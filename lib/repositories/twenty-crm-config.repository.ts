@@ -11,6 +11,7 @@ import {
   type TwentyCrmEnvConfig,
 } from '@/lib/types/twenty-crm-config.types';
 import { maskApiKey } from '@/lib/utils/twenty-crm-validation';
+import { integrationsConfig } from '@/lib/config';
 
 export class TwentyCrmConfigRepository {
   private dbService: TwentyCrmConfigDbService;
@@ -23,10 +24,11 @@ export class TwentyCrmConfigRepository {
    * Gets environment variable configuration as defaults
    */
   private getEnvConfig(): TwentyCrmEnvConfig {
-    const baseUrl = process.env.TWENTY_CRM_BASE_URL;
-    const apiKey = process.env.TWENTY_CRM_API_KEY;
-    const enabled = process.env.TWENTY_CRM_ENABLED === 'true';
-    const syncMode = (process.env.TWENTY_CRM_SYNC_MODE || 'disabled') as TwentyCrmEnvConfig['syncMode'];
+    const twentyCrm = integrationsConfig.twentyCrm;
+    const baseUrl = twentyCrm.baseUrl;
+    const apiKey = twentyCrm.apiKey;
+    const enabled = twentyCrm.enabled;
+    const syncMode = twentyCrm.syncMode;
 
     return {
       baseUrl,

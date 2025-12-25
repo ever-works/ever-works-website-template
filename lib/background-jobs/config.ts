@@ -1,24 +1,25 @@
 import { TriggerDevConfig, SchedulingMode } from './types';
+import { coreConfig, integrationsConfig } from '@/lib/config';
 
 /**
- * Get Trigger.dev configuration from environment variables
+ * Get Trigger.dev configuration from ConfigService
  * @returns Trigger.dev configuration object
  */
 export function getTriggerDevConfig(): TriggerDevConfig {
-  const apiKey = process.env.TRIGGER_DEV_API_KEY;
-  const apiUrl = process.env.TRIGGER_DEV_API_URL || 'https://api.trigger.dev';
-  const enabledRaw = process.env.TRIGGER_DEV_ENABLED?.toLowerCase()?.trim();
-  const enabled = ['1', 'true', 'yes', 'on'].includes(enabledRaw || '');
-  const environment = process.env.TRIGGER_DEV_ENVIRONMENT || 'development';
-  
-  return {
-    enabled,
-    apiKey,
-    apiUrl,
-    environment,
-    isFullyConfigured: !!(apiKey && apiUrl),
-    isPartiallyConfigured: !!(apiKey || apiUrl) && !(apiKey && apiUrl)
-  };
+	const triggerDev = integrationsConfig.triggerDev;
+	const apiKey = triggerDev.apiKey;
+	const apiUrl = triggerDev.apiUrl || 'https://api.trigger.dev';
+	const enabled = triggerDev.enabled;
+	const environment = triggerDev.environment || 'development';
+
+	return {
+		enabled,
+		apiKey,
+		apiUrl,
+		environment,
+		isFullyConfigured: !!(apiKey && apiUrl),
+		isPartiallyConfigured: !!(apiKey || apiUrl) && !(apiKey && apiUrl),
+	};
 }
 
 /**
@@ -26,10 +27,8 @@ export function getTriggerDevConfig(): TriggerDevConfig {
  * @returns True if Trigger.dev should be used
  */
 export function shouldUseTriggerDev(): boolean {
-  const config = getTriggerDevConfig();
-  return config.isFullyConfigured &&
-         config.enabled &&
-         process.env.NODE_ENV === 'production';
+	const config = getTriggerDevConfig();
+	return config.isFullyConfigured && config.enabled && coreConfig.NODE_ENV === 'production';
 }
 
 /**
@@ -37,7 +36,7 @@ export function shouldUseTriggerDev(): boolean {
  * @returns True if running on Vercel
  */
 export function isVercelEnvironment(): boolean {
-  return process.env.VERCEL === '1';
+	return process.env.VERCEL === '1';
 }
 
 /**
@@ -51,22 +50,22 @@ export function isVercelEnvironment(): boolean {
  * @returns The scheduling mode to use
  */
 export function getSchedulingMode(): SchedulingMode {
-  // Check if auto-sync is disabled
-  const disableAutoSync = process.env.DISABLE_AUTO_SYNC?.toLowerCase()?.trim();
-  if (['1', 'true', 'yes', 'on'].includes(disableAutoSync || '')) {
-    return 'disabled';
-  }
+	// Check if auto-sync is disabled
+	const disableAutoSync = process.env.DISABLE_AUTO_SYNC?.toLowerCase()?.trim();
+	if (['1', 'true', 'yes', 'on'].includes(disableAutoSync || '')) {
+		return 'disabled';
+	}
 
-  // Priority 1: Trigger.dev (production only)
-  if (shouldUseTriggerDev()) {
-    return 'trigger-dev';
-  }
+	// Priority 1: Trigger.dev (production only)
+	if (shouldUseTriggerDev()) {
+		return 'trigger-dev';
+	}
 
-  // Priority 2: Vercel cron
-  if (isVercelEnvironment()) {
-    return 'vercel';
-  }
+	// Priority 2: Vercel cron
+	if (isVercelEnvironment()) {
+		return 'vercel';
+	}
 
-  // Priority 3: Local fallback
-  return 'local';
+	// Priority 3: Local fallback
+	return 'local';
 }

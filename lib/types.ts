@@ -5,13 +5,12 @@ import { PaymentInterval, PaymentPlan, PaymentProvider } from './constants';
 export type SessionProps = {
 	session: Session | null;
 };
+
+// Default pricing config with placeholder values
+// Actual values should come from content config or environment
 export const defaultPricingConfig: PricingPlanConfig = {
-	// Default provider
 	provider: PaymentProvider.STRIPE,
-
-	// Used, if Lemon provider is enabled. Ignored by other providers.
 	lemonCheckoutUrl: '',
-
 	currency: '$',
 
 	plans: {
@@ -27,24 +26,15 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			disabled: false,
 			annualDiscount: 0,
 			popular: false,
-
-			// Stripe configuration
 			stripeProductId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID,
-			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
-			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
-
-			// LemonSqueezy configuration
-			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_FREE_VARIANT_ID,
-
+			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID || '',
+			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID || '',
+			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_FREE_VARIANT_ID || '',
 			lemonCheckoutUrl: '',
-
 			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_FREE_PRODUCT_ID,
-
-			// Polar configuration
-			polarFreePlanId: process.env.NEXT_PUBLIC_POLAR_FREE_PLAN_ID,
-			polarProductId: process.env.NEXT_PUBLIC_POLAR_FREE_PLAN_ID,
-
-			envKey: 'FREE_PLAN'
+			polarFreePlanId: process.env.NEXT_PUBLIC_POLAR_FREE_PLAN_ID || '',
+			polarProductId: process.env.NEXT_PUBLIC_POLAR_FREE_PLAN_ID || '',
+			envKey: 'FREE_PLAN',
 		},
 
 		STANDARD: {
@@ -56,33 +46,23 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			isActive: true,
 			isPremium: true,
 			isFeatured: true,
-
-			// Stripe configuration
 			stripeProductId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRODUCT_ID,
-			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRICE_ID,
-			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRICE_ID,
-
-			// Trial configuration
-			trialAmountId: process.env.NEXT_PUBLIC_STANDARD_TRIAL_AMOUNT_ID,
-			isAuthorizedTrialAmount: process.env.NEXT_PUBLIC_AUTHORIZED_TRIAL_AMOUNT === 'true',
-
+			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRICE_ID || '',
+			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRICE_ID || '',
+			trialAmountId: process.env.NEXT_PUBLIC_TRIAL_STANDARD_AMOUNT_ID || '',
+			isAuthorizedTrialAmount: process.env.NEXT_PUBLIC_TRIAL_AUTHORIZED === 'true',
 			annualDiscount: 10,
 			disabled: false,
 			popular: true,
 			envKey: 'STANDARD_PLAN',
 			trialPeriodDays: 4,
-
-			// LemonSqueezy configuration
-			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_VARIANT_ID,
-
+			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_VARIANT_ID || '',
 			lemonCheckoutUrl: '',
-
 			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_PRODUCT_ID,
-
-			// Polar configuration
-			polarStandardPlanId: process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID,
-			polarProductId: process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID
+			polarStandardPlanId: process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID || '',
+			polarProductId: process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID || '',
 		},
+
 		PREMIUM: {
 			id: PaymentPlan.PREMIUM,
 			name: 'Premium Plan',
@@ -92,33 +72,21 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			isActive: true,
 			isPremium: true,
 			isFeatured: true,
-
-			// Stripe configuration
 			stripeProductId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRODUCT_ID,
-			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID,
-			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID,
+			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID || '',
+			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID || '',
 			annualDiscount: 10,
 			disabled: true,
 			trialPeriodDays: 4,
 			popular: false,
-
-			// Trial configuration
-
-			isAuthorizedTrialAmount: process.env.NEXT_PUBLIC_AUTHORIZED_TRIAL_AMOUNT === 'true',
-			trialAmountId: process.env.NEXT_PUBLIC_PREMIUM_TRIAL_AMOUNT_ID,
-
+			isAuthorizedTrialAmount: process.env.NEXT_PUBLIC_TRIAL_AUTHORIZED === 'true',
+			trialAmountId: process.env.NEXT_PUBLIC_TRIAL_PREMIUM_AMOUNT_ID || '',
 			envKey: 'PREMIUM_PLAN',
-
-			// LemonSqueezy configuration
-			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_VARIANT_ID,
-
+			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_VARIANT_ID || '',
 			lemonCheckoutUrl: '',
-
 			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_PRODUCT_ID,
-
-			// Polar configuration
-			polarPremiumPlanId: process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID,
-			polarProductId: process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID
-		}
+			polarPremiumPlanId: process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID || '',
+			polarProductId: process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID || '',
+		},
 	}
 };

@@ -13,6 +13,7 @@ import {
   getUpdatedSubscriptionTemplate,
   getCancelledSubscriptionTemplate
 } from '@/lib/mail/templates/subscription-events';
+import { paymentConfig } from '@/lib/config';
 
 // Simple template functions for new subscription management features
 const getSubscriptionCancellingTemplate = (data: SubscriptionCancellingEmailData) => ({
@@ -616,13 +617,13 @@ export const formatBillingDate = (timestamp: number) => {
  * Get plan name from Price ID
  */
 export const getPlanName = (priceId: string) => {
-  // Mapping of Price IDs to plan names
+  // Mapping of Price IDs to plan names using ConfigService
   const planMapping: Record<string, string> = {
-    [process.env.NEXT_PUBLIC_STRIPE_SUBSCRIPTION_PRICE_ID || '']: 'Standard Plan',
-    [process.env.NEXT_PUBLIC_STRIPE_ONETIME_PRICE_ID || '']: 'Premium Plan',
-    [process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID || '']: 'Free Plan',
+    [paymentConfig.stripe.standardPriceId || '']: 'Standard Plan',
+    [paymentConfig.stripe.premiumPriceId || '']: 'Premium Plan',
+    [paymentConfig.stripe.freePriceId || '']: 'Free Plan',
   };
-  
+
   return planMapping[priceId] || 'Premium Plan';
 };
 

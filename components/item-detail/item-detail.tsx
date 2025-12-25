@@ -18,7 +18,7 @@ import { UserSurveySection } from '@/components/surveys/user-survey-section';
 import { useTranslations } from 'next-intl';
 import { generateProductSchema } from '@/lib/seo/schema';
 import { useParams } from 'next/navigation';
-import { siteConfig } from '@/lib/config';
+import { siteConfig } from '@/lib/config/client';
 import { ItemCTAButton } from './item-cta-button';
 import { useCategoriesEnabled } from '@/hooks/use-categories-enabled';
 import { useSurveysEnabled } from '@/hooks/use-surveys-enabled';

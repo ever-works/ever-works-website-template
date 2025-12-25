@@ -1,13 +1,14 @@
 import "server-only";
-import { 
-  CategoryData, 
-  CategoryWithCount, 
-  CreateCategoryRequest, 
+import {
+  CategoryData,
+  CategoryWithCount,
+  CreateCategoryRequest,
   UpdateCategoryRequest,
   CategoryListOptions,
-  CATEGORY_VALIDATION 
+  CATEGORY_VALIDATION
 } from "@/lib/types/category";
 import { createCategoryGitService } from "@/lib/services/category-git.service";
+import { coreConfig } from "@/lib/config";
 
 /**
  * Repository for category business logic operations
@@ -19,7 +20,7 @@ export class CategoryRepository {
   private async getGitService() {
     if (!this.gitService) {
       // Parse DATA_REPOSITORY URL to extract owner and repo
-      const dataRepo = process.env.DATA_REPOSITORY;
+      const dataRepo = coreConfig.content.dataRepository;
       if (!dataRepo) {
         throw new Error('DATA_REPOSITORY not configured. Please set DATA_REPOSITORY environment variable.');
       }
@@ -34,8 +35,8 @@ export class CategoryRepository {
       const gitConfig = {
         owner,
         repo,
-        token: process.env.GH_TOKEN || '',
-        branch: process.env.GITHUB_BRANCH || 'main',
+        token: coreConfig.content.ghToken || '',
+        branch: coreConfig.content.githubBranch || 'main',
       };
 
       if (!gitConfig.token) {

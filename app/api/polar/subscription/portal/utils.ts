@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { coreConfig } from '@/lib/config';
 
 /**
  * Configuration constants for return URL handling
@@ -64,10 +65,7 @@ export function isValidPathLength(path: string): boolean {
  * @returns Application base URL (absolute URI)
  */
 export function getAppUrl(): string {
-	return (
-		process.env.NEXT_PUBLIC_APP_URL ??
-		(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://demo.ever.works')
-	);
+	return coreConfig.APP_URL || 'https://demo.ever.works';
 }
 
 /**
@@ -162,7 +160,7 @@ export async function extractReturnUrl(request: NextRequest): Promise<string> {
 		return normalizedPath;
 	} catch (error) {
 		// Log error in development for debugging
-		if (process.env.NODE_ENV === 'development') {
+		if (coreConfig.NODE_ENV === 'development') {
 			console.debug('[extractReturnUrl] Error parsing request body:', error);
 		}
 

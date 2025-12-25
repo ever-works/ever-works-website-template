@@ -8,16 +8,17 @@ import {
 	formatPaymentMethod,
 	formatBillingDate,
 	getPlanName,
-	getBillingPeriod
+	getBillingPeriod,
 } from '@/lib/payment/services/payment-email.service';
 
 // Import server configuration utility
 import { getEmailConfig } from '@/lib/config/server-config';
+import { coreConfig, emailConfig as globalEmailConfig } from '@/lib/config';
 import { WebhookSubscriptionService } from '@/lib/services/webhook-subscription.service';
 import { getOrCreateStripeProvider } from '@/lib/auth';
 const webhookSubscriptionService = new WebhookSubscriptionService();
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const appUrl = coreConfig.APP_URL || 'https://demo.ever.works';
 
 // Utility function to create email data with secure configuration
 function createEmailData(baseData: any, emailConfig: Awaited<ReturnType<typeof getEmailConfig>>) {
@@ -324,7 +325,7 @@ async function handleSubscriptionCreated(data: any) {
 			manageSubscriptionUrl: `${appUrl || ''}/settings/subscription`,
 			companyName: emailConfig?.companyName,
 			companyUrl: emailConfig?.companyUrl,
-			supportEmail: process.env.EMAIL_SUPPORT,
+			supportEmail: globalEmailConfig.EMAIL_SUPPORT,
 			features: getSubscriptionFeatures(planName)
 		};
 
@@ -368,8 +369,8 @@ async function handleSubscriptionUpdated(data: any) {
 			subscriptionId: data.id,
 			manageSubscriptionUrl: `${appUrl || ''}/settings/subscription`,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
-			supportEmail: process.env.EMAIL_SUPPORT || 'support@ever.works',
+			companyUrl: coreConfig.SITE_URL || 'https://ever.works',
+			supportEmail: globalEmailConfig.EMAIL_SUPPORT || 'support@ever.works',
 			features: getSubscriptionFeatures(planName)
 		};
 
@@ -410,8 +411,8 @@ async function handleSubscriptionCancelled(data: any) {
 			cancellationReason: data.cancellation_details?.reason || 'Cancellation requested by user',
 			reactivateUrl: `${appUrl || ''}/subscription/reactivate?subscription=${data.id}`,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
-			supportEmail: process.env.EMAIL_SUPPORT || 'support@ever.works'
+			companyUrl: coreConfig.SITE_URL || 'https://ever.works',
+			supportEmail: globalEmailConfig.EMAIL_SUPPORT || 'support@ever.works'
 		};
 
 		// Send cancellation email
@@ -458,8 +459,8 @@ async function handleSubscriptionPaymentSucceeded(data: any) {
 				: undefined,
 			receiptUrl: data.receipt_url,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
-			supportEmail: process.env.EMAIL_SUPPORT || 'support@ever.works'
+			companyUrl: coreConfig.SITE_URL || 'https://ever.works',
+			supportEmail: globalEmailConfig.EMAIL_SUPPORT || 'support@ever.works'
 		};
 
 		// Send confirmation email
@@ -504,8 +505,8 @@ async function handleSubscriptionPaymentFailed(data: any) {
 			retryUrl: `${appUrl || ''}/subscription/retry?invoice=${data.id}`,
 			updatePaymentUrl: `${appUrl || ''}/settings/payment-methods`,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
-			supportEmail: process.env.EMAIL_SUPPORT || 'support@ever.works'
+			companyUrl: coreConfig.SITE_URL || 'https://ever.works',
+			supportEmail: globalEmailConfig.EMAIL_SUPPORT || 'support@ever.works'
 		};
 
 		// Send failure email
@@ -548,8 +549,8 @@ async function handleSubscriptionTrialEnding(data: any) {
 			subscriptionId: data.id,
 			manageSubscriptionUrl: `${appUrl || ''}/settings/subscription`,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
-			supportEmail: process.env.EMAIL_SUPPORT || 'support@ever.works'
+			companyUrl: coreConfig.SITE_URL || 'https://ever.works',
+			supportEmail: globalEmailConfig.EMAIL_SUPPORT || 'support@ever.works'
 		};
 
 		// Send trial ending notification email
