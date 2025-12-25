@@ -101,7 +101,7 @@ API_RETRY_DELAY=1000
 # Register at https://api.ever.works to get access.
 # If not configured, the extraction feature and other advanced functionality will be disabled.
 # Base URL of the Ever Works Platform API:
-PLATFORM_API_URL="https://api.ever.works" # For local dev, you can use http://localhost:3100/api
+PLATFORM_API_URL="https://api.ever.works/api" # For local dev, you should use "http://localhost:3100/api"
 # Secret Token for Platform API (register at https://api.ever.works to get secret token)
 PLATFORM_API_SECRET_TOKEN="your-platform-api-secret-token"
 
