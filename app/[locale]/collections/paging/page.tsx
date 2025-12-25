@@ -3,9 +3,8 @@ import { getCachedItems } from "@/lib/content";
 import { paginateMeta } from "@/lib/paginate";
 import { Collection } from "@/types/collection";
 
-// Keep paging view fresh immediately after admin changes
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
+// Keep paging view reasonably fresh while leveraging ISR like the paged sibling route
+export const revalidate = 10;
 
 // Allow non-English locales to be generated on-demand (ISR)
 export const dynamicParams = true;
