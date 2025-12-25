@@ -38,11 +38,19 @@ export default async function CollectionPage({
   // Fetch all items
   const { categories, tags, items } = await getCachedItems({ lang: locale });
 
+  // Build a lookup so string tag IDs can be resolved to full tag objects
+  const tagMap = Object.fromEntries(tags.map((tag) => [tag.id, tag]));
+
+  const normalizeItemTags = (itemTags: Array<string | { id: string }> = []) =>
+    itemTags
+      .map((tag) => (typeof tag === "string" ? tagMap[tag] : tagMap[tag?.id]))
+      .filter(Boolean);
+
   // Filter items based on collection's item list
   const collectionItemIds = collection.items || [];
-  const collectionItems = items.filter(item => 
-    collectionItemIds.includes(item.slug)
-  );
+  const collectionItems = items
+    .filter((item) => collectionItemIds.includes(item.slug))
+    .map((item) => ({ ...item, tags: normalizeItemTags(item.tags) }));
 
   return (
     <CollectionDetail

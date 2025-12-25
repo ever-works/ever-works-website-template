@@ -75,18 +75,10 @@ export function CollectionForm({ collection, mode, isLoading, onSubmit, onCancel
     event.preventDefault();
     if (!validate()) return;
 
-    const trimmed = {
-      ...formData,
-      id: formData.id.trim(),
-      name: formData.name.trim(),
-      description: formData.description.trim(),
-      icon_url: formData.icon_url.trim(),
-    };
-
     // Auto-generate slug from ID (they're the same)
     const payload = mode === "edit"
-      ? ({ ...trimmed, slug: trimmed.id, id: trimmed.id } as UpdateCollectionRequest)
-      : ({ ...trimmed, slug: trimmed.id } as CreateCollectionRequest);
+      ? ({ ...formData, slug: formData.id, id: formData.id } as UpdateCollectionRequest)
+      : ({ ...formData, slug: formData.id } as CreateCollectionRequest);
 
     await onSubmit(payload);
   };
