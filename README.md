@@ -96,11 +96,14 @@ API_TIMEOUT=10000
 API_RETRY_ATTEMPTS=3
 API_RETRY_DELAY=1000
 
-# Ever Works Platform API (optional - for item extraction feature)
-# Used for automatic metadata extraction from URLs when submitting items
-# If not configured, the extraction feature will be disabled
-PLATFORM_API_URL="http://localhost:3100/api"  # Base URL of the Ever Works Platform API
-PLATFORM_API_SECRET_TOKEN="your-platform-api-secret-token"  # Secret token for Platform API authentication
+# Ever Works Platform API (optional)
+# Used for automatic metadata extraction from URLs when submitting items, data sync, and other advanced features
+# Register at https://api.ever.works to get access.
+# If not configured, the extraction feature and other advanced functionality will be disabled.
+# Base URL of the Ever Works Platform API:
+PLATFORM_API_URL="https://api.ever.works" # For local dev, you can use http://localhost:3100/api
+# Secret Token for Platform API (register at https://api.ever.works to get secret token)
+PLATFORM_API_SECRET_TOKEN="your-platform-api-secret-token"
 
 # Cookie Security
 COOKIE_SECRET="your-secure-cookie-secret"  # Generate with: openssl rand -base64 32
