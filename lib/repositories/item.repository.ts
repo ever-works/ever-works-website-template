@@ -132,8 +132,12 @@ export class ItemRepository {
     const gitService = await this.getGitService();
     const results: ItemData[] = [];
 
+    // Pre-validate all updates to avoid partial writes if a validation fails mid-loop
     for (const { id, data } of updates) {
       this.validateUpdateData(id, data);
+    }
+
+    for (const { id, data } of updates) {
       const updated = await gitService.updateItemWithoutCommit(id, data);
       results.push(updated);
     }

@@ -57,6 +57,8 @@ export class CollectionGitService {
       }
     } catch (error) {
       console.error('❌ Git sync failed:', error);
+      console.warn('⚠️ Collection Git service may be operating on stale data after sync failure');
+      throw error;
     }
   }
 
@@ -180,6 +182,8 @@ export class CollectionGitService {
         console.log(`[WRITE COLLECTIONS] Git push successful`);
       } catch (gitError) {
         console.error('⚠️ [WRITE COLLECTIONS] Git operations failed, but local file was saved:', gitError);
+        // pendingChanges holds the latest full state (overwrites prior pending) because the file is already persisted locally;
+        // syncInProgress prevents concurrent syncs, but a failure mid-sync can still replace pendingChanges with this newest state
         this.pendingChanges = collections;
         this.scheduleBackgroundSync();
       }
@@ -289,6 +293,11 @@ export class CollectionGitService {
       await this.syncWithRemote();
       await this.pushPendingChanges();
       this.retryCount = 0;
+
+      if (this.retryTimeout) {
+        clearTimeout(this.retryTimeout);
+        this.retryTimeout = null;
+      }
     } catch (error) {
       console.error('❌ Background sync failed:', error);
 
@@ -308,9 +317,8 @@ export class CollectionGitService {
         this.retryCount = 0;
       }
     } finally {
-      if (this.retryCount >= this.maxRetries) {
-        this.syncInProgress = false;
-      }
+      // Always clear sync flag so future sync attempts can proceed
+      this.syncInProgress = false;
     }
   }
 
