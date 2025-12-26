@@ -67,6 +67,15 @@ export const emailConfigSchema = z.object({
 export type EmailConfig = z.infer<typeof emailConfigSchema>;
 
 /**
+ * Safely parses an integer, returning undefined if NaN
+ */
+function parseIntOrUndefined(value: string | undefined): number | undefined {
+	if (!value) return undefined;
+	const parsed = parseInt(value, 10);
+	return Number.isNaN(parsed) ? undefined : parsed;
+}
+
+/**
  * Collects email configuration from environment variables
  */
 export function collectEmailConfig(): z.input<typeof emailConfigSchema> {
@@ -76,7 +85,7 @@ export function collectEmailConfig(): z.input<typeof emailConfigSchema> {
 		EMAIL_SUPPORT: process.env.EMAIL_SUPPORT,
 		smtp: {
 			host: process.env.SMTP_HOST,
-			port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : undefined,
+			port: parseIntOrUndefined(process.env.SMTP_PORT),
 			user: process.env.SMTP_USER,
 			password: process.env.SMTP_PASSWORD,
 		},
