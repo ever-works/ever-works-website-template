@@ -28,7 +28,7 @@ export class ItemRepository {
         owner,
         repo,
         token,
-        branch: coreConfig.content.githubBranch || 'main',
+        branch: coreConfig.content.githubBranch,
         dataDir: getContentPath(), // Use dynamic path (local: .content, Vercel: /tmp/.content)
         itemsDir: 'data',
       };
