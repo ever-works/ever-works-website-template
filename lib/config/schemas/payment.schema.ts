@@ -104,20 +104,23 @@ export const paymentConfigSchema = z.object({
 export type PaymentConfig = z.infer<typeof paymentConfigSchema>;
 
 /**
+ * Safely parses a float, returning undefined if NaN
+ */
+function parseFloatOrUndefined(value: string | undefined): number | undefined {
+	if (!value) return undefined;
+	const parsed = parseFloat(value);
+	return Number.isNaN(parsed) ? undefined : parsed;
+}
+
+/**
  * Collects payment configuration from environment variables
  */
 export function collectPaymentConfig(): z.input<typeof paymentConfigSchema> {
 	return {
 		pricing: {
-			free: process.env.NEXT_PUBLIC_PRODUCT_PRICE_FREE
-				? parseFloat(process.env.NEXT_PUBLIC_PRODUCT_PRICE_FREE)
-				: undefined,
-			standard: process.env.NEXT_PUBLIC_PRODUCT_PRICE_STANDARD
-				? parseFloat(process.env.NEXT_PUBLIC_PRODUCT_PRICE_STANDARD)
-				: undefined,
-			premium: process.env.NEXT_PUBLIC_PRODUCT_PRICE_PREMIUM
-				? parseFloat(process.env.NEXT_PUBLIC_PRODUCT_PRICE_PREMIUM)
-				: undefined,
+			free: parseFloatOrUndefined(process.env.NEXT_PUBLIC_PRODUCT_PRICE_FREE),
+			standard: parseFloatOrUndefined(process.env.NEXT_PUBLIC_PRODUCT_PRICE_STANDARD),
+			premium: parseFloatOrUndefined(process.env.NEXT_PUBLIC_PRODUCT_PRICE_PREMIUM),
 		},
 		trial: {
 			standardTrialAmountId: process.env.NEXT_PUBLIC_STANDARD_TRIAL_AMOUNT_ID,
