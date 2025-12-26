@@ -54,7 +54,7 @@ return (
         group-hover:border-theme-primary/30 dark:group-hover:border-theme-primary/40
         transition-all duration-300">
         <span>
-          {collection.items?.length || 0} items
+          {t("COLLECTION_ITEMS", { count: collection.items?.length ?? collection.item_count ?? 0 })}
         </span>
       </div>
     </div>
