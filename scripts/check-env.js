@@ -91,7 +91,7 @@ const PRODUCTION_RECOMMENDED_PATTERNS = [
 const CATEGORY_PATTERNS = [
   { name: 'core', pattern: /^(NODE_ENV|PORT|APP_|BASE_URL)/ },
   { name: 'database', pattern: /^(DATABASE_|DB_|POSTGRES_|MYSQL_|MONGO_)/ },
-  { name: 'auth', pattern: /^(AUTH_|JWT_|OAUTH_|GOOGLE_|GITHUB_|FACEBOOK_|TWITTER_|MICROSOFT_)/ },
+  { name: 'auth', pattern: /^(AUTH_|JWT_|OAUTH_|GOOGLE_|GITHUB_|FACEBOOK_|FB_|TWITTER_|MICROSOFT_)/ },
   { name: 'supabase', pattern: /^(SUPABASE_|NEXT_PUBLIC_SUPABASE_)/ },
   { name: 'content', pattern: /^(CONTENT_|DATA_REPOSITORY|GH_TOKEN)/ },
   { name: 'email', pattern: /^(EMAIL_|SMTP_|MAIL_|RESEND_)/ },

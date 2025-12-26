@@ -52,5 +52,6 @@ export { isDevelopment, isProduction, isTest, getEnvironment } from './types';
 // Schema exports (for advanced usage)
 export * from './schemas';
 
-// Client-safe exports (can be used in client components)
+// Client-safe exports - NOTE: Client components should import directly from '@/lib/config/client'
+// because this barrel file is server-only (via config-service)
 export { siteConfig, pricingConfig, clientEnv } from './client';
