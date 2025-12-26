@@ -97,6 +97,15 @@ export type AuthConfig = z.infer<typeof authConfigSchema>;
 export type OAuthProvider = z.infer<typeof oauthProviderSchema>;
 
 /**
+ * Safely parses an integer, returning undefined if NaN
+ */
+function parseIntOrUndefined(value: string | undefined): number | undefined {
+	if (!value) return undefined;
+	const parsed = parseInt(value, 10);
+	return Number.isNaN(parsed) ? undefined : parsed;
+}
+
+/**
  * Collects authentication configuration from environment variables
  */
 export function collectAuthConfig(): z.input<typeof authConfigSchema> {
@@ -142,9 +151,7 @@ export function collectAuthConfig(): z.input<typeof authConfigSchema> {
 		seedUser: {
 			adminEmail: process.env.SEED_ADMIN_EMAIL,
 			adminPassword: process.env.SEED_ADMIN_PASSWORD,
-			fakeUserCount: process.env.SEED_FAKE_USER_COUNT
-				? parseInt(process.env.SEED_FAKE_USER_COUNT, 10)
-				: undefined,
+			fakeUserCount: parseIntOrUndefined(process.env.SEED_FAKE_USER_COUNT),
 		},
 	};
 }
