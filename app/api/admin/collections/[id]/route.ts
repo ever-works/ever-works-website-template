@@ -242,9 +242,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const updated = await collectionRepository.update(updateData);
     await invalidateContentCaches();
 
-    // Ensure collection detail/list pages pick up the new active state without manual refresh
+    // Revalidate both old and new slugs if slug changed
+    const collection = await collectionRepository.findById(id);
+    if (collection && collection.slug !== (updateData.slug || id)) {
+      revalidatePath(`/collections/${collection.slug}`); // old slug
+    }
     const targetSlug = updated.slug || updateData.slug || id;
-    revalidatePath(`/collections/${targetSlug}`);
+    revalidatePath(`/collections/${targetSlug}`); // new slug
     revalidatePath(`/collections`);
 
     return NextResponse.json({ success: true, data: updated, message: "Collection updated successfully" });
