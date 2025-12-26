@@ -75,6 +75,9 @@ export const coreConfigSchema = z.object({
 	// Demo mode
 	DEMO_MODE: z.boolean().default(false),
 
+	// Dev-only flags
+	DISABLE_AUTO_SYNC: z.boolean().default(false),
+
 	// OG Image theming
 	ogTheme: ogThemeSchema.optional().default({ gradientStart: '#667eea', gradientEnd: '#764ba2' }),
 
@@ -112,6 +115,7 @@ export function collectCoreConfig(): z.input<typeof coreConfigSchema> {
 		SITE_KEYWORDS: keywords ? keywords.split(',').map((k) => k.trim()) : [],
 		SITE_LOGO: process.env.NEXT_PUBLIC_SITE_LOGO,
 		DEMO_MODE: process.env.NEXT_PUBLIC_DEMO === 'true',
+		DISABLE_AUTO_SYNC: process.env.DISABLE_AUTO_SYNC === 'true',
 		ogTheme: {
 			gradientStart: process.env.NEXT_PUBLIC_OG_GRADIENT_START,
 			gradientEnd: process.env.NEXT_PUBLIC_OG_GRADIENT_END,

@@ -36,7 +36,7 @@ class SyncManager {
    */
   async performSync(): Promise<SyncResult> {
     // DEV-MODE FEATURE: Allow disabling auto-sync in development via environment variable
-    if (coreConfig.NODE_ENV === 'development' && process.env.DISABLE_AUTO_SYNC === 'true') {
+    if (coreConfig.NODE_ENV === 'development' && coreConfig.DISABLE_AUTO_SYNC) {
       console.log('[SYNC_MANAGER] Sync disabled in development mode (DISABLE_AUTO_SYNC=true)');
       return {
         success: true,
