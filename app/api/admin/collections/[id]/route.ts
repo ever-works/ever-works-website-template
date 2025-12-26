@@ -239,13 +239,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       ...parsed.data,
     };
 
+    const beforeUpdate = await collectionRepository.findById(id);
     const updated = await collectionRepository.update(updateData);
     await invalidateContentCaches();
 
     // Revalidate both old and new slugs if slug changed
-    const collection = await collectionRepository.findById(id);
-    if (collection && collection.slug !== (updateData.slug || id)) {
-      revalidatePath(`/collections/${collection.slug}`); // old slug
+    if (beforeUpdate && beforeUpdate.slug !== (updateData.slug || id)) {
+      revalidatePath(`/collections/${beforeUpdate.slug}`); // old slug
     }
     const targetSlug = updated.slug || updateData.slug || id;
     revalidatePath(`/collections/${targetSlug}`); // new slug

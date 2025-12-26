@@ -29757,17 +29757,6 @@
             },
             "description": "Collection ID",
             "example": "productivity-tools"
-          },
-          {
-            "in": "query",
-            "name": "permanent",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            },
-            "description": "When true, performs a permanent delete instead of soft delete.",
-            "example": true
           }
         ],
         "responses": {
@@ -29866,6 +29855,17 @@
             },
             "description": "Collection ID",
             "example": "productivity-tools"
+          },
+          {
+            "in": "query",
+            "name": "permanent",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "When true, performs a permanent delete instead of soft delete.",
+            "example": true
           }
         ],
         "requestBody": {
@@ -29993,6 +29993,16 @@
             },
             "description": "Collection ID",
             "example": "productivity-tools"
+          },
+          {
+            "in": "query",
+            "name": "permanent",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Delete permanently when true; defaults to soft delete",
+            "example": false
           }
         ],
         "responses": {
