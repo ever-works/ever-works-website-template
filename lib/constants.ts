@@ -5,7 +5,29 @@ import { clientEnv } from '@/lib/config/client';
 // LOCALIZATION
 // ============================================
 export const DEFAULT_LOCALE = 'en';
-export const LOCALES = ['en', 'fr', 'es', 'zh', 'de', 'ar', 'he', 'ru', 'uk', 'pt', 'it', 'ja', 'ko', 'nl', 'pl', 'tr', 'vi', 'th', 'hi', 'id', 'bg'] as const;
+export const LOCALES = [
+	'en',
+	'fr',
+	'es',
+	'zh',
+	'de',
+	'ar',
+	'he',
+	'ru',
+	'uk',
+	'pt',
+	'it',
+	'ja',
+	'ko',
+	'nl',
+	'pl',
+	'tr',
+	'vi',
+	'th',
+	'hi',
+	'id',
+	'bg'
+] as const;
 export type Locale = (typeof LOCALES)[number];
 
 // ============================================
@@ -16,6 +38,9 @@ export const LOGO_URL = '/logo-ever-work-3.png';
 // ============================================
 // API & BACKEND
 // ============================================
+// API_BASE_URL: Base URL for internal website API (Next.js API routes)
+// Note: For Ever Works Platform API integration, use PLATFORM_API_URL and PLATFORM_API_SECRET_TOKEN
+// environment variables (see app/api/extract/route.ts and lib/api/server-api-client.ts)
 export const API_BASE_URL = getNextPublicEnv('NEXT_PUBLIC_API_BASE_URL');
 
 // ============================================

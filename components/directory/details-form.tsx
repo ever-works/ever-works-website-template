@@ -34,7 +34,13 @@ interface DetailsFormProps {
 	isSubmitting?: boolean;
 }
 
-export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps, isSubmitting = false }: DetailsFormProps) {
+export function DetailsForm({
+	initialData = {},
+	onSubmit,
+	onBack,
+	listingProps,
+	isSubmitting = false
+}: DetailsFormProps) {
 	const t = useTranslations();
 	const editor = useEditor();
 
@@ -109,10 +115,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps, 
 
 							{/* Progress Bar */}
 							<div className={PROGRESS_BAR_CLASSES.container}>
-								<div
-									className={PROGRESS_BAR_CLASSES.bar}
-									style={{ width: `${progressPercentage}%` }}
-								>
+								<div className={PROGRESS_BAR_CLASSES.bar} style={{ width: `${progressPercentage}%` }}>
 									<div className={PROGRESS_BAR_CLASSES.shimmer}></div>
 								</div>
 							</div>
@@ -139,15 +142,13 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps, 
 								t={t as (key: string, values?: Record<string, unknown>) => string}
 								addLink={addLink}
 								removeLink={removeLink}
+								setFormData={setFormData}
 							/>
 						)}
 
 						{/* Step 2: Payment */}
 						{currentStep === 2 && (
-							<PaymentStep
-								onSelectPlan={handlePlanSelect}
-								selectedPlan={formData.selectedPlan}
-							/>
+							<PaymentStep onSelectPlan={handlePlanSelect} selectedPlan={formData.selectedPlan} />
 						)}
 
 						{/* Step 3: Review */}

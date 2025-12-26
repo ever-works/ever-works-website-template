@@ -11,6 +11,7 @@ import {
 	formatBillingDate
 } from '@/lib/payment/services/payment-email.service';
 import { WebhookSubscriptionService } from '@/lib/services/webhook-subscription.service';
+import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
 import { PaymentProvider } from '@/lib/constants';
 import { Logger } from '@/lib/logger';
 import type { PolarWebhookData } from './types';
@@ -130,6 +131,13 @@ export async function handlePaymentFailed(data: PolarWebhookData): Promise<void>
  */
 export async function handleSubscriptionCreated(data: PolarWebhookData): Promise<void> {
 	logger.info('Processing subscription created', { subscriptionId: data.id });
+
+	// Check if this is a sponsor ad subscription
+	if (isSponsorAdSubscription(data)) {
+		logger.info('📢 Polar sponsor ad subscription detected', { subscriptionId: data.id });
+		await handleSponsorAdActivation(data);
+		return;
+	}
 
 	try {
 		await webhookSubscriptionService.handleSubscriptionCreated(data);
@@ -251,6 +259,13 @@ export async function handleSubscriptionUpdated(data: PolarWebhookData): Promise
 export async function handleSubscriptionCancelled(data: PolarWebhookData): Promise<void> {
 	logger.info('Processing subscription cancelled', { subscriptionId: data.id });
 
+	// Check if this is a sponsor ad subscription
+	if (isSponsorAdSubscription(data)) {
+		logger.info('📢 Polar sponsor ad subscription cancellation detected', { subscriptionId: data.id });
+		await handleSponsorAdCancellation(data);
+		return;
+	}
+
 	try {
 		await webhookSubscriptionService.handleSubscriptionCancelled(data);
 
@@ -311,6 +326,13 @@ export async function handleSubscriptionCancelled(data: PolarWebhookData): Promi
  */
 export async function handleSubscriptionPaymentSucceeded(data: PolarWebhookData): Promise<void> {
 	logger.info('Processing subscription payment succeeded', { invoiceId: data.id });
+
+	// Check if this is a sponsor ad subscription (for renewals)
+	if (isSponsorAdSubscription(data)) {
+		logger.info('📢 Polar sponsor ad payment succeeded (renewal)', { invoiceId: data.id });
+		await handleSponsorAdRenewal(data);
+		return;
+	}
 
 	try {
 		await webhookSubscriptionService.handleSubscriptionPaymentSucceeded(data);
@@ -432,5 +454,125 @@ export async function handleSubscriptionPaymentFailed(data: PolarWebhookData): P
 			invoiceId: data.id
 		});
 		throw error;
+	}
+}
+
+// ######################### Sponsor Ad Webhook Handlers #########################
+
+/**
+ * Check if subscription metadata indicates a sponsor ad
+ * Polar uses metadata field for custom data
+ */
+function isSponsorAdSubscription(data: PolarWebhookData): boolean {
+	const metadata = data.metadata;
+	const subscriptionMetadata = data.subscription?.metadata;
+
+	return metadata?.type === 'sponsor_ad' || subscriptionMetadata?.type === 'sponsor_ad';
+}
+
+/**
+ * Get sponsor ad ID from subscription metadata
+ */
+function getSponsorAdId(data: PolarWebhookData): string | null {
+	const metadata = data.metadata;
+	const subscriptionMetadata = data.subscription?.metadata;
+
+	return metadata?.sponsorAdId || subscriptionMetadata?.sponsorAdId || null;
+}
+
+/**
+ * Handle sponsor ad subscription created/payment succeeded
+ */
+async function handleSponsorAdActivation(data: PolarWebhookData): Promise<void> {
+	const sponsorAdId = getSponsorAdId(data);
+
+	if (!sponsorAdId) {
+		logger.error('Sponsor ad ID not found in Polar metadata', { dataId: data.id });
+		return;
+	}
+
+	try {
+		const subscriptionId = data.id || '';
+		const customerId = data.customer_id || data.customer?.id || '';
+
+		logger.info('Confirming payment for sponsor ad via Polar', { sponsorAdId });
+
+		const confirmedAd = await sponsorAdService.confirmPayment(
+			sponsorAdId,
+			subscriptionId,
+			customerId
+		);
+
+		if (confirmedAd) {
+			logger.info('Sponsor ad payment confirmed, now pending admin review', { sponsorAdId });
+		} else {
+			logger.error('Failed to confirm sponsor ad payment', { sponsorAdId });
+		}
+	} catch (error) {
+		logger.error('Error confirming sponsor ad payment', {
+			sponsorAdId,
+			error: error instanceof Error ? error.message : 'Unknown error'
+		});
+	}
+}
+
+/**
+ * Handle sponsor ad subscription cancelled
+ */
+async function handleSponsorAdCancellation(data: PolarWebhookData): Promise<void> {
+	const sponsorAdId = getSponsorAdId(data);
+
+	if (!sponsorAdId) {
+		logger.error('Sponsor ad ID not found in Polar metadata', { dataId: data.id });
+		return;
+	}
+
+	try {
+		logger.info('Cancelling sponsor ad via Polar', { sponsorAdId });
+
+		const cancelledAd = await sponsorAdService.cancelSponsorAd(
+			sponsorAdId,
+			'Polar subscription cancelled'
+		);
+
+		if (cancelledAd) {
+			logger.info('Sponsor ad cancelled successfully', { sponsorAdId });
+		} else {
+			logger.error('Failed to cancel sponsor ad', { sponsorAdId });
+		}
+	} catch (error) {
+		logger.error('Error cancelling sponsor ad', {
+			sponsorAdId,
+			error: error instanceof Error ? error.message : 'Unknown error'
+		});
+	}
+}
+
+/**
+ * Handle sponsor ad subscription renewal
+ */
+async function handleSponsorAdRenewal(data: PolarWebhookData): Promise<void> {
+	const sponsorAdId = getSponsorAdId(data);
+
+	if (!sponsorAdId) {
+		logger.error('Sponsor ad ID not found in Polar metadata', { dataId: data.id });
+		return;
+	}
+
+	try {
+		logger.info('Renewing sponsor ad via Polar', { sponsorAdId });
+
+		const renewedAd = await sponsorAdService.renewSponsorAd(sponsorAdId);
+
+		if (renewedAd) {
+			logger.info('Sponsor ad renewed successfully', { sponsorAdId });
+		} else {
+			logger.error('Failed to renew sponsor ad', { sponsorAdId });
+		}
+	} catch (error) {
+		logger.error('Error renewing sponsor ad', {
+			sponsorAdId,
+			error: error instanceof Error ? error.message : 'Unknown error'
+		});
 	}
 }

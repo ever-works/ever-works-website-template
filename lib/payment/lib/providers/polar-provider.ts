@@ -30,6 +30,8 @@ import {
 	validateReactivateInputs,
 	isScheduledForCancellation,
 	createUserFriendlyError,
+	mapPolarSubscriptionToInfo,
+	validateSubscriptionId,
 	type PolarCancelSubscriptionParams,
 	type PolarReactivateSubscriptionParams
 } from '../utils/polar-subscription-helpers';
@@ -762,32 +764,101 @@ export class PolarProvider implements PaymentProviderInterface {
 		try {
 			const { subscriptionId, priceId, cancelAtPeriodEnd, metadata } = params;
 
-			const updateData: any = {};
+			// Validate and sanitize subscription ID to prevent SSRF attacks
+			const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+
+			// Get the current subscription first to use as fallback
+			const currentSubscription = await getPolarSubscription(validatedSubscriptionId, this.polar, {
+				formatErrorMessage: this.formatErrorMessage.bind(this),
+				logger: this.logger
+			});
+
+			// Special case: if cancelAtPeriodEnd is false, use reactivateSubscription
+			// Polar requires using reactivate endpoint to set cancel_at_period_end to false
+			if (cancelAtPeriodEnd === false) {
+				const isCurrentlyScheduled = isScheduledForCancellation(currentSubscription);
+				if (isCurrentlyScheduled) {
+					// Use reactivateSubscription to remove cancellation flag
+					const reactivated = await this.reactivateSubscription(validatedSubscriptionId);
+
+					// If metadata needs to be updated, do it in a separate call
+					if (metadata && Object.keys(this.sanitizeMetadata(metadata)).length > 0) {
+						return await this.updateSubscriptionMetadata(validatedSubscriptionId, metadata, reactivated);
+					}
+
+					return reactivated;
+				}
+			}
+
+			// Build the update body using REST API format (snake_case)
+			const updateBody: any = {};
+
+			// Polar API uses product_id for product changes, not priceId
 			if (priceId) {
-				updateData.priceId = priceId;
+				updateBody.product_id = priceId;
 			}
-			if (cancelAtPeriodEnd !== undefined) {
-				updateData.cancelAtPeriodEnd = cancelAtPeriodEnd;
+
+			// Polar API expects cancel_at_period_end (snake_case)
+			// Only include if it's true (false case handled above via reactivate)
+			if (cancelAtPeriodEnd === true) {
+				updateBody.cancel_at_period_end = true;
 			}
+
+			// Sanitize metadata to remove undefined values
 			if (metadata) {
-				updateData.metadata = metadata;
+				const sanitized = this.sanitizeMetadata(metadata);
+				if (Object.keys(sanitized).length > 0) {
+					updateBody.metadata = sanitized;
+				}
 			}
 
-			const subscription = await this.polar.subscriptions.update({
-				id: subscriptionId,
-				...updateData
-			} as any);
+			// If updateBody is empty, nothing to update
+			if (Object.keys(updateBody).length === 0) {
+				this.logger.warn('No update parameters provided', { subscriptionId: validatedSubscriptionId });
+				return mapPolarSubscriptionToInfo(
+					currentSubscription,
+					validatedSubscriptionId,
+					currentSubscription,
+					currentSubscription?.status || 'active',
+					currentSubscription?.cancel_at_period_end ?? currentSubscription?.cancelAtPeriodEnd ?? false
+				);
+			}
 
-			return {
-				id: (subscription as any).id || subscriptionId,
-				customerId: (subscription as any).customerId || '',
-				status: this.mapSubscriptionStatus((subscription as any).status || 'active'),
-				currentPeriodEnd: (subscription as any).currentPeriodEnd
-					? new Date((subscription as any).currentPeriodEnd).getTime() / 1000
-					: undefined,
-				cancelAtPeriodEnd: (subscription as any).cancelAtPeriodEnd || false,
-				priceId: (subscription as any).priceId || priceId || ''
-			};
+			// Use REST API directly (more reliable than SDK for updates)
+			const apiUrl = this.getPolarApiUrl();
+			const response = await fetch(`${apiUrl}/v1/subscriptions/${validatedSubscriptionId}`, {
+				method: 'PATCH',
+				headers: {
+					Authorization: `Bearer ${this.apiKey}`,
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(updateBody)
+			});
+
+			if (!response.ok) {
+				const errorText = await response.text().catch(() => 'Unknown error');
+				this.logger.error('Failed to update Polar subscription via REST API', {
+					status: response.status,
+					error: errorText,
+					subscriptionId: validatedSubscriptionId,
+					updateBody
+				});
+				throw new Error(`Failed to update subscription: ${errorText}`);
+			}
+
+			const updatedSubscription = await response.json().catch(() => currentSubscription);
+
+			// Use the helper function to map the response
+			return mapPolarSubscriptionToInfo(
+				updatedSubscription,
+				validatedSubscriptionId,
+				currentSubscription,
+				updatedSubscription?.status || currentSubscription?.status || 'active',
+				updatedSubscription?.cancel_at_period_end ??
+					updatedSubscription?.cancelAtPeriodEnd ??
+					cancelAtPeriodEnd ??
+					false
+			);
 		} catch (error) {
 			this.logger.error('Failed to update Polar subscription', {
 				error: this.formatErrorMessage(error),
@@ -795,6 +866,144 @@ export class PolarProvider implements PaymentProviderInterface {
 			});
 			throw new Error(`Failed to update subscription: ${this.formatErrorMessage(error)}`);
 		}
+	}
+
+	/**
+	 * Helper method to update only subscription metadata
+	 */
+	private async updateSubscriptionMetadata(
+		subscriptionId: string,
+		metadata: Record<string, any>,
+		fallbackSubscription?: SubscriptionInfo
+	): Promise<SubscriptionInfo> {
+		const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+		const sanitized = this.sanitizeMetadata(metadata);
+
+		if (Object.keys(sanitized).length === 0) {
+			// No metadata to update, return fallback or get current subscription
+			if (fallbackSubscription) {
+				return fallbackSubscription;
+			}
+			const current = await getPolarSubscription(validatedSubscriptionId, this.polar, {
+				formatErrorMessage: this.formatErrorMessage.bind(this),
+				logger: this.logger
+			});
+			return mapPolarSubscriptionToInfo(
+				current,
+				validatedSubscriptionId,
+				current,
+				current?.status || 'active',
+				current?.cancel_at_period_end ?? current?.cancelAtPeriodEnd ?? false
+			);
+		}
+
+		// Get current subscription to extract product_id
+		// Polar API requires product_id for SubscriptionUpdateProduct type when updating metadata
+		const currentSubscription = await getPolarSubscription(validatedSubscriptionId, this.polar, {
+			formatErrorMessage: this.formatErrorMessage.bind(this),
+			logger: this.logger
+		});
+
+		// Extract product_id from current subscription (supports multiple formats)
+		const productId =
+			currentSubscription?.product?.id ||
+			currentSubscription?.productId ||
+			currentSubscription?.product_id ||
+			null;
+
+		if (!productId) {
+			this.logger.warn('Cannot update metadata: product_id not found in current subscription', {
+				subscriptionId: validatedSubscriptionId
+			});
+			// Return fallback or current subscription if we can't update
+			if (fallbackSubscription) {
+				return fallbackSubscription;
+			}
+			return mapPolarSubscriptionToInfo(
+				currentSubscription,
+				validatedSubscriptionId,
+				currentSubscription,
+				currentSubscription?.status || 'active',
+				currentSubscription?.cancel_at_period_end ?? currentSubscription?.cancelAtPeriodEnd ?? false
+			);
+		}
+
+		// Build update body with product_id and metadata
+		// This makes it a valid SubscriptionUpdateProduct request
+		const updateBody: any = {
+			product_id: productId,
+			metadata: sanitized
+		};
+
+		const apiUrl = this.getPolarApiUrl();
+		const response = await fetch(`${apiUrl}/v1/subscriptions/${validatedSubscriptionId}`, {
+			method: 'PATCH',
+			headers: {
+				Authorization: `Bearer ${this.apiKey}`,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(updateBody)
+		});
+
+		if (!response.ok) {
+			const errorText = await response.text().catch(() => 'Unknown error');
+			this.logger.error('Failed to update Polar subscription metadata', {
+				status: response.status,
+				error: errorText,
+				subscriptionId: validatedSubscriptionId
+			});
+			// If fallback exists, return it gracefully; otherwise propagate the error
+			if (fallbackSubscription) {
+				return fallbackSubscription;
+			}
+			throw new Error(`Failed to update subscription metadata: ${errorText}`);
+		}
+
+		const updated = await response.json().catch(() => null);
+
+		// Reuse the currentSubscription we already fetched earlier
+		// If we need to refresh it and don't have a fallback, try to get updated version
+		// Otherwise, use the one we already have
+		let subscriptionForMapping = currentSubscription;
+		if (!fallbackSubscription && !updated) {
+			try {
+				subscriptionForMapping = await getPolarSubscription(validatedSubscriptionId, this.polar, {
+					formatErrorMessage: this.formatErrorMessage.bind(this),
+					logger: this.logger
+				});
+			} catch (error) {
+				this.logger.warn(
+					'Failed to get current subscription after metadata update, using previously fetched version',
+					{
+						subscriptionId: validatedSubscriptionId,
+						error: this.formatErrorMessage(error)
+					}
+				);
+				// Keep using currentSubscription we already have
+			}
+		}
+
+		// Determine cancel_at_period_end value
+		let cancelAtPeriodEndValue = false;
+		if (updated?.cancel_at_period_end !== undefined) {
+			cancelAtPeriodEndValue = updated.cancel_at_period_end;
+		} else if (updated?.cancelAtPeriodEnd !== undefined) {
+			cancelAtPeriodEndValue = updated.cancelAtPeriodEnd;
+		} else if (subscriptionForMapping?.cancel_at_period_end !== undefined) {
+			cancelAtPeriodEndValue = subscriptionForMapping.cancel_at_period_end;
+		} else if (subscriptionForMapping?.cancelAtPeriodEnd !== undefined) {
+			cancelAtPeriodEndValue = subscriptionForMapping.cancelAtPeriodEnd;
+		} else if (fallbackSubscription?.cancelAtPeriodEnd !== undefined) {
+			cancelAtPeriodEndValue = fallbackSubscription.cancelAtPeriodEnd;
+		}
+
+		return mapPolarSubscriptionToInfo(
+			updated || subscriptionForMapping,
+			validatedSubscriptionId,
+			subscriptionForMapping || (fallbackSubscription as any),
+			updated?.status || subscriptionForMapping?.status || fallbackSubscription?.status || 'active',
+			cancelAtPeriodEndValue
+		);
 	}
 
 	/**
@@ -918,10 +1127,7 @@ export class PolarProvider implements PaymentProviderInterface {
 		}
 
 		// Compute HMAC-SHA256 over raw body only (no webhookId or timestamp)
-		const expectedSignature = crypto
-			.createHmac('sha256', secretKey)
-			.update(rawBody, 'utf8')
-			.digest('hex');
+		const expectedSignature = crypto.createHmac('sha256', secretKey).update(rawBody, 'utf8').digest('hex');
 
 		// Convert incoming signature from hex to buffer for timing-safe comparison
 		let signatureBuffer: Buffer;

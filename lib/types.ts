@@ -56,7 +56,14 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			popular: true,
 			envKey: 'STANDARD_PLAN',
 			trialPeriodDays: 4,
-			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_VARIANT_ID || '',
+
+			// LemonSqueezy configuration - selects the setup-fee variant when the authorization flag is true
+			lemonVariantId:
+				process.env.NEXT_PUBLIC_AUTHORIZED_TRIAL_AMOUNT === 'true' &&
+				process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_WITH_SETUP_VARIANT_ID
+					? process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_WITH_SETUP_VARIANT_ID
+					: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_VARIANT_ID || '',
+
 			lemonCheckoutUrl: '',
 			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_PRODUCT_ID,
 			polarStandardPlanId: process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID || '',
@@ -82,7 +89,14 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			isAuthorizedTrialAmount: process.env.NEXT_PUBLIC_AUTHORIZED_TRIAL_AMOUNT === 'true',
 			trialAmountId: process.env.NEXT_PUBLIC_PREMIUM_TRIAL_AMOUNT_ID || '',
 			envKey: 'PREMIUM_PLAN',
-			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_VARIANT_ID || '',
+
+			// LemonSqueezy configuration - selects the setup-fee variant when the authorization flag is true
+			lemonVariantId:
+				process.env.NEXT_PUBLIC_AUTHORIZED_TRIAL_AMOUNT === 'true' &&
+				process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_WITH_SETUP_VARIANT_ID
+					? process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_WITH_SETUP_VARIANT_ID
+					: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_VARIANT_ID || '',
+
 			lemonCheckoutUrl: '',
 			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_PRODUCT_ID,
 			polarPremiumPlanId: process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID || '',
