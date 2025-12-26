@@ -234,7 +234,7 @@ export class EmailService {
   }
 }
 
-const appUrl = coreConfig.APP_URL || 'https://demo.ever.works';
+const appUrl = coreConfig.APP_URL;
 
 const emailConfig: EmailServiceConfig = {
 	provider: 'resend', // Default to resend (EMAIL_PROVIDER not commonly used)
