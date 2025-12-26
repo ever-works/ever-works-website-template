@@ -8,6 +8,12 @@
  * import { configService } from '@/lib/config';
  */
 
+// Helper to parse price with proper NaN fallback
+const parsePrice = (envVar: string | undefined, defaultValue: number): number => {
+	const parsed = parseFloat(envVar ?? '');
+	return Number.isNaN(parsed) ? defaultValue : parsed;
+};
+
 export const siteConfig = {
 	name: process.env.NEXT_PUBLIC_SITE_NAME || 'Ever Works',
 	tagline: process.env.NEXT_PUBLIC_SITE_TAGLINE || 'The Open-Source, AI-Powered Directory Builder',
@@ -34,4 +40,25 @@ export const siteConfig = {
 		url: process.env.NEXT_PUBLIC_ATTRIBUTION_URL || 'https://ever.works',
 		name: process.env.NEXT_PUBLIC_ATTRIBUTION_NAME || 'Ever Works'
 	}
+} as const;
+
+/**
+ * Client-safe pricing configuration
+ * Uses NEXT_PUBLIC_PRODUCT_PRICE_* environment variables with NaN-safe parsing
+ */
+export const pricingConfig = {
+	free: parsePrice(process.env.NEXT_PUBLIC_PRODUCT_PRICE_FREE, 0),
+	standard: parsePrice(process.env.NEXT_PUBLIC_PRODUCT_PRICE_STANDARD, 10),
+	premium: parsePrice(process.env.NEXT_PUBLIC_PRODUCT_PRICE_PREMIUM, 20),
+} as const;
+
+/**
+ * Client-safe environment utilities
+ * NODE_ENV is inlined at build time by Next.js, safe to use in client components
+ */
+export const clientEnv = {
+	NODE_ENV: process.env.NODE_ENV as 'development' | 'production' | 'test',
+	isDevelopment: process.env.NODE_ENV === 'development',
+	isProduction: process.env.NODE_ENV === 'production',
+	isTest: process.env.NODE_ENV === 'test',
 } as const;

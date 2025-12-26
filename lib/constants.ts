@@ -1,4 +1,5 @@
 import { getNextPublicEnv } from '@/env-config';
+import { clientEnv } from '@/lib/config/client';
 
 // ============================================
 // LOCALIZATION
@@ -37,8 +38,8 @@ export const POSTHOG_SESSION_RECORDING_ENABLED = getNextPublicEnv('POSTHOG_SESSI
 export const POSTHOG_AUTO_CAPTURE = getNextPublicEnv('POSTHOG_AUTO_CAPTURE', 'false');
 
 // PostHog Sampling
-export const POSTHOG_SAMPLE_RATE = process.env.NODE_ENV === 'production' ? 0.1 : 1.0;
-export const POSTHOG_SESSION_RECORDING_SAMPLE_RATE = process.env.NODE_ENV === 'production' ? 0.1 : 1.0;
+export const POSTHOG_SAMPLE_RATE = clientEnv.isProduction ? 0.1 : 1.0;
+export const POSTHOG_SESSION_RECORDING_SAMPLE_RATE = clientEnv.isProduction ? 0.1 : 1.0;
 
 // ============================================
 // ERROR TRACKING - SENTRY
@@ -47,7 +48,7 @@ export const SENTRY_DSN = getNextPublicEnv('NEXT_PUBLIC_SENTRY_DSN');
 export const SENTRY_ENABLE_DEV = getNextPublicEnv('SENTRY_ENABLE_DEV');
 export const SENTRY_DEBUG = getNextPublicEnv('SENTRY_DEBUG');
 export const SENTRY_ENABLED =
-	SENTRY_DSN?.value && (SENTRY_ENABLE_DEV?.value === 'true' || process.env.NODE_ENV === 'production');
+	SENTRY_DSN?.value && (SENTRY_ENABLE_DEV?.value === 'true' || clientEnv.isProduction);
 
 // ============================================
 // EXCEPTION TRACKING - UNIFIED

@@ -51,3 +51,6 @@ export { isDevelopment, isProduction, isTest, getEnvironment } from './types';
 
 // Schema exports (for advanced usage)
 export * from './schemas';
+
+// Client-safe exports (can be used in client components)
+export { siteConfig, pricingConfig, clientEnv } from './client';

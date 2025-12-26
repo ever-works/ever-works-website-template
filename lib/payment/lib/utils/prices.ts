@@ -1,15 +1,10 @@
 import { CountryPricing } from "../../types/payment-types";
+import { pricingConfig } from "@/lib/config/client";
 
-// Helper to parse price with proper NaN fallback
-const parsePrice = (envVar: string | undefined, defaultValue: number): number => {
-	const parsed = parseFloat(envVar ?? '');
-	return Number.isNaN(parsed) ? defaultValue : parsed;
-};
-
-// Get prices from environment variables (client-safe NEXT_PUBLIC_* vars)
-const standardPrice = parsePrice(process.env.NEXT_PUBLIC_PRODUCT_PRICE_STANDARD, 10);
-const premiumPrice = parsePrice(process.env.NEXT_PUBLIC_PRODUCT_PRICE_PREMIUM, 20);
-const freePrice = parsePrice(process.env.NEXT_PUBLIC_PRODUCT_PRICE_FREE, 0);
+// Get prices from centralized client config
+const standardPrice = pricingConfig.standard;
+const premiumPrice = pricingConfig.premium;
+const freePrice = pricingConfig.free;
 
 export const PRICES: Record<string, CountryPricing> = {
     us: {
