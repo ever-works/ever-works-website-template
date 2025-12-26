@@ -102,8 +102,8 @@ jobs:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET || '' }}
           GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID || '' }}
           GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET || '' }}
-          FACEBOOK_CLIENT_ID: ${{ secrets.FACEBOOK_CLIENT_ID || '' }}
-          FACEBOOK_CLIENT_SECRET: ${{ secrets.FACEBOOK_CLIENT_SECRET || '' }}
+          FB_CLIENT_ID: ${{ secrets.FACEBOOK_CLIENT_ID || '' }}
+          FB_CLIENT_SECRET: ${{ secrets.FACEBOOK_CLIENT_SECRET || '' }}
           TWITTER_CLIENT_ID: ${{ secrets.TWITTER_CLIENT_ID || '' }}
           TWITTER_CLIENT_SECRET: ${{ secrets.TWITTER_CLIENT_SECRET || '' }}
           

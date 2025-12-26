@@ -325,7 +325,7 @@ async function handleSubscriptionCreated(data: any) {
 			manageSubscriptionUrl: `${appUrl || ''}/settings/subscription`,
 			companyName: emailConfig?.companyName,
 			companyUrl: emailConfig?.companyUrl,
-			supportEmail: globalEmailConfig.EMAIL_SUPPORT,
+			supportEmail: globalEmailConfig.EMAIL_SUPPORT || 'support@ever.works',
 			features: getSubscriptionFeatures(planName)
 		};
 

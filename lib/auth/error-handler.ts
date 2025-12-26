@@ -18,7 +18,7 @@ export function validateAuthConfig() {
   const providerEnvVars = {
     google: ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"],
     github: ["GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"],
-    facebook: ["FACEBOOK_CLIENT_ID", "FACEBOOK_CLIENT_SECRET"],
+    facebook: ["FB_CLIENT_ID", "FB_CLIENT_SECRET"],
     microsoft: ["MICROSOFT_CLIENT_ID", "MICROSOFT_CLIENT_SECRET"],
     supabase: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
   };
@@ -131,7 +131,7 @@ export function handleAuthError(error: any): { error: string } {
         message: "GitHub authentication is not properly configured",
       },
       {
-        pattern: /FACEBOOK_CLIENT_ID/i,
+        pattern: /FB_CLIENT_ID/i,
         message: "Facebook authentication is not properly configured",
       },
       {

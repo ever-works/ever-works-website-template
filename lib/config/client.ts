@@ -17,7 +17,7 @@ const parsePrice = (envVar: string | undefined, defaultValue: number): number =>
 export const siteConfig = {
 	name: process.env.NEXT_PUBLIC_SITE_NAME || 'Ever Works',
 	tagline: process.env.NEXT_PUBLIC_SITE_TAGLINE || 'The Open-Source, AI-Powered Directory Builder',
-	url: process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works"),
+	url: process.env.NEXT_PUBLIC_APP_URL || 'https://demo.ever.works',
 	logo: process.env.NEXT_PUBLIC_SITE_LOGO || '/logo-ever-works.svg',
 	brandName: process.env.NEXT_PUBLIC_BRAND_NAME || 'Ever Works',
 	description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Discover and explore professional services and solutions on Ever Works',

@@ -165,7 +165,7 @@ Object.entries(categorizedVars).forEach(([category, variables]) => {
       const oauthProviders = {
         google: ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'],
         github: ['GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET'],
-        facebook: ['FACEBOOK_CLIENT_ID', 'FACEBOOK_CLIENT_SECRET'],
+        facebook: ['FB_CLIENT_ID', 'FB_CLIENT_SECRET'],
         twitter: ['TWITTER_CLIENT_ID', 'TWITTER_CLIENT_SECRET'],
         microsoft: ['MICROSOFT_CLIENT_ID', 'MICROSOFT_CLIENT_SECRET']
       };
