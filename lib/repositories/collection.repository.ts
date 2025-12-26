@@ -191,14 +191,21 @@ export class CollectionRepository {
     const updatedCollection = { ...collection, item_count: nextItemSlugs.length, items: nextItemSlugs };
 
     try {
+      // Update collection first; only update items after collection write succeeds
+      const persisted = await gitService.updateCollection(updatedCollection);
+
       if (itemUpdates.length > 0) {
         await this.itemRepository.batchUpdate(itemUpdates);
       }
-      const persisted = await gitService.updateCollection(updatedCollection);
+
       return { collection: persisted, updatedItems: itemUpdates.length };
     } catch (error) {
-      // Roll back collection changes to previous state if item updates fail
-      await gitService.updateCollection(collection);
+      // Roll back collection to previous state if subsequent item updates fail
+      try {
+        await gitService.updateCollection(collection);
+      } catch (rollbackError) {
+        console.error('Rollback of collection failed after item update error:', rollbackError);
+      }
       throw error;
     }
   }
