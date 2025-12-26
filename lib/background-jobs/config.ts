@@ -1,5 +1,5 @@
 import { TriggerDevConfig, SchedulingMode } from './types';
-import { coreConfig, integrationsConfig } from '@/lib/config';
+import { coreConfig, integrationsConfig } from '@/lib/config/config-service';
 
 /**
  * Get Trigger.dev configuration from ConfigService

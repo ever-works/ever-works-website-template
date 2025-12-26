@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, getOrCreatePolarProvider } from '@/lib/auth';
-import { coreConfig } from '@/lib/config';
+import { coreConfig } from '@/lib/config/config-service';
 import { extractReturnUrl, buildAbsoluteUrl } from './utils';
 
 /**

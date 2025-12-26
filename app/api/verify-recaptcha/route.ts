@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { externalClient, apiUtils } from "@/lib/api/server-api-client";
-import { coreConfig, analyticsConfig } from "@/lib/config";
+import { coreConfig, analyticsConfig } from "@/lib/config/config-service";
 
 /**
  * @swagger

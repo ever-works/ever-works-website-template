@@ -39,6 +39,15 @@ export enum PaymentPlan {
 	PREMIUM = 'premium'
 }
 
+/**
+ * Display names for payment plans
+ */
+export const PAYMENT_PLAN_NAMES: Record<PaymentPlan, string> = {
+	[PaymentPlan.FREE]: 'Free Plan',
+	[PaymentPlan.STANDARD]: 'Standard Plan',
+	[PaymentPlan.PREMIUM]: 'Premium Plan',
+};
+
 export enum PaymentMethod {
 	CREDIT_CARD = 'credit_card',
 	PAYPAL = 'paypal'
@@ -68,3 +77,11 @@ export enum SubmissionStatus {
 	PUBLISHED = 'published',
 	ARCHIVED = 'archived'
 }
+
+// ============================================
+// SPONSOR AD PRICING (in cents)
+// ============================================
+export const SponsorAdPricing = {
+	WEEKLY: 2500, // $25.00
+	MONTHLY: 7500, // $75.00
+} as const;

@@ -2,7 +2,7 @@ import { NextAuthConfig } from 'next-auth';
 import { createNextAuthProviders } from './lib/auth/providers';
 import { configureOAuthProviders, logError } from './lib/auth/error-handler';
 import { ErrorType, createAppError } from './lib/utils/error-handler';
-import { authConfig } from '@/lib/config';
+import { authConfig } from '@/lib/config/config-service';
 
 const configureProviders = () => {
 	try {

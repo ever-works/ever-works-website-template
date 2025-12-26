@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { coreConfig } from '@/lib/config';
+import { coreConfig } from '@/lib/config/config-service';
 
 /**
  * Configuration constants for return URL handling

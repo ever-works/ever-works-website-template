@@ -1,6 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
-import { authConfig } from '@/lib/config';
+import { authConfig } from '@/lib/config/config-service';
 
 type CookieToSet = {
   name: string;

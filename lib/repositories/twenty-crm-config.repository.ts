@@ -11,7 +11,7 @@ import {
   type TwentyCrmEnvConfig,
 } from '@/lib/types/twenty-crm-config.types';
 import { maskApiKey } from '@/lib/utils/twenty-crm-validation';
-import { integrationsConfig } from '@/lib/config';
+import { integrationsConfig } from '@/lib/config/config-service';
 
 export class TwentyCrmConfigRepository {
   private dbService: TwentyCrmConfigDbService;

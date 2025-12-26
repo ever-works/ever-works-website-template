@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { getOrCreatePolarProvider } from '@/lib/auth';
 import { Logger } from '@/lib/logger';
-import { coreConfig } from '@/lib/config';
+import { coreConfig } from '@/lib/config/config-service';
 import { validateWebhookPayload } from './utils';
 import { routeWebhookEvent } from './router';
 

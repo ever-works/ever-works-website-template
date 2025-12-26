@@ -3,7 +3,7 @@
  */
 
 import { getEmailConfig } from '@/lib/config/server-config';
-import { coreConfig, emailConfig } from '@/lib/config';
+import { coreConfig, emailConfig } from '@/lib/config/config-service';
 import { formatAmount, getPlanName, getBillingPeriod } from '@/lib/payment/services/payment-email.service';
 import type { PolarWebhookData, PolarWebhookEvent, EmailConfig } from './types';
 

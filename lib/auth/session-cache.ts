@@ -4,7 +4,7 @@
  */
 
 import { Session } from 'next-auth';
-import { coreConfig } from '@/lib/config';
+import { coreConfig } from '@/lib/config/config-service';
 
 interface CachedSession {
   session: Session;

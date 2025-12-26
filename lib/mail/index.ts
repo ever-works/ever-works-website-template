@@ -1,7 +1,7 @@
 import { getCachedConfig } from '../content';
 import { EmailProviderFactory } from './factory';
 import { getPasswordChangeConfirmationTemplate } from './templates';
-import { coreConfig, emailConfig as globalEmailConfig } from '@/lib/config';
+import { coreConfig, emailConfig as globalEmailConfig } from '@/lib/config/config-service';
 
 export interface EmailMessage {
   from: string;

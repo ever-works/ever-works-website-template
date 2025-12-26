@@ -1,5 +1,5 @@
 import { POSTHOG_HOST } from '@/lib/constants';
-import { analyticsConfig } from '@/lib/config';
+import { analyticsConfig } from '@/lib/config/config-service';
 
 export interface PostHogInsightResponse {
   results: Array<{

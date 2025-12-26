@@ -1,5 +1,5 @@
 import { BackgroundJobManager, JobStatus, JobMetrics } from './types';
-import { coreConfig } from '@/lib/config';
+import { coreConfig } from '@/lib/config/config-service';
 
 /**
  * Local job manager implementation using setInterval/setTimeout

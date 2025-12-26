@@ -1,7 +1,7 @@
 import { ItemData, CreateItemRequest, UpdateItemRequest, ReviewRequest, ItemListOptions } from '@/lib/types/item';
 import { createItemGitService, ItemGitServiceConfig, ItemGitService } from '@/lib/services/item-git.service';
 import { getContentPath } from '@/lib/lib';
-import { coreConfig } from '@/lib/config';
+import { coreConfig } from '@/lib/config/config-service';
 
 export class ItemRepository {
   private gitService: ItemGitService | null = null;

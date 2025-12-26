@@ -1,5 +1,5 @@
 import { LemonSqueezyProvider, StripeProvider, PolarProvider } from '..';
-import { paymentConfig, coreConfig } from '@/lib/config';
+import { paymentConfig, coreConfig } from '@/lib/config/config-service';
 import { PaymentProviderInterface } from '../types/payment-types';
 
 // Centralized configuration for all providers

@@ -1,7 +1,7 @@
 import { TagData, CreateTagRequest, UpdateTagRequest, TagListResponse } from '@/lib/types/tag';
 import { createTagGitService } from '@/lib/services/tag-git.service';
 import { getContentPath } from '@/lib/lib';
-import { coreConfig } from '@/lib/config';
+import { coreConfig } from '@/lib/config/config-service';
 
 export class TagRepository {
   private gitService: any = null;

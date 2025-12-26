@@ -13,7 +13,7 @@ import {
 
 // Import server configuration utility
 import { getEmailConfig } from '@/lib/config/server-config';
-import { coreConfig, emailConfig as globalEmailConfig } from '@/lib/config';
+import { coreConfig, emailConfig as globalEmailConfig } from '@/lib/config/config-service';
 import { WebhookSubscriptionService } from '@/lib/services/webhook-subscription.service';
 import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
 import { getOrCreateStripeProvider } from '@/lib/auth';

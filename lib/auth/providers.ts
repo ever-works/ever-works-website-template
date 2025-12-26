@@ -4,7 +4,7 @@ import FacebookProvider from 'next-auth/providers/facebook';
 import TwitterProvider from 'next-auth/providers/twitter';
 import { credentialsProvider } from './credentials';
 import { AuthConfig } from './config';
-import { authConfig } from '@/lib/config';
+import { authConfig } from '@/lib/config/config-service';
 
 /**
  * Supported OAuth provider types

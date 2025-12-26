@@ -13,7 +13,7 @@ import {
   getUpdatedSubscriptionTemplate,
   getCancelledSubscriptionTemplate
 } from '@/lib/mail/templates/subscription-events';
-import { paymentConfig } from '@/lib/config';
+import { paymentConfig } from '@/lib/config/config-service';
 
 // Simple template functions for new subscription management features
 const getSubscriptionCancellingTemplate = (data: SubscriptionCancellingEmailData) => ({

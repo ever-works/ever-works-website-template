@@ -3,7 +3,7 @@ import { LocalJobManager } from './local-job-manager';
 import { TriggerDevJobManager } from './trigger-dev-job-manager';
 import { NoOpJobManager } from './noop-job-manager';
 import { getTriggerDevConfig, shouldUseTriggerDev } from './config';
-import { coreConfig } from '@/lib/config';
+import { coreConfig } from '@/lib/config/config-service';
 
 /**
  * Create a job manager based on environment configuration

@@ -1,7 +1,7 @@
 // lib/lemonsqueezy.ts
 import { createCheckout } from '@lemonsqueezy/lemonsqueezy.js';
 import { initializeLemonsqueezyProvider } from '@/lib/auth';
-import { paymentConfig, coreConfig } from '@/lib/config';
+import { paymentConfig, coreConfig } from '@/lib/config/config-service';
 
 // Remove global initialization - will be called when needed
 // initializeLemonsqueezyProvider();

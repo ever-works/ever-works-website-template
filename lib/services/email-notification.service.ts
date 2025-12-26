@@ -1,7 +1,7 @@
 import { AdminNotificationEmailHtml } from '@/lib/mail/templates/admin-notification';
 import { getSubmissionDecisionTemplate } from '@/lib/mail/templates/submission-decision';
 import { EmailService } from '@/lib/mail';
-import { coreConfig, emailConfig } from '@/lib/config';
+import { coreConfig, emailConfig } from '@/lib/config/config-service';
 
 /**
  * Helper to create email service config from ConfigService

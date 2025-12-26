@@ -5,18 +5,12 @@
  * that template users need to customize for their own directory.
  *
  * All values can be overridden via environment variables in .env.local
+ *
+ * NOTE: This file is CLIENT-SAFE. For server-only config (configService, etc.),
+ * import directly from '@/lib/config/config-service' in server components/routes.
  */
 
-// Re-export ConfigService for typed configuration access
-export {
-	configService,
-	coreConfig,
-	authConfig,
-	emailConfig,
-	paymentConfig,
-	analyticsConfig,
-	integrationsConfig,
-} from './config/config-service';
+// Re-export types (types are always safe)
 export type {
 	AppConfigSchema,
 	ConfigValidationResult,

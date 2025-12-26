@@ -92,7 +92,7 @@ export const newsletterSubscriptionSchema = z.object({
 // ============================================================================
 
 import { getCachedConfig } from "@/lib/content";
-import { coreConfig, emailConfig as globalEmailConfig } from "@/lib/config";
+import { coreConfig, emailConfig as globalEmailConfig } from "@/lib/config/config-service";
 
 /**
  * Creates email service configuration from app config

@@ -5,7 +5,7 @@ import * as http from "isomorphic-git/http/node";
 import * as path from "node:path";
 import * as fs from "node:fs";
 import { fsExists } from "./lib";
-import { coreConfig } from "@/lib/config";
+import { coreConfig } from "@/lib/config/config-service";
 
 function getGitAuth(token?: string): GitAuth {
   if (!token) {

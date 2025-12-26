@@ -6,7 +6,7 @@
 import { NextRequest } from 'next/server';
 import { Session } from 'next-auth';
 import { sessionCache, createSessionIdentifier, logCacheStats } from './session-cache';
-import { coreConfig } from '@/lib/config';
+import { coreConfig } from '@/lib/config/config-service';
 
 // Dynamic import to avoid bundling database driver in Edge Runtime
 async function getAuth() {

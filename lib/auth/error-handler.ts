@@ -4,7 +4,7 @@ import {
   validateEnvVariables,
   logError,
 } from "../utils/error-handler";
-import { coreConfig, authConfig } from "@/lib/config";
+import { coreConfig, authConfig } from "@/lib/config/config-service";
 export { logError } from "../utils/error-handler";
 
 /**

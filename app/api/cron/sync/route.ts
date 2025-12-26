@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { triggerManualSync } from "@/lib/services/sync-service";
-import { integrationsConfig } from "@/lib/config";
+import { integrationsConfig } from "@/lib/config/config-service";
 
 /**
  * Vercel Cron endpoint for automatic content synchronization.

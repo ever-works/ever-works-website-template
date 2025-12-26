@@ -7,7 +7,7 @@ import { TwentyCrmSyncService } from './twenty-crm-sync.service';
 import { TwentyCrmRestClient } from './twenty-crm-rest-client.service';
 import { integrationMappingRepository } from '@/lib/repositories/integration-mapping.repository';
 import type { TwentyCrmClientConfig } from '@/lib/types/twenty-crm-config.types';
-import { integrationsConfig } from '@/lib/config';
+import { integrationsConfig } from '@/lib/config/config-service';
 
 /**
  * Creates a configured TwentyCrmSyncService instance

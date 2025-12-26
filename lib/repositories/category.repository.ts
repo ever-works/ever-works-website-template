@@ -8,7 +8,7 @@ import {
   CATEGORY_VALIDATION
 } from "@/lib/types/category";
 import { createCategoryGitService } from "@/lib/services/category-git.service";
-import { coreConfig } from "@/lib/config";
+import { coreConfig } from "@/lib/config/config-service";
 
 /**
  * Repository for category business logic operations

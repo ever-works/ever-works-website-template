@@ -1,5 +1,5 @@
 import 'server-only';
-import { coreConfig } from '@/lib/config';
+import { coreConfig } from '@/lib/config/config-service';
 
 // Types
 export type SyncResult = {
