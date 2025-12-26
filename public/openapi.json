@@ -29855,17 +29855,6 @@
             },
             "description": "Collection ID",
             "example": "productivity-tools"
-          },
-          {
-            "in": "query",
-            "name": "permanent",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            },
-            "description": "When true, performs a permanent delete instead of soft delete.",
-            "example": true
           }
         ],
         "requestBody": {
