@@ -35,7 +35,7 @@ interface ProviderConfig {
 	};
 }
 
-const appUrl = coreConfig.APP_URL || 'https://demo.ever.works';
+const appUrl = coreConfig.APP_URL;
 
 // Environment variables validation and configuration
 // Uses ConfigService for validated configuration
