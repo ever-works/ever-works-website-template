@@ -202,13 +202,14 @@ export class CollectionGitService {
       return;
     }
 
-    // Use next as authoritative: start from next, then merge any pending entries for ids still present
+    // Use next as authoritative: start from next, then keep only *new* pending ids
     const byId = new Map(next.map((c) => [c.id, c] as const));
 
     for (const existing of this.pendingChanges) {
-      if (byId.has(existing.id)) {
+      if (!byId.has(existing.id)) {
         byId.set(existing.id, existing);
       }
+      // if existing id is already in next, we keep next (newer) to avoid overwriting recent edits
       // if existing id is not in next, it was deleted -> do not re-add
     }
 
