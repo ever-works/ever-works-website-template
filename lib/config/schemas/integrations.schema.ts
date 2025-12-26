@@ -25,8 +25,8 @@ export const triggerDevConfigSchema = z
 	})
 	.transform((data) => ({
 		...data,
-		// Override enabled if explicitly set, otherwise auto-detect from apiKey
-		enabled: data.enabled || Boolean(data.apiKey),
+		// Respect explicit enabled setting, otherwise auto-detect from apiKey
+		enabled: data.enabled ?? Boolean(data.apiKey),
 	}));
 
 /**
@@ -50,8 +50,8 @@ export const twentyCrmConfigSchema = z
 	})
 	.transform((data) => ({
 		...data,
-		// Override enabled if explicitly set, otherwise auto-detect from credentials
-		enabled: data.enabled || Boolean(data.baseUrl && data.apiKey),
+		// Respect explicit enabled setting, otherwise auto-detect from credentials
+		enabled: data.enabled ?? Boolean(data.baseUrl && data.apiKey),
 	}));
 
 /**
