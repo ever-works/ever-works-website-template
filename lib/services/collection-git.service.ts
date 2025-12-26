@@ -202,10 +202,16 @@ export class CollectionGitService {
       return;
     }
 
-    const byId = new Map(this.pendingChanges.map((c) => [c.id, c] as const));
-    for (const col of next) {
-      byId.set(col.id, col);
+    // Use next as authoritative: start from next, then merge any pending entries for ids still present
+    const byId = new Map(next.map((c) => [c.id, c] as const));
+
+    for (const existing of this.pendingChanges) {
+      if (byId.has(existing.id)) {
+        byId.set(existing.id, existing);
+      }
+      // if existing id is not in next, it was deleted -> do not re-add
     }
+
     this.pendingChanges = Array.from(byId.values());
   }
 
@@ -326,10 +332,10 @@ export class CollectionGitService {
         }
 
         this.retryTimeout = setTimeout(() => {
+          this.retryTimeout = null;
           if (this.syncInProgress) {
             return;
           }
-          this.retryTimeout = null;
           this.performBackgroundSync();
         }, delay);
       } else {
