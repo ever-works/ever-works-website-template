@@ -48,7 +48,7 @@ export function normalizeEmailConfig(
 	const supportEmail =
 		typeof config.supportEmail === 'string' && config.supportEmail.trim() !== ''
 			? config.supportEmail
-			: emailConfig.EMAIL_SUPPORT || '';
+			: emailConfig.EMAIL_SUPPORT || 'support@ever.works';
 
 	return {
 		companyName: typeof config.companyName === 'string' ? config.companyName : '',
