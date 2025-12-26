@@ -161,7 +161,7 @@ export function AssignItemsModal({ isOpen, onClose, collectionName, initialSelec
             <Button
               color="primary"
               onClick={handleSave}
-              className="flex items-center gap-2 bg-theme-primary to-theme-accent text-white"
+              className="flex items-center gap-2 bg-theme-primary text-white"
               disabled={saving || isSubmitting}
               isLoading={saving || isSubmitting}
             >
