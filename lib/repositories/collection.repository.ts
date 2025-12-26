@@ -188,17 +188,19 @@ export class CollectionRepository {
       }
     }
 
-    if (itemUpdates.length > 0) {
-      await this.itemRepository.batchUpdate(itemUpdates);
+    const updatedCollection = { ...collection, item_count: nextItemSlugs.length, items: nextItemSlugs };
+
+    try {
+      if (itemUpdates.length > 0) {
+        await this.itemRepository.batchUpdate(itemUpdates);
+      }
+      const persisted = await gitService.updateCollection(updatedCollection);
+      return { collection: persisted, updatedItems: itemUpdates.length };
+    } catch (error) {
+      // Roll back collection changes to previous state if item updates fail
+      await gitService.updateCollection(collection);
+      throw error;
     }
-
-    const updatedCollection = await gitService.updateCollection({
-      ...collection,
-      item_count: nextItemSlugs.length,
-      items: nextItemSlugs,
-    });
-
-    return { collection: updatedCollection, updatedItems: itemUpdates.length };
   }
 
   async getAssignedItems(collectionId: string): Promise<Array<Pick<ItemData, 'id' | 'name' | 'slug'>>> {
