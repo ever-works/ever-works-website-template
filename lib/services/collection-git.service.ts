@@ -293,9 +293,9 @@ export class CollectionGitService {
   }
 
   private scheduleBackgroundSync(): void {
-    if (this.syncInProgress) return;
+    if (this.syncInProgress || this.retryTimeout) return;
 
-    setTimeout(() => {
+    this.retryTimeout = setTimeout(() => {
       this.performBackgroundSync();
     }, 30000);
   }
@@ -326,6 +326,10 @@ export class CollectionGitService {
         }
 
         this.retryTimeout = setTimeout(() => {
+          if (this.syncInProgress) {
+            return;
+          }
+          this.retryTimeout = null;
           this.performBackgroundSync();
         }, delay);
       } else {
@@ -341,6 +345,10 @@ export class CollectionGitService {
     if (!this.pendingChanges) return;
 
     try {
+      // Ensure pending changes are re-applied after sync to avoid loss from git pulls
+      const collectionsPath = this.getCollectionsFilePath();
+      await fs.writeFile(collectionsPath, yaml.stringify(this.pendingChanges), 'utf-8');
+
       await git.add({
         fs,
         dir: this.config.dataDir,
