@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { externalClient, apiUtils } from "@/lib/api/server-api-client";
+import { coreConfig, analyticsConfig } from "@/lib/config/config-service";
 
 /**
  * @swagger
@@ -154,9 +155,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+    const secretKey = analyticsConfig.recaptcha.secretKey;
     if (!secretKey) {
-      if (process.env.NODE_ENV === "development") {
+      if (coreConfig.NODE_ENV === "development") {
         console.warn("ReCAPTCHA secret key not configured");
         return NextResponse.json({ success: true });
       }

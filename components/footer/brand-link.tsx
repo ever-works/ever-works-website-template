@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { siteConfig } from "@/lib/config";
+import { siteConfig } from "@/lib/config/client";
 
 /**
  * Enhanced Brand link component

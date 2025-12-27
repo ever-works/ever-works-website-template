@@ -91,7 +91,7 @@ const PRODUCTION_RECOMMENDED_PATTERNS = [
 const CATEGORY_PATTERNS = [
   { name: 'core', pattern: /^(NODE_ENV|PORT|APP_|BASE_URL)/ },
   { name: 'database', pattern: /^(DATABASE_|DB_|POSTGRES_|MYSQL_|MONGO_)/ },
-  { name: 'auth', pattern: /^(AUTH_|JWT_|OAUTH_|GOOGLE_|GITHUB_|FACEBOOK_|TWITTER_|MICROSOFT_)/ },
+  { name: 'auth', pattern: /^(AUTH_|JWT_|OAUTH_|GOOGLE_|GITHUB_|FACEBOOK_|FB_|TWITTER_|MICROSOFT_)/ },
   { name: 'supabase', pattern: /^(SUPABASE_|NEXT_PUBLIC_SUPABASE_)/ },
   { name: 'content', pattern: /^(CONTENT_|DATA_REPOSITORY|GH_TOKEN)/ },
   { name: 'email', pattern: /^(EMAIL_|SMTP_|MAIL_|RESEND_)/ },
@@ -165,7 +165,7 @@ Object.entries(categorizedVars).forEach(([category, variables]) => {
       const oauthProviders = {
         google: ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'],
         github: ['GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET'],
-        facebook: ['FACEBOOK_CLIENT_ID', 'FACEBOOK_CLIENT_SECRET'],
+        facebook: ['FB_CLIENT_ID', 'FB_CLIENT_SECRET'],
         twitter: ['TWITTER_CLIENT_ID', 'TWITTER_CLIENT_SECRET'],
         microsoft: ['MICROSOFT_CLIENT_ID', 'MICROSOFT_CLIENT_SECRET']
       };

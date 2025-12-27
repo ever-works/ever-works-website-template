@@ -7,6 +7,7 @@ import { TwentyCrmSyncService } from './twenty-crm-sync.service';
 import { TwentyCrmRestClient } from './twenty-crm-rest-client.service';
 import { integrationMappingRepository } from '@/lib/repositories/integration-mapping.repository';
 import type { TwentyCrmClientConfig } from '@/lib/types/twenty-crm-config.types';
+import { integrationsConfig } from '@/lib/config/config-service';
 
 /**
  * Creates a configured TwentyCrmSyncService instance
@@ -58,8 +59,9 @@ export function createTwentyCrmSyncService(
 export function createTwentyCrmSyncServiceFromEnv(
   cacheTtlMs?: number
 ): TwentyCrmSyncService {
-  const baseUrl = process.env.TWENTY_CRM_BASE_URL;
-  const apiKey = process.env.TWENTY_CRM_API_KEY;
+  const twentyCrm = integrationsConfig.twentyCrm;
+  const baseUrl = twentyCrm.baseUrl;
+  const apiKey = twentyCrm.apiKey;
 
   if (!baseUrl || !apiKey) {
     throw new Error(

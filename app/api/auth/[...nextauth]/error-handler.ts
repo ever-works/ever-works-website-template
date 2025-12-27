@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import crypto from 'crypto';
 import { logError, ErrorType, createAppError } from '@/lib/utils/error-handler';
+import { coreConfig, authConfig } from '@/lib/config/config-service';
 
 /**
  * Handles NextAuth specific errors and provides appropriate responses
@@ -35,8 +36,8 @@ export function handleNextAuthError(
   // Send an appropriate response
   res.status(statusCode).json({
     error: {
-      message: process.env.NODE_ENV === 'production' 
-        ? 'An authentication error occurred' 
+      message: coreConfig.NODE_ENV === 'production'
+        ? 'An authentication error occurred'
         : error.message,
       status: statusCode
     }
@@ -57,11 +58,11 @@ export function checkNextAuthEnvironment(): string | null {
   
   if (missingVars.length > 0) {
     const warningMessage = `Missing NextAuth environment variables: ${missingVars.join(', ')}`;
-    
+
     // Suppress warnings during CI/linting
-    const shouldSuppress = 
+    const shouldSuppress =
       process.env.CI === 'true' ||
-      process.env.NODE_ENV === 'test' ||
+      coreConfig.NODE_ENV === 'test' ||
       process.argv.some(arg => /(?:^|[/\\])(eslint|lint(?:-staged)?)(?:\.[jt]s)?$/.test(arg));
     
     if (!shouldSuppress) {
@@ -100,7 +101,7 @@ export function isOAuthProviderConfigured(provider: string): boolean {
   const providerEnvVars: Record<string, string[]> = {
     google: ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'],
     github: ['GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET'],
-    facebook: ['FACEBOOK_CLIENT_ID', 'FACEBOOK_CLIENT_SECRET'],
+    facebook: ['FB_CLIENT_ID', 'FB_CLIENT_SECRET'],
     twitter: ['TWITTER_CLIENT_ID', 'TWITTER_CLIENT_SECRET'],
     microsoft: ['MICROSOFT_CLIENT_ID', 'MICROSOFT_CLIENT_SECRET']
   };

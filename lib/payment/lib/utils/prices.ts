@@ -1,4 +1,10 @@
 import { CountryPricing } from "../../types/payment-types";
+import { pricingConfig } from "@/lib/config/client";
+
+// Get prices from centralized client config
+const standardPrice = pricingConfig.standard;
+const premiumPrice = pricingConfig.premium;
+const freePrice = pricingConfig.free;
 
 export const PRICES: Record<string, CountryPricing> = {
     us: {
@@ -6,18 +12,18 @@ export const PRICES: Record<string, CountryPricing> = {
       currency: 'usd',
       symbol: '$',
       subscription: {
-        amount: Number(process.env.NEXT_PUBLIC_PRODUCT_PRICE_PRO) || 10.00,
-        formatted: `$${Number(process.env.NEXT_PUBLIC_PRODUCT_PRICE_PRO) || 10.00}`,
+        amount: standardPrice,
+        formatted: `$${standardPrice}`,
         collect_tax: false
       },
       oneTime: {
-        amount: Number(process.env.NEXT_PUBLIC_PRODUCT_PRICE_SPONSOR) || 20.00,
-        formatted: `$${Number(process.env.NEXT_PUBLIC_PRODUCT_PRICE_SPONSOR) || 20.00}`,
+        amount: premiumPrice,
+        formatted: `$${premiumPrice}`,
         collect_tax: false
       },
       free: {
-        amount: Number(process.env.NEXT_PUBLIC_PRODUCT_PRICE_FREE) || 0.00,
-        formatted: `$${Number(process.env.NEXT_PUBLIC_PRODUCT_PRICE_FREE) || 0.00}`,
+        amount: freePrice,
+        formatted: `$${freePrice}`,
         collect_tax: false
       }
     }

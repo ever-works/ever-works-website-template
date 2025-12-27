@@ -56,6 +56,8 @@ export interface PolarConfig extends PaymentProviderConfig {
 	options?: {
 		organizationId?: string;
 		appUrl?: string;
+		sandbox?: boolean;
+		apiUrl?: string;
 	};
 }
 
@@ -105,9 +107,7 @@ const polarTranslations = {
 	}
 };
 
-const appUrl =
-	process.env.NEXT_PUBLIC_APP_URL ??
-	(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://demo.ever.works');
+const defaultAppUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://demo.ever.works';
 
 export class PolarProvider implements PaymentProviderInterface {
 	private polar: Polar;
@@ -116,6 +116,7 @@ export class PolarProvider implements PaymentProviderInterface {
 	private appUrl?: string;
 	private apiKey: string;
 	private isSandbox: boolean = false;
+	private configuredApiUrl?: string;
 
 	constructor(config: PolarConfig) {
 		if (!config.apiKey) {
@@ -123,7 +124,7 @@ export class PolarProvider implements PaymentProviderInterface {
 		}
 
 		this.apiKey = config.apiKey;
-		const isSandbox = process.env.POLAR_SANDBOX === 'true';
+		const isSandbox = config.options?.sandbox ?? false;
 		this.isSandbox = isSandbox;
 		this.polar = new Polar({
 			accessToken: config.apiKey,
@@ -132,11 +133,10 @@ export class PolarProvider implements PaymentProviderInterface {
 		this.webhookSecret = config.webhookSecret || '';
 		this.organizationId = config.options?.organizationId;
 		// Clean appUrl: remove quotes, trailing slashes, and whitespace
-		const rawAppUrl = config.options?.appUrl || appUrl;
-		this.appUrl = rawAppUrl
-			.trim()
-			.replace(/^["']|["']$/g, '')
-			.replace(/\/+$/, '');
+		const rawAppUrl = config.options?.appUrl || defaultAppUrl;
+		this.appUrl = rawAppUrl.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
+
+		this.configuredApiUrl = config.options?.apiUrl;
 
 		if (!this.organizationId) {
 			throw new Error('Polar organization ID is required');
@@ -1349,8 +1349,8 @@ export class PolarProvider implements PaymentProviderInterface {
 	 * Uses sandbox URL if in sandbox mode, otherwise production
 	 */
 	private getPolarApiUrl(): string {
-		if (process.env.POLAR_API_URL) {
-			return process.env.POLAR_API_URL;
+		if (this.configuredApiUrl) {
+			return this.configuredApiUrl;
 		}
 		// Use sandbox URL if sandbox mode is enabled
 		return this.isSandbox ? 'https://sandbox-api.polar.sh' : 'https://api.polar.sh';

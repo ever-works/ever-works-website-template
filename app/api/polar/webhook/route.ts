@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { getOrCreatePolarProvider } from '@/lib/auth';
 import { Logger } from '@/lib/logger';
+import { coreConfig } from '@/lib/config/config-service';
 import { validateWebhookPayload } from './utils';
 import { routeWebhookEvent } from './router';
 
@@ -151,7 +152,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 		return NextResponse.json({ received: true });
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-		const isDevelopment = process.env.NODE_ENV === 'development';
+		const isDevelopment = coreConfig.NODE_ENV === 'development';
 		
 		logger.error('Webhook processing failed', {
 			error: errorMessage,

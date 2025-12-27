@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, getOrCreatePolarProvider } from '@/lib/auth';
+import { coreConfig } from '@/lib/config/config-service';
 import { extractReturnUrl, buildAbsoluteUrl } from './utils';
 
 /**
@@ -165,7 +166,7 @@ export async function POST(request: NextRequest) {
 			errorDetails = {
 				name: error.name,
 				message: error.message,
-				...(process.env.NODE_ENV === 'development' && {
+				...(coreConfig.NODE_ENV === 'development' && {
 					stack: error.stack
 				})
 			};
@@ -175,17 +176,17 @@ export async function POST(request: NextRequest) {
 		}
 
 		// Log full error for debugging
-		if (process.env.NODE_ENV === 'development') {
+		if (coreConfig.NODE_ENV === 'development') {
 			console.error('Full error object:', JSON.stringify(error, null, 2));
 		}
 
 		return NextResponse.json(
 			{
 				error: 'Failed to create customer portal session',
-				message: process.env.NODE_ENV === 'development'
+				message: coreConfig.NODE_ENV === 'development'
 					? errorMessage
 					: 'Failed to create customer portal session',
-				...(process.env.NODE_ENV === 'development' && {
+				...(coreConfig.NODE_ENV === 'development' && {
 					details: errorDetails
 				})
 			},

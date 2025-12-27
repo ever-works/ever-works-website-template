@@ -429,7 +429,6 @@ export class StripeProvider implements PaymentProviderInterface {
 		try {
 			const { customerId, paymentMethodId, priceId, trialPeriodDays, metadata } = params;
 
-			const subscription_price_id = process.env.NEXT_PUBLIC_STRIPE_SUBSCRIPTION_PRICE_ID;
 
 			// If a paymentMethodId is provided, we need to first attach it to the client
 			if (paymentMethodId) {
@@ -487,7 +486,7 @@ export class StripeProvider implements PaymentProviderInterface {
 				cancelAtPeriodEnd: subscription.cancel_at_period_end,
 				cancelAt: subscription.cancel_at || null,
 				trialEnd: subscription.trial_end || null,
-				priceId: subscription.items.data[0]?.price?.id || subscription_price_id!,
+				priceId: subscription.items.data[0]?.price?.id || priceId,
 				paymentIntentId
 			};
 		} catch (error) {

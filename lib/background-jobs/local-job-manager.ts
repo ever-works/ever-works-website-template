@@ -1,4 +1,5 @@
 import { BackgroundJobManager, JobStatus, JobMetrics } from './types';
+import { coreConfig } from '@/lib/config/config-service';
 
 /**
  * Local job manager implementation using setInterval/setTimeout
@@ -45,7 +46,7 @@ export class LocalJobManager implements BackgroundJobManager {
     this.jobs.set(id, timeout);
 
     // Reduce logging in development mode
-    if (process.env.NODE_ENV !== 'development') {
+    if (coreConfig.NODE_ENV !== 'development') {
       console.log(`📝 Scheduled job: ${name} (${id}) - Interval: ${interval}ms`);
     }
   }
@@ -69,7 +70,7 @@ export class LocalJobManager implements BackgroundJobManager {
 
     if (jobStatus.status === 'running') {
       // Reduce logging in development mode
-      if (process.env.NODE_ENV !== 'development') {
+      if (coreConfig.NODE_ENV !== 'development') {
         console.log(`Job ${id} is already running, skipping execution`);
       }
       return;
@@ -100,7 +101,7 @@ export class LocalJobManager implements BackgroundJobManager {
       this.updateAverageJobDuration(jobStatus.duration);
 
       // Reduce logging in development mode
-      if (process.env.NODE_ENV !== 'development') {
+      if (coreConfig.NODE_ENV !== 'development') {
         console.log(`✅ Job ${id} completed successfully in ${jobStatus.duration}ms`);
       }
     } catch (error) {
@@ -163,7 +164,7 @@ export class LocalJobManager implements BackgroundJobManager {
     }
 
     // Reduce logging in development mode
-    if (process.env.NODE_ENV !== 'development') {
+    if (coreConfig.NODE_ENV !== 'development') {
       console.log(`🔄 Manually triggering job: ${id}`);
     }
     await this.executeJob(id);
@@ -182,7 +183,7 @@ export class LocalJobManager implements BackgroundJobManager {
       this.jobStatuses.delete(id);
 
       // Reduce logging in development mode
-      if (process.env.NODE_ENV !== 'development') {
+      if (coreConfig.NODE_ENV !== 'development') {
         console.log(`⏹️  Stopped job: ${id}`);
       }
     }
@@ -196,7 +197,7 @@ export class LocalJobManager implements BackgroundJobManager {
       clearInterval(timeout);
 
       // Reduce logging in development mode
-      if (process.env.NODE_ENV !== 'development') {
+      if (coreConfig.NODE_ENV !== 'development') {
         console.log(`⏹️  Stopped job: ${id}`);
       }
     }
@@ -205,7 +206,7 @@ export class LocalJobManager implements BackgroundJobManager {
     this.jobIntervals.clear();
 
     // Reduce logging in development mode
-    if (process.env.NODE_ENV !== 'development') {
+    if (coreConfig.NODE_ENV !== 'development') {
       console.log('⏹️  All jobs stopped');
     }
   }

@@ -1,6 +1,6 @@
 import { FiBookOpen, FiFacebook, FiLinkedin, FiMail } from "react-icons/fi";
 import { IconGithub, IconX } from "../icons/Icons";
-import { siteConfig } from "@/lib/config";
+import { siteConfig } from "@/lib/config/client";
 
 export const socialLinks = [
   {

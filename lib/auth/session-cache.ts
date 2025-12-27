@@ -4,6 +4,7 @@
  */
 
 import { Session } from 'next-auth';
+import { coreConfig } from '@/lib/config/config-service';
 
 interface CachedSession {
   session: Session;
@@ -163,7 +164,7 @@ export function createSessionIdentifier(sessionToken?: string, userId?: string):
 
 // Development helper for monitoring cache performance
 export function logCacheStats(): void {
-  if (process.env.NODE_ENV === 'development') {
+  if (coreConfig.NODE_ENV === 'development') {
     const stats = sessionCache.getStats();
     console.log(`[SessionCache] Stats:`, {
       hits: stats.hits,

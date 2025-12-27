@@ -1,31 +1,32 @@
 // lib/lemonsqueezy.ts
-import { createCheckout } from "@lemonsqueezy/lemonsqueezy.js";
+import { createCheckout } from '@lemonsqueezy/lemonsqueezy.js';
 import { initializeLemonsqueezyProvider } from '@/lib/auth';
+import { paymentConfig, coreConfig } from '@/lib/config/config-service';
 
 // Remove global initialization - will be called when needed
 // initializeLemonsqueezyProvider();
 
 export const validateEnvironment = () => {
-  const requiredEnvVars = {
-    LEMONSQUEEZY_STORE_ID: process.env.LEMONSQUEEZY_STORE_ID,
-    LEMONSQUEEZY_API_KEY: process.env.LEMONSQUEEZY_API_KEY,
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL
-  };
+	const requiredEnvVars = {
+		LEMONSQUEEZY_STORE_ID: paymentConfig.lemonSqueezy.storeId,
+		LEMONSQUEEZY_API_KEY: paymentConfig.lemonSqueezy.apiKey,
+		NEXT_PUBLIC_APP_URL: coreConfig.APP_URL,
+		NEXT_PUBLIC_SITE_URL: coreConfig.SITE_URL,
+	};
 
-  const optionalEnvVars = {
-    LEMONSQUEEZY_VARIANT_ID: process.env.LEMONSQUEEZY_VARIANT_ID,
-  };
+	const optionalEnvVars = {
+		LEMONSQUEEZY_VARIANT_ID: paymentConfig.lemonSqueezy.variantId,
+	};
 
-  const missingVars = Object.entries(requiredEnvVars)
-    .filter(([, value]) => !value)
-    .map(([key]) => key);
+	const missingVars = Object.entries(requiredEnvVars)
+		.filter(([, value]) => !value)
+		.map(([key]) => key);
 
-  if (missingVars.length > 0) {
-    throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
-  }
+	if (missingVars.length > 0) {
+		throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
+	}
 
-  return { ...requiredEnvVars, ...optionalEnvVars };
+	return { ...requiredEnvVars, ...optionalEnvVars };
 };
 
 interface CheckoutParams {
@@ -74,7 +75,7 @@ export async function createCustomCheckout(params: CheckoutParams): Promise<stri
           custom: metadata ?? {},
         },
         preview: false,
-        testMode: process.env.NODE_ENV === 'development',
+        testMode: coreConfig.NODE_ENV === 'development',
       }
     );
 

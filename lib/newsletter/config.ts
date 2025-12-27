@@ -92,26 +92,27 @@ export const newsletterSubscriptionSchema = z.object({
 // ============================================================================
 
 import { getCachedConfig } from "@/lib/content";
+import { coreConfig, emailConfig as globalEmailConfig } from "@/lib/config/config-service";
 
 /**
  * Creates email service configuration from app config
  */
 export const createEmailConfig = async (): Promise<EmailConfig> => {
   const config = await getCachedConfig();
-  
+
   return {
     provider: config.mail?.provider || NEWSLETTER_CONFIG.DEFAULT_PROVIDER,
     defaultFrom: config.mail?.default_from || NEWSLETTER_CONFIG.DEFAULT_FROM,
-    domain: config.app_url || process.env.NEXT_PUBLIC_APP_URL || "",
+    domain: config.app_url || coreConfig.APP_URL || "",
     apiKeys: {
-      resend: process.env.RESEND_API_KEY || "",
-      novu: process.env.NOVU_API_KEY || "",
+      resend: globalEmailConfig.resend.apiKey || "",
+      novu: globalEmailConfig.novu.apiKey || "",
     },
-    novu: config.mail?.provider === "novu" 
+    novu: config.mail?.provider === "novu"
       ? {
           templateId: config.mail?.template_id,
           backendUrl: config.mail?.backend_url,
-        } 
+        }
       : undefined,
   };
 };

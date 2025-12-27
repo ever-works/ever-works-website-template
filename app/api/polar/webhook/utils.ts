@@ -3,6 +3,7 @@
  */
 
 import { getEmailConfig } from '@/lib/config/server-config';
+import { coreConfig, emailConfig } from '@/lib/config/config-service';
 import { formatAmount, getPlanName, getBillingPeriod } from '@/lib/payment/services/payment-email.service';
 import type { PolarWebhookData, PolarWebhookEvent, EmailConfig } from './types';
 
@@ -14,9 +15,7 @@ export const DEFAULT_CURRENCY = 'usd';
 export const DEFAULT_INTERVAL = 'month';
 export const DEFAULT_PLAN_NAME = 'Premium Plan';
 
-export const APP_URL =
-	process.env.NEXT_PUBLIC_APP_URL ??
-	(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://demo.ever.works');
+export const APP_URL = coreConfig.APP_URL || 'https://demo.ever.works';
 
 export const PLAN_FEATURES: Record<string, string[]> = {
 	'Free Plan': ['Access to basic features', 'Email support', 'Limited storage'],
@@ -49,9 +48,7 @@ export function normalizeEmailConfig(
 	const supportEmail =
 		typeof config.supportEmail === 'string' && config.supportEmail.trim() !== ''
 			? config.supportEmail
-			: typeof process.env.EMAIL_SUPPORT === 'string'
-				? process.env.EMAIL_SUPPORT
-				: '';
+			: emailConfig.EMAIL_SUPPORT || 'support@ever.works';
 
 	return {
 		companyName: typeof config.companyName === 'string' ? config.companyName : '',
