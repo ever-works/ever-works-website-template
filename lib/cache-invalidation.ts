@@ -63,6 +63,7 @@ export async function invalidateContentCaches(): Promise<void> {
   safeRevalidateTag(CACHE_TAGS.ITEMS);
   safeRevalidateTag(CACHE_TAGS.CATEGORIES);
   safeRevalidateTag(CACHE_TAGS.TAGS);
+  safeRevalidateTag(CACHE_TAGS.COLLECTIONS);
   safeRevalidateTag(CACHE_TAGS.PAGES);
 
   console.log('[CACHE] Content caches invalidated successfully');

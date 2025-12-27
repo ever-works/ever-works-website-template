@@ -132,6 +132,8 @@
 		"MANAGE_CLIENTS_DESC": "View and manage client profiles",
 		"MANAGE_COMPANIES": "Manage Companies",
 		"MANAGE_COMPANIES_DESC": "View and manage company information",
+		"MANAGE_COLLECTIONS": "Manage Collections",
+		"MANAGE_COLLECTIONS_DESC": "Curate and organize directory items",
 		"YOUR_PROFILE": "Your Profile",
 		"YOUR_PROFILE_DESC": "View and edit your profile",
 		"MANAGE_CATEGORIES_DESC": "Manage categories",

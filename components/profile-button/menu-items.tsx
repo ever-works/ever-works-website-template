@@ -16,6 +16,7 @@ import {
   FileText,
   Sliders,
   Flag,
+  Layers,
   type LucideIcon
 } from "lucide-react";
 import type { ExtendedUser } from "@/types/profile-button.types";
@@ -129,6 +130,17 @@ function MenuItems({ user, profilePath, onItemClick, onNavigationStart, isNaviga
           gradientFrom="from-cyan-100"
           gradientTo="to-sky-100 dark:from-cyan-900/30 dark:to-sky-900/30"
           iconColor="text-cyan-600 dark:text-cyan-400"
+          endIcon={Star}
+        />
+
+        <MenuItem
+          href="/admin/collections"
+          icon={Layers}
+          title={t("common.MANAGE_COLLECTIONS")}
+          description={t("common.MANAGE_COLLECTIONS_DESC")}
+          gradientFrom="from-pink-100"
+          gradientTo="to-rose-100 dark:from-pink-900/30 dark:to-rose-900/30"
+          iconColor="text-pink-600 dark:text-pink-400"
           endIcon={Star}
         />
 
