@@ -216,7 +216,10 @@ export const HomeTwoTagsSelector = ({
             </div>
 
             {/* Tags List */}
-            <div className="max-h-[200px] sm:max-h-[250px] overflow-y-auto overflow-hidden scrollbar-none space-y-1.5 sm:space-y-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent scrollbar-none">
+            <div
+              className="max-h-[200px] sm:max-h-[250px] overflow-y-auto overflow-x-hidden -mr-2 pr-2 space-y-1.5 sm:space-y-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent [&::-webkit-scrollbar]:w-2"
+              style={{ scrollbarWidth: "thin" }}
+            >
               {filteredTags.map((tag, index) => {
                 const isActive = selectedTags.includes(tag.id);
                 return (
