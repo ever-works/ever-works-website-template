@@ -57,7 +57,7 @@ const WEBHOOK_ID_HEADER = 'webhook-id';
  *         required: true
  *         schema:
  *           type: string
-	 *         description: "Polar webhook signature for verification (HMAC SHA256, format: v1,<hex_signature>)"
+ *         description: "Polar webhook signature for verification (HMAC SHA256, format: v1,<hex_signature>)"
  *       - name: "webhook-timestamp"
  *         in: "header"
  *         required: true
@@ -118,18 +118,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 			return NextResponse.json({ error: 'No signature provided' }, { status: 400 });
 		}
 
-		// Extract signature from format "v1,<signature>"
-		// Polar uses format: v1,<hex_signature>
-		const signatureParts = signatureHeader.split(',');
-		const signature = signatureParts.length > 1 ? signatureParts[1] : signatureHeader;
-
+		// Pass full signature header (including "v1," prefix) to provider
+		// validateEvent expects the complete header value with format "v1,<signature>"
 		// Process webhook through provider
-		// Pass raw body text, signature, timestamp, and webhook-id for signature verification
+		// Pass raw body text, signature header (full value), timestamp, and webhook-id for signature verification
 		const polarProvider = getOrCreatePolarProvider();
 		const webhookResult = await polarProvider.handleWebhook(
-			body, 
-			signature, 
-			bodyText, 
+			body,
+			signatureHeader,
+			bodyText,
 			timestampHeader || undefined,
 			webhookIdHeader || undefined
 		);
@@ -153,7 +150,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 		const isDevelopment = coreConfig.NODE_ENV === 'development';
-		
+
 		logger.error('Webhook processing failed', {
 			error: errorMessage,
 			stack: error instanceof Error ? error.stack : undefined
@@ -161,10 +158,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
 		// Don't expose internal error details in production
 		return NextResponse.json(
-			{ 
+			{
 				error: 'Webhook processing failed',
 				...(isDevelopment && { details: errorMessage })
-			}, 
+			},
 			{ status: 400 }
 		);
 	}

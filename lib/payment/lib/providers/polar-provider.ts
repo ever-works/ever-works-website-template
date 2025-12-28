@@ -1,7 +1,8 @@
 import { User } from '@supabase/auth-js';
 import React from 'react';
 import { Polar } from '@polar-sh/sdk';
-import crypto from 'crypto';
+import { validateEvent } from '@polar-sh/sdk/webhooks';
+
 import {
 	PaymentProviderInterface,
 	PaymentIntent,
@@ -1056,11 +1057,10 @@ export class PolarProvider implements PaymentProviderInterface {
 	}
 
 	/**
-	 * Verifies webhook signature using Polar's official signature format
-	 * Polar uses: HMAC SHA256 of raw request body only (hex digest)
-	 * The webhook secret must be base64-decoded before HMAC computation
+	 * Verifies webhook signature using Polar SDK's validateEvent function
+	 * Uses the official @polar-sh/sdk webhook validation utility
 	 *
-	 * @param signature - Received signature from header (hex format)
+	 * @param signature - Received signature header value (should include "v1," prefix, e.g., "v1,<hex_signature>")
 	 * @param rawBody - Raw request body (required, no fallback)
 	 * @param payload - Parsed payload (unused, kept for compatibility)
 	 * @param timestamp - Webhook timestamp (optional, used for replay protection only)
@@ -1092,75 +1092,44 @@ export class PolarProvider implements PaymentProviderInterface {
 			throw new Error('Missing webhook-signature header required for signature verification');
 		}
 
-		// Validate timestamp replay protection if provided (optional but recommended)
-		if (timestamp) {
-			const webhookTime = parseInt(timestamp, 10);
-			const currentTime = Math.floor(Date.now() / 1000);
-			const tolerance = 300; // 5 minutes in seconds
+		try {
+			// Build headers object for validateEvent
+			// Polar SDK validateEvent expects headers with webhook-signature (full value including "v1," prefix),
+			// webhook-timestamp, and webhook-id
+			// The signature should be in format "v1,<hex_signature>" as sent by Polar
+			const headers: Record<string, string> = {
+				'webhook-signature': signature
+			};
 
-			if (isNaN(webhookTime)) {
-				this.logger.error('Invalid webhook timestamp format', {
-					bodyLength: rawBody.length
-				});
-				throw new Error('Invalid webhook timestamp format');
+			if (timestamp) {
+				headers['webhook-timestamp'] = timestamp;
 			}
 
-			if (Math.abs(currentTime - webhookTime) > tolerance) {
-				this.logger.error('Webhook timestamp is outside acceptable window', {
-					timeDifference: Math.abs(currentTime - webhookTime),
-					tolerance,
-					bodyLength: rawBody.length
-				});
-				throw new Error('Webhook timestamp is outside acceptable window');
+			if (webhookId) {
+				headers['webhook-id'] = webhookId;
 			}
-		}
 
-		// Base64-decode the webhook secret before HMAC computation (per Polar docs)
-		let secretKey: Buffer;
-		try {
-			secretKey = Buffer.from(this.webhookSecret, 'base64');
+			// Use @polar-sh/sdk validateEvent function for signature verification
+			// validateEvent takes the raw body, headers object, and secret
+			// It expects the webhook-signature header to contain the full value "v1,<signature>"
+			validateEvent(rawBody, headers, this.webhookSecret);
+
+			this.logger.debug('Webhook signature verified successfully using @polar-sh/sdk validateEvent', {
+				bodyLength: rawBody.length,
+				hasTimestamp: !!timestamp,
+				signatureFormat: signature.startsWith('v1,') ? 'v1,<signature>' : 'raw'
+			});
 		} catch (error) {
-			this.logger.error('Failed to base64-decode webhook secret', {
-				error: error instanceof Error ? error.message : String(error)
+			this.logger.error('Webhook signature verification failed', {
+				error: error instanceof Error ? error.message : String(error),
+				bodyLength: rawBody.length,
+				hasTimestamp: !!timestamp,
+				signatureFormat: signature.startsWith('v1,') ? 'v1,<signature>' : 'raw'
 			});
-			throw new Error('Invalid webhook secret format (must be base64-encoded)');
+			throw new Error(
+				`Invalid webhook signature: ${error instanceof Error ? error.message : 'Verification failed'}`
+			);
 		}
-
-		// Compute HMAC-SHA256 over raw body only (no webhookId or timestamp)
-		const expectedSignature = crypto.createHmac('sha256', secretKey).update(rawBody, 'utf8').digest('hex');
-
-		// Convert incoming signature from hex to buffer for timing-safe comparison
-		let signatureBuffer: Buffer;
-		try {
-			signatureBuffer = Buffer.from(signature, 'hex');
-		} catch (error) {
-			this.logger.error('Invalid signature format (expected hex)', {
-				error: error instanceof Error ? error.message : String(error)
-			});
-			throw new Error('Invalid webhook signature format (expected hexadecimal)');
-		}
-
-		const expectedSignatureBuffer = Buffer.from(expectedSignature, 'hex');
-
-		// Use constant-time comparison to prevent timing attacks
-		// timingSafeEqual requires buffers of equal length
-		const signaturesMatch =
-			signatureBuffer.length === expectedSignatureBuffer.length &&
-			crypto.timingSafeEqual(signatureBuffer, expectedSignatureBuffer);
-
-		if (!signaturesMatch) {
-			this.logger.error('Invalid webhook signature', {
-				expectedLength: expectedSignature.length,
-				receivedLength: signature.length,
-				bodyLength: rawBody.length
-			});
-			throw new Error('Invalid webhook signature');
-		}
-
-		this.logger.debug('Webhook signature verified successfully', {
-			bodyLength: rawBody.length,
-			hasTimestamp: !!timestamp
-		});
 	}
 
 	/**
