@@ -110,6 +110,16 @@ const polarTranslations = {
 
 const defaultAppUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://demo.ever.works';
 
+/**
+ * Cache entry for webhook ID deduplication
+ * Stores webhook IDs with TTL to prevent replay attacks
+ */
+interface WebhookIdCacheEntry {
+	webhookId: string;
+	processedAt: number;
+	expiresAt: number;
+}
+
 export class PolarProvider implements PaymentProviderInterface {
 	private polar: Polar;
 	private webhookSecret: string;
@@ -118,6 +128,13 @@ export class PolarProvider implements PaymentProviderInterface {
 	private apiKey: string;
 	private isSandbox: boolean = false;
 	private configuredApiUrl?: string;
+	// In-memory cache for webhook ID deduplication (replay protection)
+	// Key: webhook-id, Value: cache entry with expiration
+	private webhookIdCache: Map<string, WebhookIdCacheEntry> = new Map();
+	// Default replay protection window: ±300 seconds (5 minutes)
+	private readonly REPLAY_PROTECTION_WINDOW_SECONDS: number = 300;
+	// TTL for webhook ID cache entries: window * 2 + 60 seconds buffer (660 seconds = 11 minutes)
+	private readonly WEBHOOK_ID_CACHE_TTL_MS: number = 660000; // (300 * 2 + 60) * 1000
 
 	constructor(config: PolarConfig) {
 		if (!config.apiKey) {
@@ -135,7 +152,10 @@ export class PolarProvider implements PaymentProviderInterface {
 		this.organizationId = config.options?.organizationId;
 		// Clean appUrl: remove quotes, trailing slashes, and whitespace
 		const rawAppUrl = config.options?.appUrl || defaultAppUrl;
-		this.appUrl = rawAppUrl.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
+		this.appUrl = rawAppUrl
+			.trim()
+			.replace(/^["']|["']$/g, '')
+			.replace(/\/+$/, '');
 
 		this.configuredApiUrl = config.options?.apiUrl;
 
@@ -1059,13 +1079,14 @@ export class PolarProvider implements PaymentProviderInterface {
 	/**
 	 * Verifies webhook signature using Polar SDK's validateEvent function
 	 * Uses the official @polar-sh/sdk webhook validation utility
+	 * Also implements replay protection via timestamp and webhook-id checks
 	 *
 	 * @param signature - Received signature header value (should include "v1," prefix, e.g., "v1,<hex_signature>")
 	 * @param rawBody - Raw request body (required, no fallback)
 	 * @param payload - Parsed payload (unused, kept for compatibility)
-	 * @param timestamp - Webhook timestamp (optional, used for replay protection only)
-	 * @param webhookId - Webhook ID (optional, not used in signature)
-	 * @throws Error if signature verification fails
+	 * @param timestamp - Webhook timestamp (optional, used for replay protection)
+	 * @param webhookId - Webhook ID (optional, used for idempotency/replay protection)
+	 * @throws Error if signature verification fails or replay protection checks fail
 	 */
 	private verifyWebhookSignature(
 		signature: string,
@@ -1109,7 +1130,7 @@ export class PolarProvider implements PaymentProviderInterface {
 				headers['webhook-id'] = webhookId;
 			}
 
-			// Use @polar-sh/sdk validateEvent function for signature verification
+			// Step 1: Verify HMAC signature using Polar SDK
 			// validateEvent takes the raw body, headers object, and secret
 			// It expects the webhook-signature header to contain the full value "v1,<signature>"
 			validateEvent(rawBody, headers, this.webhookSecret);
@@ -1119,16 +1140,185 @@ export class PolarProvider implements PaymentProviderInterface {
 				hasTimestamp: !!timestamp,
 				signatureFormat: signature.startsWith('v1,') ? 'v1,<signature>' : 'raw'
 			});
+
+			// Step 2: Replay protection - Timestamp validation
+			// Reject webhooks outside the acceptable time window (±300 seconds by default)
+			this.validateWebhookTimestamp(timestamp, rawBody.length, webhookId);
+
+			// Step 3: Replay protection - Idempotency check via webhook-id
+			// Ensure we haven't processed this webhook-id before
+			this.checkWebhookIdempotency(webhookId, rawBody.length, timestamp);
 		} catch (error) {
+			// Re-throw errors from replay protection checks as-is
+			if (
+				error instanceof Error &&
+				(error.message.includes('timestamp') || error.message.includes('webhook-id'))
+			) {
+				throw error;
+			}
+
 			this.logger.error('Webhook signature verification failed', {
 				error: error instanceof Error ? error.message : String(error),
 				bodyLength: rawBody.length,
 				hasTimestamp: !!timestamp,
+				hasWebhookId: !!webhookId,
 				signatureFormat: signature.startsWith('v1,') ? 'v1,<signature>' : 'raw'
 			});
 			throw new Error(
 				`Invalid webhook signature: ${error instanceof Error ? error.message : 'Verification failed'}`
 			);
+		}
+	}
+
+	/**
+	 * Validates webhook timestamp to prevent replay attacks
+	 * Rejects webhooks outside the acceptable time window
+	 *
+	 * @param timestamp - Webhook timestamp from header (Unix timestamp as string)
+	 * @param bodyLength - Length of the request body (for logging)
+	 * @param webhookId - Webhook ID (for logging)
+	 * @throws Error if timestamp is missing, invalid, or outside acceptable window
+	 */
+	private validateWebhookTimestamp(
+		timestamp: string | undefined,
+		bodyLength: number,
+		webhookId: string | undefined
+	): void {
+		// Timestamp is required for replay protection
+		if (!timestamp || typeof timestamp !== 'string' || timestamp.trim().length === 0) {
+			this.logger.error('Webhook timestamp missing or invalid', {
+				bodyLength,
+				webhookId: webhookId || 'unknown',
+				hasTimestamp: !!timestamp
+			});
+			throw new Error('Webhook timestamp is required for replay protection');
+		}
+
+		// Parse timestamp (Polar sends Unix timestamp as string)
+		const webhookTimestamp = parseInt(timestamp, 10);
+		if (isNaN(webhookTimestamp) || webhookTimestamp <= 0) {
+			this.logger.error('Webhook timestamp is not a valid number', {
+				bodyLength,
+				webhookId: webhookId || 'unknown',
+				timestamp
+			});
+			throw new Error(`Invalid webhook timestamp format: ${timestamp}`);
+		}
+
+		// Calculate time difference in seconds
+		const currentTimestamp = Math.floor(Date.now() / 1000);
+		const timeDifference = Math.abs(currentTimestamp - webhookTimestamp);
+
+		// Reject if timestamp is outside acceptable window
+		if (timeDifference > this.REPLAY_PROTECTION_WINDOW_SECONDS) {
+			this.logger.error('Webhook timestamp outside acceptable window', {
+				bodyLength,
+				webhookId: webhookId || 'unknown',
+				webhookTimestamp,
+				currentTimestamp,
+				timeDifferenceSeconds: timeDifference,
+				windowSeconds: this.REPLAY_PROTECTION_WINDOW_SECONDS,
+				isTooOld: webhookTimestamp < currentTimestamp
+			});
+			throw new Error(
+				`Webhook timestamp outside acceptable window: ${timeDifference} seconds difference (max: ${this.REPLAY_PROTECTION_WINDOW_SECONDS} seconds)`
+			);
+		}
+
+		this.logger.debug('Webhook timestamp validation passed', {
+			bodyLength,
+			webhookId: webhookId || 'unknown',
+			timeDifferenceSeconds: timeDifference
+		});
+	}
+
+	/**
+	 * Checks webhook idempotency to prevent duplicate processing
+	 * Uses in-memory cache with TTL to track processed webhook IDs
+	 *
+	 * @param webhookId - Webhook ID from header
+	 * @param bodyLength - Length of the request body (for logging)
+	 * @param timestamp - Webhook timestamp (for logging)
+	 * @throws Error if webhook-id is missing or has already been processed
+	 */
+	private checkWebhookIdempotency(
+		webhookId: string | undefined,
+		bodyLength: number,
+		timestamp: string | undefined
+	): void {
+		// Webhook ID is required for idempotency checks
+		if (!webhookId || typeof webhookId !== 'string' || webhookId.trim().length === 0) {
+			this.logger.error('Webhook ID missing or invalid', {
+				bodyLength,
+				timestamp: timestamp || 'unknown',
+				hasWebhookId: !!webhookId
+			});
+			throw new Error('Webhook ID is required for idempotency protection');
+		}
+
+		// Clean up expired cache entries periodically (every 100 checks, approximately)
+		if (Math.random() < 0.01) {
+			this.cleanupExpiredWebhookIds();
+		}
+
+		// Check if webhook ID was already processed
+		const existingEntry = this.webhookIdCache.get(webhookId);
+		const now = Date.now();
+
+		if (existingEntry) {
+			// Check if entry is still valid (not expired)
+			if (existingEntry.expiresAt > now) {
+				this.logger.error('Webhook ID already processed (duplicate/replay detected)', {
+					bodyLength,
+					webhookId,
+					timestamp: timestamp || 'unknown',
+					previouslyProcessedAt: new Date(existingEntry.processedAt).toISOString(),
+					timeSinceFirstProcessing: Math.floor((now - existingEntry.processedAt) / 1000) + ' seconds'
+				});
+				throw new Error(`Webhook ID already processed: ${webhookId} (replay attack detected)`);
+			} else {
+				// Entry expired, remove it
+				this.webhookIdCache.delete(webhookId);
+			}
+		}
+
+		// Record this webhook ID with TTL
+		const cacheEntry: WebhookIdCacheEntry = {
+			webhookId,
+			processedAt: now,
+			expiresAt: now + this.WEBHOOK_ID_CACHE_TTL_MS
+		};
+
+		this.webhookIdCache.set(webhookId, cacheEntry);
+
+		this.logger.debug('Webhook ID recorded for idempotency', {
+			bodyLength,
+			webhookId,
+			timestamp: timestamp || 'unknown',
+			expiresAt: new Date(cacheEntry.expiresAt).toISOString()
+		});
+	}
+
+	/**
+	 * Cleans up expired webhook ID cache entries
+	 * Removes entries that have exceeded their TTL
+	 */
+	private cleanupExpiredWebhookIds(): void {
+		const now = Date.now();
+		let cleanedCount = 0;
+
+		for (const [webhookId, entry] of this.webhookIdCache.entries()) {
+			if (entry.expiresAt <= now) {
+				this.webhookIdCache.delete(webhookId);
+				cleanedCount++;
+			}
+		}
+
+		if (cleanedCount > 0) {
+			this.logger.debug('Cleaned up expired webhook ID cache entries', {
+				cleanedCount,
+				remainingEntries: this.webhookIdCache.size
+			});
 		}
 	}
 
