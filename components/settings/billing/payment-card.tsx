@@ -24,16 +24,12 @@ const formatDate = (date: string) => new Date(date).toLocaleDateString(undefined
 });
 
 const formatAmount = (amount: number, currency: string) => {
-  const currencySymbols: Record<string, string> = {
-    'USD': '$',
-    'EUR': '€',
-    'GBP': '£',
-    'CAD': 'C$',
-    'AUD': 'A$'
-  };
-  
-  const symbol = currencySymbols[currency] || currency;
-  return `${symbol}${amount.toFixed(2)}`;
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency.toUpperCase(),
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
 };
 
 const getStatusConfig = (status: string) => {

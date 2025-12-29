@@ -435,7 +435,7 @@ export function DetailedBillingStats({
 							<span className="text-slate-600 dark:text-slate-300">Average Transaction:</span>
 							<span className="font-semibold text-slate-900 dark:text-slate-100">
 								{totalPayments > 0
-									? formatCurrency(totalPayments > 0 ? totalSpent / totalPayments : 0)
+									? formatCurrency(totalPayments > 0 ? totalSpent / totalPayments : 0, currency)
 									: 'N/A'}
 							</span>
 						</div>
@@ -482,7 +482,7 @@ export function DetailedBillingStats({
 						<div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600/50">
 							<span className="text-slate-600 dark:text-slate-300">Monthly Cost:</span>
 							<span className="font-semibold text-slate-900 dark:text-slate-100">
-								{hasActiveSubscription ? formatCurrency(monthlyAverage) : 'Free'}
+								{hasActiveSubscription ? formatCurrency(monthlyAverage, currency) : 'Free'}
 							</span>
 						</div>
 					</div>
@@ -493,10 +493,10 @@ export function DetailedBillingStats({
 }
 
 // Helper function for currency formatting
-function formatCurrency(amount: number): string {
+function formatCurrency(amount: number, currency: string = 'USD'): string {
 	return new Intl.NumberFormat('en-US', {
 		style: 'currency',
-		currency: 'USD',
+		currency: currency.toUpperCase(),
 		minimumFractionDigits: 2,
 		maximumFractionDigits: 2
 	}).format(amount);

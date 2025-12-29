@@ -13,6 +13,7 @@ import {
 } from '@/components/providers';
 import { SessionProvider } from 'next-auth/react';
 import { LoginModalProvider } from '@/components/auth/login-modal-provider';
+import { CurrencyProvider } from '@/components/context';
 
 interface ProvidersProps {
 	config: Config;
@@ -23,28 +24,30 @@ interface ProvidersProps {
 export function Providers({ config, children, dehydratedState }: ProvidersProps) {
 	// Extract homepage settings for layout defaults
 	const configDefaults = {
-		defaultView: config.settings?.homepage?.default_view,
+		defaultView: config.settings?.homepage?.default_view
 	};
 
 	return (
 		<SessionProvider>
 			<QueryClientProvider dehydratedState={dehydratedState}>
-				<LayoutProvider configDefaults={configDefaults}>
-					<ErrorProvider>
-						<ConfirmProvider>
-							<FilterProvider>
-								<ConfigProvider config={config}>
-									<ThemeProvider>
-										<HeroUIProvider>
-											<LoginModalProvider />
-											{children}
-										</HeroUIProvider>
-									</ThemeProvider>
-								</ConfigProvider>
-							</FilterProvider>
-						</ConfirmProvider>
-					</ErrorProvider>
-				</LayoutProvider>
+				<CurrencyProvider>
+					<LayoutProvider configDefaults={configDefaults}>
+						<ErrorProvider>
+							<ConfirmProvider>
+								<FilterProvider>
+									<ConfigProvider config={config}>
+										<ThemeProvider>
+											<HeroUIProvider>
+												<LoginModalProvider />
+												{children}
+											</HeroUIProvider>
+										</ThemeProvider>
+									</ConfigProvider>
+								</FilterProvider>
+							</ConfirmProvider>
+						</ErrorProvider>
+					</LayoutProvider>
+				</CurrencyProvider>
 			</QueryClientProvider>
 		</SessionProvider>
 	);

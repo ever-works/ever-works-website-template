@@ -28,8 +28,12 @@ const formatDate = (date: string) =>
 	});
 
 const formatAmount = (amount: number, currency: string) => {
-	const symbol = currency === 'USD' ? '$' : currency;
-	return `${symbol}${amount.toFixed(2)}`;
+	return new Intl.NumberFormat('en-US', {
+		style: 'currency',
+		currency: currency.toUpperCase(),
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2,
+	}).format(amount);
 };
 
 const getStatusConfig = (status: string) => {

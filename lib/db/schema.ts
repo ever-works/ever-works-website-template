@@ -178,6 +178,8 @@ export const clientProfiles = pgTable(
 		}).default('free'),
 		timezone: text('timezone').default('UTC'),
 		language: text('language').default('en'),
+		country: text('country'),
+		currency: text('currency').default('USD'),
 		twoFactorEnabled: boolean('two_factor_enabled').default(false),
 		emailVerified: boolean('email_verified').default(false),
 		totalSubmissions: integer('total_submissions').default(0),
