@@ -8,7 +8,7 @@ import { coreConfig, emailConfig } from '@/lib/config/config-service';
  */
 function getEmailServiceConfig() {
 	return {
-		provider: 'resend' as const,
+		provider: emailConfig.EMAIL_PROVIDER,
 		defaultFrom: emailConfig.EMAIL_FROM || 'info@ever.works',
 		domain: coreConfig.APP_URL || 'https://demo.ever.works',
 		apiKeys: {
