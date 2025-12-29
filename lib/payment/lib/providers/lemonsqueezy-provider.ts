@@ -432,7 +432,7 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 		try {
 			const { variantId, email, customPrice, metadata } = params;
 
-			const finalProductId = variantId ?? Number(process.env.LEMONSQUEEZY_VARIANT_ID);
+			const finalProductId = variantId;
 			if (!finalProductId) {
 				throw new Error('Product ID is required');
 			}

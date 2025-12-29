@@ -23,20 +23,21 @@ import {
 	sessions,
 	authenticators,
 	verificationTokens,
-	passwordResetTokens
+	passwordResetTokens,
 } from './schema';
 import type { NewAccount, NewPaymentProvider, NewPaymentAccount } from './schema';
 import { getAllPermissions } from '../permissions/definitions';
 import { PaymentProvider, PaymentPlan } from '../constants';
 import { SubscriptionStatus, VoteType } from './schema';
 import { isDemoMode } from '../utils';
+import { getDatabaseUrl, getNodeEnv } from './config';
 
 // Global database connection - will be initialized after environment loading
 let db: ReturnType<typeof import('./drizzle').getDrizzleInstance>;
 
 async function ensureDb() {
 	// Quick sanity check similar to drizzle.ts behavior
-	if (!process.env.DATABASE_URL) {
+	if (!getDatabaseUrl()) {
 		throw new Error('DATABASE_URL is not set. Aborting seed to prevent accidental DummyDb operations.');
 	}
 
@@ -110,7 +111,7 @@ export async function runSeed(): Promise<void> {
 		const profilesEmpty = await isTableEmpty('client_profiles', clientProfiles);
 
 		// Debug logging - show actual data in each table
-		if (process.env.NODE_ENV === 'development') {
+		if (getNodeEnv() === 'development') {
 			console.log('[Seed] Table status:');
 
 			const permissionsData = await db.select().from(permissions);
@@ -144,7 +145,10 @@ export async function runSeed(): Promise<void> {
 
 		console.log(`[Seed] Will seed: ${tablesToSeedNames.join(', ')}`);
 
-		// Resolve admin credentials - always use predefined defaults unless explicitly configured
+		// Resolve admin credentials with environment-sensitive defaults
+		const isProd = getNodeEnv() === 'production';
+
+		// Read seed config directly from process.env to avoid server-only issues in scripts
 		const envAdminEmail = process.env.SEED_ADMIN_EMAIL;
 		const envAdminPassword = process.env.SEED_ADMIN_PASSWORD;
 
@@ -348,11 +352,7 @@ export async function runSeed(): Promise<void> {
 
 		// Optional: generate additional fake users, profiles, and accounts when users table is initially empty
 		if (usersEmpty) {
-			const fakeUserCountRaw = process.env.SEED_FAKE_USER_COUNT;
-			const fakeUserCount =
-				fakeUserCountRaw === undefined || fakeUserCountRaw === ''
-					? 10
-					: Number(fakeUserCountRaw);
+			const fakeUserCount = parseInt(process.env.SEED_FAKE_USER_COUNT || '0', 10);
 
 			if (!Number.isNaN(fakeUserCount) && fakeUserCount > 0) {
 				const { faker } = await import('@faker-js/faker');
