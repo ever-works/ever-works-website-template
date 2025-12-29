@@ -234,7 +234,7 @@ export class EmailService {
   }
 }
 
-const appUrl = coreConfig.APP_URL || 'http://localhost:3000';
+const appUrl = coreConfig.APP_URL || 'https://demo.ever.works';
 
 const emailConfig: EmailServiceConfig = {
 	provider: globalEmailConfig.EMAIL_PROVIDER,
