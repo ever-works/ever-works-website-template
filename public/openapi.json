@@ -29982,16 +29982,6 @@
             },
             "description": "Collection ID",
             "example": "productivity-tools"
-          },
-          {
-            "in": "query",
-            "name": "permanent",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "description": "Delete permanently when true; defaults to soft delete",
-            "example": false
           }
         ],
         "responses": {
