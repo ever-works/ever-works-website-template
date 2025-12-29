@@ -37,7 +37,7 @@ const COUNTRY_TO_CURRENCY: Record<string, string> = {
 	HU: 'HUF',
 	RO: 'RON',
 	BG: 'BGN',
-	HR: 'HRK',
+	HR: 'EUR', // Croatia adopted EUR on January 1, 2023 (replacing HRK)
 
 	// Asia Pacific
 	JP: 'JPY',
@@ -191,9 +191,6 @@ export function extractCountryCode(location: string | null | undefined): string 
 
 	const lowerLocation = normalized.toLowerCase();
 	for (const [name, code] of Object.entries(countryNameToCode)) {
-		console.log('name', name);
-		console.log('code', code);
-		console.log('lowerLocation', lowerLocation);
 		if (lowerLocation.includes(name)) {
 			return code;
 		}

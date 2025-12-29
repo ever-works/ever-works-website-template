@@ -1,4 +1,8 @@
+'use client';
+
 import { Calendar, Clock, TrendingUp, XCircle, CheckCircle, AlertCircle, Crown } from 'lucide-react';
+import { useLocale } from 'next-intl';
+import { formatCurrencyAmount } from '@/lib/utils/currency-format';
 
 interface SubscriptionHistoryItem {
 	id: string;
@@ -20,15 +24,6 @@ const formatDate = (date: string) =>
 		month: 'short',
 		day: 'numeric'
 	});
-
-const formatAmount = (amount: number, currency: string) => {
-	return new Intl.NumberFormat('en-US', {
-		style: 'currency',
-		currency: currency.toUpperCase(),
-		minimumFractionDigits: 2,
-		maximumFractionDigits: 2
-	}).format(amount);
-};
 
 const getStatusConfig = (status: string) => {
 	switch (status.toLowerCase()) {
@@ -95,6 +90,7 @@ const getPlanIcon = (planName: string) => {
 };
 
 export function SubscriptionHistoryCard({ subscription }: { subscription: SubscriptionHistoryItem }) {
+	const locale = useLocale();
 	const statusConfig = getStatusConfig(subscription.status);
 	const StatusIcon = statusConfig.icon;
 	const PlanIcon = getPlanIcon(subscription.planName);
@@ -208,7 +204,7 @@ export function SubscriptionHistoryCard({ subscription }: { subscription: Subscr
 
 				<div className="text-right ml-6">
 					<div className="text-2xl font-bold text-slate-900 mb-1 group-hover:text-slate-800 transition-colors dark:text-slate-100 dark:group-hover:text-slate-100">
-						{formatAmount(subscription.amount, subscription.currency)}
+						{formatCurrencyAmount(subscription.amount, subscription.currency, locale)}
 					</div>
 
 					<div className="text-sm text-slate-600 dark:text-slate-300 mb-3">

@@ -1,12 +1,12 @@
 'use client';
 
 import React, { createContext, useContext } from 'react';
-import { useCurrency } from '@/hooks/use-currency';
+import { useCurrency, type UpdateCurrencyOptions } from '@/hooks/use-currency';
 
 interface CurrencyContextType {
 	currency: string;
 	isLoading: boolean;
-	updateCurrency: (currency: string) => void;
+	updateCurrency: (currency: string, options?: UpdateCurrencyOptions) => void;
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);

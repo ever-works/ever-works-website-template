@@ -14,7 +14,7 @@ interface CurrencyResponse {
 	currency: string;
 }
 
-interface UpdateCurrencyOptions {
+export interface UpdateCurrencyOptions {
 	onSuccess?: (currency: string) => void;
 	onError?: (error: Error) => void;
 }
