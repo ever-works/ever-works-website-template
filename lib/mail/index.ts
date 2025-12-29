@@ -22,7 +22,7 @@ export interface EmailNovuConfig {
 }
 
 export interface EmailServiceConfig {
-  provider: "resend" | "novu" | string;
+  provider: string;
   defaultFrom: string;
   apiKeys: Record<string, string>;
   domain: string;
@@ -237,7 +237,7 @@ export class EmailService {
 const appUrl = coreConfig.APP_URL || 'http://localhost:3000';
 
 const emailConfig: EmailServiceConfig = {
-	provider: 'resend', // Default to resend (EMAIL_PROVIDER not commonly used)
+	provider: globalEmailConfig.EMAIL_PROVIDER,
 	defaultFrom: globalEmailConfig.EMAIL_FROM || 'info@ever.works',
 	domain: appUrl,
 	apiKeys: {

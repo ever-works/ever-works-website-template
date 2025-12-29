@@ -51,6 +51,9 @@ export const emailConfigSchema = z.object({
 	// Company name for email templates
 	COMPANY_NAME: z.string().default('Ever Works'),
 
+	// Email provider selection (resend, novu)
+	EMAIL_PROVIDER: z.string().default('resend'),
+
 	// Email addresses
 	EMAIL_FROM: z.string().email().optional().catch(undefined),
 	EMAIL_SUPPORT: z.string().email().optional().catch(undefined),
@@ -81,6 +84,7 @@ function parseIntOrUndefined(value: string | undefined): number | undefined {
 export function collectEmailConfig(): z.input<typeof emailConfigSchema> {
 	return {
 		COMPANY_NAME: process.env.COMPANY_NAME,
+		EMAIL_PROVIDER: process.env.EMAIL_PROVIDER,
 		EMAIL_FROM: process.env.EMAIL_FROM,
 		EMAIL_SUPPORT: process.env.EMAIL_SUPPORT,
 		smtp: {
