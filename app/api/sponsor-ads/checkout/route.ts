@@ -232,9 +232,8 @@ export async function POST(request: NextRequest) {
 	} catch (error) {
 		console.error('Error creating sponsor ad checkout:', error);
 
-		const errorMessage = error instanceof Error ? error.message : 'Failed to create checkout session';
-
-		return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
+		// Use generic message for 500 errors to avoid exposing sensitive details
+		return NextResponse.json({ success: false, error: 'Failed to create checkout session' }, { status: 500 });
 	}
 }
 

@@ -8,7 +8,7 @@ import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { useLayoutTheme } from '@/components/context';
 import { Loader2 } from 'lucide-react';
 import { useInView } from 'react-intersection-observer';
-import { PER_PAGE } from '@/lib/paginate';
+import { PER_PAGE, totalPages } from '@/lib/paginate';
 import { useInfiniteLoading } from '@/hooks/use-infinite-loading';
 import { UniversalPagination } from '@/components/universal-pagination';
 
@@ -87,8 +87,8 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
 		[sortedCategories, page]
 	);
 
-	// Calculate total pages for standard pagination
-	const totalPages = useMemo(() => Math.ceil(sortedCategories.length / PAGE_SIZE), [sortedCategories.length]);
+	// Calculate total pages for standard pagination using exported function
+	const totalPagesCount = totalPages(sortedCategories.length, PAGE_SIZE);
 
 	// Choose which categories to show
 	const categoriesToShow = paginationType === 'infinite' ? loadedCategories : pagedCategories;
@@ -227,8 +227,8 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
 				))}
 			</LayoutGrid>
 			{/* Standard Pagination */}
-			{paginationType === 'standard' && totalPages > 1 && (
-				<UniversalPagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
+			{paginationType === 'standard' && totalPagesCount > 1 && (
+				<UniversalPagination page={page} totalPages={totalPagesCount} onPageChange={handlePageChange} />
 			)}
 
 			{/* Infinite Scroll Loader */}

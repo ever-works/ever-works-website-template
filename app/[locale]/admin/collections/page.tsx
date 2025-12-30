@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Card, CardBody, Chip, useDisclosure } from '@heroui/react';
 import { FolderPlus, Edit, Trash2, Layers, Link2, ListChecks } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Collection } from '@/types/collection';
 import { useAdminCollections } from '@/hooks/use-admin-collections';
 import { UniversalPagination } from '@/components/universal-pagination';
@@ -12,6 +13,7 @@ import { AssignItemsModal } from '@/components/admin/collections/assign-items-mo
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
 
 export default function AdminCollectionsPage() {
+	const t = useTranslations('common');
 	const PageSize = 10;
 	const [currentPage, setCurrentPage] = useState(1);
 	const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
@@ -90,9 +92,7 @@ export default function AdminCollectionsPage() {
 	};
 
 	const handleDelete = async (collection: Collection) => {
-		const confirmDelete = confirm(
-			`Delete collection "${collection.name}"? This will remove assignments from items.`
-		);
+		const confirmDelete = confirm(t('DELETE_COLLECTION_CONFIRM', { name: collection.name }));
 		if (!confirmDelete) return;
 		await deleteCollection(collection.id);
 	};
@@ -128,13 +128,13 @@ export default function AdminCollectionsPage() {
 							</div>
 							<div>
 								<h1 className="text-2xl sm:text-3xl font-bold bg-linear-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-									Manage Collections
+									{t('MANAGE_COLLECTIONS')}
 								</h1>
 								<p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center space-x-2">
-									<span>Curate and group directory items.</span>
+									<span>{t('MANAGE_COLLECTIONS_DESC')}</span>
 									<span className="hidden sm:inline">•</span>
 									<span className="text-sm px-2 py-1 bg-theme-primary/10 text-theme-primary rounded-full font-medium">
-										{total} total
+										{total} {t('TOTAL')}
 									</span>
 								</p>
 							</div>
@@ -146,7 +146,7 @@ export default function AdminCollectionsPage() {
 							startContent={<FolderPlus size={18} />}
 							className="bg-linear-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
 						>
-							Add collection
+							{t('ADD_COLLECTION')}
 						</Button>
 					</div>
 				</div>
@@ -157,7 +157,9 @@ export default function AdminCollectionsPage() {
 					<CardBody className="p-6">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-1">Collections</p>
+								<p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-1">
+									{t('COLLECTION')}
+								</p>
 								<p className="text-3xl font-bold text-blue-700 dark:text-blue-300">{total}</p>
 							</div>
 							<div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg">
@@ -171,7 +173,9 @@ export default function AdminCollectionsPage() {
 					<CardBody className="p-6">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-sm font-medium text-green-600 dark:text-green-400 mb-1">Active</p>
+								<p className="text-sm font-medium text-green-600 dark:text-green-400 mb-1">
+									{t('ACTIVE')}
+								</p>
 								<p className="text-3xl font-bold text-green-700 dark:text-green-300">
 									{activeCollections}
 								</p>
@@ -188,7 +192,7 @@ export default function AdminCollectionsPage() {
 						<div className="flex items-center justify-between">
 							<div>
 								<p className="text-sm font-medium text-purple-600 dark:text-purple-400 mb-1">
-									Items assigned
+									{t('ITEMS_ASSIGNED')}
 								</p>
 								<p className="text-3xl font-bold text-purple-700 dark:text-purple-300">
 									{totalItemsInCollections}
@@ -205,17 +209,17 @@ export default function AdminCollectionsPage() {
 			<Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-xs">
 				<CardBody className="p-0">
 					<div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 flex items-center justify-between">
-						<h3 className="text-lg font-semibold text-gray-900 dark:text-white">Collections</h3>
+						<h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('COLLECTION')}</h3>
 						<span className="text-sm text-gray-600 dark:text-gray-400">
-							{collections.length} of {total}
+							{collections.length} {t('OF')} {total}
 						</span>
 					</div>
 
 					<div className="divide-y divide-gray-100 dark:divide-gray-800">
 						{isLoading ? (
-							<div className="p-6 text-center text-gray-500">Loading collections…</div>
+							<div className="p-6 text-center text-gray-500">{t('LOADING_COLLECTIONS')}</div>
 						) : collections.length === 0 ? (
-							<div className="p-6 text-center text-gray-500">No collections yet.</div>
+							<div className="p-6 text-center text-gray-500">{t('NO_COLLECTIONS_YET')}</div>
 						) : (
 							collections.map((collection) => (
 								<div
@@ -237,13 +241,15 @@ export default function AdminCollectionsPage() {
 														variant="flat"
 														color={collection.isActive !== false ? 'success' : 'danger'}
 													>
-														{collection.isActive !== false ? 'Active' : 'Inactive'}
+														{collection.isActive !== false ? t('ACTIVE') : t('INACTIVE')}
 													</Chip>
 													<Chip size="sm" variant="flat" color="primary">
-														{collection.item_count || 0} items
+														{t('COLLECTION_ITEMS', { count: collection.item_count || 0 })}
 													</Chip>
 												</div>
-												<p className="text-xs text-gray-500">Slug: {collection.slug}</p>
+												<p className="text-xs text-gray-500">
+													{t('SLUG_LABEL')} {collection.slug}
+												</p>
 												{collection.description && (
 													<p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
 														{collection.description}
@@ -259,7 +265,7 @@ export default function AdminCollectionsPage() {
 												onPress={() => handleAssign(collection)}
 												className="h-9 px-3"
 											>
-												<Link2 className="w-4 h-4 mr-1" /> Assign items
+												<Link2 className="w-4 h-4 mr-1" /> {t('ASSIGN_ITEMS')}
 											</Button>
 											<Button
 												size="sm"
@@ -267,7 +273,7 @@ export default function AdminCollectionsPage() {
 												onPress={() => openEditForm(collection)}
 												className="h-9 px-3"
 											>
-												<Edit className="w-4 h-4 mr-1" /> Edit
+												<Edit className="w-4 h-4 mr-1" /> {t('EDIT')}
 											</Button>
 											<Button
 												size="sm"
@@ -277,7 +283,7 @@ export default function AdminCollectionsPage() {
 												className="h-9 px-3"
 												isDisabled={isSubmitting}
 											>
-												<Trash2 className="w-4 h-4 mr-1" /> Delete
+												<Trash2 className="w-4 h-4 mr-1" /> {t('DELETE')}
 											</Button>
 										</div>
 									</div>
@@ -310,7 +316,7 @@ export default function AdminCollectionsPage() {
 					<div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden">
 						<div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
 							<h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-								{formMode === 'create' ? 'Create Collection' : 'Edit Collection'}
+								{formMode === 'create' ? t('CREATE_COLLECTION') : t('EDIT_COLLECTION')}
 							</h2>
 							{!isSubmitting && (
 								<button

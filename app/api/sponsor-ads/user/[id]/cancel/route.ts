@@ -74,7 +74,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
 		const errorMessage = error instanceof Error ? error.message : 'Failed to cancel sponsor ad';
 
-		// Return specific error message for expected validation errors (400)
+		// Handle expected not found errors (404) - keep specific message
+		if (errorMessage === 'Sponsor ad not found') {
+			return NextResponse.json({ success: false, error: errorMessage }, { status: 404 });
+		}
+
+		// Handle expected validation errors (400) - keep specific message
 		if (errorMessage.includes('Cannot cancel')) {
 			return NextResponse.json({ success: false, error: errorMessage }, { status: 400 });
 		}

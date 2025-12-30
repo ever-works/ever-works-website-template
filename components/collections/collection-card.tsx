@@ -107,7 +107,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
 				{/* Arrow indicator - bottom right */}
 				<div className="relative flex items-center justify-end text-sm text-theme-primary font-medium">
 					<span className="text-xs opacity-80 group-hover:opacity-100 transition-opacity duration-300">
-						View collection
+						{t('VIEW_COLLECTION')}
 					</span>
 					<svg
 						className="w-4 h-4 ml-2 transform transition-all duration-300 

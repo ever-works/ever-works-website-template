@@ -27,6 +27,11 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 			return NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 });
 		}
 
+		// Validate body is a non-null object before destructuring
+		if (!body || typeof body !== 'object' || Array.isArray(body)) {
+			return NextResponse.json({ error: 'Invalid request body. Expected a JSON object.' }, { status: 400 });
+		}
+
 		const { enabled, paymentProvider } = body as { enabled?: unknown; paymentProvider?: string };
 		const provider = paymentProvider || 'stripe';
 

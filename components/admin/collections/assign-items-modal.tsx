@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Input, Checkbox } from '@heroui/react';
 import { Search, Save, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/modal';
 import { UniversalPagination } from '@/components/universal-pagination';
@@ -18,6 +19,8 @@ interface AssignItemsModalProps {
 }
 
 export function AssignItemsModal({ isOpen, onClose, collectionName, initialSelected, onSave }: AssignItemsModalProps) {
+	const t = useTranslations('common');
+	const tListing = useTranslations('listing');
 	const PageSize = 50;
 	const [page, setPage] = useState(1);
 	const [search, setSearch] = useState('');
@@ -78,13 +81,11 @@ export function AssignItemsModal({ isOpen, onClose, collectionName, initialSelec
 				<ModalHeader>
 					<div className="flex w-full items-center justify-between">
 						<div>
-							<h3 className="text-lg font-semibold">Assign items</h3>
-							<p className="text-sm text-gray-600 dark:text-gray-400">
-								Select which items belong to this collection.
-							</p>
+							<h3 className="text-lg font-semibold">{t('ASSIGN_ITEMS')}</h3>
+							<p className="text-sm text-gray-600 dark:text-gray-400">{t('SELECT_ITEMS_DESCRIPTION')}</p>
 						</div>
 						<span className="text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full">
-							{selectedCount} selected
+							{t('SELECTED_COUNT', { count: selectedCount })}
 						</span>
 					</div>
 				</ModalHeader>
@@ -93,7 +94,7 @@ export function AssignItemsModal({ isOpen, onClose, collectionName, initialSelec
 					<div className="flex flex-col gap-4">
 						<div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
 							<Input
-								placeholder="Search items"
+								placeholder={t('SEARCH_ITEMS')}
 								startContent={<Search size={16} />}
 								value={search}
 								onChange={(e) => {
@@ -103,7 +104,7 @@ export function AssignItemsModal({ isOpen, onClose, collectionName, initialSelec
 								className="sm:w-80"
 							/>
 							<div className="text-sm text-gray-600 dark:text-gray-400">
-								Showing {items.length} of {total} items
+								{tListing('FILTER_STATUS', { filtered: items.length, total })}
 							</div>
 						</div>
 
@@ -112,9 +113,9 @@ export function AssignItemsModal({ isOpen, onClose, collectionName, initialSelec
 							className="border border-gray-200 dark:border-gray-700 rounded-lg divide-y divide-gray-100 dark:divide-gray-800 max-h-[420px] overflow-auto"
 						>
 							{isLoading ? (
-								<div className="p-6 text-center text-sm text-gray-500">Loading items…</div>
+								<div className="p-6 text-center text-sm text-gray-500">{t('LOADING_ITEMS')}</div>
 							) : items.length === 0 ? (
-								<div className="p-6 text-center text-sm text-gray-500">No items found.</div>
+								<div className="p-6 text-center text-sm text-gray-500">{t('NO_ITEMS_FOUND')}</div>
 							) : (
 								items.map((item) => (
 									<label
@@ -166,7 +167,7 @@ export function AssignItemsModal({ isOpen, onClose, collectionName, initialSelec
 							disabled={saving || isSubmitting}
 						>
 							<X className="h-4 w-4" />
-							Cancel
+							{t('CANCEL')}
 						</Button>
 						<Button
 							color="primary"
@@ -176,7 +177,7 @@ export function AssignItemsModal({ isOpen, onClose, collectionName, initialSelec
 							isLoading={saving || isSubmitting}
 						>
 							<Save className="h-4 w-4" />
-							Save changes
+							{t('SAVE_CHANGES')}
 						</Button>
 					</div>
 				</ModalFooter>
