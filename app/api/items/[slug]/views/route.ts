@@ -41,16 +41,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 			return NextResponse.json({ success: true, counted: false, reason: 'bot' });
 		}
 
-		// 3. Get or create viewer ID from cookie
-		const cookieStore = await cookies();
-		let viewerId = cookieStore.get(VIEWER_COOKIE_NAME)?.value;
-		const isNewViewer = !viewerId;
-
-		if (!viewerId) {
-			viewerId = crypto.randomUUID();
-		}
-
-		// 4. Owner exclusion (if authenticated)
+		// 3. Owner exclusion (if authenticated) - check before cookie handling
 		const session = await auth();
 		if (session?.user?.id) {
 			const itemRepository = new ItemRepository();
@@ -58,6 +49,15 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 			if (item?.submitted_by === session.user.id) {
 				return NextResponse.json({ success: true, counted: false, reason: 'owner' });
 			}
+		}
+
+		// 4. Get or create viewer ID from cookie
+		const cookieStore = await cookies();
+		let viewerId = cookieStore.get(VIEWER_COOKIE_NAME)?.value;
+		const isNewViewer = !viewerId;
+
+		if (!viewerId) {
+			viewerId = crypto.randomUUID();
 		}
 
 		// 5. Record view with daily deduplication
