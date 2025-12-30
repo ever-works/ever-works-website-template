@@ -12,31 +12,14 @@ import {
     Cell,
 } from "recharts";
 import type { EngagementDistributionData } from "@/hooks/use-dashboard-stats";
-
-// Design system constants
-const CARD_BASE_STYLES = "bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700 p-6";
-const TITLE_STYLES = "text-lg font-semibold text-gray-900 dark:text-gray-100";
-const SUBTITLE_STYLES = "text-sm text-gray-500 dark:text-gray-400";
-const VALUE_STYLES = "text-2xl font-bold text-gray-900 dark:text-gray-100";
-const TOOLTIP_STYLES = {
-    backgroundColor: "#1F2937",
-    border: "1px solid #374151",
-    borderRadius: "8px",
-    color: "#F9FAFB",
-};
-
-const CHART_COLORS = [
-    "#3B82F6",
-    "#10B981",
-    "#F59E0B",
-    "#8B5CF6",
-    "#EF4444",
-    "#06B6D4",
-    "#EC4899",
-    "#84CC16",
-    "#F97316",
-    "#6366F1",
-];
+import {
+    CARD_BASE_STYLES,
+    TITLE_STYLES,
+    SUBTITLE_STYLES,
+    VALUE_STYLES,
+    TOOLTIP_STYLES,
+    CHART_COLORS,
+} from "./styles";
 
 interface EngagementDistributionProps {
     data: EngagementDistributionData[];
@@ -83,10 +66,10 @@ export function EngagementDistribution({ data, isLoading = false }: EngagementDi
     const topItemPercentage = data[0]?.percentage || 0;
 
     return (
-        <div className={CARD_BASE_STYLES}>
+        <section className={CARD_BASE_STYLES} aria-labelledby="engagement-distribution-title">
             <div className="flex items-center justify-between mb-4">
                 <div>
-                    <h3 className={TITLE_STYLES}>{t("TITLE")}</h3>
+                    <h3 id="engagement-distribution-title" className={TITLE_STYLES}>{t("TITLE")}</h3>
                     <p className={SUBTITLE_STYLES}>{t("SUBTITLE")}</p>
                 </div>
                 <div className="text-right">
@@ -152,6 +135,6 @@ export function EngagementDistribution({ data, isLoading = false }: EngagementDi
                     />
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
