@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { useSubscription } from '@/hooks/use-subscription';
 import { toast } from 'sonner';
+import { useLocale } from 'next-intl';
+import { formatCurrencyAmount } from '@/lib/utils/currency-format';
 
 interface BillingStatsProps {
 	planName: string;
@@ -47,15 +49,7 @@ export function BillingStats({
 	currentPeriodEnd
 }: BillingStatsProps) {
 	const { createBillingPortalSession, isCreateBillingPortalSessionPending } = useSubscription();
-
-	const formatCurrency = (amount: number) => {
-		return new Intl.NumberFormat('en-US', {
-			style: 'currency',
-			currency: currency,
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2
-		}).format(amount);
-	};
+	const locale = useLocale();
 
 	const getTrendIcon = (value: number, threshold: number): React.ReactElement | null => {
 		if (value > threshold) {
@@ -131,7 +125,7 @@ export function BillingStats({
 						{getTrendIcon(totalSpent, 100)}
 					</div>
 					<h3 className="text-2xl font-bold text-theme-primary-900 dark:text-theme-primary-100 mb-1 group-hover:text-theme-primary-800 dark:group-hover:text-white transition-colors">
-						{formatCurrency(totalSpent)}
+						{formatCurrencyAmount(totalSpent, currency, locale)}
 					</h3>
 					<p className="text-theme-primary-700 dark:text-theme-primary-300 text-sm font-medium">
 						Total Spent
@@ -166,7 +160,7 @@ export function BillingStats({
 						{getTrendIcon(monthlyAverage, 50)}
 					</div>
 					<h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-1 group-hover:text-purple-800 dark:group-hover:text-white transition-colors">
-						{formatCurrency(monthlyAverage)}
+						{formatCurrencyAmount(monthlyAverage, currency, locale)}
 					</h3>
 					<p className="text-purple-700 dark:text-purple-300 text-sm font-medium">Monthly Average</p>
 					<div className="mt-2 text-xs text-purple-600 dark:text-purple-400">
@@ -224,13 +218,13 @@ export function BillingStats({
 								<div className="flex justify-between items-center">
 									<span className="text-slate-600 dark:text-slate-300">This Month:</span>
 									<span className="font-semibold text-slate-900 dark:text-slate-100">
-										{formatCurrency(totalSpent)}
+										{formatCurrencyAmount(totalSpent, currency, locale)}
 									</span>
 								</div>
 								<div className="flex justify-between items-center">
 									<span className="text-slate-600 dark:text-slate-300">Last Month:</span>
 									<span className="font-semibold text-slate-900 dark:text-slate-100">
-										{formatCurrency(lastMonthSpent)}
+										{formatCurrencyAmount(lastMonthSpent || 0, currency, locale)}
 									</span>
 								</div>
 								<div className="pt-2 border-t border-slate-200 dark:border-slate-700">
@@ -238,13 +232,17 @@ export function BillingStats({
 										<span className="text-slate-600 dark:text-slate-300">Change:</span>
 										<span
 											className={`font-semibold ${
-												lastMonthSpent > totalSpent
+												lastMonthSpent && lastMonthSpent > totalSpent
 													? 'text-emerald-600 dark:text-emerald-400'
 													: 'text-red-600 dark:text-red-400'
 											}`}
 										>
-											{lastMonthSpent > totalSpent ? '↓' : '↑'}{' '}
-											{formatCurrency(Math.abs(lastMonthSpent - totalSpent))}
+											{lastMonthSpent && lastMonthSpent > totalSpent ? '↓' : '↑'}{' '}
+											{formatCurrencyAmount(
+												Math.abs((lastMonthSpent || 0) - totalSpent),
+												currency,
+												locale
+											)}
 										</span>
 									</div>
 								</div>
@@ -404,6 +402,8 @@ export function DetailedBillingStats({
 	daysUntilRenewal,
 	currentPeriodEnd
 }: BillingStatsProps) {
+	const locale = useLocale();
+
 	return (
 		<div className="space-y-6">
 			{/* Main Stats Grid */}
@@ -435,7 +435,11 @@ export function DetailedBillingStats({
 							<span className="text-slate-600 dark:text-slate-300">Average Transaction:</span>
 							<span className="font-semibold text-slate-900 dark:text-slate-100">
 								{totalPayments > 0
-									? formatCurrency(totalPayments > 0 ? totalSpent / totalPayments : 0)
+									? formatCurrencyAmount(
+											totalPayments > 0 ? totalSpent / totalPayments : 0,
+											currency,
+											locale
+										)
 									: 'N/A'}
 							</span>
 						</div>
@@ -482,7 +486,9 @@ export function DetailedBillingStats({
 						<div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600/50">
 							<span className="text-slate-600 dark:text-slate-300">Monthly Cost:</span>
 							<span className="font-semibold text-slate-900 dark:text-slate-100">
-								{hasActiveSubscription ? formatCurrency(monthlyAverage) : 'Free'}
+								{hasActiveSubscription
+									? formatCurrencyAmount(monthlyAverage, currency, locale)
+									: 'Free'}
 							</span>
 						</div>
 					</div>
@@ -490,14 +496,4 @@ export function DetailedBillingStats({
 			</div>
 		</div>
 	);
-}
-
-// Helper function for currency formatting
-function formatCurrency(amount: number): string {
-	return new Intl.NumberFormat('en-US', {
-		style: 'currency',
-		currency: 'USD',
-		minimumFractionDigits: 2,
-		maximumFractionDigits: 2
-	}).format(amount);
 }
