@@ -18,8 +18,16 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 		}
 
 		const { subscriptionId } = await params;
-		const body = await request.json();
-		const { enabled, paymentProvider } = body;
+
+		// Parse request body with error handling for invalid JSON
+		let body: unknown;
+		try {
+			body = await request.json();
+		} catch (parseError) {
+			return NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 });
+		}
+
+		const { enabled, paymentProvider } = body as { enabled?: unknown; paymentProvider?: string };
 		const provider = paymentProvider || 'stripe';
 
 		if (typeof enabled !== 'boolean') {

@@ -281,7 +281,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    let body: any;
+    try {
+      body = await request.json();
+    } catch (jsonError) {
+      console.error('Invalid JSON in request body:', jsonError);
+      return NextResponse.json(
+        { success: false, error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+
     const createData: CreateCollectionRequest = {
       id: body.id,
       name: body.name,

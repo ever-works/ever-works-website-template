@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { sponsorAdService } from "@/lib/services/sponsor-ad.service";
-import { createSponsorAdSchema, querySponsorAdsSchema } from "@/lib/validations/sponsor-ad";
-import { PaymentProvider } from "@/lib/constants";
-import type { SponsorAdStatus } from "@/lib/types/sponsor-ad";
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
+import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
+import { createSponsorAdSchema, querySponsorAdsSchema } from '@/lib/validations/sponsor-ad';
+import { PaymentProvider } from '@/lib/constants';
+import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
 
 // Determine which payment provider to use
 const ACTIVE_PAYMENT_PROVIDER = process.env.NEXT_PUBLIC_PAYMENT_PROVIDER || PaymentProvider.STRIPE;
@@ -46,20 +46,17 @@ export async function GET(request: NextRequest) {
 		const session = await auth();
 
 		if (!session?.user?.id) {
-			return NextResponse.json(
-				{ success: false, error: "Unauthorized" },
-				{ status: 401 }
-			);
+			return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 		}
 
 		const { searchParams } = new URL(request.url);
 
 		// Parse query parameters
 		const queryParams = {
-			page: parseInt(searchParams.get("page") || "1", 10),
-			limit: parseInt(searchParams.get("limit") || "10", 10),
-			status: searchParams.get("status") as SponsorAdStatus | undefined,
-			userId: session.user.id,
+			page: parseInt(searchParams.get('page') || '1', 10),
+			limit: parseInt(searchParams.get('limit') || '10', 10),
+			status: searchParams.get('status') as SponsorAdStatus | undefined,
+			userId: session.user.id
 		};
 
 		// Validate with Zod (partial validation for user-specific params)
@@ -68,7 +65,7 @@ export async function GET(request: NextRequest) {
 			return NextResponse.json(
 				{
 					success: false,
-					error: validationResult.error.issues[0]?.message || "Invalid query parameters",
+					error: validationResult.error.issues[0]?.message || 'Invalid query parameters'
 				},
 				{ status: 400 }
 			);
@@ -77,7 +74,7 @@ export async function GET(request: NextRequest) {
 		// Get paginated sponsor ads for user
 		const result = await sponsorAdService.getSponsorAdsPaginated({
 			...validationResult.data,
-			userId: session.user.id,
+			userId: session.user.id
 		});
 
 		return NextResponse.json({
@@ -89,15 +86,12 @@ export async function GET(request: NextRequest) {
 				total: result.total,
 				totalPages: result.totalPages,
 				hasNext: result.page < result.totalPages,
-				hasPrev: result.page > 1,
-			},
+				hasPrev: result.page > 1
+			}
 		});
 	} catch (error) {
-		console.error("Error fetching user sponsor ads:", error);
-		return NextResponse.json(
-			{ success: false, error: "Failed to fetch sponsor ads" },
-			{ status: 500 }
-		);
+		console.error('Error fetching user sponsor ads:', error);
+		return NextResponse.json({ success: false, error: 'Failed to fetch sponsor ads' }, { status: 500 });
 	}
 }
 
@@ -155,61 +149,55 @@ export async function POST(request: NextRequest) {
 		const session = await auth();
 
 		if (!session?.user?.id) {
-			return NextResponse.json(
-				{ success: false, error: "Unauthorized" },
-				{ status: 401 }
-			);
+			return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 		}
 
-		const body = await request.json();
+		let body: any;
+		try {
+			body = await request.json();
+		} catch (jsonError) {
+			console.error('Invalid JSON in request body:', jsonError);
+			return NextResponse.json({ success: false, error: 'Invalid JSON in request body' }, { status: 400 });
+		}
 
 		// Validate request body
 		const validationResult = createSponsorAdSchema.safeParse({
 			...body,
-			paymentProvider: ACTIVE_PAYMENT_PROVIDER,
+			paymentProvider: ACTIVE_PAYMENT_PROVIDER
 		});
 
 		if (!validationResult.success) {
 			return NextResponse.json(
 				{
 					success: false,
-					error: validationResult.error.issues[0]?.message || "Invalid request body",
+					error: validationResult.error.issues[0]?.message || 'Invalid request body'
 				},
 				{ status: 400 }
 			);
 		}
 
 		// Create sponsor ad
-		const sponsorAd = await sponsorAdService.createSponsorAd(
-			session.user.id,
-			validationResult.data
-		);
+		const sponsorAd = await sponsorAdService.createSponsorAd(session.user.id, validationResult.data);
 
 		return NextResponse.json(
 			{
 				success: true,
 				data: sponsorAd,
-				message: "Sponsor ad submission created successfully. Pending admin approval.",
+				message: 'Sponsor ad submission created successfully. Pending admin approval.'
 			},
 			{ status: 201 }
 		);
 	} catch (error) {
-		console.error("Error creating sponsor ad:", error);
+		console.error('Error creating sponsor ad:', error);
 
-		const errorMessage =
-			error instanceof Error ? error.message : "Failed to create sponsor ad";
+		const errorMessage = error instanceof Error ? error.message : 'Failed to create sponsor ad';
 
-		// Handle duplicate submission errors
-		if (errorMessage.includes("already have")) {
-			return NextResponse.json(
-				{ success: false, error: errorMessage },
-				{ status: 400 }
-			);
+		// Handle duplicate submission errors (400) - keep specific message for expected validation errors
+		if (errorMessage.includes('already have')) {
+			return NextResponse.json({ success: false, error: errorMessage }, { status: 400 });
 		}
 
-		return NextResponse.json(
-			{ success: false, error: errorMessage },
-			{ status: 500 }
-		);
+		// Use generic message for unexpected errors (500) to avoid exposing sensitive details
+		return NextResponse.json({ success: false, error: 'Failed to create sponsor ad' }, { status: 500 });
 	}
 }
