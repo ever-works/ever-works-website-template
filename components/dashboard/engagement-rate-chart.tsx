@@ -12,18 +12,13 @@ import {
     ResponsiveContainer,
     ReferenceLine,
 } from "recharts";
-
-// Design system constants
-const CARD_BASE_STYLES = "bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700 p-6";
-const TITLE_STYLES = "text-lg font-semibold text-gray-900 dark:text-gray-100";
-const SUBTITLE_STYLES = "text-sm text-gray-500 dark:text-gray-400";
-const VALUE_STYLES = "text-2xl font-bold text-gray-900 dark:text-gray-100";
-const TOOLTIP_STYLES = {
-    backgroundColor: "#1F2937",
-    border: "1px solid #374151",
-    borderRadius: "8px",
-    color: "#F9FAFB",
-};
+import {
+    CARD_BASE_STYLES,
+    TITLE_STYLES,
+    SUBTITLE_STYLES,
+    VALUE_STYLES,
+    TOOLTIP_STYLES,
+} from "./styles";
 
 interface EngagementOverviewData {
     week: string;
@@ -43,6 +38,7 @@ export function EngagementRateChart({
     isLoading = false,
 }: EngagementRateChartProps) {
     const t = useTranslations("client.dashboard.ENGAGEMENT_RATE");
+    const tCommon = useTranslations("client.dashboard.COMMON");
 
     const chartData = useMemo(() => {
         if (!engagementOverview || totalSubmissions === 0) return [];
@@ -92,10 +88,10 @@ export function EngagementRateChart({
     }
 
     return (
-        <div className={CARD_BASE_STYLES}>
+        <section className={CARD_BASE_STYLES} aria-labelledby="engagement-rate-title">
             <div className="flex items-center justify-between mb-4">
                 <div>
-                    <h3 className={TITLE_STYLES}>{t("TITLE")}</h3>
+                    <h3 id="engagement-rate-title" className={TITLE_STYLES}>{t("TITLE")}</h3>
                     <p className={SUBTITLE_STYLES}>{t("SUBTITLE")}</p>
                 </div>
                 <div className="text-right">
@@ -141,7 +137,7 @@ export function EngagementRateChart({
                         stroke="#8B5CF6"
                         strokeDasharray="5 5"
                         label={{
-                            value: `Avg: ${avgRate.toFixed(1)}%`,
+                            value: `${tCommon("AVG")}: ${avgRate.toFixed(1)}%`,
                             position: "insideTopRight",
                             fill: "#8B5CF6",
                             fontSize: 11,
@@ -167,10 +163,10 @@ export function EngagementRateChart({
                 <div className="flex items-center gap-2">
                     <div className="h-0.5 w-4 border-t-2 border-dashed border-purple-500" />
                     <span className="text-gray-600 dark:text-gray-400">
-                        Avg: {avgRate.toFixed(1)}%
+                        {tCommon("AVG")}: {avgRate.toFixed(1)}%
                     </span>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
