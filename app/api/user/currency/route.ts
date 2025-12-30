@@ -2,50 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/lib/auth';
 import { getUserCurrency, updateUserCurrency } from '@/lib/services/currency.service';
-
-// Whitelist of supported ISO 4217 currency codes
-const SUPPORTED_CURRENCIES = [
-	'USD',
-	'EUR',
-	'GBP',
-	'JPY',
-	'CNY',
-	'CAD',
-	'AUD',
-	'CHF',
-	'INR',
-	'BRL',
-	'MXN',
-	'KRW',
-	'RUB',
-	'TRY',
-	'ZAR',
-	'SGD',
-	'HKD',
-	'NOK',
-	'SEK',
-	'DKK',
-	'PLN',
-	'CZK',
-	'HUF',
-	'NZD',
-	'THB',
-	'ILS',
-	'CLP',
-	'PHP',
-	'AED',
-	'SAR',
-	'MYR',
-	'IDR',
-	'VND',
-	'BGN',
-	'RON',
-	// HRK removed - Croatia adopted EUR on January 1, 2023
-	'ISK',
-	'BWP',
-	'COP',
-	'PEN'
-] as const;
+import { SUPPORTED_CURRENCIES } from '@/lib/config/billing';
 
 const currencyUpdateSchema = z.object({
 	currency: z
@@ -92,7 +49,14 @@ export async function PUT(request: NextRequest) {
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		const body = await request.json();
+		// Parse and validate JSON body
+		let body: unknown;
+		try {
+			body = await request.json();
+		} catch (parseError) {
+			console.error('[API] Invalid JSON in currency update request:', parseError);
+			return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
+		}
 
 		// Validate request body with Zod schema
 		const validationResult = currencyUpdateSchema.safeParse(body);

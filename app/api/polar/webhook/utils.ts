@@ -42,9 +42,7 @@ export const PLAN_FEATURES: Record<string, string[]> = {
 /**
  * Normalizes email config to ensure all values are strings
  */
-export function normalizeEmailConfig(
-	config: Awaited<ReturnType<typeof getEmailConfig>>
-): EmailConfig {
+export function normalizeEmailConfig(config: Awaited<ReturnType<typeof getEmailConfig>>): EmailConfig {
 	const supportEmail =
 		typeof config.supportEmail === 'string' && config.supportEmail.trim() !== ''
 			? config.supportEmail
@@ -77,14 +75,9 @@ export function createEmailData<T extends Record<string, any>>(
  */
 export function extractSubscriptionInfo(data: PolarWebhookData) {
 	const productId = data.product?.id || data.product_id || '';
-	const planName = productId ? getPlanName(productId) : DEFAULT_PLAN_NAME;
-	const amount = formatAmount(
-		data.price?.amount || data.amount || 0,
-		data.currency || DEFAULT_CURRENCY
-	);
-	const billingPeriod = getBillingPeriod(
-		data.price?.recurring?.interval || data.interval || DEFAULT_INTERVAL
-	);
+	const planName = productId ? getPlanName(productId) || DEFAULT_PLAN_NAME : DEFAULT_PLAN_NAME;
+	const amount = formatAmount(data.price?.amount || data.amount || 0, data.currency || DEFAULT_CURRENCY);
+	const billingPeriod = getBillingPeriod(data.price?.recurring?.interval || data.interval || DEFAULT_INTERVAL);
 
 	return { productId, planName, amount, billingPeriod };
 }
@@ -94,13 +87,10 @@ export function extractSubscriptionInfo(data: PolarWebhookData) {
  */
 export function extractNestedSubscriptionInfo(data: PolarWebhookData) {
 	const subscription = data.subscription;
-	const productId =
-		subscription?.product?.id || subscription?.product_id || data.product?.id || data.product_id;
-	const planName = productId ? getPlanName(productId) : DEFAULT_PLAN_NAME;
+	const productId = subscription?.product?.id || subscription?.product_id || data.product?.id || data.product_id;
+	const planName = productId ? getPlanName(productId) || DEFAULT_PLAN_NAME : DEFAULT_PLAN_NAME;
 	const billingPeriod = subscription
-		? getBillingPeriod(
-				subscription.price?.recurring?.interval || subscription.interval || DEFAULT_INTERVAL
-			)
+		? getBillingPeriod(subscription.price?.recurring?.interval || subscription.interval || DEFAULT_INTERVAL)
 		: DEFAULT_INTERVAL;
 
 	return { productId, planName, billingPeriod, subscription };
@@ -123,7 +113,7 @@ export function validateWebhookPayload(body: unknown): body is PolarWebhookEvent
 	}
 
 	const event = body as Record<string, unknown>;
-	
+
 	// Must have type and data
 	if (typeof event.type !== 'string' || event.data === null || typeof event.data !== 'object') {
 		return false;

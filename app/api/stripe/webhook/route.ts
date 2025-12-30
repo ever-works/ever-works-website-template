@@ -315,7 +315,7 @@ async function handleSubscriptionCreated(data: any) {
 
 		// Extract subscription information
 		const priceId = data.items?.data?.[0]?.price?.id;
-		const planName = getPlanName(priceId);
+		const planName = getPlanName(priceId) || 'Premium Plan';
 		const amount = formatAmount(data.items?.data?.[0]?.price?.unit_amount || 0, data.currency);
 		const billingPeriod = getBillingPeriod(data.items?.data?.[0]?.price?.recurring?.interval);
 		const emailConfig = await getEmailConfig();		
@@ -361,7 +361,7 @@ async function handleSubscriptionUpdated(data: any) {
 
 		// Extract subscription information
 		const priceId = data.items?.data?.[0]?.price?.id;
-		const planName = getPlanName(priceId);
+		const planName = getPlanName(priceId) || 'Premium Plan';
 		const amount = formatAmount(data.items?.data?.[0]?.price?.unit_amount || 0, data.currency);
 		const billingPeriod = getBillingPeriod(data.items?.data?.[0]?.price?.recurring?.interval);
 
@@ -409,7 +409,7 @@ async function handleSubscriptionCancelled(data: any) {
 		await webhookSubscriptionService.handleSubscriptionCancelled(data);
 		const customerInfo = extractCustomerInfo(data);
 		const priceId = data.items?.data?.[0]?.price?.id;
-		const planName = getPlanName(priceId);
+		const planName = getPlanName(priceId) || 'Premium Plan';
 		const amount = formatAmount(data.items?.data?.[0]?.price?.unit_amount || 0, data.currency);
 		const billingPeriod = getBillingPeriod(data.items?.data?.[0]?.price?.recurring?.interval);
 
@@ -461,7 +461,7 @@ async function handleSubscriptionPaymentSucceeded(data: any) {
 		// Extract payment information
 		const amount = formatAmount(data.amount_paid, data.currency);
 		const subscription = data.subscription;
-		const planName = subscription ? getPlanName(subscription.items?.data?.[0]?.price?.id) : 'Premium Plan';
+		const planName = subscription ? (getPlanName(subscription.items?.data?.[0]?.price?.id) || 'Premium Plan') : 'Premium Plan';
 		const billingPeriod = subscription
 			? getBillingPeriod(subscription.items?.data?.[0]?.price?.recurring?.interval)
 			: 'month';
@@ -508,7 +508,7 @@ async function handleSubscriptionPaymentFailed(data: any) {
 		// Extract payment information
 		const amount = formatAmount(data.amount_due, data.currency);
 		const subscription = data.subscription;
-		const planName = subscription ? getPlanName(subscription.items?.data?.[0]?.price?.id) : 'Premium Plan';
+		const planName = subscription ? (getPlanName(subscription.items?.data?.[0]?.price?.id) || 'Premium Plan') : 'Premium Plan';
 		const billingPeriod = subscription
 			? getBillingPeriod(subscription.items?.data?.[0]?.price?.recurring?.interval)
 			: 'month';
@@ -555,7 +555,7 @@ async function handleSubscriptionTrialEnding(data: any) {
 
 		// Extract subscription information
 		const priceId = data.items?.data?.[0]?.price?.id;
-		const planName = getPlanName(priceId);
+		const planName = getPlanName(priceId) || 'Premium Plan';
 		const amount = formatAmount(data.items?.data?.[0]?.price?.unit_amount || 0, data.currency);
 		const billingPeriod = getBillingPeriod(data.items?.data?.[0]?.price?.recurring?.interval);
 
