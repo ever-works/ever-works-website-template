@@ -1,14 +1,14 @@
 "use client";
 
 import { useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import type { SubmissionCalendarDataExport } from "@/hooks/use-dashboard-stats";
-
-// Design system constants
-const CARD_BASE_STYLES = "bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700 p-6";
-const TITLE_STYLES = "text-lg font-semibold text-gray-900 dark:text-gray-100";
-const SUBTITLE_STYLES = "text-sm text-gray-500 dark:text-gray-400";
-const VALUE_STYLES = "text-2xl font-bold text-gray-900 dark:text-gray-100";
+import {
+    CARD_BASE_STYLES,
+    TITLE_STYLES,
+    SUBTITLE_STYLES,
+    VALUE_STYLES,
+} from "./styles";
 
 interface SubmissionCalendarProps {
     data: SubmissionCalendarDataExport[];
@@ -30,9 +30,9 @@ function getIntensityClass(count: number, maxCount: number): string {
     return "bg-green-600 dark:bg-green-500";
 }
 
-function formatDate(dateStr: string): string {
+function formatDate(dateStr: string, locale: string): string {
     const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString(locale, {
         month: "short",
         day: "numeric",
         year: "numeric",
@@ -41,6 +41,7 @@ function formatDate(dateStr: string): string {
 
 export function SubmissionCalendar({ data, isLoading = false }: SubmissionCalendarProps) {
     const t = useTranslations("client.dashboard.SUBMISSION_CALENDAR");
+    const locale = useLocale();
 
     const calendarData = useMemo(() => {
         const dataMap = new Map(data.map((d) => [d.date, d.count]));
@@ -117,10 +118,10 @@ export function SubmissionCalendar({ data, isLoading = false }: SubmissionCalend
     }
 
     return (
-        <div className={CARD_BASE_STYLES}>
+        <section className={CARD_BASE_STYLES} aria-labelledby="submission-calendar-title">
             <div className="flex items-center justify-between mb-4">
                 <div>
-                    <h3 className={TITLE_STYLES}>{t("TITLE")}</h3>
+                    <h3 id="submission-calendar-title" className={TITLE_STYLES}>{t("TITLE")}</h3>
                     <p className={SUBTITLE_STYLES}>{t("SUBTITLE")}</p>
                 </div>
                 <div className="text-right">
@@ -144,7 +145,7 @@ export function SubmissionCalendar({ data, isLoading = false }: SubmissionCalend
                                     }`}
                                     title={
                                         day.count >= 0
-                                            ? `${formatDate(day.date)}: ${day.count} ${day.count === 1 ? t("SUBMISSION") : t("SUBMISSIONS")}`
+                                            ? `${formatDate(day.date, locale)}: ${day.count} ${day.count === 1 ? t("SUBMISSION") : t("SUBMISSIONS")}`
                                             : undefined
                                     }
                                 />
@@ -164,6 +165,6 @@ export function SubmissionCalendar({ data, isLoading = false }: SubmissionCalend
                 </div>
                 <span>{t("MORE")}</span>
             </div>
-        </div>
+        </section>
     );
 }
