@@ -14,7 +14,6 @@ import {
 import { PaymentPlan, PaymentProvider } from '@/lib/constants';
 import { convertCentsToDecimal, convertNumberToDate, WebhookEventType } from '@/lib/payment/types/payment-types';
 
-
 export interface WebhookSubscriptionData {
 	id: string;
 	userId: string;
@@ -54,7 +53,10 @@ export interface WebhookSubscriptionData {
  * Format webhook data to WebhookSubscriptionData format
  * This is a standalone utility function that can be used outside the class
  */
-export const formatData = (data: any, paymentProvider: PaymentProvider = PaymentProvider.STRIPE): WebhookSubscriptionData => {
+export const formatData = (
+	data: any,
+	paymentProvider: PaymentProvider = PaymentProvider.STRIPE
+): WebhookSubscriptionData => {
 	return {
 		id: data.id,
 		userId: data.metadata?.userId,
@@ -112,7 +114,7 @@ export class WebhookSubscriptionService {
 
 	/**
 	 * Creates a new WebhookSubscriptionService instance
-	 * 
+	 *
 	 * @param paymentProvider - The payment provider for this webhook service instance
 	 *                         Defaults to STRIPE if not provided
 	 */
@@ -240,7 +242,7 @@ export class WebhookSubscriptionService {
 				interval: response.interval || existingSubscription.interval,
 				intervalCount: response.intervalCount || existingSubscription.intervalCount,
 				trialStart: trialStart !== undefined ? trialStart : existingSubscription.trialStart,
-				trialEnd: trialEnd !== undefined ? trialStart : existingSubscription.trialEnd,
+				trialEnd: trialEnd !== undefined ? trialEnd : existingSubscription.trialEnd,
 				cancelAtPeriodEnd:
 					response.cancelAtPeriodEnd !== undefined
 						? response.cancelAtPeriodEnd
@@ -679,20 +681,21 @@ export class WebhookSubscriptionService {
 
 	private sanitizeMetadata(metadata: any): Record<string, any> {
 		if (!metadata || typeof metadata !== 'object') return {};
-		
+
 		const sanitized: Record<string, any> = {};
 		for (const [key, value] of Object.entries(metadata)) {
-		  // Only allow primitive types and arrays of primitives
-		  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-			sanitized[key] = value;
-		  } else if (Array.isArray(value) && value.every(v => 
-			typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean'
-		  )) {
-			sanitized[key] = value;
-		  }
+			// Only allow primitive types and arrays of primitives
+			if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+				sanitized[key] = value;
+			} else if (
+				Array.isArray(value) &&
+				value.every((v) => typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean')
+			) {
+				sanitized[key] = value;
+			}
 		}
 		return sanitized;
-	  }
+	}
 
 	/**
 	 * Process webhook event based on type

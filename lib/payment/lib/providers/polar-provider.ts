@@ -1,7 +1,8 @@
 import { User } from '@supabase/auth-js';
 import React from 'react';
 import { Polar } from '@polar-sh/sdk';
-import crypto from 'crypto';
+import { validateEvent } from '@polar-sh/sdk/webhooks';
+
 import {
 	PaymentProviderInterface,
 	PaymentIntent,
@@ -30,6 +31,8 @@ import {
 	validateReactivateInputs,
 	isScheduledForCancellation,
 	createUserFriendlyError,
+	mapPolarSubscriptionToInfo,
+	validateSubscriptionId,
 	type PolarCancelSubscriptionParams,
 	type PolarReactivateSubscriptionParams
 } from '../utils/polar-subscription-helpers';
@@ -54,6 +57,8 @@ export interface PolarConfig extends PaymentProviderConfig {
 	options?: {
 		organizationId?: string;
 		appUrl?: string;
+		sandbox?: boolean;
+		apiUrl?: string;
 	};
 }
 
@@ -103,9 +108,17 @@ const polarTranslations = {
 	}
 };
 
-const appUrl =
-	process.env.NEXT_PUBLIC_APP_URL ??
-	(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://demo.ever.works');
+const defaultAppUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://demo.ever.works';
+
+/**
+ * Cache entry for webhook ID deduplication
+ * Stores webhook IDs with TTL to prevent replay attacks
+ */
+interface WebhookIdCacheEntry {
+	webhookId: string;
+	processedAt: number;
+	expiresAt: number;
+}
 
 export class PolarProvider implements PaymentProviderInterface {
 	private polar: Polar;
@@ -114,6 +127,14 @@ export class PolarProvider implements PaymentProviderInterface {
 	private appUrl?: string;
 	private apiKey: string;
 	private isSandbox: boolean = false;
+	private configuredApiUrl?: string;
+	// In-memory cache for webhook ID deduplication (replay protection)
+	// Key: webhook-id, Value: cache entry with expiration
+	private webhookIdCache: Map<string, WebhookIdCacheEntry> = new Map();
+	// Default replay protection window: ±300 seconds (5 minutes)
+	private readonly REPLAY_PROTECTION_WINDOW_SECONDS: number = 300;
+	// TTL for webhook ID cache entries: window * 2 + 60 seconds buffer (660 seconds = 11 minutes)
+	private readonly WEBHOOK_ID_CACHE_TTL_MS: number = 660000; // (300 * 2 + 60) * 1000
 
 	constructor(config: PolarConfig) {
 		if (!config.apiKey) {
@@ -121,7 +142,7 @@ export class PolarProvider implements PaymentProviderInterface {
 		}
 
 		this.apiKey = config.apiKey;
-		const isSandbox = process.env.POLAR_SANDBOX === 'true';
+		const isSandbox = config.options?.sandbox ?? false;
 		this.isSandbox = isSandbox;
 		this.polar = new Polar({
 			accessToken: config.apiKey,
@@ -130,8 +151,13 @@ export class PolarProvider implements PaymentProviderInterface {
 		this.webhookSecret = config.webhookSecret || '';
 		this.organizationId = config.options?.organizationId;
 		// Clean appUrl: remove quotes, trailing slashes, and whitespace
-		const rawAppUrl = config.options?.appUrl || appUrl;
-		this.appUrl = rawAppUrl.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
+		const rawAppUrl = config.options?.appUrl || defaultAppUrl;
+		this.appUrl = rawAppUrl
+			.trim()
+			.replace(/^["']|["']$/g, '')
+			.replace(/\/+$/, '');
+
+		this.configuredApiUrl = config.options?.apiUrl;
 
 		if (!this.organizationId) {
 			throw new Error('Polar organization ID is required');
@@ -759,32 +785,101 @@ export class PolarProvider implements PaymentProviderInterface {
 		try {
 			const { subscriptionId, priceId, cancelAtPeriodEnd, metadata } = params;
 
-			const updateData: any = {};
+			// Validate and sanitize subscription ID to prevent SSRF attacks
+			const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+
+			// Get the current subscription first to use as fallback
+			const currentSubscription = await getPolarSubscription(validatedSubscriptionId, this.polar, {
+				formatErrorMessage: this.formatErrorMessage.bind(this),
+				logger: this.logger
+			});
+
+			// Special case: if cancelAtPeriodEnd is false, use reactivateSubscription
+			// Polar requires using reactivate endpoint to set cancel_at_period_end to false
+			if (cancelAtPeriodEnd === false) {
+				const isCurrentlyScheduled = isScheduledForCancellation(currentSubscription);
+				if (isCurrentlyScheduled) {
+					// Use reactivateSubscription to remove cancellation flag
+					const reactivated = await this.reactivateSubscription(validatedSubscriptionId);
+
+					// If metadata needs to be updated, do it in a separate call
+					if (metadata && Object.keys(this.sanitizeMetadata(metadata)).length > 0) {
+						return await this.updateSubscriptionMetadata(validatedSubscriptionId, metadata, reactivated);
+					}
+
+					return reactivated;
+				}
+			}
+
+			// Build the update body using REST API format (snake_case)
+			const updateBody: any = {};
+
+			// Polar API uses product_id for product changes, not priceId
 			if (priceId) {
-				updateData.priceId = priceId;
+				updateBody.product_id = priceId;
 			}
-			if (cancelAtPeriodEnd !== undefined) {
-				updateData.cancelAtPeriodEnd = cancelAtPeriodEnd;
+
+			// Polar API expects cancel_at_period_end (snake_case)
+			// Only include if it's true (false case handled above via reactivate)
+			if (cancelAtPeriodEnd === true) {
+				updateBody.cancel_at_period_end = true;
 			}
+
+			// Sanitize metadata to remove undefined values
 			if (metadata) {
-				updateData.metadata = metadata;
+				const sanitized = this.sanitizeMetadata(metadata);
+				if (Object.keys(sanitized).length > 0) {
+					updateBody.metadata = sanitized;
+				}
 			}
 
-			const subscription = await this.polar.subscriptions.update({
-				id: subscriptionId,
-				...updateData
-			} as any);
+			// If updateBody is empty, nothing to update
+			if (Object.keys(updateBody).length === 0) {
+				this.logger.warn('No update parameters provided', { subscriptionId: validatedSubscriptionId });
+				return mapPolarSubscriptionToInfo(
+					currentSubscription,
+					validatedSubscriptionId,
+					currentSubscription,
+					currentSubscription?.status || 'active',
+					currentSubscription?.cancel_at_period_end ?? currentSubscription?.cancelAtPeriodEnd ?? false
+				);
+			}
 
-			return {
-				id: (subscription as any).id || subscriptionId,
-				customerId: (subscription as any).customerId || '',
-				status: this.mapSubscriptionStatus((subscription as any).status || 'active'),
-				currentPeriodEnd: (subscription as any).currentPeriodEnd
-					? new Date((subscription as any).currentPeriodEnd).getTime() / 1000
-					: undefined,
-				cancelAtPeriodEnd: (subscription as any).cancelAtPeriodEnd || false,
-				priceId: (subscription as any).priceId || priceId || ''
-			};
+			// Use REST API directly (more reliable than SDK for updates)
+			const apiUrl = this.getPolarApiUrl();
+			const response = await fetch(`${apiUrl}/v1/subscriptions/${validatedSubscriptionId}`, {
+				method: 'PATCH',
+				headers: {
+					Authorization: `Bearer ${this.apiKey}`,
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(updateBody)
+			});
+
+			if (!response.ok) {
+				const errorText = await response.text().catch(() => 'Unknown error');
+				this.logger.error('Failed to update Polar subscription via REST API', {
+					status: response.status,
+					error: errorText,
+					subscriptionId: validatedSubscriptionId,
+					updateBody
+				});
+				throw new Error(`Failed to update subscription: ${errorText}`);
+			}
+
+			const updatedSubscription = await response.json().catch(() => currentSubscription);
+
+			// Use the helper function to map the response
+			return mapPolarSubscriptionToInfo(
+				updatedSubscription,
+				validatedSubscriptionId,
+				currentSubscription,
+				updatedSubscription?.status || currentSubscription?.status || 'active',
+				updatedSubscription?.cancel_at_period_end ??
+					updatedSubscription?.cancelAtPeriodEnd ??
+					cancelAtPeriodEnd ??
+					false
+			);
 		} catch (error) {
 			this.logger.error('Failed to update Polar subscription', {
 				error: this.formatErrorMessage(error),
@@ -792,6 +887,144 @@ export class PolarProvider implements PaymentProviderInterface {
 			});
 			throw new Error(`Failed to update subscription: ${this.formatErrorMessage(error)}`);
 		}
+	}
+
+	/**
+	 * Helper method to update only subscription metadata
+	 */
+	private async updateSubscriptionMetadata(
+		subscriptionId: string,
+		metadata: Record<string, any>,
+		fallbackSubscription?: SubscriptionInfo
+	): Promise<SubscriptionInfo> {
+		const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+		const sanitized = this.sanitizeMetadata(metadata);
+
+		if (Object.keys(sanitized).length === 0) {
+			// No metadata to update, return fallback or get current subscription
+			if (fallbackSubscription) {
+				return fallbackSubscription;
+			}
+			const current = await getPolarSubscription(validatedSubscriptionId, this.polar, {
+				formatErrorMessage: this.formatErrorMessage.bind(this),
+				logger: this.logger
+			});
+			return mapPolarSubscriptionToInfo(
+				current,
+				validatedSubscriptionId,
+				current,
+				current?.status || 'active',
+				current?.cancel_at_period_end ?? current?.cancelAtPeriodEnd ?? false
+			);
+		}
+
+		// Get current subscription to extract product_id
+		// Polar API requires product_id for SubscriptionUpdateProduct type when updating metadata
+		const currentSubscription = await getPolarSubscription(validatedSubscriptionId, this.polar, {
+			formatErrorMessage: this.formatErrorMessage.bind(this),
+			logger: this.logger
+		});
+
+		// Extract product_id from current subscription (supports multiple formats)
+		const productId =
+			currentSubscription?.product?.id ||
+			currentSubscription?.productId ||
+			currentSubscription?.product_id ||
+			null;
+
+		if (!productId) {
+			this.logger.warn('Cannot update metadata: product_id not found in current subscription', {
+				subscriptionId: validatedSubscriptionId
+			});
+			// Return fallback or current subscription if we can't update
+			if (fallbackSubscription) {
+				return fallbackSubscription;
+			}
+			return mapPolarSubscriptionToInfo(
+				currentSubscription,
+				validatedSubscriptionId,
+				currentSubscription,
+				currentSubscription?.status || 'active',
+				currentSubscription?.cancel_at_period_end ?? currentSubscription?.cancelAtPeriodEnd ?? false
+			);
+		}
+
+		// Build update body with product_id and metadata
+		// This makes it a valid SubscriptionUpdateProduct request
+		const updateBody: any = {
+			product_id: productId,
+			metadata: sanitized
+		};
+
+		const apiUrl = this.getPolarApiUrl();
+		const response = await fetch(`${apiUrl}/v1/subscriptions/${validatedSubscriptionId}`, {
+			method: 'PATCH',
+			headers: {
+				Authorization: `Bearer ${this.apiKey}`,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(updateBody)
+		});
+
+		if (!response.ok) {
+			const errorText = await response.text().catch(() => 'Unknown error');
+			this.logger.error('Failed to update Polar subscription metadata', {
+				status: response.status,
+				error: errorText,
+				subscriptionId: validatedSubscriptionId
+			});
+			// If fallback exists, return it gracefully; otherwise propagate the error
+			if (fallbackSubscription) {
+				return fallbackSubscription;
+			}
+			throw new Error(`Failed to update subscription metadata: ${errorText}`);
+		}
+
+		const updated = await response.json().catch(() => null);
+
+		// Reuse the currentSubscription we already fetched earlier
+		// If we need to refresh it and don't have a fallback, try to get updated version
+		// Otherwise, use the one we already have
+		let subscriptionForMapping = currentSubscription;
+		if (!fallbackSubscription && !updated) {
+			try {
+				subscriptionForMapping = await getPolarSubscription(validatedSubscriptionId, this.polar, {
+					formatErrorMessage: this.formatErrorMessage.bind(this),
+					logger: this.logger
+				});
+			} catch (error) {
+				this.logger.warn(
+					'Failed to get current subscription after metadata update, using previously fetched version',
+					{
+						subscriptionId: validatedSubscriptionId,
+						error: this.formatErrorMessage(error)
+					}
+				);
+				// Keep using currentSubscription we already have
+			}
+		}
+
+		// Determine cancel_at_period_end value
+		let cancelAtPeriodEndValue = false;
+		if (updated?.cancel_at_period_end !== undefined) {
+			cancelAtPeriodEndValue = updated.cancel_at_period_end;
+		} else if (updated?.cancelAtPeriodEnd !== undefined) {
+			cancelAtPeriodEndValue = updated.cancelAtPeriodEnd;
+		} else if (subscriptionForMapping?.cancel_at_period_end !== undefined) {
+			cancelAtPeriodEndValue = subscriptionForMapping.cancel_at_period_end;
+		} else if (subscriptionForMapping?.cancelAtPeriodEnd !== undefined) {
+			cancelAtPeriodEndValue = subscriptionForMapping.cancelAtPeriodEnd;
+		} else if (fallbackSubscription?.cancelAtPeriodEnd !== undefined) {
+			cancelAtPeriodEndValue = fallbackSubscription.cancelAtPeriodEnd;
+		}
+
+		return mapPolarSubscriptionToInfo(
+			updated || subscriptionForMapping,
+			validatedSubscriptionId,
+			subscriptionForMapping || (fallbackSubscription as any),
+			updated?.status || subscriptionForMapping?.status || fallbackSubscription?.status || 'active',
+			cancelAtPeriodEndValue
+		);
 	}
 
 	/**
@@ -844,16 +1077,16 @@ export class PolarProvider implements PaymentProviderInterface {
 	}
 
 	/**
-	 * Verifies webhook signature using Polar's official signature format
-	 * Polar uses: HMAC SHA256 of raw request body only (hex digest)
-	 * The webhook secret must be base64-decoded before HMAC computation
+	 * Verifies webhook signature using Polar SDK's validateEvent function
+	 * Uses the official @polar-sh/sdk webhook validation utility
+	 * Also implements replay protection via timestamp and webhook-id checks
 	 *
-	 * @param signature - Received signature from header (hex format)
+	 * @param signature - Received signature header value (should include "v1," prefix, e.g., "v1,<hex_signature>")
 	 * @param rawBody - Raw request body (required, no fallback)
 	 * @param payload - Parsed payload (unused, kept for compatibility)
-	 * @param timestamp - Webhook timestamp (optional, used for replay protection only)
-	 * @param webhookId - Webhook ID (optional, not used in signature)
-	 * @throws Error if signature verification fails
+	 * @param timestamp - Webhook timestamp (optional, used for replay protection)
+	 * @param webhookId - Webhook ID (optional, used for idempotency/replay protection)
+	 * @throws Error if signature verification fails or replay protection checks fail
 	 */
 	private verifyWebhookSignature(
 		signature: string,
@@ -880,78 +1113,213 @@ export class PolarProvider implements PaymentProviderInterface {
 			throw new Error('Missing webhook-signature header required for signature verification');
 		}
 
-		// Validate timestamp replay protection if provided (optional but recommended)
-		if (timestamp) {
-			const webhookTime = parseInt(timestamp, 10);
-			const currentTime = Math.floor(Date.now() / 1000);
-			const tolerance = 300; // 5 minutes in seconds
+		try {
+			// Build headers object for validateEvent
+			// Polar SDK validateEvent expects headers with webhook-signature (full value including "v1," prefix),
+			// webhook-timestamp, and webhook-id
+			// The signature should be in format "v1,<hex_signature>" as sent by Polar
+			const headers: Record<string, string> = {
+				'webhook-signature': signature
+			};
 
-			if (isNaN(webhookTime)) {
-				this.logger.error('Invalid webhook timestamp format', {
-					bodyLength: rawBody.length
-				});
-				throw new Error('Invalid webhook timestamp format');
+			if (timestamp) {
+				headers['webhook-timestamp'] = timestamp;
 			}
 
-			if (Math.abs(currentTime - webhookTime) > tolerance) {
-				this.logger.error('Webhook timestamp is outside acceptable window', {
-					timeDifference: Math.abs(currentTime - webhookTime),
-					tolerance,
-					bodyLength: rawBody.length
-				});
-				throw new Error('Webhook timestamp is outside acceptable window');
+			if (webhookId) {
+				headers['webhook-id'] = webhookId;
 			}
-		}
 
-		// Base64-decode the webhook secret before HMAC computation (per Polar docs)
-		let secretKey: Buffer;
-		try {
-			secretKey = Buffer.from(this.webhookSecret, 'base64');
+			// Step 1: Verify HMAC signature using Polar SDK
+			// validateEvent takes the raw body, headers object, and secret
+			// It expects the webhook-signature header to contain the full value "v1,<signature>"
+			validateEvent(rawBody, headers, this.webhookSecret);
+
+			this.logger.debug('Webhook signature verified successfully using @polar-sh/sdk validateEvent', {
+				bodyLength: rawBody.length,
+				hasTimestamp: !!timestamp,
+				signatureFormat: signature.startsWith('v1,') ? 'v1,<signature>' : 'raw'
+			});
+
+			// Step 2: Replay protection - Timestamp validation
+			// Reject webhooks outside the acceptable time window (±300 seconds by default)
+			this.validateWebhookTimestamp(timestamp, rawBody.length, webhookId);
+
+			// Step 3: Replay protection - Idempotency check via webhook-id
+			// Ensure we haven't processed this webhook-id before
+			this.checkWebhookIdempotency(webhookId, rawBody.length, timestamp);
 		} catch (error) {
-			this.logger.error('Failed to base64-decode webhook secret', {
-				error: error instanceof Error ? error.message : String(error)
+			// Re-throw errors from replay protection checks as-is
+			if (
+				error instanceof Error &&
+				(error.message.includes('timestamp') || error.message.includes('webhook-id'))
+			) {
+				throw error;
+			}
+
+			this.logger.error('Webhook signature verification failed', {
+				error: error instanceof Error ? error.message : String(error),
+				bodyLength: rawBody.length,
+				hasTimestamp: !!timestamp,
+				hasWebhookId: !!webhookId,
+				signatureFormat: signature.startsWith('v1,') ? 'v1,<signature>' : 'raw'
 			});
-			throw new Error('Invalid webhook secret format (must be base64-encoded)');
+			throw new Error(
+				`Invalid webhook signature: ${error instanceof Error ? error.message : 'Verification failed'}`
+			);
+		}
+	}
+
+	/**
+	 * Validates webhook timestamp to prevent replay attacks
+	 * Rejects webhooks outside the acceptable time window
+	 *
+	 * @param timestamp - Webhook timestamp from header (Unix timestamp as string)
+	 * @param bodyLength - Length of the request body (for logging)
+	 * @param webhookId - Webhook ID (for logging)
+	 * @throws Error if timestamp is missing, invalid, or outside acceptable window
+	 */
+	private validateWebhookTimestamp(
+		timestamp: string | undefined,
+		bodyLength: number,
+		webhookId: string | undefined
+	): void {
+		// Timestamp is required for replay protection
+		if (!timestamp || typeof timestamp !== 'string' || timestamp.trim().length === 0) {
+			this.logger.error('Webhook timestamp missing or invalid', {
+				bodyLength,
+				webhookId: webhookId || 'unknown',
+				hasTimestamp: !!timestamp
+			});
+			throw new Error('Webhook timestamp is required for replay protection');
 		}
 
-		// Compute HMAC-SHA256 over raw body only (no webhookId or timestamp)
-		const expectedSignature = crypto
-			.createHmac('sha256', secretKey)
-			.update(rawBody, 'utf8')
-			.digest('hex');
-
-		// Convert incoming signature from hex to buffer for timing-safe comparison
-		let signatureBuffer: Buffer;
-		try {
-			signatureBuffer = Buffer.from(signature, 'hex');
-		} catch (error) {
-			this.logger.error('Invalid signature format (expected hex)', {
-				error: error instanceof Error ? error.message : String(error)
+		// Parse timestamp (Polar sends Unix timestamp as string)
+		const webhookTimestamp = parseInt(timestamp, 10);
+		if (isNaN(webhookTimestamp) || webhookTimestamp <= 0) {
+			this.logger.error('Webhook timestamp is not a valid number', {
+				bodyLength,
+				webhookId: webhookId || 'unknown',
+				timestamp
 			});
-			throw new Error('Invalid webhook signature format (expected hexadecimal)');
+			throw new Error(`Invalid webhook timestamp format: ${timestamp}`);
 		}
 
-		const expectedSignatureBuffer = Buffer.from(expectedSignature, 'hex');
+		// Calculate time difference in seconds
+		const currentTimestamp = Math.floor(Date.now() / 1000);
+		const timeDifference = Math.abs(currentTimestamp - webhookTimestamp);
 
-		// Use constant-time comparison to prevent timing attacks
-		// timingSafeEqual requires buffers of equal length
-		const signaturesMatch =
-			signatureBuffer.length === expectedSignatureBuffer.length &&
-			crypto.timingSafeEqual(signatureBuffer, expectedSignatureBuffer);
-
-		if (!signaturesMatch) {
-			this.logger.error('Invalid webhook signature', {
-				expectedLength: expectedSignature.length,
-				receivedLength: signature.length,
-				bodyLength: rawBody.length
+		// Reject if timestamp is outside acceptable window
+		if (timeDifference > this.REPLAY_PROTECTION_WINDOW_SECONDS) {
+			this.logger.error('Webhook timestamp outside acceptable window', {
+				bodyLength,
+				webhookId: webhookId || 'unknown',
+				webhookTimestamp,
+				currentTimestamp,
+				timeDifferenceSeconds: timeDifference,
+				windowSeconds: this.REPLAY_PROTECTION_WINDOW_SECONDS,
+				isTooOld: webhookTimestamp < currentTimestamp
 			});
-			throw new Error('Invalid webhook signature');
+			throw new Error(
+				`Webhook timestamp outside acceptable window: ${timeDifference} seconds difference (max: ${this.REPLAY_PROTECTION_WINDOW_SECONDS} seconds)`
+			);
 		}
 
-		this.logger.debug('Webhook signature verified successfully', {
-			bodyLength: rawBody.length,
-			hasTimestamp: !!timestamp
+		this.logger.debug('Webhook timestamp validation passed', {
+			bodyLength,
+			webhookId: webhookId || 'unknown',
+			timeDifferenceSeconds: timeDifference
 		});
+	}
+
+	/**
+	 * Checks webhook idempotency to prevent duplicate processing
+	 * Uses in-memory cache with TTL to track processed webhook IDs
+	 *
+	 * @param webhookId - Webhook ID from header
+	 * @param bodyLength - Length of the request body (for logging)
+	 * @param timestamp - Webhook timestamp (for logging)
+	 * @throws Error if webhook-id is missing or has already been processed
+	 */
+	private checkWebhookIdempotency(
+		webhookId: string | undefined,
+		bodyLength: number,
+		timestamp: string | undefined
+	): void {
+		// Webhook ID is required for idempotency checks
+		if (!webhookId || typeof webhookId !== 'string' || webhookId.trim().length === 0) {
+			this.logger.error('Webhook ID missing or invalid', {
+				bodyLength,
+				timestamp: timestamp || 'unknown',
+				hasWebhookId: !!webhookId
+			});
+			throw new Error('Webhook ID is required for idempotency protection');
+		}
+
+		// Clean up expired cache entries periodically (every 100 checks, approximately)
+		if (Math.random() < 0.01) {
+			this.cleanupExpiredWebhookIds();
+		}
+
+		// Check if webhook ID was already processed
+		const existingEntry = this.webhookIdCache.get(webhookId);
+		const now = Date.now();
+
+		if (existingEntry) {
+			// Check if entry is still valid (not expired)
+			if (existingEntry.expiresAt > now) {
+				this.logger.error('Webhook ID already processed (duplicate/replay detected)', {
+					bodyLength,
+					webhookId,
+					timestamp: timestamp || 'unknown',
+					previouslyProcessedAt: new Date(existingEntry.processedAt).toISOString(),
+					timeSinceFirstProcessing: Math.floor((now - existingEntry.processedAt) / 1000) + ' seconds'
+				});
+				throw new Error(`Webhook ID already processed: ${webhookId} (replay attack detected)`);
+			} else {
+				// Entry expired, remove it
+				this.webhookIdCache.delete(webhookId);
+			}
+		}
+
+		// Record this webhook ID with TTL
+		const cacheEntry: WebhookIdCacheEntry = {
+			webhookId,
+			processedAt: now,
+			expiresAt: now + this.WEBHOOK_ID_CACHE_TTL_MS
+		};
+
+		this.webhookIdCache.set(webhookId, cacheEntry);
+
+		this.logger.debug('Webhook ID recorded for idempotency', {
+			bodyLength,
+			webhookId,
+			timestamp: timestamp || 'unknown',
+			expiresAt: new Date(cacheEntry.expiresAt).toISOString()
+		});
+	}
+
+	/**
+	 * Cleans up expired webhook ID cache entries
+	 * Removes entries that have exceeded their TTL
+	 */
+	private cleanupExpiredWebhookIds(): void {
+		const now = Date.now();
+		let cleanedCount = 0;
+
+		for (const [webhookId, entry] of this.webhookIdCache.entries()) {
+			if (entry.expiresAt <= now) {
+				this.webhookIdCache.delete(webhookId);
+				cleanedCount++;
+			}
+		}
+
+		if (cleanedCount > 0) {
+			this.logger.debug('Cleaned up expired webhook ID cache entries', {
+				cleanedCount,
+				remainingEntries: this.webhookIdCache.size
+			});
+		}
 	}
 
 	/**
@@ -1140,8 +1508,8 @@ export class PolarProvider implements PaymentProviderInterface {
 	 * Uses sandbox URL if in sandbox mode, otherwise production
 	 */
 	private getPolarApiUrl(): string {
-		if (process.env.POLAR_API_URL) {
-			return process.env.POLAR_API_URL;
+		if (this.configuredApiUrl) {
+			return this.configuredApiUrl;
 		}
 		// Use sandbox URL if sandbox mode is enabled
 		return this.isSandbox ? 'https://sandbox-api.polar.sh' : 'https://api.polar.sh';

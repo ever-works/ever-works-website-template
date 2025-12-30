@@ -4,6 +4,7 @@ import {
   validateEnvVariables,
   logError,
 } from "../utils/error-handler";
+import { coreConfig, authConfig } from "@/lib/config/config-service";
 export { logError } from "../utils/error-handler";
 
 /**
@@ -17,7 +18,7 @@ export function validateAuthConfig() {
   const providerEnvVars = {
     google: ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"],
     github: ["GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"],
-    facebook: ["FACEBOOK_CLIENT_ID", "FACEBOOK_CLIENT_SECRET"],
+    facebook: ["FB_CLIENT_ID", "FB_CLIENT_SECRET"],
     microsoft: ["MICROSOFT_CLIENT_ID", "MICROSOFT_CLIENT_SECRET"],
     supabase: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
   };
@@ -26,9 +27,9 @@ export function validateAuthConfig() {
   const baseError = validateEnvVariables(baseNextAuthVars);
   if (baseError) {
     // Suppress warnings during CI/linting
-    const shouldSuppress = 
+    const shouldSuppress =
       process.env.CI === 'true' ||
-      process.env.NODE_ENV === 'test' ||
+      coreConfig.NODE_ENV === 'test' ||
       process.argv.some(arg => /(?:^|[/\\])(eslint|lint(?:-staged)?)(?:\.[jt]s)?$/.test(arg));
     
     if (!shouldSuppress) {
@@ -76,26 +77,26 @@ export function configureOAuthProviders() {
     {
       id: "google",
       enabled: enabledProviders.google,
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: authConfig.google.clientId,
+      clientSecret: authConfig.google.clientSecret,
     },
     {
       id: "github",
       enabled: enabledProviders.github,
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      clientId: authConfig.github.clientId,
+      clientSecret: authConfig.github.clientSecret,
     },
     {
       id: "facebook",
       enabled: enabledProviders.facebook,
-      clientId: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+      clientId: authConfig.facebook.clientId,
+      clientSecret: authConfig.facebook.clientSecret,
     },
     {
       id: "microsoft",
       enabled: enabledProviders.microsoft,
-      clientId: process.env.MICROSOFT_CLIENT_ID,
-      clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
+      clientId: authConfig.microsoft.clientId,
+      clientSecret: authConfig.microsoft.clientSecret,
     },
   ];
 
@@ -130,7 +131,7 @@ export function handleAuthError(error: any): { error: string } {
         message: "GitHub authentication is not properly configured",
       },
       {
-        pattern: /FACEBOOK_CLIENT_ID/i,
+        pattern: /FB_CLIENT_ID/i,
         message: "Facebook authentication is not properly configured",
       },
       {

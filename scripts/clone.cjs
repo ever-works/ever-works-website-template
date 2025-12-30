@@ -27,6 +27,13 @@ const auth = { username: "x-access-token", password: token };
 const dest = getContentPath();
 
 async function main() {
+  // If already cloned, skip to avoid wiping local content
+  const gitDir = path.join(dest, '.git');
+  if (fs.existsSync(gitDir)) {
+    console.log("Content repo already present, skipping clone:", dest);
+    return;
+  }
+
   await fs.promises.mkdir(dest, { recursive: true });
 
   console.log("Cloning content repository to", dest);

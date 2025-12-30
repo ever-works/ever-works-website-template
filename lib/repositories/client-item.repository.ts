@@ -9,6 +9,7 @@ import {
 } from '@/lib/types/client-item';
 import { ItemRepository } from './item.repository';
 import { slugify } from '@/lib/utils/slug';
+import { getViewsPerItem } from '@/lib/db/queries/item-view.queries';
 
 /**
  * Repository for client-side item management operations.
@@ -105,10 +106,14 @@ export class ClientItemRepository {
     // Get stats for this user
     const stats = await this.getStatsByUser(userId);
 
+    // Get view counts for items
+    const itemSlugs = result.items.map(item => item.slug);
+    const viewsMap = await getViewsPerItem(itemSlugs);
+
     // Convert items to ClientSubmissionData (add engagement metrics)
     const items: ClientSubmissionData[] = result.items.map(item => ({
       ...item,
-      views: 0, // TODO: Fetch from engagement tracking system
+      views: viewsMap.get(item.slug) ?? 0,
       likes: 0, // TODO: Fetch from engagement tracking system
     }));
 
@@ -138,9 +143,12 @@ export class ClientItemRepository {
       return null;
     }
 
+    // Get view count for this item
+    const viewsMap = await getViewsPerItem([item.slug]);
+
     return {
       ...item,
-      views: 0, // TODO: Fetch from engagement tracking system
+      views: viewsMap.get(item.slug) ?? 0,
       likes: 0, // TODO: Fetch from engagement tracking system
     };
   }
@@ -275,10 +283,14 @@ export class ClientItemRepository {
     const startIndex = (page - 1) * limit;
     const paginatedItems = allDeletedItems.slice(startIndex, startIndex + limit);
 
+    // Get view counts for paginated items
+    const itemSlugs = paginatedItems.map(item => item.slug);
+    const viewsMap = await getViewsPerItem(itemSlugs);
+
     // Convert to ClientSubmissionData
     const items: ClientSubmissionData[] = paginatedItems.map(item => ({
       ...item,
-      views: 0,
+      views: viewsMap.get(item.slug) ?? 0,
       likes: 0,
     }));
 

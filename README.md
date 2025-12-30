@@ -90,10 +90,20 @@ Create a `.env.local` file in the root directory with the following configuratio
 NODE_ENV=development
 
 # API Configuration
+# Internal website API (Next.js API routes)
 NEXT_PUBLIC_API_BASE_URL="http://localhost:3000/api"
 API_TIMEOUT=10000
 API_RETRY_ATTEMPTS=3
 API_RETRY_DELAY=1000
+
+# Ever Works Platform API (optional)
+# Used for automatic metadata extraction from URLs when submitting items, data sync, and other advanced features
+# Register at https://api.ever.works to get access.
+# If not configured, the extraction feature and other advanced functionality will be disabled.
+# Base URL of the Ever Works Platform API:
+PLATFORM_API_URL="https://api.ever.works/api" # For local dev, you should use "http://localhost:3100/api"
+# Secret Token for Platform API (register at https://api.ever.works to get secret token)
+PLATFORM_API_SECRET_TOKEN="your-platform-api-secret-token"
 
 # Cookie Security
 COOKIE_SECRET="your-secure-cookie-secret"  # Generate with: openssl rand -base64 32

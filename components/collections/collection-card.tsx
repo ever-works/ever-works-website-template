@@ -1,6 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { Spinner } from "@heroui/react";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Collection } from "@/types/collection";
 
 interface CollectionCardProps {
@@ -9,9 +12,18 @@ interface CollectionCardProps {
 
 export function CollectionCard({ collection }: CollectionCardProps) {
   const t = useTranslations("common");
+  const [isNavigating, setIsNavigating] = useState(false);
+  const pathname = usePathname();
+
+  // Reset spinner when route changes (e.g., back navigation)
+  useEffect(() => {
+    setIsNavigating(false);
+  }, [pathname]);
   
 return (
-  <div
+  <Link
+    href={`/collections/${collection.slug}`}
+    onClick={() => setIsNavigating(true)}
     className="group relative block p-6 bg-linear-to-br from-white via-red-50/30 to-red-100/20 
       dark:from-gray-800 dark:via-red-900/10 dark:to-red-900/5
       rounded-2xl border border-gray-200 dark:border-gray-700 
@@ -42,7 +54,7 @@ return (
         group-hover:border-theme-primary/30 dark:group-hover:border-theme-primary/40
         transition-all duration-300">
         <span>
-          {t("COLLECTION_ITEMS", { count: collection.item_count })}
+          {t("COLLECTION_ITEMS", { count: collection.items?.length ?? collection.item_count ?? 0 })}
         </span>
       </div>
     </div>
@@ -97,6 +109,12 @@ return (
     <div className="absolute top-0 right-0 w-32 h-32 -translate-y-1/2 translate-x-1/2 
       bg-theme-primary/5 rounded-full blur-2xl group-hover:blur-2xl 
       transition-all duration-500"></div>
-  </div>
+
+    {isNavigating && (
+      <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xs rounded-2xl flex items-center justify-center z-50 transition-opacity duration-300">
+        <Spinner size="lg" color="primary" />
+      </div>
+    )}
+  </Link>
 );
 }

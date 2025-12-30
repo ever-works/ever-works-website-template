@@ -1,5 +1,9 @@
+'use client';
+
 import { CreditCard, Calendar, DollarSign, ExternalLink, Download, CheckCircle, Clock, AlertCircle, X, Edit3 } from 'lucide-react';
 import { useState } from 'react';
+import { useLocale } from 'next-intl';
+import { formatCurrencyAmount } from '@/lib/utils/currency-format';
 
 interface PaymentHistoryItem {
   id: string;
@@ -22,19 +26,6 @@ const formatDate = (date: string) => new Date(date).toLocaleDateString(undefined
   month: 'short', 
   day: 'numeric' 
 });
-
-const formatAmount = (amount: number, currency: string) => {
-  const currencySymbols: Record<string, string> = {
-    'USD': '$',
-    'EUR': '€',
-    'GBP': '£',
-    'CAD': 'C$',
-    'AUD': 'A$'
-  };
-  
-  const symbol = currencySymbols[currency] || currency;
-  return `${symbol}${amount.toFixed(2)}`;
-};
 
 const getStatusConfig = (status: string) => {
   switch (status.toLowerCase()) {
@@ -97,6 +88,7 @@ const getProviderIcon = (provider: string) => {
 };
 
 export function PaymentCard({ payment }: { payment: PaymentHistoryItem }) {
+  const locale = useLocale();
   const [isModifyModalOpen, setIsModifyModalOpen] = useState(false);
   const statusConfig = getStatusConfig(payment.status);
   const StatusIcon = statusConfig.icon;
@@ -178,7 +170,7 @@ export function PaymentCard({ payment }: { payment: PaymentHistoryItem }) {
         {/* Right Section - Amount and Actions */}
         <div className="text-right ml-6">
           <div className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1 group-hover:text-slate-800 dark:group-hover:text-white transition-colors">
-            {formatAmount(payment.amount, payment.currency)}
+            {formatCurrencyAmount(payment.amount, payment.currency, locale)}
           </div>
           
           <div className="text-sm text-slate-600 dark:text-slate-300 mb-3">

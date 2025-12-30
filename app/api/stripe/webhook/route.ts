@@ -8,16 +8,18 @@ import {
 	formatPaymentMethod,
 	formatBillingDate,
 	getPlanName,
-	getBillingPeriod
+	getBillingPeriod,
 } from '@/lib/payment/services/payment-email.service';
 
 // Import server configuration utility
 import { getEmailConfig } from '@/lib/config/server-config';
+import { coreConfig, emailConfig as globalEmailConfig } from '@/lib/config/config-service';
 import { WebhookSubscriptionService } from '@/lib/services/webhook-subscription.service';
+import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
 import { getOrCreateStripeProvider } from '@/lib/auth';
 const webhookSubscriptionService = new WebhookSubscriptionService();
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const appUrl = coreConfig.APP_URL || 'https://demo.ever.works';
 
 // Utility function to create email data with secure configuration
 function createEmailData(baseData: any, emailConfig: Awaited<ReturnType<typeof getEmailConfig>>) {
@@ -299,6 +301,13 @@ async function handlePaymentFailed(data: any) {
 async function handleSubscriptionCreated(data: any) {
 	console.log('Subscription created:', data.id);
 
+	// Check if this is a sponsor ad subscription
+	if (isSponsorAdSubscription(data)) {
+		console.log('📢 Sponsor ad subscription detected');
+		await handleSponsorAdActivation(data);
+		return;
+	}
+
 	try {
 		await webhookSubscriptionService.handleSubscriptionCreated(data);
 
@@ -324,7 +333,7 @@ async function handleSubscriptionCreated(data: any) {
 			manageSubscriptionUrl: `${appUrl || ''}/settings/subscription`,
 			companyName: emailConfig?.companyName,
 			companyUrl: emailConfig?.companyUrl,
-			supportEmail: process.env.EMAIL_SUPPORT,
+			supportEmail: globalEmailConfig.EMAIL_SUPPORT || 'support@ever.works',
 			features: getSubscriptionFeatures(planName)
 		};
 
@@ -368,8 +377,8 @@ async function handleSubscriptionUpdated(data: any) {
 			subscriptionId: data.id,
 			manageSubscriptionUrl: `${appUrl || ''}/settings/subscription`,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
-			supportEmail: process.env.EMAIL_SUPPORT || 'support@ever.works',
+			companyUrl: coreConfig.SITE_URL || 'https://ever.works',
+			supportEmail: globalEmailConfig.EMAIL_SUPPORT || 'support@ever.works',
 			features: getSubscriptionFeatures(planName)
 		};
 
@@ -388,6 +397,13 @@ async function handleSubscriptionUpdated(data: any) {
 
 async function handleSubscriptionCancelled(data: any) {
 	console.log('Subscription cancelled:', data.id);
+
+	// Check if this is a sponsor ad subscription
+	if (isSponsorAdSubscription(data)) {
+		console.log('📢 Sponsor ad subscription cancellation detected');
+		await handleSponsorAdCancellation(data);
+		return;
+	}
 
 	try {
 		await webhookSubscriptionService.handleSubscriptionCancelled(data);
@@ -410,8 +426,8 @@ async function handleSubscriptionCancelled(data: any) {
 			cancellationReason: data.cancellation_details?.reason || 'Cancellation requested by user',
 			reactivateUrl: `${appUrl || ''}/subscription/reactivate?subscription=${data.id}`,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
-			supportEmail: process.env.EMAIL_SUPPORT || 'support@ever.works'
+			companyUrl: coreConfig.SITE_URL || 'https://ever.works',
+			supportEmail: globalEmailConfig.EMAIL_SUPPORT || 'support@ever.works'
 		};
 
 		// Send cancellation email
@@ -429,6 +445,13 @@ async function handleSubscriptionCancelled(data: any) {
 
 async function handleSubscriptionPaymentSucceeded(data: any) {
 	console.log('Subscription payment succeeded:', data.id);
+
+	// Check if this is a sponsor ad subscription (for renewals)
+	if (isSponsorAdSubscription(data)) {
+		console.log('📢 Sponsor ad payment succeeded (renewal)');
+		await handleSponsorAdRenewal(data);
+		return;
+	}
 
 	try {
 		await webhookSubscriptionService.handleSubscriptionPaymentSucceeded(data);
@@ -458,8 +481,8 @@ async function handleSubscriptionPaymentSucceeded(data: any) {
 				: undefined,
 			receiptUrl: data.receipt_url,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
-			supportEmail: process.env.EMAIL_SUPPORT || 'support@ever.works'
+			companyUrl: coreConfig.SITE_URL || 'https://ever.works',
+			supportEmail: globalEmailConfig.EMAIL_SUPPORT || 'support@ever.works'
 		};
 
 		// Send confirmation email
@@ -504,8 +527,8 @@ async function handleSubscriptionPaymentFailed(data: any) {
 			retryUrl: `${appUrl || ''}/subscription/retry?invoice=${data.id}`,
 			updatePaymentUrl: `${appUrl || ''}/settings/payment-methods`,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
-			supportEmail: process.env.EMAIL_SUPPORT || 'support@ever.works'
+			companyUrl: coreConfig.SITE_URL || 'https://ever.works',
+			supportEmail: globalEmailConfig.EMAIL_SUPPORT || 'support@ever.works'
 		};
 
 		// Send failure email
@@ -548,8 +571,8 @@ async function handleSubscriptionTrialEnding(data: any) {
 			subscriptionId: data.id,
 			manageSubscriptionUrl: `${appUrl || ''}/settings/subscription`,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
-			supportEmail: process.env.EMAIL_SUPPORT || 'support@ever.works'
+			companyUrl: coreConfig.SITE_URL || 'https://ever.works',
+			supportEmail: globalEmailConfig.EMAIL_SUPPORT || 'support@ever.works'
 		};
 
 		// Send trial ending notification email
@@ -588,4 +611,117 @@ function getSubscriptionFeatures(planName: string): string[] {
 	};
 
 	return features[planName] || features['Standard Plan'];
+}
+
+// ######################### Sponsor Ad Webhook Handlers #########################
+
+/**
+ * Check if subscription metadata indicates a sponsor ad
+ */
+function isSponsorAdSubscription(data: Record<string, unknown>): boolean {
+	const metadata = data.metadata as Record<string, string> | undefined;
+	const subscriptionMetadata = (data.subscription_data as Record<string, unknown>)?.metadata as Record<string, string> | undefined;
+
+	return metadata?.type === 'sponsor_ad' || subscriptionMetadata?.type === 'sponsor_ad';
+}
+
+/**
+ * Get sponsor ad ID from subscription metadata
+ */
+function getSponsorAdId(data: Record<string, unknown>): string | null {
+	const metadata = data.metadata as Record<string, string> | undefined;
+	const subscriptionMetadata = (data.subscription_data as Record<string, unknown>)?.metadata as Record<string, string> | undefined;
+
+	return metadata?.sponsorAdId || subscriptionMetadata?.sponsorAdId || null;
+}
+
+/**
+ * Handle sponsor ad subscription created/payment succeeded
+ * Activates the sponsor ad after successful payment
+ */
+async function handleSponsorAdActivation(data: Record<string, unknown>): Promise<void> {
+	const sponsorAdId = getSponsorAdId(data);
+
+	if (!sponsorAdId) {
+		console.error('❌ Sponsor ad ID not found in subscription metadata');
+		return;
+	}
+
+	try {
+		const subscriptionId = data.id as string;
+		const customerId = data.customer as string;
+
+		console.log(`🔄 Confirming payment for sponsor ad: ${sponsorAdId}`);
+
+		const confirmedAd = await sponsorAdService.confirmPayment(
+			sponsorAdId,
+			subscriptionId,
+			customerId
+		);
+
+		if (confirmedAd) {
+			console.log(`✅ Sponsor ad payment confirmed, now pending admin review: ${sponsorAdId}`);
+		} else {
+			console.error(`❌ Failed to confirm sponsor ad payment: ${sponsorAdId}`);
+		}
+	} catch (error) {
+		console.error('❌ Error activating sponsor ad:', error);
+	}
+}
+
+/**
+ * Handle sponsor ad subscription cancelled
+ * Cancels the sponsor ad
+ */
+async function handleSponsorAdCancellation(data: Record<string, unknown>): Promise<void> {
+	const sponsorAdId = getSponsorAdId(data);
+
+	if (!sponsorAdId) {
+		console.error('❌ Sponsor ad ID not found in subscription metadata');
+		return;
+	}
+
+	try {
+		console.log(`🔄 Cancelling sponsor ad: ${sponsorAdId}`);
+
+		const cancelledAd = await sponsorAdService.cancelSponsorAd(
+			sponsorAdId,
+			'Subscription cancelled'
+		);
+
+		if (cancelledAd) {
+			console.log(`✅ Sponsor ad cancelled successfully: ${sponsorAdId}`);
+		} else {
+			console.error(`❌ Failed to cancel sponsor ad: ${sponsorAdId}`);
+		}
+	} catch (error) {
+		console.error('❌ Error cancelling sponsor ad:', error);
+	}
+}
+
+/**
+ * Handle sponsor ad subscription renewal
+ * Extends the sponsor ad end date
+ */
+async function handleSponsorAdRenewal(data: Record<string, unknown>): Promise<void> {
+	const sponsorAdId = getSponsorAdId(data);
+
+	if (!sponsorAdId) {
+		console.error('❌ Sponsor ad ID not found in subscription metadata');
+		return;
+	}
+
+	try {
+		console.log(`🔄 Renewing sponsor ad: ${sponsorAdId}`);
+
+		const renewedAd = await sponsorAdService.renewSponsorAd(sponsorAdId);
+
+		if (renewedAd) {
+			console.log(`✅ Sponsor ad renewed successfully: ${sponsorAdId}`);
+		} else {
+			console.error(`❌ Failed to renew sponsor ad: ${sponsorAdId}`);
+		}
+	} catch (error) {
+		console.error('❌ Error renewing sponsor ad:', error);
+	}
 }

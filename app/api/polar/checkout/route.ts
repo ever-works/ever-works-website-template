@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, getOrCreatePolarProvider } from '@/lib/auth';
+import { coreConfig } from '@/lib/config/config-service';
 
 /**
  * @swagger
@@ -314,7 +315,7 @@ export async function POST(request: NextRequest) {
 			{
 				error: errorMessage,
 				message: errorMessage,
-				details: process.env.NODE_ENV === 'development' && error instanceof Error ? error.stack : undefined
+				details: coreConfig.NODE_ENV === 'development' && error instanceof Error ? error.stack : undefined
 			},
 			{ status: statusCode }
 		);
@@ -460,7 +461,7 @@ export async function GET(request: NextRequest) {
 		return NextResponse.json(
 			{
 				error: errorMessage,
-				details: process.env.NODE_ENV === 'development' && error instanceof Error ? error.stack : undefined
+				details: coreConfig.NODE_ENV === 'development' && error instanceof Error ? error.stack : undefined
 			},
 			{ status: 500 }
 		);

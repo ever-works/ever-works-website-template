@@ -82,13 +82,13 @@ export class StripeProvider implements PaymentProviderInterface {
 	private webhookSecret: string;
 	private publishableKey: string;
 
-  constructor(config: PaymentProviderConfig) {
-    this.stripe = new Stripe(config.apiKey, {
-      apiVersion: '2025-07-30.basil' as Stripe.LatestApiVersion,
-    });
-    this.webhookSecret = config.webhookSecret!;
-    this.publishableKey = config.options?.publishableKey || '';
-  }
+	constructor(config: PaymentProviderConfig) {
+		this.stripe = new Stripe(config.apiKey, {
+			apiVersion: '2025-07-30.basil' as Stripe.LatestApiVersion
+		});
+		this.webhookSecret = config.webhookSecret!;
+		this.publishableKey = config.options?.publishableKey || '';
+	}
 
 	// Public method to get Stripe instance
 	public getStripeInstance(): Stripe {
@@ -182,7 +182,7 @@ export class StripeProvider implements PaymentProviderInterface {
 				this.logger.debug('Payment account not found (404) - this is expected for new users', { userId });
 				return null;
 			}
-			
+
 			this.logger.warn('Error retrieving from database', {
 				userId,
 				error: this.formatErrorMessage(error)
@@ -224,7 +224,6 @@ export class StripeProvider implements PaymentProviderInterface {
 		};
 	}
 
-
 	private async synchronizePaymentAccount(userId: string, customerId: string): Promise<void> {
 		try {
 			const paymentAccount = await paymentAccountClient.setupPaymentAccount({
@@ -246,7 +245,7 @@ export class StripeProvider implements PaymentProviderInterface {
 					customerId,
 					error: this.formatErrorMessage(error)
 				});
-				
+
 				// Try to get the existing account and update it
 				try {
 					const existingAccount = await paymentAccountClient.getPaymentAccount(userId, 'stripe');
@@ -266,7 +265,7 @@ export class StripeProvider implements PaymentProviderInterface {
 					});
 				}
 			}
-			
+
 			this.logger.error('Failed to synchronize PaymentAccount in database', {
 				userId,
 				customerId,
@@ -430,7 +429,6 @@ export class StripeProvider implements PaymentProviderInterface {
 		try {
 			const { customerId, paymentMethodId, priceId, trialPeriodDays, metadata } = params;
 
-			const subscription_price_id = process.env.NEXT_PUBLIC_STRIPE_SUBSCRIPTION_PRICE_ID;
 
 			// If a paymentMethodId is provided, we need to first attach it to the client
 			if (paymentMethodId) {
@@ -488,7 +486,7 @@ export class StripeProvider implements PaymentProviderInterface {
 				cancelAtPeriodEnd: subscription.cancel_at_period_end,
 				cancelAt: subscription.cancel_at || null,
 				trialEnd: subscription.trial_end || null,
-				priceId: subscription.items.data[0]?.price?.id || subscription_price_id!,
+				priceId: subscription.items.data[0]?.price?.id || priceId,
 				paymentIntentId
 			};
 		} catch (error) {
@@ -558,7 +556,17 @@ export class StripeProvider implements PaymentProviderInterface {
 			}
 
 			const subscription = await this.stripe.subscriptions.update(subscriptionId, updateParams);
-
+			// Log only non-sensitive subscription fields
+			if (process.env.NODE_ENV === 'development') {
+				console.log('Stripe updateSubscription:', {
+					id: subscription.id,
+					status: subscription.status,
+					cancelAtPeriodEnd: subscription.cancel_at_period_end,
+					cancelAt: subscription.cancel_at,
+					trialEnd: subscription.trial_end,
+					priceId: subscription.items.data[0]?.price?.id
+				});
+			}
 			return {
 				id: subscription.id,
 				customerId: subscription.customer as string,
@@ -575,7 +583,13 @@ export class StripeProvider implements PaymentProviderInterface {
 		}
 	}
 
-	async handleWebhook(payload: any, signature: string, rawBody?: string, timestamp?: string, webhookId?: string): Promise<WebhookResult> {
+	async handleWebhook(
+		payload: any,
+		signature: string,
+		rawBody?: string,
+		timestamp?: string,
+		webhookId?: string
+	): Promise<WebhookResult> {
 		try {
 			const event = this.stripe.webhooks.constructEvent(payload, signature, this.webhookSecret);
 

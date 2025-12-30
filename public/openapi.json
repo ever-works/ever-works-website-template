@@ -19,6 +19,601 @@
       "description": "Production server"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "sessionAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Bearer token"
+      },
+      "session": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "session_token",
+        "description": "Session cookie"
+      },
+      "cronSecret": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Secret",
+        "description": "Cron Job Secret Key"
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "string",
+            "example": "Error message"
+          }
+        },
+        "required": [
+          "success",
+          "error"
+        ]
+      },
+      "PaginationMeta": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page",
+            "example": 20
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of responses",
+            "example": 150
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of pages",
+            "example": 8
+          }
+        },
+        "required": [
+          "page",
+          "pageSize",
+          "total",
+          "totalPages"
+        ]
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {},
+            "description": "List of items on the current page"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        },
+        "required": [
+          "items",
+          "pagination"
+        ]
+      },
+      "ClientProfile": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique client profile identifier",
+            "example": "client_123abc"
+          },
+          "userId": {
+            "type": "string",
+            "description": "Associated user ID",
+            "example": "user_456def"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Client email address",
+            "example": "john.doe@example.com"
+          },
+          "name": {
+            "type": "string",
+            "description": "Client full name",
+            "example": "John Doe"
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Display name for the client",
+            "example": "John Doe"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique username",
+            "example": "johndoe"
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true,
+            "description": "Client biography",
+            "example": "Software engineer with 5+ years experience"
+          },
+          "jobTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title",
+            "example": "Senior Software Engineer"
+          },
+          "company": {
+            "type": "string",
+            "nullable": true,
+            "description": "Company name",
+            "example": "Tech Corp Inc"
+          },
+          "industry": {
+            "type": "string",
+            "nullable": true,
+            "description": "Industry sector",
+            "example": "Technology"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "Phone number",
+            "example": "+1-555-123-4567"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Personal or company website",
+            "example": "https://johndoe.com"
+          },
+          "location": {
+            "type": "string",
+            "nullable": true,
+            "description": "Geographic location",
+            "example": "San Francisco, CA"
+          },
+          "avatar": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Avatar image URL",
+            "example": "https://example.com/avatars/johndoe.jpg"
+          },
+          "accountType": {
+            "type": "string",
+            "enum": [
+              "individual",
+              "business",
+              "enterprise"
+            ],
+            "description": "Type of account",
+            "example": "business"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "suspended",
+              "trial"
+            ],
+            "description": "Account status",
+            "example": "active"
+          },
+          "plan": {
+            "type": "string",
+            "enum": [
+              "free",
+              "standard",
+              "premium"
+            ],
+            "description": "Subscription plan",
+            "example": "premium"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Client timezone",
+            "example": "America/New_York"
+          },
+          "language": {
+            "type": "string",
+            "description": "Preferred language",
+            "example": "en"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean",
+            "description": "Whether two-factor authentication is enabled",
+            "example": true
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "description": "Whether email is verified",
+            "example": true
+          },
+          "totalSubmissions": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total number of submissions",
+            "example": 25
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true,
+            "description": "Admin notes about the client",
+            "example": "VIP client, priority support"
+          },
+          "tags": {
+            "type": "string",
+            "nullable": true,
+            "description": "Client tags (comma-separated)",
+            "example": "vip,enterprise,priority"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Profile creation timestamp",
+            "example": "2024-01-15T10:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Profile last update timestamp",
+            "example": "2024-01-20T14:45:00.000Z"
+          },
+          "accountProvider": {
+            "type": "string",
+            "description": "Authentication provider",
+            "example": "google"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the account is currently active",
+            "example": true
+          },
+          "lastActiveAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Last activity timestamp",
+            "example": "2024-01-20T14:45:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "email",
+          "name",
+          "accountType",
+          "status",
+          "plan",
+          "timezone",
+          "language",
+          "twoFactorEnabled",
+          "emailVerified",
+          "totalSubmissions",
+          "createdAt",
+          "updatedAt",
+          "accountProvider",
+          "isActive"
+        ]
+      },
+      "Company": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique company identifier (UUID)",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Company name",
+            "example": "Acme Corporation"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Company website URL",
+            "example": "https://acme.com"
+          },
+          "domain": {
+            "type": "string",
+            "nullable": true,
+            "description": "Company domain (normalized, without www.)",
+            "example": "acme.com"
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL-friendly company identifier",
+            "example": "acme-corporation"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ],
+            "description": "Company status",
+            "example": "active"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Company creation timestamp",
+            "example": "2024-01-15T10:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp",
+            "example": "2024-01-20T14:45:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Survey": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique survey identifier",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL-friendly survey identifier",
+            "example": "customer-satisfaction-2024"
+          },
+          "title": {
+            "type": "string",
+            "description": "Survey title",
+            "example": "Customer Satisfaction Survey"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Survey description",
+            "example": "Help us improve our services"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "global",
+              "item"
+            ],
+            "description": "Survey type - global or item-specific",
+            "example": "global"
+          },
+          "itemId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Associated item ID for item-specific surveys",
+            "example": "item-123"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published",
+              "closed"
+            ],
+            "description": "Survey status",
+            "example": "published"
+          },
+          "surveyJson": {
+            "type": "object",
+            "description": "SurveyJS JSON definition containing questions and configuration",
+            "example": {
+              "pages": [
+                {
+                  "elements": [
+                    {
+                      "type": "text",
+                      "name": "question1",
+                      "title": "What is your name?"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Survey creation timestamp",
+            "example": "2024-01-15T10:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp",
+            "example": "2024-01-20T14:45:00.000Z"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Survey publication timestamp",
+            "example": "2024-01-16T09:00:00.000Z"
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Survey closure timestamp",
+            "example": null
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Soft deletion timestamp",
+            "example": null
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "type",
+          "status",
+          "surveyJson",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "SurveyResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique response identifier",
+            "example": "660e8400-e29b-41d4-a716-446655440000"
+          },
+          "surveyId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Survey identifier",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true,
+            "description": "User ID if authenticated",
+            "example": "user-123"
+          },
+          "itemId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Associated item ID for item-specific surveys",
+            "example": "item-123"
+          },
+          "data": {
+            "type": "object",
+            "description": "Survey response data containing answers to all questions",
+            "example": {
+              "question1": "John Doe",
+              "question2": 5,
+              "question3": [
+                "option1",
+                "option2"
+              ]
+            }
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Response completion timestamp",
+            "example": "2024-01-18T15:30:00.000Z"
+          },
+          "ipAddress": {
+            "type": "string",
+            "nullable": true,
+            "description": "Respondent IP address",
+            "example": "192.168.1.1"
+          },
+          "userAgent": {
+            "type": "string",
+            "nullable": true,
+            "description": "Respondent user agent string",
+            "example": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Response creation timestamp",
+            "example": "2024-01-18T15:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp",
+            "example": "2024-01-18T15:30:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "surveyId",
+          "data",
+          "completedAt",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PaginatedSurveyResponses": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SurveyResponse"
+            },
+            "description": "Array of survey responses"
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer",
+                "description": "Current page number",
+                "example": 1
+              },
+              "pageSize": {
+                "type": "integer",
+                "description": "Number of items per page",
+                "example": 20
+              },
+              "total": {
+                "type": "integer",
+                "description": "Total number of responses",
+                "example": 150
+              },
+              "totalPages": {
+                "type": "integer",
+                "description": "Total number of pages",
+                "example": 8
+              }
+            },
+            "required": [
+              "page",
+              "pageSize",
+              "total",
+              "totalPages"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "pagination"
+        ]
+      }
+    },
+    "responses": {}
+  },
   "paths": {
     "/api/admin/categories/{id}": {
       "get": {
@@ -28034,518 +28629,1842 @@
           }
         }
       }
-    }
-  },
-  "components": {
-    "schemas": {
-      "ClientProfile": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique client profile identifier",
-            "example": "client_123abc"
+    },
+    "/api/admin/sponsor-ads/{id}/approve": {
+      "post": {
+        "tags": [
+          "Admin - Sponsor Ads"
+        ],
+        "summary": "Approve sponsor ad",
+        "description": "Approves a pending sponsor ad submission. Only pending ads can be approved. Requires admin authentication.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sponsor ad ID to approve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sponsor ad approved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sponsor ad approved successfully"
+                    }
+                  }
+                }
+              }
+            }
           },
-          "userId": {
-            "type": "string",
-            "description": "Associated user ID",
-            "example": "user_456def"
+          "400": {
+            "description": "Bad request - Cannot approve ad with current status"
           },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "Client email address",
-            "example": "john.doe@example.com"
+          "401": {
+            "description": "Unauthorized"
           },
-          "name": {
-            "type": "string",
-            "description": "Client full name",
-            "example": "John Doe"
+          "404": {
+            "description": "Sponsor ad not found"
           },
-          "displayName": {
-            "type": "string",
-            "nullable": true,
-            "description": "Display name for the client",
-            "example": "John Doe"
-          },
-          "username": {
-            "type": "string",
-            "nullable": true,
-            "description": "Unique username",
-            "example": "johndoe"
-          },
-          "bio": {
-            "type": "string",
-            "nullable": true,
-            "description": "Client biography",
-            "example": "Software engineer with 5+ years experience"
-          },
-          "jobTitle": {
-            "type": "string",
-            "nullable": true,
-            "description": "Job title",
-            "example": "Senior Software Engineer"
-          },
-          "company": {
-            "type": "string",
-            "nullable": true,
-            "description": "Company name",
-            "example": "Tech Corp Inc"
-          },
-          "industry": {
-            "type": "string",
-            "nullable": true,
-            "description": "Industry sector",
-            "example": "Technology"
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true,
-            "description": "Phone number",
-            "example": "+1-555-123-4567"
-          },
-          "website": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true,
-            "description": "Personal or company website",
-            "example": "https://johndoe.com"
-          },
-          "location": {
-            "type": "string",
-            "nullable": true,
-            "description": "Geographic location",
-            "example": "San Francisco, CA"
-          },
-          "avatar": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true,
-            "description": "Avatar image URL",
-            "example": "https://example.com/avatars/johndoe.jpg"
-          },
-          "accountType": {
-            "type": "string",
-            "enum": [
-              "individual",
-              "business",
-              "enterprise"
-            ],
-            "description": "Type of account",
-            "example": "business"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "active",
-              "inactive",
-              "suspended",
-              "trial"
-            ],
-            "description": "Account status",
-            "example": "active"
-          },
-          "plan": {
-            "type": "string",
-            "enum": [
-              "free",
-              "standard",
-              "premium"
-            ],
-            "description": "Subscription plan",
-            "example": "premium"
-          },
-          "timezone": {
-            "type": "string",
-            "description": "Client timezone",
-            "example": "America/New_York"
-          },
-          "language": {
-            "type": "string",
-            "description": "Preferred language",
-            "example": "en"
-          },
-          "twoFactorEnabled": {
-            "type": "boolean",
-            "description": "Whether two-factor authentication is enabled",
-            "example": true
-          },
-          "emailVerified": {
-            "type": "boolean",
-            "description": "Whether email is verified",
-            "example": true
-          },
-          "totalSubmissions": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Total number of submissions",
-            "example": 25
-          },
-          "notes": {
-            "type": "string",
-            "nullable": true,
-            "description": "Admin notes about the client",
-            "example": "VIP client, priority support"
-          },
-          "tags": {
-            "type": "string",
-            "nullable": true,
-            "description": "Client tags (comma-separated)",
-            "example": "vip,enterprise,priority"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Profile creation timestamp",
-            "example": "2024-01-15T10:30:00.000Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Profile last update timestamp",
-            "example": "2024-01-20T14:45:00.000Z"
-          },
-          "accountProvider": {
-            "type": "string",
-            "description": "Authentication provider",
-            "example": "google"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "Whether the account is currently active",
-            "example": true
-          },
-          "lastActiveAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "Last activity timestamp",
-            "example": "2024-01-20T14:45:00.000Z"
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/admin/sponsor-ads/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Admin - Sponsor Ads"
+        ],
+        "summary": "Cancel sponsor ad",
+        "description": "Cancels a sponsor ad. Can cancel pending, approved, or active ads. Requires admin authentication.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sponsor ad ID to cancel"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cancelReason": {
+                    "type": "string",
+                    "maxLength": 500,
+                    "description": "Optional reason for cancellation"
+                  }
+                }
+              }
+            }
           }
         },
-        "required": [
-          "id",
-          "userId",
-          "email",
-          "name",
-          "accountType",
-          "status",
-          "plan",
-          "timezone",
-          "language",
-          "twoFactorEnabled",
-          "emailVerified",
-          "totalSubmissions",
-          "createdAt",
-          "updatedAt",
-          "accountProvider",
-          "isActive"
-        ]
-      },
-      "Company": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique company identifier (UUID)",
-            "example": "550e8400-e29b-41d4-a716-446655440000"
+        "responses": {
+          "200": {
+            "description": "Sponsor ad cancelled successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sponsor ad cancelled successfully"
+                    }
+                  }
+                }
+              }
+            }
           },
-          "name": {
-            "type": "string",
-            "description": "Company name",
-            "example": "Acme Corporation"
+          "400": {
+            "description": "Bad request - Cannot cancel ad with current status"
           },
-          "website": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true,
-            "description": "Company website URL",
-            "example": "https://acme.com"
+          "401": {
+            "description": "Unauthorized"
           },
-          "domain": {
-            "type": "string",
-            "nullable": true,
-            "description": "Company domain (normalized, without www.)",
-            "example": "acme.com"
+          "404": {
+            "description": "Sponsor ad not found"
           },
-          "slug": {
-            "type": "string",
-            "nullable": true,
-            "description": "URL-friendly company identifier",
-            "example": "acme-corporation"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "active",
-              "inactive"
-            ],
-            "description": "Company status",
-            "example": "active"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Company creation timestamp",
-            "example": "2024-01-15T10:30:00.000Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last update timestamp",
-            "example": "2024-01-20T14:45:00.000Z"
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/admin/sponsor-ads/{id}/reject": {
+      "post": {
+        "tags": [
+          "Admin - Sponsor Ads"
+        ],
+        "summary": "Reject sponsor ad",
+        "description": "Rejects a pending sponsor ad submission with a reason. Only pending ads can be rejected. Requires admin authentication.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sponsor ad ID to reject"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rejectionReason": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 500,
+                    "description": "Reason for rejection (minimum 10 characters)"
+                  }
+                },
+                "required": [
+                  "rejectionReason"
+                ]
+              }
+            }
           }
         },
-        "required": [
-          "id",
-          "name",
-          "status",
-          "createdAt",
-          "updatedAt"
-        ]
+        "responses": {
+          "200": {
+            "description": "Sponsor ad rejected successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Sponsor ad rejected successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input or cannot reject ad with current status"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Sponsor ad not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/admin/sponsor-ads/{id}": {
+      "get": {
+        "tags": [
+          "Admin - Sponsor Ads"
+        ],
+        "summary": "Get sponsor ad by ID",
+        "description": "Retrieves a specific sponsor ad with user details. Requires admin authentication.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sponsor ad retrieved successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Sponsor ad not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
       },
-      "Survey": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique survey identifier",
-            "example": "550e8400-e29b-41d4-a716-446655440000"
+      "delete": {
+        "tags": [
+          "Admin - Sponsor Ads"
+        ],
+        "summary": "Delete sponsor ad",
+        "description": "Permanently deletes a sponsor ad. Requires admin authentication.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sponsor ad deleted successfully"
           },
-          "slug": {
-            "type": "string",
-            "description": "URL-friendly survey identifier",
-            "example": "customer-satisfaction-2024"
+          "401": {
+            "description": "Unauthorized"
           },
-          "title": {
-            "type": "string",
-            "description": "Survey title",
-            "example": "Customer Satisfaction Survey"
+          "404": {
+            "description": "Sponsor ad not found"
           },
-          "description": {
-            "type": "string",
-            "nullable": true,
-            "description": "Survey description",
-            "example": "Help us improve our services"
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/admin/sponsor-ads": {
+      "get": {
+        "tags": [
+          "Admin - Sponsor Ads"
+        ],
+        "summary": "List sponsor ads",
+        "description": "Returns a paginated list of sponsor ads with optional filtering by status and interval. Requires admin authentication.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
           },
-          "type": {
-            "type": "string",
-            "enum": [
-              "global",
-              "item"
-            ],
-            "description": "Survey type - global or item-specific",
-            "example": "global"
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
           },
-          "itemId": {
-            "type": "string",
-            "nullable": true,
-            "description": "Associated item ID for item-specific surveys",
-            "example": "item-123"
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "approved",
+                "rejected",
+                "active",
+                "expired",
+                "cancelled"
+              ]
+            }
           },
-          "status": {
-            "type": "string",
-            "enum": [
-              "draft",
-              "published",
-              "closed"
-            ],
-            "description": "Survey status",
-            "example": "published"
+          {
+            "name": "interval",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "weekly",
+                "monthly"
+              ]
+            }
           },
-          "surveyJson": {
-            "type": "object",
-            "description": "SurveyJS JSON definition containing questions and configuration",
-            "example": {
-              "pages": [
-                {
-                  "elements": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "createdAt",
+                "updatedAt",
+                "startDate",
+                "endDate",
+                "status"
+              ],
+              "default": "createdAt"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sponsor ads retrieved successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/sponsor-ads/checkout": {
+      "post": {
+        "tags": [
+          "Sponsor Ads"
+        ],
+        "summary": "Create sponsor ad checkout session",
+        "description": "Creates a checkout session for an approved sponsor ad. The sponsor ad must be in 'approved' status.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "sponsorAdId"
+                ],
+                "properties": {
+                  "sponsorAdId": {
+                    "type": "string",
+                    "description": "ID of the approved sponsor ad"
+                  },
+                  "successUrl": {
+                    "type": "string",
+                    "description": "URL to redirect after successful payment"
+                  },
+                  "cancelUrl": {
+                    "type": "string",
+                    "description": "URL to redirect after cancelled payment"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Checkout session created successfully"
+          },
+          "400": {
+            "description": "Bad request - Sponsor ad not approved or missing price configuration"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - User does not own this sponsor ad"
+          },
+          "404": {
+            "description": "Sponsor ad not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/sponsor-ads": {
+      "get": {
+        "tags": [
+          "Sponsor Ads"
+        ],
+        "summary": "Get active sponsor ads",
+        "description": "Returns a list of currently active sponsor ads for public display. No authentication required.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "maximum": 50
+            },
+            "description": "Maximum number of sponsor ads to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Active sponsor ads retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "itemSlug": {
+                            "type": "string"
+                          },
+                          "itemName": {
+                            "type": "string"
+                          },
+                          "itemIconUrl": {
+                            "type": "string"
+                          },
+                          "itemCategory": {
+                            "type": "string"
+                          },
+                          "itemDescription": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/sponsor-ads/user/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Sponsor Ads - User"
+        ],
+        "summary": "Cancel user's sponsor ad",
+        "description": "Cancels a sponsor ad owned by the authenticated user. Can only cancel pending, approved, or active ads.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sponsor ad ID to cancel"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sponsor ad cancelled successfully"
+          },
+          "400": {
+            "description": "Bad request - Cannot cancel ad with current status"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - User does not own this sponsor ad"
+          },
+          "404": {
+            "description": "Sponsor ad not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/sponsor-ads/user": {
+      "get": {
+        "tags": [
+          "Sponsor Ads - User"
+        ],
+        "summary": "Get user's sponsor ads",
+        "description": "Returns a paginated list of sponsor ads submitted by the authenticated user.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "approved",
+                "rejected",
+                "active",
+                "expired",
+                "cancelled"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User's sponsor ads retrieved successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Sponsor Ads - User"
+        ],
+        "summary": "Create sponsor ad submission",
+        "description": "Creates a new sponsor ad submission for the authenticated user. The submission will be pending admin approval.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "itemSlug",
+                  "itemName",
+                  "interval"
+                ],
+                "properties": {
+                  "itemSlug": {
+                    "type": "string",
+                    "description": "Slug of the item to sponsor"
+                  },
+                  "itemName": {
+                    "type": "string",
+                    "description": "Name of the item to sponsor"
+                  },
+                  "itemIconUrl": {
+                    "type": "string",
+                    "description": "Icon URL of the item"
+                  },
+                  "itemCategory": {
+                    "type": "string",
+                    "description": "Category of the item"
+                  },
+                  "itemDescription": {
+                    "type": "string",
+                    "description": "Description of the item (max 500 chars)"
+                  },
+                  "interval": {
+                    "type": "string",
+                    "enum": [
+                      "weekly",
+                      "monthly"
+                    ],
+                    "description": "Subscription interval"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Sponsor ad submission created successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid input or duplicate submission"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/client/dashboard/stats": {
+      "get": {
+        "tags": [
+          "Client - Dashboard"
+        ],
+        "summary": "Get user dashboard statistics",
+        "description": "Returns comprehensive dashboard statistics for the authenticated user including submission counts, engagement metrics, charts data, and top performing items.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "totalSubmissions": {
+                      "type": "integer",
+                      "description": "Total number of items submitted by user",
+                      "example": 23
+                    },
+                    "totalViews": {
+                      "type": "integer",
+                      "description": "Total views on user's items (0 if not tracked)",
+                      "example": 0
+                    },
+                    "totalVotesReceived": {
+                      "type": "integer",
+                      "description": "Total votes received on user's items",
+                      "example": 156
+                    },
+                    "totalCommentsReceived": {
+                      "type": "integer",
+                      "description": "Total comments received on user's items",
+                      "example": 89
+                    },
+                    "viewsAvailable": {
+                      "type": "boolean",
+                      "description": "Whether views tracking is available",
+                      "example": false
+                    },
+                    "recentActivity": {
+                      "type": "object",
+                      "properties": {
+                        "newSubmissions": {
+                          "type": "integer",
+                          "example": 3
+                        },
+                        "newViews": {
+                          "type": "integer",
+                          "example": 0
+                        }
+                      }
+                    },
+                    "uniqueItemsInteracted": {
+                      "type": "integer",
+                      "description": "Number of unique items user has interacted with",
+                      "example": 45
+                    },
+                    "totalActivity": {
+                      "type": "integer",
+                      "description": "Total activity count (votes + comments made)",
+                      "example": 237
+                    },
+                    "activityChartData": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "date": {
+                            "type": "string",
+                            "example": "Mon"
+                          },
+                          "submissions": {
+                            "type": "integer"
+                          },
+                          "views": {
+                            "type": "integer"
+                          },
+                          "engagement": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "engagementChartData": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "integer"
+                          },
+                          "color": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "submissionTimeline": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "month": {
+                            "type": "string",
+                            "example": "Mar"
+                          },
+                          "submissions": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "engagementOverview": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "week": {
+                            "type": "string",
+                            "example": "W1"
+                          },
+                          "votes": {
+                            "type": "integer"
+                          },
+                          "comments": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "statusBreakdown": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "Approved",
+                              "Pending",
+                              "Rejected"
+                            ]
+                          },
+                          "value": {
+                            "type": "integer"
+                          },
+                          "color": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "topItems": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "views": {
+                            "type": "integer"
+                          },
+                          "votes": {
+                            "type": "integer"
+                          },
+                          "comments": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized. Please sign in to continue."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to fetch dashboard statistics"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cron/subscription-expiration": {
+      "get": {
+        "summary": "Process expired subscriptions",
+        "description": "Cron job endpoint that finds and processes expired subscriptions.\nUpdates status from 'active' to 'expired' for subscriptions past their end date.\nShould be called daily.\n",
+        "tags": [
+          "Cron Jobs"
+        ],
+        "security": [
+          {
+            "cronSecret": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully processed expired subscriptions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "processed": {
+                          "type": "integer",
+                          "description": "Number of subscriptions updated"
+                        },
+                        "affectedUsers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "subscriptionId": {
+                                "type": "string"
+                              },
+                              "userId": {
+                                "type": "string"
+                              },
+                              "planId": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing cron secret"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/user/plan-status": {
+      "get": {
+        "summary": "Get user's plan status with expiration info",
+        "description": "Returns the user's current plan with full expiration details.\nIncludes effective plan (what the user can actually access),\nexpiration warnings, and feature access status.\n",
+        "tags": [
+          "User",
+          "Subscription"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved plan status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "planId": {
+                          "type": "string",
+                          "description": "The user's subscribed plan ID",
+                          "enum": [
+                            "free",
+                            "standard",
+                            "premium"
+                          ]
+                        },
+                        "effectivePlan": {
+                          "type": "string",
+                          "description": "The plan the user can actually access (may differ if expired)",
+                          "enum": [
+                            "free",
+                            "standard",
+                            "premium"
+                          ]
+                        },
+                        "isExpired": {
+                          "type": "boolean",
+                          "description": "Whether the subscription has expired"
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true,
+                          "description": "Subscription expiration date"
+                        },
+                        "daysUntilExpiration": {
+                          "type": "integer",
+                          "nullable": true,
+                          "description": "Days until expiration (negative if already expired)"
+                        },
+                        "isInWarningPeriod": {
+                          "type": "boolean",
+                          "description": "Whether subscription expires within 7 days"
+                        },
+                        "canAccessPlanFeatures": {
+                          "type": "boolean",
+                          "description": "Whether user can access their plan's features"
+                        },
+                        "warningMessage": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "User-facing warning message if applicable"
+                        },
+                        "status": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "Raw subscription status"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - User not authenticated"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/admin/collections/{id}": {
+      "get": {
+        "summary": "Get a single collection",
+        "description": "Retrieves detailed information about a specific collection by ID. Admin access required.",
+        "tags": [
+          "Admin - Collections"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Collection ID",
+            "example": "productivity-tools"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Collection retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "slug": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "icon_url": {
+                          "type": "string"
+                        },
+                        "isActive": {
+                          "type": "boolean"
+                        },
+                        "item_count": {
+                          "type": "integer"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required"
+          },
+          "404": {
+            "description": "Collection not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Collection not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a collection",
+        "description": "Updates an existing collection with the provided details. Admin access required.",
+        "tags": [
+          "Admin - Collections"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Collection ID",
+            "example": "productivity-tools"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Display name of the collection",
+                    "example": "Productivity Tools"
+                  },
+                  "slug": {
+                    "type": "string",
+                    "description": "URL-friendly slug",
+                    "example": "productivity-tools"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Detailed description of the collection",
+                    "example": "Essential tools to boost your productivity"
+                  },
+                  "icon_url": {
+                    "type": "string",
+                    "description": "URL to the collection icon",
+                    "example": "/icons/productivity.svg"
+                  },
+                  "isActive": {
+                    "type": "boolean",
+                    "description": "Whether the collection is active and visible"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Collection updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "slug": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "icon_url": {
+                          "type": "string"
+                        },
+                        "isActive": {
+                          "type": "boolean"
+                        },
+                        "item_count": {
+                          "type": "integer"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Collection updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Validation error"
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required"
+          },
+          "404": {
+            "description": "Not Found - Collection not found"
+          },
+          "409": {
+            "description": "Conflict - Slug already exists"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a collection",
+        "description": "Deletes a collection by ID. Admin access required. Defaults to soft delete; pass permanent=true to permanently remove the collection.",
+        "tags": [
+          "Admin - Collections"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Collection ID",
+            "example": "productivity-tools"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Collection deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Collection deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required"
+          },
+          "404": {
+            "description": "Collection not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/admin/collections": {
+      "get": {
+        "summary": "List all collections",
+        "description": "Retrieves a paginated list of collections with optional filtering and sorting. Admin access required.",
+        "tags": [
+          "Admin - Collections"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "description": "Number of items per page"
+          },
+          {
+            "in": "query",
+            "name": "includeInactive",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Include inactive collections in results"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search term to filter collections by name or description"
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "name",
+                "item_count",
+                "created_at"
+              ],
+              "default": "name"
+            },
+            "description": "Field to sort by"
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "asc"
+            },
+            "description": "Sort order direction"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Collections retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "collections": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "icon_url": {
+                            "type": "string"
+                          },
+                          "isActive": {
+                            "type": "boolean"
+                          },
+                          "item_count": {
+                            "type": "integer"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "description": "Total number of collections"
+                    },
+                    "page": {
+                      "type": "integer",
+                      "description": "Current page number"
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "description": "Items per page"
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "description": "Total number of pages"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized. Admin access required."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new collection",
+        "description": "Creates a new collection with the provided details. Admin access required.",
+        "tags": [
+          "Admin - Collections"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Immutable primary identifier used in URL paths; cannot be changed via PUT after creation",
+                    "pattern": "^[a-z0-9-]+$",
+                    "example": "col_123abc"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Display name of the collection",
+                    "example": "Productivity Tools"
+                  },
+                  "slug": {
+                    "type": "string",
+                    "description": "Mutable secondary identifier; optional and auto-generated from name if omitted; can be updated via PUT",
+                    "example": "productivity-tools"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Detailed description of the collection",
+                    "example": "Essential tools to boost your productivity"
+                  },
+                  "icon_url": {
+                    "type": "string",
+                    "description": "URL to the collection icon",
+                    "example": "/icons/productivity.svg"
+                  },
+                  "isActive": {
+                    "type": "boolean",
+                    "description": "Whether the collection is active and visible",
+                    "default": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Collection created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "collection": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "slug": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "icon_url": {
+                          "type": "string"
+                        },
+                        "isActive": {
+                          "type": "boolean"
+                        },
+                        "item_count": {
+                          "type": "integer"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Collection created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing required fields or validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Collection ID and name are required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required"
+          },
+          "409": {
+            "description": "Conflict - Collection with ID or slug already exists"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/extract": {
+      "post": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Extract item metadata from URL",
+        "description": "Secure proxy route that extracts item metadata (name, description, etc.) from a given URL using the Ever Works Platform API. This endpoint requires PLATFORM_API_URL to be configured. If not configured, returns a graceful response indicating the feature is disabled (featureDisabled: true).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL to extract metadata from",
+                    "example": "https://example.com/product"
+                  },
+                  "existingCategories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Optional array of existing category names to help with categorization",
+                    "example": [
+                      "Productivity",
+                      "Developer Tools"
+                    ]
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response from extraction endpoint - can be success, feature disabled, or error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
                     {
-                      "type": "text",
-                      "name": "question1",
-                      "title": "What is your name?"
+                      "type": "object",
+                      "description": "Successfully extracted metadata",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "data": {
+                          "type": "object",
+                          "description": "Extracted item metadata (name, description, etc.)",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "Awesome Product"
+                            },
+                            "description": {
+                              "type": "string",
+                              "example": "A great product description"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "description": "Feature disabled - Platform API not configured",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "featureDisabled": {
+                          "type": "boolean",
+                          "example": true,
+                          "description": "Indicates that the extraction feature is not available"
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "URL extraction feature is not available. This feature requires PLATFORM_API_URL to be configured."
+                        }
+                      }
                     }
                   ]
                 }
-              ]
-            }
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Survey creation timestamp",
-            "example": "2024-01-15T10:30:00.000Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last update timestamp",
-            "example": "2024-01-20T14:45:00.000Z"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "Survey publication timestamp",
-            "example": "2024-01-16T09:00:00.000Z"
-          },
-          "closedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "Survey closure timestamp",
-            "example": null
-          },
-          "deletedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "Soft deletion timestamp",
-            "example": null
-          }
-        },
-        "required": [
-          "id",
-          "slug",
-          "title",
-          "type",
-          "status",
-          "surveyJson",
-          "createdAt",
-          "updatedAt"
-        ]
-      },
-      "SurveyResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique response identifier",
-            "example": "660e8400-e29b-41d4-a716-446655440000"
-          },
-          "surveyId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Survey identifier",
-            "example": "550e8400-e29b-41d4-a716-446655440000"
-          },
-          "userId": {
-            "type": "string",
-            "nullable": true,
-            "description": "User ID if authenticated",
-            "example": "user-123"
-          },
-          "itemId": {
-            "type": "string",
-            "nullable": true,
-            "description": "Associated item ID for item-specific surveys",
-            "example": "item-123"
-          },
-          "data": {
-            "type": "object",
-            "description": "Survey response data containing answers to all questions",
-            "example": {
-              "question1": "John Doe",
-              "question2": 5,
-              "question3": [
-                "option1",
-                "option2"
-              ]
-            }
-          },
-          "completedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Response completion timestamp",
-            "example": "2024-01-18T15:30:00.000Z"
-          },
-          "ipAddress": {
-            "type": "string",
-            "nullable": true,
-            "description": "Respondent IP address",
-            "example": "192.168.1.1"
-          },
-          "userAgent": {
-            "type": "string",
-            "nullable": true,
-            "description": "Respondent user agent string",
-            "example": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Response creation timestamp",
-            "example": "2024-01-18T15:30:00.000Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last update timestamp",
-            "example": "2024-01-18T15:30:00.000Z"
-          }
-        },
-        "required": [
-          "id",
-          "surveyId",
-          "data",
-          "completedAt",
-          "createdAt",
-          "updatedAt"
-        ]
-      },
-      "PaginatedSurveyResponses": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SurveyResponse"
-            },
-            "description": "Array of survey responses"
-          },
-          "pagination": {
-            "type": "object",
-            "properties": {
-              "page": {
-                "type": "integer",
-                "description": "Current page number",
-                "example": 1
-              },
-              "pageSize": {
-                "type": "integer",
-                "description": "Number of items per page",
-                "example": 20
-              },
-              "total": {
-                "type": "integer",
-                "description": "Total number of responses",
-                "example": 150
-              },
-              "totalPages": {
-                "type": "integer",
-                "description": "Total number of pages",
-                "example": 8
               }
-            },
-            "required": [
-              "page",
-              "pageSize",
-              "total",
-              "totalPages"
-            ]
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid URL format or validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid URL format"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error during extraction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error during extraction"
+                    }
+                  }
+                }
+              }
+            }
           }
-        },
-        "required": [
-          "items",
-          "pagination"
-        ]
+        }
       }
-    },
-    "responses": {},
-    "securitySchemes": {}
+    }
   },
   "tags": []
 }

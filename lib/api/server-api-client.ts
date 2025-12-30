@@ -3,6 +3,8 @@
  * Provides a centralized way to handle API calls with proper error handling
  * Optimized for performance and reduced latency
  */
+import { siteConfig } from '../config';
+import { getFrontendUrl } from '../utils/server-url';
 
 // Optimized logger utility with conditional logging
 const isDev = process.env.NODE_ENV === 'development';
@@ -30,11 +32,13 @@ export interface FetchOptions extends RequestInit {
 	timeout?: number;
 	retries?: number;
 	retryDelay?: number;
+	token?: string;
+	isApiCall?: boolean;
 }
 
-// Optimized default configuration with pre-allocated objects
 const DEFAULT_HEADERS = {
-	'Content-Type': 'application/json'
+	'Content-Type': 'application/json',
+	Accept: 'application/json'
 } as const;
 
 const DEFAULT_CONFIG = {
@@ -57,6 +61,8 @@ async function fetchWithTimeout(url: string, options: FetchOptions = {}): Promis
 		timeout = DEFAULT_CONFIG.timeout,
 		retries = DEFAULT_CONFIG.retries,
 		retryDelay = DEFAULT_CONFIG.retryDelay,
+		token = process.env.PLATFORM_API_SECRET_TOKEN,
+		isApiCall = false,
 		...fetchOptions
 	} = options;
 
@@ -106,9 +112,34 @@ async function fetchWithTimeout(url: string, options: FetchOptions = {}): Promis
 				}
 			}
 
-			const headers = normalizedHeaders;
+			const headers = { ...normalizedHeaders };
 
-			const response = await fetch(url, {
+			if (token) {
+				headers.Authorization = `Bearer ${token}`;
+			}
+
+			// Resolve final URL with robust joining
+			// Use PLATFORM_API_URL for calls to the Ever Works Platform API
+			// Use 'http://localhost:3100/api' for local development
+			const apiBase = isApiCall ? process.env.PLATFORM_API_URL || 'https://api.ever.works/api' : '';
+
+			const finalUrl =
+				apiBase && !url.startsWith('http') ? `${apiBase.replace(/\/+$/, '')}/${url.replace(/^\/+/, '')}` : url;
+
+			// Inject X-Frontend-URL ONLY on server-side to avoid CORS preflight issues in browsers
+			if (isApiCall && typeof window === 'undefined') {
+				try {
+					headers['X-Frontend-URL'] = await getFrontendUrl();
+				} catch (e) {
+					headers['X-Frontend-URL'] = siteConfig.url;
+				}
+			}
+
+			if (isDev) {
+				logger.debug(`Fetching: ${finalUrl}`, { method: fetchOptions.method || 'GET', isApiCall });
+			}
+
+			const response = await fetch(finalUrl, {
 				...fetchOptions,
 				signal,
 				headers

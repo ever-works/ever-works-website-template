@@ -3,17 +3,18 @@ import { LocalJobManager } from './local-job-manager';
 import { TriggerDevJobManager } from './trigger-dev-job-manager';
 import { NoOpJobManager } from './noop-job-manager';
 import { getTriggerDevConfig, shouldUseTriggerDev } from './config';
+import { coreConfig } from '@/lib/config/config-service';
 
 /**
  * Create a job manager based on environment configuration
  * @returns Appropriate job manager implementation
  */
 export function createJobManager(): BackgroundJobManager {
-  // Allow disabling background jobs in development via environment variable
-  if (process.env.NODE_ENV === 'development' && process.env.DISABLE_AUTO_SYNC === 'true') {
-    console.log('⏭️  Skipping background jobs in development mode (DISABLE_AUTO_SYNC=true)');
-    return new NoOpJobManager();
-  }
+	// Allow disabling background jobs in development via environment variable
+	if (coreConfig.NODE_ENV === 'development' && process.env.DISABLE_AUTO_SYNC === 'true') {
+		console.log('⏭️  Skipping background jobs in development mode (DISABLE_AUTO_SYNC=true)');
+		return new NoOpJobManager();
+	}
 
   const config = getTriggerDevConfig();
 

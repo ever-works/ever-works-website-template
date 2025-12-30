@@ -1,4 +1,5 @@
 import 'server-only';
+import { coreConfig } from '@/lib/config/config-service';
 
 // Types
 export type SyncResult = {
@@ -35,8 +36,8 @@ class SyncManager {
    */
   async performSync(): Promise<SyncResult> {
     // DEV-MODE FEATURE: Allow disabling auto-sync in development via environment variable
-    if (process.env.NODE_ENV === 'development' && process.env.DISABLE_AUTO_SYNC === 'true') {      
-      console.log('[SYNC_MANAGER] Sync disabled in development mode (DISABLE_AUTO_SYNC=true)');      
+    if (coreConfig.NODE_ENV === 'development' && coreConfig.DISABLE_AUTO_SYNC) {
+      console.log('[SYNC_MANAGER] Sync disabled in development mode (DISABLE_AUTO_SYNC=true)');
       return {
         success: true,
         message: 'Sync disabled in development mode',
@@ -46,7 +47,7 @@ class SyncManager {
 
     // Prevent concurrent syncs
     if (this.syncInProgress) {
-      if (process.env.NODE_ENV !== 'development') {
+      if (coreConfig.NODE_ENV !== 'development') {
         console.log('[SYNC_MANAGER] Sync already in progress, skipping');
       }
       return {
@@ -61,7 +62,7 @@ class SyncManager {
 
     try {
       // DEV-MODE FEATURE: Reduce logging in development mode
-      if (process.env.NODE_ENV !== 'development') {
+      if (coreConfig.NODE_ENV !== 'development') {
         console.log('[SYNC_MANAGER] Starting background repository sync');
       }
 
@@ -93,7 +94,7 @@ class SyncManager {
       this.lastSyncResult = result;
 
       // DEV-MODE FEATURE: Reduce logging in development mode
-      if (process.env.NODE_ENV !== 'development') {
+      if (coreConfig.NODE_ENV !== 'development') {
         console.log(`[SYNC_MANAGER] Sync completed successfully in ${duration}ms`);
       }
 
@@ -123,7 +124,7 @@ class SyncManager {
       // Retry logic
       if (this.retryCount < MAX_RETRIES) {
         this.retryCount++;
-        if (process.env.NODE_ENV !== 'development') {
+        if (coreConfig.NODE_ENV !== 'development') {
           console.log(`[SYNC_MANAGER] Scheduling retry ${this.retryCount}/${MAX_RETRIES} in 10 seconds`);
         }
         setTimeout(() => this.performSync(), 10000);
@@ -157,7 +158,7 @@ class SyncManager {
    * Manually trigger a sync (for admin API)
    */
   async triggerManualSync(): Promise<SyncResult> {
-    if (process.env.NODE_ENV !== 'development') {
+    if (coreConfig.NODE_ENV !== 'development') {
       console.log('[SYNC_MANAGER] Manual sync triggered');
     }
     return await this.performSync();
