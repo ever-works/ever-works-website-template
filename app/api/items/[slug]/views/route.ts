@@ -5,11 +5,9 @@ import { checkDatabaseAvailability } from '@/lib/utils/database-check';
 import { isBot } from '@/lib/utils/bot-detection';
 import { recordItemView } from '@/lib/db/queries/item-view.queries';
 import { ItemRepository } from '@/lib/repositories/item.repository';
+import { VIEWER_COOKIE_NAME, VIEWER_COOKIE_MAX_AGE } from '@/lib/constants/analytics';
 
 type RouteParams = { params: Promise<{ slug: string }> };
-
-const VIEWER_COOKIE_NAME = 'ever_viewer_id';
-const VIEWER_COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 365 days in seconds
 
 /**
  * POST /api/items/[slug]/views

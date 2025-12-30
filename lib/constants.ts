@@ -104,3 +104,11 @@ export {
 	SponsorAdPricing,
 	type ExceptionTrackingProvider,
 } from './constants/payment';
+
+// ============================================
+// ANALYTICS (re-exported from constants/analytics)
+// ============================================
+export {
+	VIEWER_COOKIE_NAME,
+	VIEWER_COOKIE_MAX_AGE,
+} from './constants/analytics';
