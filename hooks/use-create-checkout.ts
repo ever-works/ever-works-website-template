@@ -5,6 +5,8 @@ import { PricingConfig, PricingPlans } from '@/lib/content';
 import { getQueryClient } from '@/lib/query-client';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useCurrencyContext } from '@/components/context/currency-provider';
+import { getStripePriceConfig } from '@/lib/config/billing/stripe.config';
 
 export interface SubscriptionFormProps {
 	selectedPlan?: PricingPlans;
@@ -66,6 +68,7 @@ class CheckoutSessionError extends Error {
 
 export const useCreateCheckoutSession = () => {
 	const router = useRouter();
+	const { currency } = useCurrencyContext();
 
 	const invalidateQueries = async () => {
 		const queryClient = getQueryClient();
@@ -95,7 +98,27 @@ export const useCreateCheckoutSession = () => {
 				);
 			}
 
-			const priceId = billingInterval === PaymentInterval.YEARLY ? plan.annualPriceId : plan.stripePriceId;
+			// Get currency-aware price ID using multi-currency configs
+			// Map plan.id to plan name for billing configs
+			const planName = plan.id === 'free' ? 'free' : plan.id === 'standard' ? 'standard' : 'premium';
+			const interval = billingInterval === PaymentInterval.YEARLY ? 'yearly' : 'monthly';
+
+			// Try to get currency-aware price ID
+			const currencyPriceConfig = getStripePriceConfig(
+				planName as 'free' | 'standard' | 'premium',
+				currency,
+				interval
+			);
+
+			// Use currency-aware price ID if available, otherwise fallback to plan's price ID
+			let priceId: string | undefined;
+			if (currencyPriceConfig?.priceId) {
+				priceId = currencyPriceConfig.priceId;
+			} else {
+				// Fallback to plan's configured price ID
+				priceId = billingInterval === PaymentInterval.YEARLY ? plan.annualPriceId : plan.stripePriceId;
+			}
+
 			if (!priceId) {
 				throw new CheckoutSessionError('Invalid price ID');
 			}

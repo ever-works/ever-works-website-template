@@ -13,6 +13,9 @@ import { useLoginModal, type LoginModalStore } from './use-login-modal';
 import { useCheckoutButton } from './use-checkout-button';
 import { usePolarCheckout } from './use-polar-checkout';
 import { useSelectedCheckoutProvider } from './use-selected-checkout-provider';
+import { useCurrencyContext } from '@/components/context/currency-provider';
+import { getLemonSqueezyPriceConfig } from '@/lib/config/billing/lemonsqueezy.config';
+import { usePaymentProvider } from '@/lib/utils/payment-provider';
 
 export interface UsePricingSectionParams {
 	onSelectPlan?: (plan: PaymentPlan) => void;
@@ -74,6 +77,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	const router = useRouter();
 	const { user } = useCurrentUser();
 	const config = useConfig();
+	const { currency } = useCurrencyContext();
 	const t = useTranslations('pricing');
 	const tBilling = useTranslations('billing');
 
@@ -113,17 +117,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	const { getActiveProvider } = useSelectedCheckoutProvider();
 
 	// Determine payment provider: User selection takes precedence over config
-	const paymentProvider = useMemo(() => {
-		const userSelectedProvider = getActiveProvider();
-
-		// Map from CheckoutProvider type to PaymentProvider enum
-		if (userSelectedProvider === 'stripe') return PaymentProvider.STRIPE;
-		if (userSelectedProvider === 'lemonsqueezy') return PaymentProvider.LEMONSQUEEZY;
-		if (userSelectedProvider === 'polar') return PaymentProvider.POLAR;
-
-		// Fallback to config default if no user selection or provider not configured
-		return config.pricing?.provider || PaymentProvider.STRIPE;
-	}, [getActiveProvider, config.pricing?.provider]);
+	const paymentProvider = usePaymentProvider(getActiveProvider, config.pricing);
 
 	const paymentHook =
 		paymentProvider === PaymentProvider.LEMONSQUEEZY
@@ -234,7 +228,26 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 
 			try {
 				if (paymentProvider === PaymentProvider.LEMONSQUEEZY) {
-					if (!plan.lemonVariantId) {
+					// Get currency-aware variant ID using multi-currency configs
+					const planName = plan.id === 'free' ? 'free' : plan.id === 'standard' ? 'standard' : 'premium';
+					const interval = billingInterval === PaymentInterval.YEARLY ? 'yearly' : 'monthly';
+
+					// Try to get currency-aware variant ID
+					const currencyVariantConfig = getLemonSqueezyPriceConfig(
+						planName as 'free' | 'standard' | 'premium',
+						currency,
+						interval
+					);
+
+					// Use currency-aware variant ID if available, otherwise fallback to plan's variant ID
+					let variantId: string | undefined;
+					if (currencyVariantConfig?.priceId) {
+						variantId = currencyVariantConfig.priceId;
+					} else {
+						variantId = plan.lemonVariantId;
+					}
+
+					if (!variantId) {
 						toast.error('No variant ID found for plan');
 						currentProcessingPlanRef.current = null;
 						setProcessingPlan(null);
@@ -243,7 +256,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 					// Create checkout session for Lemonsqueezy
 					// Lemonsqueezy checkout hook
 					await lemonsqueezyHook.handleSubmitWithParams({
-						variantId: Number(plan.lemonVariantId),
+						variantId: Number(variantId),
 						defaultPrice: plan.price,
 						metadata: {
 							source: 'checkout-button',
@@ -252,7 +265,8 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 							planName: plan.name,
 							billingInterval: billingInterval,
 							userId: user.id,
-							email: user.email
+							email: user.email,
+							currency: currency
 						},
 						embedded: false
 					});
@@ -285,7 +299,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 					}
 					await stripeHook.createCheckoutSession(plan, user as any, billingInterval);
 				}
-				} catch (checkoutError) {
+			} catch (checkoutError) {
 				// Log error if checkout fails
 				console.error('Checkout error:', checkoutError);
 				toast.error('Failed to create checkout session. Please try again.');
@@ -305,7 +319,8 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 			lemonsqueezyHook,
 			stripeHook,
 			billingInterval,
-			polarHook
+			polarHook,
+			currency
 		]
 	);
 

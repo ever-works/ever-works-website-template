@@ -4,8 +4,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiUtils, serverClient } from '@/lib/api/server-api-client';
 import { useConfig } from '@/app/[locale]/config';
 import { PaymentProvider } from '@/lib/constants';
-import { useMemo } from 'react';
 import { useSelectedCheckoutProvider } from './use-selected-checkout-provider';
+import { usePaymentProvider } from '@/lib/utils/payment-provider';
 
 // Types
 export interface SubscriptionData {
@@ -74,22 +74,11 @@ export function useSubscription() {
 	const queryClient = useQueryClient();
 	const config = useConfig();
 
-	// Get the current payment provider from config, default to Stripe
 	// Get user's selected checkout provider from Settings
 	const { getActiveProvider } = useSelectedCheckoutProvider();
 
 	// Determine payment provider: User selection takes precedence over config
-	const paymentProvider = useMemo(() => {
-		const userSelectedProvider = getActiveProvider();
-
-		// Map from CheckoutProvider type to PaymentProvider enum
-		if (userSelectedProvider === 'stripe') return PaymentProvider.STRIPE;
-		if (userSelectedProvider === 'lemonsqueezy') return PaymentProvider.LEMONSQUEEZY;
-		if (userSelectedProvider === 'polar') return PaymentProvider.POLAR;
-
-		// Fallback to config default if no user selection or provider not configured
-		return config.pricing?.provider || PaymentProvider.STRIPE;
-	}, [getActiveProvider, config.pricing?.provider]);
+	const paymentProvider = usePaymentProvider(getActiveProvider, config.pricing);
 
 	// Create subscription mutation
 	const createSubscription = useMutation({
