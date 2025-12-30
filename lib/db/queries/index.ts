@@ -3,6 +3,8 @@
  *
  * This file provides a single entry point for importing query functions
  * organized by domain following Single Responsibility Principle (SRP)
+ *
+ * Updated: 2025-12-21
  */
 
 // Activity queries
@@ -16,6 +18,9 @@ export * from './client.queries';
 
 // Comment queries
 export * from './comment.queries';
+
+// Dashboard queries
+export * from './dashboard.queries';
 
 // Company queries
 export * from './company.queries';

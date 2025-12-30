@@ -1,6 +1,7 @@
-import { getCachedConfig } from "../content";
-import { EmailProviderFactory } from "./factory";
-import { getPasswordChangeConfirmationTemplate } from "./templates";
+import { getCachedConfig } from '../content';
+import { EmailProviderFactory } from './factory';
+import { getPasswordChangeConfirmationTemplate } from './templates';
+import { coreConfig, emailConfig as globalEmailConfig } from '@/lib/config/config-service';
 
 export interface EmailMessage {
   from: string;
@@ -21,7 +22,7 @@ export interface EmailNovuConfig {
 }
 
 export interface EmailServiceConfig {
-  provider: "resend" | "novu" | string;
+  provider: string;
   defaultFrom: string;
   apiKeys: Record<string, string>;
   domain: string;
@@ -233,16 +234,16 @@ export class EmailService {
   }
 }
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const appUrl = coreConfig.APP_URL || 'https://demo.ever.works';
 
 const emailConfig: EmailServiceConfig = {
-  provider: process.env.EMAIL_PROVIDER || "resend", // Default to resend
-  defaultFrom: process.env.EMAIL_FROM || "info@ever.works",
-  domain: appUrl,
-  apiKeys: {
-    resend: process.env.RESEND_API_KEY || "",
-    novu: process.env.NOVU_API_KEY || "",
-  },
+	provider: globalEmailConfig.EMAIL_PROVIDER,
+	defaultFrom: globalEmailConfig.EMAIL_FROM || 'info@ever.works',
+	domain: appUrl,
+	apiKeys: {
+		resend: globalEmailConfig.resend.apiKey || '',
+		novu: globalEmailConfig.novu.apiKey || '',
+	},
 };
 
 async function mailService() {

@@ -1,4 +1,6 @@
 import { LemonSqueezyProvider, StripeProvider, PolarProvider } from '..';
+import { paymentConfig, coreConfig } from '@/lib/config/config-service';
+import { PaymentProviderInterface } from '../types/payment-types';
 
 // Centralized configuration for all providers
 interface ProviderConfig {
@@ -33,32 +35,33 @@ interface ProviderConfig {
 	};
 }
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const appUrl = coreConfig.APP_URL;
 
 // Environment variables validation and configuration
+// Uses ConfigService for validated configuration
 class ConfigManager {
 	private static config: ProviderConfig | null = null;
 	private static initializedProviders: Set<string> = new Set();
 
-	// Stripe configuration
-	private static stripeApiKey: string = process.env.STRIPE_SECRET_KEY || '';
-	private static stripeWebhookSecret: string = process.env.STRIPE_WEBHOOK_SECRET || '';
-	private static stripePublishableKey: string = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
-	private static stripeApiVersion: string = process.env.STRIPE_API_VERSION || '2023-10-16';
+	// Stripe configuration (from ConfigService)
+	private static stripeApiKey: string = paymentConfig.stripe.secretKey || '';
+	private static stripeWebhookSecret: string = paymentConfig.stripe.webhookSecret || '';
+	private static stripePublishableKey: string = paymentConfig.stripe.publishableKey || '';
+	private static stripeApiVersion: string = '2023-10-16';
 
-	// LemonSqueezy configuration
-	private static lemonsqueezyApiKey: string = process.env.LEMONSQUEEZY_API_KEY || '';
-	private static lemonsqueezyWebhookSecret: string = process.env.LEMONSQUEEZY_WEBHOOK_SECRET || '';
-	private static lemonsqueezyStoreId: string = process.env.LEMONSQUEEZY_STORE_ID || '';
-	private static lemonsqueezyTestMode: boolean = process.env.LEMONSQUEEZY_TEST_MODE === 'true';
-	private static lemonsqueezyApiVersion: string = process.env.LEMONSQUEEZY_API_VERSION || '2023-10-16';
+	// LemonSqueezy configuration (from ConfigService)
+	private static lemonsqueezyApiKey: string = paymentConfig.lemonSqueezy.apiKey || '';
+	private static lemonsqueezyWebhookSecret: string = paymentConfig.lemonSqueezy.webhookSecret || '';
+	private static lemonsqueezyStoreId: string = paymentConfig.lemonSqueezy.storeId || '';
+	private static lemonsqueezyTestMode: boolean = paymentConfig.lemonSqueezy.testMode;
+	private static lemonsqueezyApiVersion: string = '2023-10-16';
 	private static lemonsqueezyAppUrl: string = appUrl;
-	private static lemonsqueezySiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works';
+	private static lemonsqueezySiteUrl: string = coreConfig.SITE_URL || 'https://ever.works';
 
-	// Polar configuration
-	private static polarApiKey: string = process.env.POLAR_ACCESS_TOKEN || '';
-	private static polarWebhookSecret: string = process.env.POLAR_WEBHOOK_SECRET || '';
-	private static polarOrganizationId: string = process.env.POLAR_ORGANIZATION_ID || '';
+	// Polar configuration (from ConfigService)
+	private static polarApiKey: string = paymentConfig.polar.accessToken || '';
+	private static polarWebhookSecret: string = paymentConfig.polar.webhookSecret || '';
+	private static polarOrganizationId: string = paymentConfig.polar.organizationId || '';
 	private static polarAppUrl: string = appUrl;
 
 	private static ensureConfig(): ProviderConfig {
@@ -181,9 +184,7 @@ class ConfigManager {
 		const polarAppUrl = this.polarAppUrl;
 
 		if (!polarApiKey || !polarOrganizationId) {
-			throw new Error(
-				'Polar configuration is incomplete. Required: POLAR_ACCESS_TOKEN, POLAR_ORGANIZATION_ID'
-			);
+			throw new Error('Polar configuration is incomplete. Required: POLAR_ACCESS_TOKEN, POLAR_ORGANIZATION_ID');
 		}
 
 		this.ensureConfig().polar = {
@@ -295,4 +296,26 @@ export function getPolarProvider(): PolarProvider | null {
 
 export function getOrCreatePolarProvider(): PolarProvider {
 	return getPolarProvider() || initializePolarProvider();
+}
+
+/**
+ * Generic function to get or create a payment provider instance by provider name
+ * Supports all payment providers: stripe, lemonsqueezy, polar
+ * @param providerName - The name of the payment provider (e.g., 'stripe', 'lemonsqueezy', 'polar')
+ * @returns The payment provider instance
+ * @throws Error if the provider is not supported
+ */
+export function getOrCreateProvider(providerName: string): PaymentProviderInterface {
+	const normalizedName = providerName.toLowerCase();
+
+	switch (normalizedName) {
+		case 'stripe':
+			return getOrCreateStripeProvider();
+		case 'lemonsqueezy':
+			return getOrCreateLemonsqueezyProvider();
+		case 'polar':
+			return getOrCreatePolarProvider();
+		default:
+			throw new Error(`Unsupported payment provider: ${providerName}`);
+	}
 }

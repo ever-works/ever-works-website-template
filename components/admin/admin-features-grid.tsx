@@ -1,4 +1,4 @@
-import { Users, FileText, BarChart3, FolderTree, Tag, Package, Shield, Building2, MessageSquare, Star, Flag } from "lucide-react";
+import { Users, FileText, BarChart3, FolderTree, Tag, Package, Shield, Building2, MessageSquare, Star, Flag, Megaphone } from "lucide-react";
 import { AdminFeatureCard } from "./admin-feature-card";
 import { AdminFeature } from "./types";
 
@@ -30,6 +30,13 @@ const ADMIN_FEATURES: AdminFeature[] = [
     description: "Manage featured items and homepage highlights.",
     href: "/admin/featured-items",
     emoji: "⭐"
+  },
+  {
+    icon: Megaphone,
+    title: "Sponsorships",
+    description: "Review and manage sponsor ad submissions.",
+    href: "/admin/sponsorships",
+    emoji: "📢"
   },
   {
     icon: Shield,

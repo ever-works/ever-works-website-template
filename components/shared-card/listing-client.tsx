@@ -9,12 +9,12 @@ import { Category, ItemData, Tag } from "@/lib/content";
 import { usePathname } from "@/i18n/navigation";
 import { isCategoryPagePath } from "@/lib/utils";
 
-interface ListingClientProps extends BaseCardProps {
+interface ListingClientProps extends Omit<BaseCardProps, 'categories'> {
   total: number;
   start: number;
   page: number;
   basePath: string;
-  categories: Category[];
+  categories?: Category[];
   tags: Tag[];
   items: ItemData[];
   filteredAndSortedItems?: ItemData[];
@@ -24,6 +24,7 @@ interface ListingClientProps extends BaseCardProps {
 export function ListingClient(props: ListingClientProps) {
   const pathname = usePathname();
   const isCategoryPage = isCategoryPagePath(pathname);
+  const categories = props.categories ?? [];
   
   // Use different configuration based on mode
   let config = props.config || CardPresets.fullListing;
@@ -40,6 +41,7 @@ export function ListingClient(props: ListingClientProps) {
   return (
     <Card
       {...props}
+      categories={categories}
       config={config}
       className="listing-client"
     />

@@ -234,7 +234,7 @@ export default function SubmissionSuccessPage() {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
-              onClick={() => router.push("/dashboard")}
+              onClick={() => router.push("/client/dashboard")}
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
             >
               <FileText className="w-4 h-4 mr-2" />

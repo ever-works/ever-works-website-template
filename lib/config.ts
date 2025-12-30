@@ -5,7 +5,29 @@
  * that template users need to customize for their own directory.
  *
  * All values can be overridden via environment variables in .env.local
+ *
+ * NOTE: This file is CLIENT-SAFE. For server-only config (configService, etc.),
+ * import directly from '@/lib/config/config-service' in server components/routes.
  */
+
+// Re-export types (types are always safe)
+export type {
+	AppConfigSchema,
+	ConfigValidationResult,
+	ConfigValidationError,
+	ConfigValidationWarning,
+	ConfigSection,
+	ConfigSectionType,
+	Environment,
+	CoreConfig,
+	AuthConfig,
+	OAuthProvider,
+	EmailConfig,
+	PaymentConfig,
+	AnalyticsConfig,
+	IntegrationsConfig,
+} from './config/types';
+export { isDevelopment, isProduction, isTest, getEnvironment } from './config/types';
 
 export const siteConfig = {
 	/**
@@ -26,7 +48,9 @@ export const siteConfig = {
 	 * Should NOT include trailing slash
 	 * @example "https://mydirectory.com"
 	 */
-	url: process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works"),
+	url:
+		process.env.NEXT_PUBLIC_APP_URL ??
+		(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://demo.ever.works'),
 
 	/**
 	 * Site logo path (used as fallback for OG images)

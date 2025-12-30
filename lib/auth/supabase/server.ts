@@ -1,16 +1,20 @@
 import { createServerClient, type CookieMethodsServer } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { authConfig } from '@/lib/config/config-service';
 
 export async function createClient() {
   const cookieStore = await cookies()
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  const supabaseUrl = authConfig.supabase.url;
+  const supabaseAnonKey = authConfig.supabase.anonKey;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error(
       'Missing required Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY'
     );
   }
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         getAll() {

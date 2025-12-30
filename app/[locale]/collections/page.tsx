@@ -1,8 +1,9 @@
 import { getCachedItems } from "@/lib/content";
-import { MOCK_COLLECTIONS } from "@/lib/mock/collections";
 import CollectionsGridClient from "./collections-grid-client";
 
-export const revalidate = 10;
+// Always fetch fresh collections so public page updates immediately after admin changes
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 // Allow non-English locales to be generated on-demand (ISR)
 export const dynamicParams = true;
@@ -19,11 +20,11 @@ export default async function CollectionsPage({
 }) {
   const { locale } = await params;
 
-  // Fetch collections from content
+  // Fetch collections from YAML content
   const { collections } = await getCachedItems({ lang: locale });
 
-  // Fallback to mock data if no collections.yml exists yet
-  const collectionsData = collections.length > 0 ? collections : MOCK_COLLECTIONS;
+  // Only show active collections publicly
+  const activeCollections = collections.filter((c) => c.isActive !== false);
 
-  return <CollectionsGridClient collections={collectionsData} locale={locale} />;
+  return <CollectionsGridClient collections={activeCollections} locale={locale} />;
 }

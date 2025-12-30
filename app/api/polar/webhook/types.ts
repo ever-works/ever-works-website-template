@@ -53,6 +53,7 @@ export interface PolarWebhookData {
 	subscription?: PolarSubscriptionData;
 	canceled_at?: number;
 	cancellation_details?: { reason?: string };
+	metadata?: Record<string, string>;
 }
 
 export interface PolarSubscriptionData {
@@ -72,6 +73,7 @@ export interface PolarSubscriptionData {
 	customer_id?: string;
 	customer_name?: string;
 	customer_email?: string;
+	metadata?: Record<string, string>;
 }
 
 export interface EmailConfig {
