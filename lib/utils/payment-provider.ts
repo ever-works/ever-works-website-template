@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { PaymentProvider } from '@/lib/constants';
 import type { CheckoutProvider } from '@/components/context/LayoutThemeContext';
 import type { PricingPlanConfig } from '@/lib/content';
@@ -67,5 +68,8 @@ export function usePaymentProvider(
 	configPricing?: PricingPlanConfig
 ): PaymentProvider {
 	const userSelectedProvider = getActiveProvider();
-	return determinePaymentProvider(userSelectedProvider, configPricing?.provider);
+	return useMemo(
+		() => determinePaymentProvider(userSelectedProvider, configPricing?.provider),
+		[userSelectedProvider, configPricing?.provider]
+	);
 }

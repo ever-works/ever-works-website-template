@@ -21,6 +21,13 @@ function getLemonVariantId(standardVariantEnv: string | undefined, setupFeeVaria
 }
 
 /**
+ * Type guard to validate that a string is a valid PaymentPlan enum value
+ */
+function isValidPaymentPlan(value: string): value is PaymentPlan {
+	return Object.values(PaymentPlan).includes(value as PaymentPlan);
+}
+
+/**
  * Maps PaymentPlan enum to PlanName type used by billing configs
  */
 function mapPaymentPlanToPlanName(plan: PaymentPlan): 'free' | 'standard' | 'premium' {
@@ -45,7 +52,12 @@ function enrichPricingConfigWithCurrency(
 	currency: string,
 	provider: PaymentProvider
 ): PricingConfig {
-	const planName = mapPaymentPlanToPlanName(config.id as PaymentPlan);
+	if (!isValidPaymentPlan(config.id)) {
+		throw new Error(
+			`Invalid PaymentPlan value: ${config.id}. Expected one of: ${Object.values(PaymentPlan).join(', ')}`
+		);
+	}
+	const planName = mapPaymentPlanToPlanName(config.id);
 	const interval = config.interval === PaymentInterval.YEARLY ? 'yearly' : 'monthly';
 
 	// Get currency-aware price config based on provider
@@ -180,7 +192,7 @@ export function getDefaultPricingConfigWithCurrency(
 	currency: string = 'USD',
 	provider: PaymentProvider = PaymentProvider.STRIPE
 ): PricingPlanConfig {
-	const baseConfig = { ...basePricingConfig };
+	const baseConfig = { ...basePricingConfig, plans: structuredClone(basePricingConfig.plans) };
 	const normalizedCurrency = currency.toUpperCase().trim() || 'USD';
 
 	// Get currency symbol from billing configs

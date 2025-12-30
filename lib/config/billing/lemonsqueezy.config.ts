@@ -49,7 +49,7 @@ import { PlanConfig, PlanName, CurrencyCode } from '.';
  * by mapping it to the appropriate LemonSqueezy configuration
  */
 const CURRENCY_TO_CONFIG_KEY: Record<string, CurrencyCode> = {
-	USD: 'us',
+	USD: 'usd',
 	EUR: 'eur',
 	GBP: 'gbp',
 	CAD: 'cad'
@@ -57,11 +57,11 @@ const CURRENCY_TO_CONFIG_KEY: Record<string, CurrencyCode> = {
 
 /**
  * Get LemonSqueezy config key from ISO currency code
- * Falls back to 'us' (USD) if currency is not supported
+ * Falls back to 'usd' (USD) if currency is not supported
  */
 export function getLemonSqueezyConfigKey(currency: string): CurrencyCode {
 	const normalizedCurrency = currency.toUpperCase().trim();
-	return CURRENCY_TO_CONFIG_KEY[normalizedCurrency] || 'us';
+	return CURRENCY_TO_CONFIG_KEY[normalizedCurrency] || 'usd';
 }
 
 /**
@@ -83,7 +83,7 @@ export function getLemonSqueezyPriceConfig(
 
 	if (!currencyConfig) {
 		// Fallback to USD if currency not found
-		const usdConfig = config.us;
+		const usdConfig = config.usd;
 		if (!usdConfig) {
 			return null;
 		}
@@ -104,7 +104,7 @@ export function getLemonSqueezyPriceConfig(
 export const LEMONSQUEEZY_CONFIG: Record<PlanName, PlanConfig> = {
 	premium: {
 		productId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_PRODUCT_ID,
-		us: {
+		usd: {
 			amount: {
 				monthly: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_MONTHLY_PRICE_ID_USD,
 				yearly: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_YEARLY_PRICE_ID_USD,
@@ -143,7 +143,7 @@ export const LEMONSQUEEZY_CONFIG: Record<PlanName, PlanConfig> = {
 	},
 	standard: {
 		productId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_PRODUCT_ID,
-		us: {
+		usd: {
 			amount: {
 				monthly: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_MONTHLY_PRICE_ID_USD,
 				yearly: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_YEARLY_PRICE_ID_USD,

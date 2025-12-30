@@ -36,7 +36,8 @@ export const PRICES: Record<string, CountryPricing> = {
  */
 export function getCurrencyDecimalPlaces(currency: string): number {
 	const zeroDecimalCurrencies = ['JPY', 'KRW', 'VND', 'CLP', 'IDR'];
-	return zeroDecimalCurrencies.includes(currency) ? 0 : 2;
+	const normalizedCurrency = currency.toUpperCase();
+	return zeroDecimalCurrencies.includes(normalizedCurrency) ? 0 : 2;
 }
 
 /**

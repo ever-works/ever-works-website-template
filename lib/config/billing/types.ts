@@ -1,4 +1,4 @@
-export type CurrencyCode = 'us' | 'eur' | 'gbp' | 'cad';
+export type CurrencyCode = 'usd' | 'eur' | 'gbp' | 'cad';
 export type PlanName = 'premium' | 'standard' | 'free';
 export type Interval = 'monthly' | 'yearly';
 export interface AmountConfig {

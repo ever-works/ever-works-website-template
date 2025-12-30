@@ -44,6 +44,27 @@ export interface UsePricingSectionActions {
 	getSavingsText: (plan: PricingConfig) => string | null;
 }
 
+/**
+ * Validates and maps plan.id to a valid plan name for billing configs
+ * @param planId - The plan ID to validate
+ * @returns The validated plan name ('free' | 'standard' | 'premium')
+ * @throws Error if planId is not a valid PaymentPlan
+ */
+function validateAndMapPlanName(planId: string): 'free' | 'standard' | 'premium' {
+	const validPlans: Record<string, 'free' | 'standard' | 'premium'> = {
+		[PaymentPlan.FREE]: 'free',
+		[PaymentPlan.STANDARD]: 'standard',
+		[PaymentPlan.PREMIUM]: 'premium'
+	};
+
+	const planName = validPlans[planId];
+	if (!planName) {
+		throw new Error(`Invalid plan ID: "${planId}". Expected one of: ${Object.values(PaymentPlan).join(', ')}`);
+	}
+
+	return planName;
+}
+
 export interface UsePricingSectionReturn extends UsePricingSectionState, UsePricingSectionActions {
 	// Additional data
 	user: any;
@@ -229,15 +250,12 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 			try {
 				if (paymentProvider === PaymentProvider.LEMONSQUEEZY) {
 					// Get currency-aware variant ID using multi-currency configs
-					const planName = plan.id === 'free' ? 'free' : plan.id === 'standard' ? 'standard' : 'premium';
+					// Map plan.id to plan name for billing configs with explicit validation
+					const planName = validateAndMapPlanName(plan.id);
 					const interval = billingInterval === PaymentInterval.YEARLY ? 'yearly' : 'monthly';
 
 					// Try to get currency-aware variant ID
-					const currencyVariantConfig = getLemonSqueezyPriceConfig(
-						planName as 'free' | 'standard' | 'premium',
-						currency,
-						interval
-					);
+					const currencyVariantConfig = getLemonSqueezyPriceConfig(planName, currency, interval);
 
 					// Use currency-aware variant ID if available, otherwise fallback to plan's variant ID
 					let variantId: string | undefined;
