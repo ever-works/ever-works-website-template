@@ -9,6 +9,12 @@ import {
     getDailyActivityData,
     getTopItemsEngagement,
 } from '@/lib/db/queries/dashboard.queries';
+import {
+    getTotalViewsCount,
+    getRecentViewsCount,
+    getDailyViewsData,
+    getViewsPerItem,
+} from '@/lib/db/queries/item-view.queries';
 import type { ItemData } from '@/lib/types/item';
 
 // ===================== Types =====================
@@ -127,6 +133,11 @@ export class ClientDashboardRepository {
             engagementOverview,
             activityChartData,
             topItemsEngagement,
+            // View queries
+            totalViews,
+            recentViews,
+            dailyViewsMap,
+            viewsPerItemMap,
         ] = await Promise.all([
             getVotesReceivedCount(itemSlugs),
             getCommentsReceivedCount(itemSlugs),
@@ -135,6 +146,11 @@ export class ClientDashboardRepository {
             getWeeklyEngagementData(itemSlugs, 12),
             getDailyActivityData(clientProfile.id, itemSlugs, 7),
             getTopItemsEngagement(itemSlugs, 5),
+            // View queries
+            getTotalViewsCount(itemSlugs),
+            getRecentViewsCount(itemSlugs, 7),
+            getDailyViewsData(itemSlugs, 7),
+            getViewsPerItem(itemSlugs),
         ]);
 
         // Calculate submission-based metrics from Git items
@@ -142,12 +158,15 @@ export class ClientDashboardRepository {
         const submissionTimeline = this.calculateSubmissionTimeline(userItems);
         const recentSubmissions = this.calculateRecentSubmissions(userItems, 7);
 
-        // Map top items with titles from Git data
-        const topItems = this.mapTopItems(topItemsEngagement, userItems);
+        // Map top items with titles from Git data and view counts
+        const topItems = this.mapTopItems(topItemsEngagement, userItems, viewsPerItemMap);
+
+        // Inject views into activity chart data
+        const activityChartDataWithViews = this.injectViewsIntoActivityData(activityChartData, dailyViewsMap);
 
         // Build engagement chart data
         const engagementChartData = [
-            { name: 'Views', value: 0, color: ENGAGEMENT_COLORS.views }, // Views not tracked
+            { name: 'Views', value: totalViews, color: ENGAGEMENT_COLORS.views },
             { name: 'Votes Received', value: votesReceived, color: ENGAGEMENT_COLORS.votes },
             { name: 'Comments Received', value: commentsReceived, color: ENGAGEMENT_COLORS.comments },
             { name: 'Shares', value: 0, color: ENGAGEMENT_COLORS.shares }, // Shares not tracked
@@ -155,17 +174,17 @@ export class ClientDashboardRepository {
 
         return {
             totalSubmissions: userItems.length,
-            totalViews: 0, // Views tracking not implemented
+            totalViews,
             totalVotesReceived: votesReceived,
             totalCommentsReceived: commentsReceived,
-            viewsAvailable: false, // Flag to indicate views are not tracked yet
+            viewsAvailable: true,
             recentActivity: {
                 newSubmissions: recentSubmissions,
-                newViews: 0, // Views not tracked
+                newViews: recentViews,
             },
             uniqueItemsInteracted,
             totalActivity,
-            activityChartData,
+            activityChartData: activityChartDataWithViews,
             engagementChartData,
             submissionTimeline,
             engagementOverview,
@@ -251,11 +270,12 @@ export class ClientDashboardRepository {
     }
 
     /**
-     * Map top items engagement data with item titles
+     * Map top items engagement data with item titles and view counts
      */
     private mapTopItems(
         engagement: Array<{ itemId: string; votes: number; comments: number }>,
-        items: ItemData[]
+        items: ItemData[],
+        viewsPerItem: Map<string, number>
     ): TopItem[] {
         const itemMap = new Map(items.map(item => [item.slug, item]));
 
@@ -267,12 +287,33 @@ export class ClientDashboardRepository {
                 return {
                     id: item.id,
                     title: item.name,
-                    views: 0, // Views not tracked
+                    views: viewsPerItem.get(eng.itemId) ?? 0,
                     votes: eng.votes,
                     comments: eng.comments,
                 };
             })
             .filter((item): item is TopItem => item !== null);
+    }
+
+    /**
+     * Inject view counts into activity chart data
+     * Maps daily views (keyed by YYYY-MM-DD) to the activity data array (keyed by day name)
+     */
+    private injectViewsIntoActivityData(
+        activityData: ActivityData[],
+        dailyViewsMap: Map<string, number>
+    ): ActivityData[] {
+        return activityData.map((day, index) => {
+            // Calculate the date for this entry (oldest to newest: index 0 = 6 days ago)
+            const date = new Date();
+            date.setDate(date.getDate() - (activityData.length - 1 - index));
+            const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
+
+            return {
+                ...day,
+                views: dailyViewsMap.get(dateStr) ?? 0,
+            };
+        });
     }
 
     /**
@@ -284,7 +325,7 @@ export class ClientDashboardRepository {
             totalViews: 0,
             totalVotesReceived: 0,
             totalCommentsReceived: 0,
-            viewsAvailable: false,
+            viewsAvailable: true,
             recentActivity: {
                 newSubmissions: 0,
                 newViews: 0,

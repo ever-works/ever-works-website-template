@@ -1,6 +1,6 @@
 {
-  "id": "76c7e06e-520c-412d-b905-16ca448ef88b",
-  "prevId": "e8d0d731-ca24-4221-89fe-0cd3607c173f",
+  "id": "20fd1bc9-d40f-4309-9572-a947d06e908e",
+  "prevId": "76c7e06e-520c-412d-b905-16ca448ef88b",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -468,6 +468,19 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'en'"
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'USD'"
         },
         "two_factor_enabled": {
           "name": "two_factor_enabled",
@@ -1310,99 +1323,6 @@
           "columns": [
             {
               "expression": "object_type",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.item_views": {
-      "name": "item_views",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "item_id": {
-          "name": "item_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "viewer_id": {
-          "name": "viewer_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "viewed_date_utc": {
-          "name": "viewed_date_utc",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "viewed_at": {
-          "name": "viewed_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "item_views_unique_daily_idx": {
-          "name": "item_views_unique_daily_idx",
-          "columns": [
-            {
-              "expression": "item_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "viewer_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "viewed_date_utc",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "item_views_item_date_idx": {
-          "name": "item_views_item_date_idx",
-          "columns": [
-            {
-              "expression": "item_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "viewed_date_utc",
               "isExpression": false,
               "asc": true,
               "nulls": "last"

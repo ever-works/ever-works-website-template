@@ -1062,6 +1062,39 @@ export const surveyResponses = pgTable(
 	})
 );
 
+// ######################### Item Views Schema #########################
+/**
+ * Item Views Table
+ *
+ * Tracks unique daily item views for analytics.
+ * Uses cookie-based viewer identification with UTC date deduplication.
+ *
+ * Key features:
+ * - Unique constraint on (item_id, viewer_id, viewed_date_utc) ensures one view per viewer per day
+ * - No IP storage for privacy - uses anonymous cookie-based viewer_id only
+ * - Excludes bots and item owners at API level
+ */
+export const itemViews = pgTable(
+	'item_views',
+	{
+		id: text('id')
+			.primaryKey()
+			.$defaultFn(() => crypto.randomUUID()),
+		itemId: text('item_id').notNull(),
+		viewerId: text('viewer_id').notNull(),
+		viewedDateUtc: text('viewed_date_utc').notNull(), // YYYY-MM-DD format
+		viewedAt: timestamp('viewed_at', { mode: 'date', withTimezone: true }).notNull().defaultNow()
+	},
+	(table) => ({
+		uniqueDailyView: uniqueIndex('item_views_unique_daily_idx').on(table.itemId, table.viewerId, table.viewedDateUtc),
+		itemDateIndex: index('item_views_item_date_idx').on(table.itemId, table.viewedDateUtc)
+	})
+);
+
+// ######################### Item Views Types #########################
+export type ItemView = typeof itemViews.$inferSelect;
+export type NewItemView = typeof itemViews.$inferInsert;
+
 // ######################### Seed Status Schema #########################
 // Singleton table to track database seeding status and prevent concurrent seed races
 export const seedStatus = pgTable(
