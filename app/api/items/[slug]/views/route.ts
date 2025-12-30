@@ -5,11 +5,9 @@ import { checkDatabaseAvailability } from '@/lib/utils/database-check';
 import { isBot } from '@/lib/utils/bot-detection';
 import { recordItemView } from '@/lib/db/queries/item-view.queries';
 import { ItemRepository } from '@/lib/repositories/item.repository';
+import { VIEWER_COOKIE_NAME, VIEWER_COOKIE_MAX_AGE } from '@/lib/constants/analytics';
 
 type RouteParams = { params: Promise<{ slug: string }> };
-
-const VIEWER_COOKIE_NAME = 'ever_viewer_id';
-const VIEWER_COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 365 days in seconds
 
 /**
  * POST /api/items/[slug]/views
@@ -43,16 +41,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 			return NextResponse.json({ success: true, counted: false, reason: 'bot' });
 		}
 
-		// 3. Get or create viewer ID from cookie
-		const cookieStore = await cookies();
-		let viewerId = cookieStore.get(VIEWER_COOKIE_NAME)?.value;
-		const isNewViewer = !viewerId;
-
-		if (!viewerId) {
-			viewerId = crypto.randomUUID();
-		}
-
-		// 4. Owner exclusion (if authenticated)
+		// 3. Owner exclusion (if authenticated) - check before cookie handling
 		const session = await auth();
 		if (session?.user?.id) {
 			const itemRepository = new ItemRepository();
@@ -60,6 +49,15 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 			if (item?.submitted_by === session.user.id) {
 				return NextResponse.json({ success: true, counted: false, reason: 'owner' });
 			}
+		}
+
+		// 4. Get or create viewer ID from cookie
+		const cookieStore = await cookies();
+		let viewerId = cookieStore.get(VIEWER_COOKIE_NAME)?.value;
+		const isNewViewer = !viewerId;
+
+		if (!viewerId) {
+			viewerId = crypto.randomUUID();
 		}
 
 		// 5. Record view with daily deduplication

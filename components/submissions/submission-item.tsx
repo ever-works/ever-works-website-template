@@ -137,17 +137,15 @@ export function SubmissionItem({
                     {t('SUBMITTED')}: {formatDate(submission.submittedAt)}
                   </span>
                 )}
-                {submission.status === "approved" && submission.views > 0 && (
-                  <>
-                    <span className="flex items-center gap-1">
-                      <FiEye className="w-3 h-3" />
-                      {t('VIEWS_COUNT', { count: submission.views })}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <FiTrendingUp className="w-3 h-3" />
-                      {t('LIKES_COUNT', { count: submission.likes })}
-                    </span>
-                  </>
+                <span className="flex items-center gap-1">
+                  <FiEye className="w-3 h-3" />
+                  {t('VIEWS_COUNT', { count: submission.views })}
+                </span>
+                {submission.status === "approved" && submission.likes > 0 && (
+                  <span className="flex items-center gap-1">
+                    <FiTrendingUp className="w-3 h-3" />
+                    {t('LIKES_COUNT', { count: submission.likes })}
+                  </span>
                 )}
               </div>
               {submission.status === "rejected" && submission.rejectionReason && (

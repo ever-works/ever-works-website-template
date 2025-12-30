@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import { ItemDetail } from '@/components/item-detail';
 import { ServerItemContent } from '@/components/item-detail/server-item-content';
 import { Container } from '@/components/ui/container';
+import { ItemViewTracker } from '@/components/tracking/item-view-tracker';
 import { Metadata } from 'next';
 import { siteConfig } from '@/lib/config';
 import { cleanUrl } from '@/lib/utils/url-cleaner';
@@ -211,6 +212,7 @@ export default async function ItemDetails({ params }: { params: Promise<{ slug: 
 
 		return (
 			<Container maxWidth="7xl" padding="default" useGlobalWidth>
+				<ItemViewTracker slug={slug} />
 				<ItemDetail meta={metaWithVideo} renderedContent={renderedContent} categoryName={categoryName} />
 			</Container>
 		);
