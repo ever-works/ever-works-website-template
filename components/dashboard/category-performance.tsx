@@ -12,19 +12,13 @@ import {
     Cell,
 } from "recharts";
 import type { CategoryPerformanceDataExport } from "@/hooks/use-dashboard-stats";
-
-// Design system constants
-const CARD_BASE_STYLES = "bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700 p-6";
-const TITLE_STYLES = "text-lg font-semibold text-gray-900 dark:text-gray-100";
-const SUBTITLE_STYLES = "text-xs text-gray-500 dark:text-gray-400";
-const TOOLTIP_STYLES = {
-    backgroundColor: "#1F2937",
-    border: "1px solid #374151",
-    borderRadius: "8px",
-    color: "#F9FAFB",
-};
-
-const CHART_COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#8B5CF6", "#EF4444"];
+import {
+    CARD_BASE_STYLES,
+    TITLE_STYLES,
+    SUBTITLE_STYLES,
+    TOOLTIP_STYLES,
+    CHART_COLORS,
+} from "./styles";
 
 interface CategoryPerformanceProps {
     data: CategoryPerformanceDataExport[];
@@ -68,9 +62,9 @@ export function CategoryPerformance({ data, isLoading = false }: CategoryPerform
     }));
 
     return (
-        <div className={CARD_BASE_STYLES}>
+        <section className={CARD_BASE_STYLES} aria-labelledby="category-performance-title">
             <div className="flex items-center justify-between mb-4">
-                <h3 className={TITLE_STYLES}>{t("TITLE")}</h3>
+                <h3 id="category-performance-title" className={TITLE_STYLES}>{t("TITLE")}</h3>
                 <span className={SUBTITLE_STYLES}>{t("SUBTITLE")}</span>
             </div>
             <ResponsiveContainer width="100%" height={250}>
@@ -143,6 +137,6 @@ export function CategoryPerformance({ data, isLoading = false }: CategoryPerform
                     </div>
                 ))}
             </div>
-        </div>
+        </section>
     );
 }
