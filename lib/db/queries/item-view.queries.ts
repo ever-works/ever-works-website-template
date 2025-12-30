@@ -19,6 +19,20 @@ export async function recordItemView(
 	return result.length > 0;
 }
 
+// ===================== Helper Functions =====================
+
+/**
+ * Get UTC date string for N days ago
+ * Uses UTC methods to avoid timezone-related off-by-one errors
+ * @param daysAgo - Number of days to subtract from today
+ * @returns Date string in YYYY-MM-DD format (UTC)
+ */
+function getUtcDateString(daysAgo: number = 0): string {
+	const date = new Date();
+	date.setUTCDate(date.getUTCDate() - daysAgo);
+	return date.toISOString().split('T')[0];
+}
+
 // ===================== View Aggregation Queries =====================
 
 /**
@@ -46,9 +60,7 @@ export async function getTotalViewsCount(itemSlugs: string[]): Promise<number> {
 export async function getRecentViewsCount(itemSlugs: string[], days: number = 7): Promise<number> {
 	if (itemSlugs.length === 0) return 0;
 
-	const startDate = new Date();
-	startDate.setDate(startDate.getDate() - days);
-	const startDateStr = startDate.toISOString().split('T')[0]; // YYYY-MM-DD
+	const startDateStr = getUtcDateString(days);
 
 	const [result] = await db
 		.select({ count: count() })
@@ -68,9 +80,7 @@ export async function getRecentViewsCount(itemSlugs: string[], days: number = 7)
 export async function getDailyViewsData(itemSlugs: string[], days: number = 7): Promise<Map<string, number>> {
 	if (itemSlugs.length === 0) return new Map();
 
-	const startDate = new Date();
-	startDate.setDate(startDate.getDate() - days);
-	const startDateStr = startDate.toISOString().split('T')[0];
+	const startDateStr = getUtcDateString(days);
 
 	const dailyViews = await db
 		.select({
