@@ -61,4 +61,38 @@ export const mockStats: UserStats = {
     { id: 'item2', title: 'Next.js 13 Features', views: 280, votes: 38, comments: 15 },
     { id: 'item3', title: 'Vite Build Tool', views: 210, votes: 29, comments: 12 },
   ],
+  periodComparison: {
+    thisWeek: { votes: 24, comments: 12, submissions: 3, views: 156 },
+    lastWeek: { votes: 20, comments: 8, submissions: 2, views: 134 },
+    change: { votes: 20, comments: 50, submissions: 50, views: 16 },
+  },
+  categoryPerformance: [
+    { category: 'React', itemCount: 8, totalEngagement: 120, avgEngagement: 15 },
+    { category: 'Next.js', itemCount: 5, totalEngagement: 85, avgEngagement: 17 },
+    { category: 'TypeScript', itemCount: 6, totalEngagement: 72, avgEngagement: 12 },
+    { category: 'Node.js', itemCount: 4, totalEngagement: 48, avgEngagement: 12 },
+  ],
+  approvalTrend: [
+    { month: 'Jul', approved: 4, total: 5, rate: 80 },
+    { month: 'Aug', approved: 5, total: 6, rate: 83 },
+    { month: 'Sep', approved: 3, total: 4, rate: 75 },
+    { month: 'Oct', approved: 6, total: 7, rate: 86 },
+    { month: 'Nov', approved: 5, total: 5, rate: 100 },
+    { month: 'Dec', approved: 4, total: 5, rate: 80 },
+  ],
+  submissionCalendar: [
+    { date: '2024-12-01', count: 1 },
+    { date: '2024-12-05', count: 2 },
+    { date: '2024-12-10', count: 1 },
+    { date: '2024-12-15', count: 3 },
+    { date: '2024-12-20', count: 2 },
+    { date: '2024-12-25', count: 1 },
+  ],
+  engagementDistribution: [
+    { id: 'item1', title: 'React Hooks Guide', slug: 'react-hooks-guide', engagement: 63, percentage: 25.7 },
+    { id: 'item2', title: 'Next.js 13 Features', slug: 'nextjs-13-features', engagement: 53, percentage: 21.6 },
+    { id: 'item3', title: 'Vite Build Tool', slug: 'vite-build-tool', engagement: 41, percentage: 16.7 },
+    { id: 'item4', title: 'TypeScript Tips', slug: 'typescript-tips', engagement: 38, percentage: 15.5 },
+    { id: 'item5', title: 'CSS Grid Mastery', slug: 'css-grid-mastery', engagement: 50, percentage: 20.4 },
+  ],
 }; 

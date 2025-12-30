@@ -2869,6 +2869,92 @@
 			"DESCRIPTION": "Beschreibung",
 			"EDIT_SUBMISSION_TITLE": "Einreichung bearbeiten",
 			"EDIT_SUBMISSION_DESC": "Aktualisieren Sie die Details Ihrer Einreichung"
+		},
+		"dashboard": {
+			"TITLE": "Dashboard",
+			"WELCOME_BACK": "Willkommen zurück, {name}! Hier ist Ihre Aktivitätsübersicht.",
+			"REFRESH": "Aktualisieren",
+			"FAILED_TO_LOAD": "Fehler beim Laden der Dashboard-Statistiken",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "Gesamte Einreichungen",
+				"CONTENT_CREATED": "Von Ihnen erstellte Inhalte",
+				"TOTAL_VIEWS": "Gesamte Aufrufe",
+				"VIEWS_ON_CONTENT": "Aufrufe Ihrer Inhalte",
+				"VOTES_RECEIVED": "Erhaltene Stimmen",
+				"VOTES_ON_CONTENT": "Stimmen für Ihre Inhalte",
+				"COMMENTS_RECEIVED": "Erhaltene Kommentare",
+				"COMMENTS_ON_CONTENT": "Kommentare zu Ihren Inhalten"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "Wöchentliche Leistung",
+				"THIS_WEEK": "Diese Woche",
+				"LAST_WEEK": "Letzte Woche",
+				"CHANGE": "Änderung",
+				"VOTES": "Stimmen",
+				"COMMENTS": "Kommentare",
+				"SUBMISSIONS": "Einreichungen",
+				"VIEWS": "Aufrufe",
+				"NO_DATA": "Keine Daten verfügbar",
+				"NO_DATA_DESC": "Beginnen Sie mit der Erstellung von Inhalten, um Ihren wöchentlichen Leistungsvergleich zu sehen."
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "Kategorie-Leistung",
+				"SUBTITLE": "Top-Kategorien nach durchschnittlichem Engagement",
+				"CATEGORY": "Kategorie",
+				"ITEMS": "Elemente",
+				"AVG_ENGAGEMENT": "Durchschn. Engag.",
+				"TOTAL_ENGAGEMENT": "Gesamt",
+				"NO_DATA": "Keine Kategoriedaten",
+				"NO_DATA_DESC": "Reichen Sie Elemente ein, um Kategorie-Leistungsmetriken zu sehen."
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "Genehmigungstrend",
+				"SUBTITLE": "Monatliche Genehmigungsrate",
+				"APPROVAL_RATE": "Genehmigungsrate",
+				"APPROVED": "Genehmigt",
+				"TOTAL": "Gesamt",
+				"NO_DATA": "Keine Genehmigungsdaten",
+				"NO_DATA_DESC": "Reichen Sie Elemente ein, um Ihre Genehmigungsrate zu verfolgen."
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "Engagement-Rate",
+				"SUBTITLE": "Engagement pro Einreichung im Zeitverlauf",
+				"RATE": "Rate",
+				"NO_DATA": "Keine Engagement-Daten",
+				"NO_DATA_DESC": "Erstellen Sie Inhalte, um Ihre Engagement-Trends zu sehen."
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "Einreichungsaktivität",
+				"SUBTITLE": "Ihre Einreichungskonsistenz der letzten 3 Monate",
+				"SUBMISSIONS": "Einreichungen",
+				"SUBMISSION": "Einreichung",
+				"NO_SUBMISSIONS": "Keine Einreichungen",
+				"NO_DATA": "Keine Aktivitätsdaten",
+				"NO_DATA_DESC": "Beginnen Sie mit Einreichungen, um Ihren Aktivitätskalender zu sehen.",
+				"LESS": "Weniger",
+				"MORE": "Mehr"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "Engagement-Verteilung",
+				"SUBTITLE": "Wie das Engagement auf Ihre Top-Elemente verteilt ist",
+				"ENGAGEMENT": "Engagement",
+				"OF_TOTAL": "vom Gesamt",
+				"NO_DATA": "Keine Engagement-Daten",
+				"NO_DATA_DESC": "Erhalten Sie Stimmen und Kommentare, um die Engagement-Verteilung zu sehen."
+			},
+
+			"CHARTS": {
+				"LOADING": "Diagrammdaten werden geladen...",
+				"ERROR": "Fehler beim Laden des Diagramms",
+				"RETRY": "Erneut versuchen"
+			}
 		}
 	}
 }

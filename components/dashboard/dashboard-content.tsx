@@ -15,6 +15,12 @@ import { SubmissionTimeline } from "./submission-timeline";
 import { EngagementOverview } from "./engagement-overview";
 import { StatusBreakdown } from "./status-breakdown";
 import { TopItems } from "./top-items";
+import { PeriodComparison } from "./period-comparison";
+import { CategoryPerformance } from "./category-performance";
+import { ApprovalTrend } from "./approval-trend";
+import { SubmissionCalendar } from "./submission-calendar";
+import { EngagementDistribution } from "./engagement-distribution";
+import { EngagementRateChart } from "./engagement-rate-chart";
 import { useDashboardStats } from "@/hooks/use-dashboard-stats";
 import { Button } from "@/components/ui/button";
 
@@ -99,7 +105,15 @@ export function DashboardContent({ session }: DashboardContentProps) {
           />
         </div>
 
-        {/* New Charts Section */}
+        {/* Period Comparison */}
+        <div className="mb-8">
+          <PeriodComparison
+            data={stats?.periodComparison}
+            isLoading={!stats}
+          />
+        </div>
+
+        {/* Submission Timeline & Status */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <SubmissionTimeline 
             data={stats?.submissionTimeline || []} 
@@ -113,8 +127,20 @@ export function DashboardContent({ session }: DashboardContentProps) {
 
         {/* Engagement Overview */}
         <div className="mb-8">
-          <EngagementOverview 
-            data={stats?.engagementOverview || []} 
+          <EngagementOverview
+            data={stats?.engagementOverview || []}
+            isLoading={!stats}
+          />
+        </div>
+
+        {/* Category Performance & Approval Trend */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <CategoryPerformance
+            data={stats?.categoryPerformance || []}
+            isLoading={!stats}
+          />
+          <ApprovalTrend
+            data={stats?.approvalTrend || []}
             isLoading={!stats}
           />
         </div>
@@ -133,6 +159,27 @@ export function DashboardContent({ session }: DashboardContentProps) {
               isLoading={!stats}
             />
           </div>
+        </div>
+
+        {/* Submission Calendar & Engagement Distribution */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <SubmissionCalendar
+            data={stats?.submissionCalendar || []}
+            isLoading={!stats}
+          />
+          <EngagementDistribution
+            data={stats?.engagementDistribution || []}
+            isLoading={!stats}
+          />
+        </div>
+
+        {/* Engagement Rate Chart */}
+        <div className="mb-8">
+          <EngagementRateChart
+            engagementOverview={stats?.engagementOverview || []}
+            totalSubmissions={stats?.totalSubmissions || 0}
+            isLoading={!stats}
+          />
         </div>
 
         {/* Weekly Activity Chart */}

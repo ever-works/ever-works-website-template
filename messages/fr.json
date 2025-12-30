@@ -2936,6 +2936,92 @@
 
 			"EDIT_SUBMISSION_TITLE": "Modifier la Soumission",
 			"EDIT_SUBMISSION_DESC": "Mettre à jour les détails de votre soumission"
+		},
+		"dashboard": {
+			"TITLE": "Tableau de Bord",
+			"WELCOME_BACK": "Bon retour, {name} ! Voici votre aperçu d'activité.",
+			"REFRESH": "Actualiser",
+			"FAILED_TO_LOAD": "Échec du chargement des statistiques",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "Total des Soumissions",
+				"CONTENT_CREATED": "Contenu que vous avez créé",
+				"TOTAL_VIEWS": "Vues Totales",
+				"VIEWS_ON_CONTENT": "Vues sur votre contenu",
+				"VOTES_RECEIVED": "Votes Reçus",
+				"VOTES_ON_CONTENT": "Votes sur votre contenu",
+				"COMMENTS_RECEIVED": "Commentaires Reçus",
+				"COMMENTS_ON_CONTENT": "Commentaires sur votre contenu"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "Performance Hebdomadaire",
+				"THIS_WEEK": "Cette Semaine",
+				"LAST_WEEK": "Semaine Dernière",
+				"CHANGE": "Variation",
+				"VOTES": "Votes",
+				"COMMENTS": "Commentaires",
+				"SUBMISSIONS": "Soumissions",
+				"VIEWS": "Vues",
+				"NO_DATA": "Aucune donnée disponible",
+				"NO_DATA_DESC": "Commencez à créer du contenu pour voir votre comparaison de performance hebdomadaire."
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "Performance par Catégorie",
+				"SUBTITLE": "Meilleures catégories par engagement moyen",
+				"CATEGORY": "Catégorie",
+				"ITEMS": "Éléments",
+				"AVG_ENGAGEMENT": "Engag. Moy.",
+				"TOTAL_ENGAGEMENT": "Total",
+				"NO_DATA": "Aucune donnée de catégorie",
+				"NO_DATA_DESC": "Soumettez des éléments pour voir les métriques de performance par catégorie."
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "Tendance d'Approbation",
+				"SUBTITLE": "Taux de réussite d'approbation mensuel",
+				"APPROVAL_RATE": "Taux d'Approbation",
+				"APPROVED": "Approuvés",
+				"TOTAL": "Total",
+				"NO_DATA": "Aucune donnée d'approbation",
+				"NO_DATA_DESC": "Soumettez des éléments pour suivre votre taux d'approbation au fil du temps."
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "Taux d'Engagement",
+				"SUBTITLE": "Engagement par soumission au fil du temps",
+				"RATE": "Taux",
+				"NO_DATA": "Aucune donnée d'engagement",
+				"NO_DATA_DESC": "Créez du contenu pour voir vos tendances d'engagement."
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "Activité de Soumission",
+				"SUBTITLE": "Votre régularité de soumission sur les 3 derniers mois",
+				"SUBMISSIONS": "soumissions",
+				"SUBMISSION": "soumission",
+				"NO_SUBMISSIONS": "Aucune soumission",
+				"NO_DATA": "Aucune donnée d'activité",
+				"NO_DATA_DESC": "Commencez à soumettre du contenu pour voir votre calendrier d'activité.",
+				"LESS": "Moins",
+				"MORE": "Plus"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "Distribution de l'Engagement",
+				"SUBTITLE": "Comment l'engagement est réparti sur vos meilleurs éléments",
+				"ENGAGEMENT": "Engagement",
+				"OF_TOTAL": "du total",
+				"NO_DATA": "Aucune donnée d'engagement",
+				"NO_DATA_DESC": "Obtenez des votes et commentaires pour voir comment l'engagement est distribué."
+			},
+
+			"CHARTS": {
+				"LOADING": "Chargement des données du graphique...",
+				"ERROR": "Échec du chargement du graphique",
+				"RETRY": "Réessayer"
+			}
 		}
 	}
 }

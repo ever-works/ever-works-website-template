@@ -1,4 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
+import type {
+    PeriodComparisonDataExport,
+    CategoryPerformanceDataExport,
+    ApprovalTrendDataExport,
+    SubmissionCalendarDataExport,
+    EngagementDistributionData,
+} from "@/lib/repositories/client-dashboard.repository";
+
+// Re-export types for component usage
+export type {
+    PeriodComparisonDataExport,
+    CategoryPerformanceDataExport,
+    ApprovalTrendDataExport,
+    SubmissionCalendarDataExport,
+    EngagementDistributionData,
+};
 
 interface ActivityData {
   date: string;
@@ -51,6 +67,11 @@ export interface UserStats {
   engagementOverview: EngagementOverviewData[];
   statusBreakdown: StatusBreakdownData[];
   topItems: TopItem[];
+  periodComparison: PeriodComparisonDataExport;
+  categoryPerformance: CategoryPerformanceDataExport[];
+  approvalTrend: ApprovalTrendDataExport[];
+  submissionCalendar: SubmissionCalendarDataExport[];
+  engagementDistribution: EngagementDistributionData[];
 }
 
 export function useDashboardStats() {
