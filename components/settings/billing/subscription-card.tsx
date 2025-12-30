@@ -2,6 +2,8 @@
 
 import { Calendar, Clock, CheckCircle, AlertCircle, CreditCard } from 'lucide-react';
 import { useAutoRenewal } from '@/hooks/use-auto-renewal';
+import { useLocale } from 'next-intl';
+import { formatCurrencyAmount } from '@/lib/utils/currency-format';
 
 interface SubscriptionInfo {
 	id: string;
@@ -26,11 +28,6 @@ const formatDate = (date: string) =>
 		month: 'short',
 		day: 'numeric'
 	});
-
-const formatAmount = (amount: number, currency: string) => {
-	const symbol = currency === 'USD' ? '$' : currency;
-	return `${symbol}${amount.toFixed(2)}`;
-};
 
 const getStatusConfig = (status: string) => {
 	switch (status.toLowerCase()) {
@@ -80,6 +77,7 @@ const getStatusConfig = (status: string) => {
 };
 
 export function SubscriptionCard({ subscription }: { subscription: SubscriptionInfo }) {
+	const locale = useLocale();
 	const statusConfig = getStatusConfig(subscription.status);
 	const StatusIcon = statusConfig.icon;
 
@@ -117,7 +115,7 @@ export function SubscriptionCard({ subscription }: { subscription: SubscriptionI
 
 				<div className="text-right ml-3">
 					<div className="text-xl font-bold text-slate-900 dark:text-slate-100">
-						{formatAmount(subscription.amount, subscription.currency)}
+						{formatCurrencyAmount(subscription.amount, subscription.currency, locale)}
 					</div>
 					<div className="text-sm text-slate-600 dark:text-slate-400 font-medium">
 						per {subscription.billingInterval}
