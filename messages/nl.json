@@ -2917,6 +2917,11 @@
 				"NO_DATA_DESC": "Ontvang stemmen en reacties om de betrokkenheidsverdeling te zien."
 			},
 
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Gem."
+			},
+
 			"CHARTS": {
 				"LOADING": "Grafiekgegevens laden...",
 				"ERROR": "Kan grafiek niet laden",

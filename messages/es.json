@@ -2939,6 +2939,11 @@
 				"NO_DATA_DESC": "Obtén votos y comentarios para ver cómo se distribuye la participación."
 			},
 
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Prom."
+			},
+
 			"CHARTS": {
 				"LOADING": "Cargando datos del gráfico...",
 				"ERROR": "Error al cargar el gráfico",

@@ -3033,6 +3033,11 @@
 				"NO_DATA_DESC": "Get votes and comments to see how engagement is distributed."
 			},
 
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Avg"
+			},
+
 			"CHARTS": {
 				"LOADING": "Loading chart data...",
 				"ERROR": "Failed to load chart",

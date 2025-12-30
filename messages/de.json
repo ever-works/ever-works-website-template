@@ -2950,6 +2950,11 @@
 				"NO_DATA_DESC": "Erhalten Sie Stimmen und Kommentare, um die Engagement-Verteilung zu sehen."
 			},
 
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Durchschn."
+			},
+
 			"CHARTS": {
 				"LOADING": "Diagrammdaten werden geladen...",
 				"ERROR": "Fehler beim Laden des Diagramms",

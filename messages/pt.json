@@ -2917,6 +2917,11 @@
 				"NO_DATA_DESC": "Receba votos e comentários para ver como o engajamento é distribuído."
 			},
 
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Méd."
+			},
+
 			"CHARTS": {
 				"LOADING": "Carregando dados do gráfico...",
 				"ERROR": "Falha ao carregar gráfico",

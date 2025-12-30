@@ -2917,6 +2917,11 @@
 				"NO_DATA_DESC": "Dapatkan suara dan komentar untuk melihat distribusi keterlibatan."
 			},
 
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Rata-rata"
+			},
+
 			"CHARTS": {
 				"LOADING": "Memuat data grafik...",
 				"ERROR": "Gagal memuat grafik",

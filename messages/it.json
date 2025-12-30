@@ -2917,6 +2917,11 @@
 				"NO_DATA_DESC": "Ricevi voti e commenti per vedere come è distribuito il coinvolgimento."
 			},
 
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Media"
+			},
+
 			"CHARTS": {
 				"LOADING": "Caricamento dati grafico...",
 				"ERROR": "Impossibile caricare il grafico",

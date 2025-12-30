@@ -3017,6 +3017,11 @@
 				"NO_DATA_DESC": "Obtenez des votes et commentaires pour voir comment l'engagement est distribué."
 			},
 
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Moy."
+			},
+
 			"CHARTS": {
 				"LOADING": "Chargement des données du graphique...",
 				"ERROR": "Échec du chargement du graphique",

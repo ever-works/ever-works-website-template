@@ -2917,6 +2917,11 @@
 				"NO_DATA_DESC": "Otrzymuj głosy i komentarze, aby zobaczyć rozkład zaangażowania."
 			},
 
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Śr."
+			},
+
 			"CHARTS": {
 				"LOADING": "Ładowanie danych wykresu...",
 				"ERROR": "Nie udało się załadować wykresu",
