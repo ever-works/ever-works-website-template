@@ -101,10 +101,8 @@ export function CategoryPerformance({ data, isLoading = false }: CategoryPerform
                             return [value, String(name)];
                         }}
                         labelFormatter={(label) => {
-                            const item = data.find(
-                                (d) =>
-                                    d.category.substring(0, 15) ===
-                                    String(label).replace("...", "")
+                            const item = chartData.find(
+                                (d) => d.displayCategory === String(label)
                             );
                             return item ? item.category : String(label);
                         }}
