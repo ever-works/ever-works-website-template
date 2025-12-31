@@ -156,8 +156,8 @@ const SelectLayout: React.FC<SelectLayoutProps> = ({ className, disabled = false
 										className={cn(
 											'absolute inset-0',
 											layout.key === LayoutHome.HOME_ONE
-												? 'bg-linear-to-br from-theme-primary-100/20 to-theme-primary-200/20 dark:from-theme-primary-900/20 dark:to-theme-primary-800/20'
-												: 'bg-linear-to-br from-purple-100/20 to-pink-100/20 dark:from-purple-900/20 dark:to-pink-900/20'
+												? 'bg-gradient-to-br from-theme-primary-100/20 to-theme-primary-200/20 dark:from-theme-primary-900/20 dark:to-theme-primary-800/20'
+												: 'bg-gradient-to-br from-purple-100/20 to-pink-100/20 dark:from-purple-900/20 dark:to-pink-900/20'
 										)}
 									/>
 									<Image
@@ -168,7 +168,7 @@ const SelectLayout: React.FC<SelectLayoutProps> = ({ className, disabled = false
 										sizes="(max-width: 768px) 50vw, 200px"
 									/>
 									{/* Overlay on hover */}
-									<div className="absolute inset-0 bg-linear-to-t from-black/50 via-black/20 to-transparent opacity-0 group-hover/layout:opacity-100 transition-opacity duration-300" />
+									<div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-0 group-hover/layout:opacity-100 transition-opacity duration-300" />
 								</div>
 
 								{/* Layout label and icon */}
