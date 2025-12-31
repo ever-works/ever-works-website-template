@@ -131,8 +131,8 @@ export function SubmissionCalendar({ data, isLoading = false }: SubmissionCalend
                     </div>
                 </div>
             </div>
-            <div className="overflow-x-auto">
-                <div className="flex gap-0.5 min-w-fit">
+            <div className="overflow-x-auto w-full">
+                <div className="flex gap-1 justify-center">
                     {weeks.map((week, weekIndex) => (
                         <div key={weekIndex} className="flex flex-col gap-0.5">
                             {week.map((day, dayIndex) => (

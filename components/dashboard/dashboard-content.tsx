@@ -161,12 +161,16 @@ export function DashboardContent({ session }: DashboardContentProps) {
           </div>
         </div>
 
-        {/* Submission Calendar & Engagement Distribution */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Submission Calendar - Full Width */}
+        <div className="mb-8">
           <SubmissionCalendar
             data={stats?.submissionCalendar || []}
             isLoading={!stats}
           />
+        </div>
+
+        {/* Engagement Distribution */}
+        <div className="mb-8">
           <EngagementDistribution
             data={stats?.engagementDistribution || []}
             isLoading={!stats}
