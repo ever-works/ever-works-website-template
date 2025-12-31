@@ -1,10 +1,12 @@
-import { Card, CardBody, Skeleton } from '@heroui/react';
+import { Card, CardBody } from '@heroui/react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function CollectionsSkeleton({ itemCount = 7 }: { itemCount?: number }) {
 	return (
-		<div className="p-6 max-w-7xl mx-auto">
+		<div className="p-6 max-w-7xl mx-auto" role="status" aria-live="polite" aria-busy="true">
+			<span className="sr-only">Loading collections…</span>
 			{/* Page Header - matching the image */}
-			<div className="mb-6">
+			<div className="mb-6" aria-hidden="true">
 				<div className="flex items-center justify-between">
 					<Skeleton className="h-9 w-40 rounded-lg" />
 					<Skeleton className="h-5 w-20 rounded-lg" />
@@ -12,7 +14,7 @@ export function CollectionsSkeleton({ itemCount = 7 }: { itemCount?: number }) {
 			</div>
 
 			{/* Collections Card Skeleton */}
-			<Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-xs">
+			<Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-xs" aria-hidden="true">
 				<CardBody className="p-0">
 					{/* Card Header */}
 					<div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 flex items-center justify-between">
