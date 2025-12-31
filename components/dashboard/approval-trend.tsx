@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { useTranslations } from "next-intl";
 import {
     AreaChart,
@@ -25,6 +26,7 @@ interface ApprovalTrendProps {
 }
 
 export function ApprovalTrend({ data, isLoading = false }: ApprovalTrendProps) {
+    const gradientId = useId();
     const t = useTranslations("client.dashboard.APPROVAL_TREND");
 
     if (isLoading) {
@@ -86,7 +88,7 @@ export function ApprovalTrend({ data, isLoading = false }: ApprovalTrendProps) {
                 >
                     <defs>
                         <linearGradient
-                            id="approvalGradient"
+                            id={`approvalGradient-${gradientId}`}
                             x1="0"
                             y1="0"
                             x2="0"
@@ -128,7 +130,7 @@ export function ApprovalTrend({ data, isLoading = false }: ApprovalTrendProps) {
                         dataKey="rate"
                         stroke="#10B981"
                         strokeWidth={2}
-                        fill="url(#approvalGradient)"
+                        fill={`url(#approvalGradient-${gradientId})`}
                     />
                 </AreaChart>
             </ResponsiveContainer>
