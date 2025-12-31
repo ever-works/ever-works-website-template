@@ -122,7 +122,7 @@ export function PeriodComparison({ data, isLoading = false }: PeriodComparisonPr
                     {t("THIS_WEEK")} {vsLabel} {t("LAST_WEEK")}
                 </span>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4" role="list">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <MetricCard
                     label={t("VOTES")}
                     thisWeek={data.thisWeek.votes}
