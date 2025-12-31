@@ -2560,7 +2560,19 @@
 			"FOOTER_VERSION_ENABLED_LABEL": "Show Version Information",
 			"FOOTER_VERSION_ENABLED_DESC": "Show or hide the version information in the footer.",
 			"FOOTER_THEME_SELECTOR_ENABLED_LABEL": "Show Theme Selector",
-			"FOOTER_THEME_SELECTOR_ENABLED_DESC": "Show or hide the theme selector control in the footer."
+			"FOOTER_THEME_SELECTOR_ENABLED_DESC": "Show or hide the theme selector control in the footer.",
+			"MONETIZATION_TITLE": "Monetization",
+			"MONETIZATION_DESC": "Configure revenue and payment settings",
+			"MONETIZATION_SPONSOR_ADS_TITLE": "Sponsor Ads",
+			"MONETIZATION_SPONSOR_ADS_DESC": "Configure sponsor ad pricing displayed to users. Note: Actual charges are determined by your payment provider's price IDs.",
+			"SPONSOR_ADS_ENABLED_LABEL": "Enable Sponsor Ads",
+			"SPONSOR_ADS_ENABLED_DESC": "Allow users to sponsor items for premium visibility.",
+			"SPONSOR_ADS_WEEKLY_PRICE_LABEL": "Weekly Price (in cents)",
+			"SPONSOR_ADS_WEEKLY_PRICE_DESC": "Display price for weekly sponsorship in cents (e.g., 10000 = $100.00).",
+			"SPONSOR_ADS_MONTHLY_PRICE_LABEL": "Monthly Price (in cents)",
+			"SPONSOR_ADS_MONTHLY_PRICE_DESC": "Display price for monthly sponsorship in cents (e.g., 30000 = $300.00).",
+			"SPONSOR_ADS_CURRENCY_LABEL": "Currency",
+			"SPONSOR_ADS_CURRENCY_DESC": "Currency for displaying sponsor ad prices."
 		},
 		"AUTH_FORM": {
 			"ADMIN_WELCOME_TITLE": "Willkommen im Admin-Dashboard",

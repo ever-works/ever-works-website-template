@@ -8,16 +8,22 @@ import { Megaphone, Calendar, CheckCircle, AlertCircle, Send } from "lucide-reac
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { SponsorAdPricing } from "@/lib/constants";
 import { SearchableSelect, type SearchableSelectItem } from "@/components/ui/searchable-select";
 import type { ItemData } from "@/lib/content";
 
 // ######################### Types #########################
 
+interface PricingConfig {
+	weeklyPrice: number;
+	monthlyPrice: number;
+	currency: string;
+}
+
 interface SponsorFormProps {
 	items: ItemData[];
 	locale: string;
 	onSuccess?: (sponsorAdId: string) => void;
+	pricingConfig: PricingConfig;
 }
 
 type IntervalType = "weekly" | "monthly";
@@ -43,31 +49,31 @@ const SUMMARY_BOX = "rounded-xl bg-gray-50 dark:bg-gray-800/50 p-5";
 const NOTICE_BOX = "rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-900/20";
 const SUBMIT_BUTTON = "w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white font-medium shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30";
 
-// ######################### Constants #########################
-
-const PRICING_OPTIONS: PricingOption[] = [
-	{
-		id: "weekly",
-		label: "Weekly",
-		price: SponsorAdPricing.WEEKLY,
-		description: "7 days of premium visibility",
-	},
-	{
-		id: "monthly",
-		label: "Monthly",
-		price: SponsorAdPricing.MONTHLY,
-		description: "30 days of premium visibility",
-		savings: "Save 25%",
-	},
-];
-
 // ######################### Helper Functions #########################
 
-function formatCurrency(amountInCents: number): string {
+function formatCurrency(amountInCents: number, currency: string = "USD"): string {
 	return new Intl.NumberFormat("en-US", {
 		style: "currency",
-		currency: "USD",
+		currency: currency.toUpperCase(),
 	}).format(amountInCents / 100);
+}
+
+function getPricingOptions(pricingConfig: PricingConfig): PricingOption[] {
+	return [
+		{
+			id: "weekly",
+			label: "Weekly",
+			price: pricingConfig.weeklyPrice,
+			description: "7 days of premium visibility",
+		},
+		{
+			id: "monthly",
+			label: "Monthly",
+			price: pricingConfig.monthlyPrice,
+			description: "30 days of premium visibility",
+			savings: "Save 25%",
+		},
+	];
 }
 
 function getCategoryName(category: ItemData["category"]): string {
@@ -80,7 +86,7 @@ function getCategoryName(category: ItemData["category"]): string {
 
 // ######################### Component #########################
 
-export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
+export function SponsorForm({ items, locale, onSuccess, pricingConfig }: SponsorFormProps) {
 	const t = useTranslations("sponsor");
 	const router = useRouter();
 
@@ -88,6 +94,9 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 	const [selectedItemSlug, setSelectedItemSlug] = useState<string>("");
 	const [selectedInterval, setSelectedInterval] = useState<IntervalType>("monthly");
 	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	// Generate pricing options from config
+	const pricingOptions = useMemo(() => getPricingOptions(pricingConfig), [pricingConfig]);
 
 	// Transform items for SearchableSelect
 	const selectItems: SearchableSelectItem[] = useMemo(() => {
@@ -118,8 +127,8 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 
 	// Selected pricing option
 	const selectedPricing = useMemo(() => {
-		return PRICING_OPTIONS.find((option) => option.id === selectedInterval);
-	}, [selectedInterval]);
+		return pricingOptions.find((option) => option.id === selectedInterval);
+	}, [pricingOptions, selectedInterval]);
 
 	// Handle form submission
 	const handleSubmit = async () => {
@@ -219,7 +228,7 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 				</div>
 				<CardBody className={CARD_BODY}>
 					<div className="grid gap-4 sm:grid-cols-2">
-						{PRICING_OPTIONS.map((option) => (
+						{pricingOptions.map((option) => (
 							<button
 								key={option.id}
 								type="button"
@@ -248,7 +257,7 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 								</div>
 								<div className="flex items-baseline gap-1 mb-2">
 									<span className="text-3xl font-bold text-gray-900 dark:text-white">
-										{formatCurrency(option.price)}
+										{formatCurrency(option.price, pricingConfig.currency)}
 									</span>
 								</div>
 								<p className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
@@ -302,7 +311,7 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 										</div>
 									</div>
 									<p className="text-2xl font-bold text-gray-900 dark:text-white">
-										{formatCurrency(selectedPricing.price)}
+										{formatCurrency(selectedPricing.price, pricingConfig.currency)}
 									</p>
 								</div>
 							</div>

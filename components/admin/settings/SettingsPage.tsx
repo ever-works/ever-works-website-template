@@ -10,6 +10,7 @@ import {
 import { Sliders } from 'lucide-react';
 import { SettingSwitch } from './SettingSwitch';
 import { SettingSelect } from './SettingSelect';
+import { SettingInput } from './SettingInput';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
@@ -137,6 +138,17 @@ interface FooterConfigSettings {
 	theme_selector_enabled?: boolean;
 }
 
+interface SponsorAdsSettings {
+	enabled?: boolean;
+	weekly_price?: number;
+	monthly_price?: number;
+	currency?: string;
+}
+
+interface MonetizationConfigSettings {
+	sponsor_ads?: SponsorAdsSettings;
+}
+
 interface Settings {
 	categories_enabled?: boolean;
 	companies_enabled?: boolean;
@@ -145,6 +157,7 @@ interface Settings {
 	header?: HeaderConfigSettings;
 	homepage?: HomepageSettings;
 	footer?: FooterConfigSettings;
+	monetization?: MonetizationConfigSettings;
 	[key: string]: unknown;
 }
 
@@ -507,6 +520,81 @@ export function SettingsPage() {
 									description={t('FOOTER_THEME_SELECTOR_ENABLED_DESC')}
 									value={settings.footer?.theme_selector_enabled ?? false}
 									onChange={(value) => updateSetting('footer.theme_selector_enabled', value)}
+									disabled={saving}
+								/>
+							</>
+						)}
+					</AccordionContent>
+				</AccordionItem>
+
+				{/* Monetization Settings Section */}
+				<AccordionItem
+					value="monetization"
+					className={ACCORDION_ITEM_CLASSES}
+				>
+					<AccordionTrigger>
+						<div className="text-left w-full">
+							<h3 className={ACCORDION_TITLE_CLASSES}>
+								{t('MONETIZATION_TITLE')}
+							</h3>
+							<p className={ACCORDION_DESC_CLASSES}>
+								{t('MONETIZATION_DESC')}
+							</p>
+						</div>
+					</AccordionTrigger>
+					<AccordionContent className={ACCORDION_CONTENT_CLASSES}>
+						{loading ? (
+							<p className={PLACEHOLDER_TEXT_CLASSES}>
+								Loading settings...
+							</p>
+						) : (
+							<>
+								{/* Sponsor Ads Subsection */}
+								<div className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
+									<h4 className="text-base font-medium text-gray-800 dark:text-gray-200 mb-1">
+										{t('MONETIZATION_SPONSOR_ADS_TITLE')}
+									</h4>
+									<p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+										{t('MONETIZATION_SPONSOR_ADS_DESC')}
+									</p>
+								</div>
+								<SettingSwitch
+									label={t('SPONSOR_ADS_ENABLED_LABEL')}
+									description={t('SPONSOR_ADS_ENABLED_DESC')}
+									value={settings.monetization?.sponsor_ads?.enabled ?? true}
+									onChange={(value) => updateSetting('monetization.sponsor_ads.enabled', value)}
+									disabled={saving}
+								/>
+								<SettingInput
+									label={t('SPONSOR_ADS_WEEKLY_PRICE_LABEL')}
+									description={t('SPONSOR_ADS_WEEKLY_PRICE_DESC')}
+									value={settings.monetization?.sponsor_ads?.weekly_price ?? 10000}
+									onChange={(value) => updateSetting('monetization.sponsor_ads.weekly_price', value)}
+									type="number"
+									placeholder="10000"
+									disabled={saving}
+								/>
+								<SettingInput
+									label={t('SPONSOR_ADS_MONTHLY_PRICE_LABEL')}
+									description={t('SPONSOR_ADS_MONTHLY_PRICE_DESC')}
+									value={settings.monetization?.sponsor_ads?.monthly_price ?? 30000}
+									onChange={(value) => updateSetting('monetization.sponsor_ads.monthly_price', value)}
+									type="number"
+									placeholder="30000"
+									disabled={saving}
+								/>
+								<SettingSelect
+									label={t('SPONSOR_ADS_CURRENCY_LABEL')}
+									description={t('SPONSOR_ADS_CURRENCY_DESC')}
+									value={settings.monetization?.sponsor_ads?.currency ?? 'USD'}
+									onChange={(value) => updateSetting('monetization.sponsor_ads.currency', value)}
+									options={[
+										{ value: 'USD', label: 'USD - US Dollar' },
+										{ value: 'EUR', label: 'EUR - Euro' },
+										{ value: 'GBP', label: 'GBP - British Pound' },
+										{ value: 'CAD', label: 'CAD - Canadian Dollar' },
+										{ value: 'AUD', label: 'AUD - Australian Dollar' },
+									]}
 									disabled={saving}
 								/>
 							</>
