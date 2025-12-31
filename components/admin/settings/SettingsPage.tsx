@@ -590,13 +590,37 @@ export function SettingsPage() {
 									value={settings.monetization?.sponsor_ads?.currency ?? 'USD'}
 									onChange={(value) => updateSetting('monetization.sponsor_ads.currency', value)}
 									options={[
+										// Major currencies
 										{ value: 'USD', label: 'USD - US Dollar' },
 										{ value: 'EUR', label: 'EUR - Euro' },
 										{ value: 'GBP', label: 'GBP - British Pound' },
+										// Americas
 										{ value: 'CAD', label: 'CAD - Canadian Dollar' },
+										{ value: 'BRL', label: 'BRL - Brazilian Real' },
+										{ value: 'MXN', label: 'MXN - Mexican Peso' },
+										// Asia Pacific
 										{ value: 'AUD', label: 'AUD - Australian Dollar' },
+										{ value: 'JPY', label: 'JPY - Japanese Yen' },
+										{ value: 'CNY', label: 'CNY - Chinese Yuan' },
+										{ value: 'KRW', label: 'KRW - South Korean Won' },
+										{ value: 'INR', label: 'INR - Indian Rupee' },
+										{ value: 'IDR', label: 'IDR - Indonesian Rupiah' },
+										{ value: 'THB', label: 'THB - Thai Baht' },
+										{ value: 'VND', label: 'VND - Vietnamese Dong' },
+										// Europe
+										{ value: 'PLN', label: 'PLN - Polish Zloty' },
+										{ value: 'BGN', label: 'BGN - Bulgarian Lev' },
+										{ value: 'RUB', label: 'RUB - Russian Ruble' },
+										{ value: 'UAH', label: 'UAH - Ukrainian Hryvnia' },
+										{ value: 'TRY', label: 'TRY - Turkish Lira' },
+										{ value: 'CHF', label: 'CHF - Swiss Franc' },
+										// Middle East
+										{ value: 'ILS', label: 'ILS - Israeli Shekel' },
+										{ value: 'SAR', label: 'SAR - Saudi Riyal' },
+										{ value: 'AED', label: 'AED - UAE Dirham' },
 									]}
 									disabled={saving}
+									usePortal={true}
 								/>
 							</>
 						)}

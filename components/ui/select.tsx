@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ interface SelectProps {
   description?: string;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
+  usePortal?: boolean;
   classNames?: {
     trigger?: string;
     value?: string;
@@ -70,16 +72,32 @@ export function Select({
   description,
   startContent,
   endContent,
+  usePortal = false,
   classNames = {},
 }: SelectProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [internalSelectedKeys, setInternalSelectedKeys] = React.useState<string[]>(selectedKeys || []);
+  const [portalPosition, setPortalPosition] = React.useState({ top: 0, left: 0, width: 0 });
   const selectRef = React.useRef<HTMLDivElement>(null);
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const portalRef = React.useRef<HTMLDivElement>(null);
 
   // Update internal state when selectedKeys prop changes
   React.useEffect(() => {
     setInternalSelectedKeys(selectedKeys || []);
   }, [selectedKeys]);
+
+  // Update portal position when dropdown opens
+  React.useEffect(() => {
+    if (isOpen && usePortal && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPortalPosition({
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    }
+  }, [isOpen, usePortal]);
 
   // Handle click outside to close dropdown with deferred listener pattern
   // This prevents the opening click from triggering the close handler
@@ -87,7 +105,11 @@ export function Select({
     if (!isOpen) return;
 
     const handleClickOutside = (event: PointerEvent) => {
-      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const isInsideSelect = selectRef.current && selectRef.current.contains(target);
+      const isInsidePortal = portalRef.current && portalRef.current.contains(target);
+
+      if (!isInsideSelect && !isInsidePortal) {
         setIsOpen(false);
       }
     };
@@ -168,6 +190,7 @@ export function Select({
         )}
         
         <button
+          ref={buttonRef}
           type="button"
           onClick={() => !disabled && setIsOpen(!isOpen)}
           disabled={disabled}
@@ -211,7 +234,7 @@ export function Select({
           </p>
         )}
 
-        {isOpen && (
+        {isOpen && !usePortal && (
           <div
             className={cn(
               "absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg",
@@ -225,6 +248,30 @@ export function Select({
               </div>
             </div>
           </div>
+        )}
+        {isOpen && usePortal && typeof document !== 'undefined' && createPortal(
+          <div
+            ref={portalRef}
+            style={{
+              position: 'absolute',
+              top: portalPosition.top,
+              left: portalPosition.left,
+              width: portalPosition.width,
+              zIndex: 9999,
+            }}
+            className={cn(
+              "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg",
+              "max-h-60 overflow-y-auto",
+              classNames.popover
+            )}
+          >
+            <div className={cn("py-1", classNames.listboxWrapper)}>
+              <div className={cn("", classNames.listbox)}>
+                {children}
+              </div>
+            </div>
+          </div>,
+          document.body
         )}
       </div>
     </SelectContext.Provider>
