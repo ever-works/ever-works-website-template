@@ -340,7 +340,7 @@ export class SponsorAdService {
 	// ===================== Helper Methods =====================
 
 	/**
-	 * Get amount in cents for interval
+	 * Get amount for interval
 	 * Uses configurable pricing from settings with fallback to constants
 	 */
 	getAmountForInterval(interval: string): number {
@@ -384,12 +384,12 @@ export class SponsorAdService {
 	/**
 	 * Format amount for display
 	 */
-	formatAmount(amountInCents: number, currency: string = "usd"): string {
+	formatAmount(amount: number, currency: string = "usd"): string {
 		const formatter = new Intl.NumberFormat("en-US", {
 			style: "currency",
 			currency: currency.toUpperCase(),
 		});
-		return formatter.format(amountInCents / 100);
+		return formatter.format(amount);
 	}
 
 	/**

@@ -146,21 +146,21 @@ export function getSponsorAdsEnabled(): boolean {
 }
 
 /**
- * Server-side utility to get the weekly sponsor ad price (in cents)
- * @returns number - weekly price in cents (default: 10000 = $100)
+ * Server-side utility to get the weekly sponsor ad price
+ * @returns number - weekly price (default: 100)
  */
 export function getSponsorAdWeeklyPrice(): number {
 	const price = configManager.getNestedValue('settings.monetization.sponsor_ads.weekly_price');
-	return price ?? 10000;
+	return price ?? 100;
 }
 
 /**
- * Server-side utility to get the monthly sponsor ad price (in cents)
- * @returns number - monthly price in cents (default: 30000 = $300)
+ * Server-side utility to get the monthly sponsor ad price
+ * @returns number - monthly price (default: 300)
  */
 export function getSponsorAdMonthlyPrice(): number {
 	const price = configManager.getNestedValue('settings.monetization.sponsor_ads.monthly_price');
-	return price ?? 30000;
+	return price ?? 300;
 }
 
 /**

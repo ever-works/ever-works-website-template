@@ -79,9 +79,9 @@ export enum SubmissionStatus {
 }
 
 // ============================================
-// SPONSOR AD PRICING (in cents)
+// SPONSOR AD PRICING (default fallback values)
 // ============================================
 export const SponsorAdPricing = {
-	WEEKLY: 2500, // $25.00
-	MONTHLY: 7500, // $75.00
+	WEEKLY: 25, // $25.00
+	MONTHLY: 75, // $75.00
 } as const;

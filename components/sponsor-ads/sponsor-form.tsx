@@ -51,11 +51,11 @@ const SUBMIT_BUTTON = "w-full bg-linear-to-r from-blue-600 to-indigo-600 text-wh
 
 // ######################### Helper Functions #########################
 
-function formatCurrency(amountInCents: number, currency: string = "USD"): string {
+function formatCurrency(amount: number, currency: string = "USD"): string {
 	return new Intl.NumberFormat("en-US", {
 		style: "currency",
 		currency: currency.toUpperCase(),
-	}).format(amountInCents / 100);
+	}).format(amount);
 }
 
 function getPricingOptions(pricingConfig: PricingConfig): PricingOption[] {

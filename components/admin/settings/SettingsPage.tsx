@@ -11,6 +11,7 @@ import { Sliders } from 'lucide-react';
 import { SettingSwitch } from './SettingSwitch';
 import { SettingSelect } from './SettingSelect';
 import { SettingInput } from './SettingInput';
+import { SettingCurrencyInput } from './SettingCurrencyInput';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
@@ -565,22 +566,22 @@ export function SettingsPage() {
 									onChange={(value) => updateSetting('monetization.sponsor_ads.enabled', value)}
 									disabled={saving}
 								/>
-								<SettingInput
+								<SettingCurrencyInput
 									label={t('SPONSOR_ADS_WEEKLY_PRICE_LABEL')}
 									description={t('SPONSOR_ADS_WEEKLY_PRICE_DESC')}
-									value={settings.monetization?.sponsor_ads?.weekly_price ?? 10000}
+									value={settings.monetization?.sponsor_ads?.weekly_price ?? 100}
 									onChange={(value) => updateSetting('monetization.sponsor_ads.weekly_price', value)}
-									type="number"
-									placeholder="10000"
+									currency={settings.monetization?.sponsor_ads?.currency ?? 'USD'}
+									placeholder="100.00"
 									disabled={saving}
 								/>
-								<SettingInput
+								<SettingCurrencyInput
 									label={t('SPONSOR_ADS_MONTHLY_PRICE_LABEL')}
 									description={t('SPONSOR_ADS_MONTHLY_PRICE_DESC')}
-									value={settings.monetization?.sponsor_ads?.monthly_price ?? 30000}
+									value={settings.monetization?.sponsor_ads?.monthly_price ?? 300}
 									onChange={(value) => updateSetting('monetization.sponsor_ads.monthly_price', value)}
-									type="number"
-									placeholder="30000"
+									currency={settings.monetization?.sponsor_ads?.currency ?? 'USD'}
+									placeholder="300.00"
 									disabled={saving}
 								/>
 								<SettingSelect
