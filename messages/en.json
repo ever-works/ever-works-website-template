@@ -187,6 +187,7 @@
 		"USER": "User",
 		"ANONYMOUS": "Anonymous",
 		"CANCEL": "Cancel",
+		"EDIT": "Edit",
 		"DELETE": "Delete",
 		"SAVING": "Saving...",
 		"FILTERS": "Filters",
