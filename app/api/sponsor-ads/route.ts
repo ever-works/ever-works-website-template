@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { sponsorAdService } from "@/lib/services/sponsor-ad.service";
+import { NextRequest, NextResponse } from 'next/server';
+import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
 
 /**
  * @swagger
@@ -50,21 +50,20 @@ import { sponsorAdService } from "@/lib/services/sponsor-ad.service";
 export async function GET(request: NextRequest) {
 	try {
 		const { searchParams } = new URL(request.url);
-		const limitParam = searchParams.get("limit");
-		const limit = limitParam ? Math.min(parseInt(limitParam, 10), 50) : 10;
+		const limitParam = searchParams.get('limit');
+		// Validate limit parameter: must be a finite number, at least 1, and at most 50
+		const rawLimit = limitParam ? Number(limitParam) : 10;
+		const limit = Number.isFinite(rawLimit) ? Math.min(Math.max(1, Math.floor(rawLimit)), 50) : 10;
 
 		// Get active sponsor ads
 		const sponsorAds = await sponsorAdService.getActiveSponsorAds(limit);
 
 		return NextResponse.json({
 			success: true,
-			data: sponsorAds,
+			data: sponsorAds
 		});
 	} catch (error) {
-		console.error("Error fetching active sponsor ads:", error);
-		return NextResponse.json(
-			{ success: false, error: "Failed to fetch sponsor ads" },
-			{ status: 500 }
-		);
+		console.error('Error fetching active sponsor ads:', error);
+		return NextResponse.json({ success: false, error: 'Failed to fetch sponsor ads' }, { status: 500 });
 	}
 }

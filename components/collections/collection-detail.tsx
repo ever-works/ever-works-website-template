@@ -132,6 +132,7 @@ type CollectionHomeTwoFiltersProps = {
 };
 
 function CollectionHomeTwoFilters({ tags, totalCount, filteredCount, searchEnabled = true }: CollectionHomeTwoFiltersProps) {
+  const t = useTranslations('listing');
   const {
     searchTerm,
     setSearchTerm,
@@ -224,9 +225,9 @@ function CollectionHomeTwoFilters({ tags, totalCount, filteredCount, searchEnabl
         <div className="text-sm text-gray-600 dark:text-gray-400">
           {filteredCount !== undefined && totalCount !== undefined ? (
             filteredCount === totalCount ? (
-              <span>Showing {totalCount} items</span>
+              <span>{t('SHOWING_TOTAL_ITEMS', { total: totalCount })}</span>
             ) : (
-              <span>Showing {filteredCount} of {totalCount} items</span>
+              <span>{t('FILTER_STATUS', { filtered: filteredCount, total: totalCount })}</span>
             )
           ) : null}
         </div>
@@ -387,8 +388,8 @@ function CollectionDetailContent(props: CollectionDetailProps) {
                   />
                   <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
                     {filteredItems.length === props.items.length
-                      ? `Showing ${props.items.length} items`
-                      : `Showing ${filteredItems.length} of ${props.items.length} items`}
+                      ? t('listing.SHOWING_TOTAL_ITEMS', { total: props.items.length })
+                      : t('listing.FILTER_STATUS', { filtered: filteredItems.length, total: props.items.length })}
                   </span>
                 </div>
                 <ListingClient
