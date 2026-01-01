@@ -255,6 +255,11 @@ export interface Settings {
 	footer?: FooterConfigSettings;
 }
 
+export interface CustomNavigationItem {
+	label: string;
+	path: string;
+}
+
 export interface Config {
 	company_name?: string;
 	copyright_year?: number;
@@ -280,6 +285,8 @@ export interface Config {
 	categoriesEnabled?: boolean;
 	settings?: Settings;
 	logo?: LogoSettings;
+	custom_header?: CustomNavigationItem[];
+	custom_footer?: CustomNavigationItem[];
 }
 
 interface FetchOptions {
