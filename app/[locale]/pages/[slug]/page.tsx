@@ -2,9 +2,11 @@ import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { PageContainer } from '@/components/ui/container';
+import { Breadcrumb, type BreadcrumbItem } from '@/components/ui/breadcrumb';
 import { MDX } from '@/components/mdx';
 import { getCachedPageContent } from '@/lib/content';
 import { cleanUrl } from '@/lib/utils/url-cleaner';
+import { formatDisplayName } from '@/components/filters/utils/text-utils';
 import { siteConfig } from '@/lib/config';
 
 interface PageProps {
@@ -18,6 +20,19 @@ export const dynamicParams = true;
 const rawUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || 'http://localhost:3000';
 const baseUrl = cleanUrl(rawUrl);
 
+/**
+ * Extracts page title from metadata or generates it from slug
+ * @param metadata - Page metadata object
+ * @param slug - Page slug as fallback
+ * @returns Formatted page title
+ */
+function getPageTitle(metadata: Record<string, unknown> | undefined, slug: string): string {
+	if (metadata?.title && typeof metadata.title === 'string') {
+		return metadata.title;
+	}
+	return formatDisplayName(slug);
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
 	const { slug, locale } = await params;
 	const pageData = await getCachedPageContent(slug, locale);
@@ -28,8 +43,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 		};
 	}
 
-	const title =
-		(pageData.metadata?.title as string) || slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ');
+	const title = getPageTitle(pageData.metadata, slug);
 	const description = (pageData.metadata?.description as string) || '';
 
 	return {
@@ -61,12 +75,19 @@ export default async function DynamicPage({ params }: PageProps) {
 	}
 
 	const { content, metadata } = pageData;
-	const title = (metadata?.title as string) || slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ');
+	const title = getPageTitle(metadata, slug);
+
+	const breadcrumbItems: BreadcrumbItem[] = [
+		{
+			label: title
+		}
+	];
 
 	return (
 		<PageContainer className="py-8 sm:py-12 md:py-16">
+			<Breadcrumb items={breadcrumbItems} homeLabel={t('HOME')} />
+
 			<article className="prose prose-lg dark:prose-invert max-w-none">
-				<h1 className="mb-8">{title}</h1>
 				{content ? (
 					<MDX source={content} />
 				) : (
