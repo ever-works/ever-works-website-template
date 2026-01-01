@@ -11,6 +11,7 @@ import { UniversalPagination } from '@/components/universal-pagination';
 import { CollectionForm } from '@/components/admin/collections/collection-form';
 import { AssignItemsModal } from '@/components/admin/collections/assign-items-modal';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
+import { CollectionsSkeleton } from '@/components/admin/collections/collections-skeleton';
 
 export default function AdminCollectionsPage() {
 	const t = useTranslations('common');
@@ -117,6 +118,10 @@ export default function AdminCollectionsPage() {
 		await assignItems(selectedCollection.id, itemSlugs);
 	};
 
+	if (isLoading) {
+		return <CollectionsSkeleton itemCount={PageSize} />;
+	}
+
 	return (
 		<div className="p-6 max-w-7xl mx-auto">
 			<div className="mb-8">
@@ -216,9 +221,7 @@ export default function AdminCollectionsPage() {
 					</div>
 
 					<div className="divide-y divide-gray-100 dark:divide-gray-800">
-						{isLoading ? (
-							<div className="p-6 text-center text-gray-500">{t('LOADING_COLLECTIONS')}</div>
-						) : collections.length === 0 ? (
+						{collections.length === 0 ? (
 							<div className="p-6 text-center text-gray-500">{t('NO_COLLECTIONS_YET')}</div>
 						) : (
 							collections.map((collection) => (
