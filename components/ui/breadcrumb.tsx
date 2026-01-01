@@ -24,7 +24,7 @@ export function Breadcrumb({ items, homeLabel = 'Home', className }: BreadcrumbP
 				<li className="inline-flex items-center text-black dark:text-white">
 					<Link
 						href="/"
-						className="inline-flex items-center text-sm font-medium text-black dark:text-white hover:text-white dark:hover:text-white transition-colors duration-300"
+						className="inline-flex items-center text-sm font-medium text-black dark:text-white hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
 					>
 						<HomeIcon />
 						{homeLabel}
