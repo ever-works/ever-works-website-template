@@ -29,6 +29,7 @@ import { useSurveysEnabled } from '@/hooks/use-surveys-enabled';
 import { useTagsEnabled } from '@/hooks/use-tags-enabled';
 import { useHeaderSettings } from '@/hooks/use-header-settings';
 import { useCategoriesExists } from '@/hooks/use-categories-exists';
+import { useCollectionsExists } from '@/hooks/use-collections-exists';
 import { isDemoMode } from '@/lib/utils';
 
 interface NavigationItem {
@@ -172,6 +173,7 @@ export default function Header() {
 	const { tagsEnabled } = useTagsEnabled();
 	const { settings: headerSettings } = useHeaderSettings();
 	const { data: categoriesData, isLoading: categoriesLoading } = useCategoriesExists();
+	const { data: collectionsData, isLoading: collectionsLoading } = useCollectionsExists();
 	const isDemo = isDemoMode();
 
 	const t = useTranslations('common');
@@ -181,13 +183,18 @@ export default function Header() {
 	const pathname = usePathname();
 
 	// Check if we're still loading essential data for navigation
-	const isNavigationLoading = categoriesLoading;
+	const isNavigationLoading = categoriesLoading || collectionsLoading;
 
 	// Extract hasCategories from React Query data
 	const hasCategories = categoriesData?.exists ?? false;
+	const hasCollections = collectionsData?.exists ?? false;
 
 	const navigationItems = useMemo((): NavigationItem[] => {
 		return NAVIGATION_CONFIG.filter((item) => {
+			// Hide collections link when there are no collections (but keep it visible while loading to prevent flicker)
+			if (item.key === 'collections' && !collectionsLoading && !hasCollections) {
+				return false;
+			}
 			// Hide categories link when categories are disabled
 			if (item.key === 'categories' && (!categoriesEnabled || !hasCategories)) {
 				return false;
@@ -237,7 +244,9 @@ export default function Header() {
 		surveysEnabled,
 		headerSettings.pricingEnabled,
 		headerSettings.submitEnabled,
-		hasCategories
+		hasCategories,
+		hasCollections,
+		collectionsLoading
 	]);
 
 	const isActiveLink = useCallback(
