@@ -75,6 +75,7 @@ export function ExpiredPlanBanner({
 	compact = false
 }: ExpiredPlanBannerProps) {
 	const t = useTranslations('billing');
+	const tCommon = useTranslations('common');
 	const [isDismissed, setIsDismissed] = useState(false);
 
 	const urgency = useMemo(() => getUrgencyLevel(daysUntilExpiration, isExpired), [daysUntilExpiration, isExpired]);
@@ -237,7 +238,7 @@ export function ExpiredPlanBanner({
 							styles.text,
 							'opacity-60 hover:opacity-100'
 						)}
-						aria-label="Dismiss"
+						aria-label={tCommon('CLOSE')}
 					>
 						<X className="w-4 h-4" />
 					</button>

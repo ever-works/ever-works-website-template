@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { sponsorAdService } from "@/lib/services/sponsor-ad.service";
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
+import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
 
 /**
  * @swagger
@@ -32,18 +32,12 @@ import { sponsorAdService } from "@/lib/services/sponsor-ad.service";
  *       500:
  *         description: "Internal server error"
  */
-export async function POST(
-	request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const session = await auth();
 
 		if (!session?.user?.id) {
-			return NextResponse.json(
-				{ success: false, error: "Unauthorized" },
-				{ status: 401 }
-			);
+			return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 		}
 
 		const { id } = await params;
@@ -52,53 +46,47 @@ export async function POST(
 		const sponsorAd = await sponsorAdService.getSponsorAdById(id);
 
 		if (!sponsorAd) {
-			return NextResponse.json(
-				{ success: false, error: "Sponsor ad not found" },
-				{ status: 404 }
-			);
+			return NextResponse.json({ success: false, error: 'Sponsor ad not found' }, { status: 404 });
 		}
 
 		// Verify ownership
 		if (sponsorAd.userId !== session.user.id) {
 			return NextResponse.json(
-				{ success: false, error: "You do not have permission to cancel this sponsor ad" },
+				{ success: false, error: 'You do not have permission to cancel this sponsor ad' },
 				{ status: 403 }
 			);
 		}
 
 		// Cancel the sponsor ad
-		const cancelledAd = await sponsorAdService.cancelSponsorAd(
-			id,
-			"Cancelled by user"
-		);
+		const cancelledAd = await sponsorAdService.cancelSponsorAd(id, 'Cancelled by user');
 
 		if (!cancelledAd) {
-			return NextResponse.json(
-				{ success: false, error: "Failed to cancel sponsor ad" },
-				{ status: 500 }
-			);
+			return NextResponse.json({ success: false, error: 'Failed to cancel sponsor ad' }, { status: 500 });
 		}
 
 		return NextResponse.json({
 			success: true,
 			data: cancelledAd,
-			message: "Sponsor ad cancelled successfully",
+			message: 'Sponsor ad cancelled successfully'
 		});
 	} catch (error) {
-		console.error("Error cancelling sponsor ad:", error);
+		console.error('Error cancelling sponsor ad:', error);
 
-		const errorMessage =
-			error instanceof Error ? error.message : "Failed to cancel sponsor ad";
+		const errorMessage = error instanceof Error ? error.message : 'Failed to cancel sponsor ad';
 
-		if (errorMessage.includes("Cannot cancel")) {
-			return NextResponse.json(
-				{ success: false, error: errorMessage },
-				{ status: 400 }
-			);
+		// Handle expected not found errors (404) - keep specific message
+		if (errorMessage === 'Sponsor ad not found') {
+			return NextResponse.json({ success: false, error: errorMessage }, { status: 404 });
 		}
 
+		// Handle expected validation errors (400) - keep specific message
+		if (errorMessage.includes('Cannot cancel')) {
+			return NextResponse.json({ success: false, error: errorMessage }, { status: 400 });
+		}
+
+		// Use generic message for unexpected errors (500) to avoid exposing sensitive details
 		return NextResponse.json(
-			{ success: false, error: errorMessage },
+			{ success: false, error: 'An error occurred while cancelling the sponsor ad' },
 			{ status: 500 }
 		);
 	}

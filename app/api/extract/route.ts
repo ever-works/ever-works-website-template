@@ -136,15 +136,20 @@ export async function POST(request: Request) {
 			})
 		});
 
-		const data = await response.json();
-
 		if (!response.ok) {
-			return NextResponse.json(
-				{ success: false, error: data.message || 'Failed to extract data from platform API' },
-				{ status: response.status }
-			);
+			// Try to parse error response as JSON, fallback to text if it fails
+			let errorMessage = 'Failed to extract data from platform API';
+			try {
+				const errorData = await response.json();
+				errorMessage = errorData.message || errorMessage;
+			} catch {
+				// If response is not JSON (e.g., HTML error page), use status text
+				errorMessage = response.statusText || errorMessage;
+			}
+			return NextResponse.json({ success: false, error: errorMessage }, { status: response.status });
 		}
 
+		const data = await response.json();
 		return NextResponse.json(data);
 	} catch (error) {
 		console.error('[ExtractProxy] Error:', error);
