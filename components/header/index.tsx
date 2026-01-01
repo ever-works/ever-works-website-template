@@ -29,6 +29,7 @@ import { useSurveysEnabled } from '@/hooks/use-surveys-enabled';
 import { useTagsEnabled } from '@/hooks/use-tags-enabled';
 import { useHeaderSettings } from '@/hooks/use-header-settings';
 import { useCategoriesExists } from '@/hooks/use-categories-exists';
+import { isDemoMode } from '@/lib/utils';
 
 interface NavigationItem {
 	key: string;
@@ -171,6 +172,7 @@ export default function Header() {
 	const { tagsEnabled } = useTagsEnabled();
 	const { settings: headerSettings } = useHeaderSettings();
 	const { data: categoriesData, isLoading: categoriesLoading } = useCategoriesExists();
+	const isDemo = isDemoMode();
 
 	const t = useTranslations('common');
 	const tListing = useTranslations('listing');
@@ -371,7 +373,7 @@ export default function Header() {
 					)}
 
 					<div className={STYLES.mobileControls}>
-						{headerSettings.layoutEnabled && (
+						{headerSettings.layoutEnabled && isDemo && (
 							<div className="py-2 flex justify-center">
 								<div className="scale-90 sm:scale-95 md:scale-100 transition-transform duration-200">
 									<LayoutSwitcher inline />
