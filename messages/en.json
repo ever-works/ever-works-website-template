@@ -2678,7 +2678,14 @@
 			"FAILED_TO_LOAD_VERIFICATION": "Failed to load security verification. Please refresh the page.",
 			"VERIFICATION_EXPIRED": "Security verification expired. Please complete it again.",
 			"VERIFYING": "Verifying...",
-			"PLEASE_COMPLETE_VERIFICATION": "Please complete the security verification"
+			"PLEASE_COMPLETE_VERIFICATION": "Please complete the security verification",
+			"LOGIN_FAILED": "Login Failed",
+			"ACCOUNT_NOT_FOUND": "No account found with this email address. Please check your email or create a new account.",
+			"INVALID_PASSWORD": "Incorrect password. Please check your password and try again.",
+			"PROFILE_NOT_FOUND": "Account profile not found. Please contact support.",
+			"GENERIC_ERROR_MESSAGE": "An error occurred. Please try again.",
+			"RATE_LIMITED": "Too many attempts. Please wait a few minutes before trying again.",
+			"USE_OAUTH_PROVIDER": "This account uses social login. Please sign in with your social provider."
 		},
 		"FORGOT_PASSWORD_PAGE": {
 			"TITLE": "Forgot Password?",
