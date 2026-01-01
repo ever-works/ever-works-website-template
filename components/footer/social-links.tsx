@@ -115,10 +115,22 @@ export function footerNavigation(
 			}
 		],
 		resources: [
-			{ label: t('footer.BLOG'), href: siteConfig.social.blog, isExternal: true },
+			{
+				label: t('footer.BLOG'),
+				href: siteConfig.social.blog,
+				target: '_blank',
+				rel: 'noopener noreferrer',
+				isExternal: true
+			},
 			{ label: t('common.SUBMIT'), href: '/submit?step=details&plan=free' },
 			{ label: t('help.DOCS_PAGE_TITLE'), href: '/docs' }
-		]
+		] as Array<{
+			label: string;
+			href: string;
+			target?: string;
+			rel?: string;
+			isExternal?: boolean;
+		}>
 	};
 
 	// Add custom links to resources section if they exist

@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2, GripVertical, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
+import { isExternalUrl } from '@/lib/utils/custom-navigation';
 import type { CustomNavigationItem } from '@/lib/content';
 
 interface CustomNavigationManagerProps {
@@ -79,10 +80,6 @@ export function CustomNavigationManager({ type, items, onUpdate, disabled = fals
 		} finally {
 			setIsSaving(false);
 		}
-	};
-
-	const isExternalUrl = (path: string): boolean => {
-		return /^https?:\/\//i.test(path);
 	};
 
 	return (

@@ -1,3 +1,5 @@
+import { IntlErrorCode } from 'next-intl';
+
 /**
  * Utility functions for custom navigation links
  */
@@ -26,12 +28,19 @@ export function resolveLabel(label: string, t: (key: string) => string): string 
 		// Try the key with namespace directly (e.g., "footer.PRIVACY_POLICY")
 		try {
 			const translated = t(label);
-			// Check that we got a valid translation (not the key itself, not missing message)
-			if (translated && translated !== label && !translated.includes('MISSING_MESSAGE')) {
+			// Check that we got a valid translation (not the key itself)
+			// next-intl returns the key itself when translation is missing
+			if (translated && translated !== label) {
 				return translated;
 			}
-		} catch (error) {
-			// Translation not found, continue to fallback
+		} catch (error: unknown) {
+			// Handle missing translations using next-intl's error API
+			if (error && typeof error === 'object' && 'code' in error && error.code === IntlErrorCode.MISSING_MESSAGE) {
+				// Translation not found, continue to fallback
+			} else {
+				// Re-throw non-missing translation errors
+				throw error;
+			}
 		}
 	}
 
@@ -56,34 +65,37 @@ export function resolveLabel(label: string, t: (key: string) => string): string 
 
 			// next-intl returns the key itself if translation doesn't exist
 			// Also check if it's the same as the key or contains the namespace prefix (missing translation)
-			if (
-				translated &&
-				translated !== key &&
-				!translated.startsWith(`${ns}.`) &&
-				!translated.includes('MISSING_MESSAGE')
-			) {
+			if (translated && translated !== key && !translated.startsWith(`${ns}.`)) {
 				return translated;
 			}
-		} catch (error) {
-			// Translation key doesn't exist, continue to next namespace
-			continue;
+		} catch (error: unknown) {
+			// Handle missing translations using next-intl's error API
+			if (error && typeof error === 'object' && 'code' in error && error.code === IntlErrorCode.MISSING_MESSAGE) {
+				// Translation key doesn't exist, continue to next namespace
+				continue;
+			} else {
+				// Re-throw non-missing translation errors
+				throw error;
+			}
 		}
 	}
 
 	// Try the key directly (without namespace) as last resort
 	try {
 		const translated = t(keyPart);
-		// Check that we got a valid translation (not the key itself, not missing message)
-		if (
-			translated &&
-			translated !== keyPart &&
-			!translated.includes('.') &&
-			!translated.includes('MISSING_MESSAGE')
-		) {
+		// Check that we got a valid translation (not the key itself)
+		// next-intl returns the key itself when translation is missing
+		if (translated && translated !== keyPart) {
 			return translated;
 		}
-	} catch (error) {
-		// Translation not found - will fall back to original label
+	} catch (error: unknown) {
+		// Handle missing translations using next-intl's error API
+		if (error && typeof error === 'object' && 'code' in error && error.code === IntlErrorCode.MISSING_MESSAGE) {
+			// Translation not found - will fall back to original label
+		} else {
+			// Re-throw non-missing translation errors
+			throw error;
+		}
 	}
 
 	// Return original label if translation not found

@@ -3,18 +3,67 @@ import path from 'path';
 import yaml from 'js-yaml';
 import { getContentPath } from '@/lib/lib';
 
-// Lazy import for isomorphic-git to avoid bundling issues
-// isomorphic-git requires node:fs/promises for async operations
-let git: typeof import('isomorphic-git').default;
-let http: typeof import('isomorphic-git/http/node').default;
-let gitFs: typeof import('node:fs/promises');
-async function getGit() {
-	if (!git) {
-		git = (await import('isomorphic-git')).default;
-		http = (await import('isomorphic-git/http/node')).default;
-		gitFs = await import('node:fs/promises');
+/**
+ * Git module dependencies with lazy loading
+ * Uses singleton pattern to avoid bundling issues and prevent duplicate imports
+ */
+type GitModule = typeof import('isomorphic-git').default;
+type HttpModule = typeof import('isomorphic-git/http/node').default;
+type FsModule = typeof import('node:fs/promises');
+
+interface GitDependencies {
+	git: GitModule;
+	http: HttpModule;
+	fs: FsModule;
+}
+
+// Singleton instance cache
+let gitDependencies: GitDependencies | null = null;
+let gitLoadPromise: Promise<GitDependencies> | null = null;
+
+/**
+ * Lazy loads isomorphic-git modules (singleton pattern)
+ * Prevents duplicate imports and handles concurrent access safely
+ * @returns Promise resolving to git dependencies
+ * @throws Error if modules fail to load
+ */
+async function getGit(): Promise<GitDependencies> {
+	// Return cached instance if already loaded
+	if (gitDependencies) {
+		return gitDependencies;
 	}
-	return { git, http, fs: gitFs };
+
+	// If loading is in progress, wait for the existing promise
+	if (gitLoadPromise) {
+		return gitLoadPromise;
+	}
+
+	// Start loading modules
+	gitLoadPromise = (async (): Promise<GitDependencies> => {
+		try {
+			const [gitModule, httpModule, fsModule] = await Promise.all([
+				import('isomorphic-git').then((m) => m.default),
+				import('isomorphic-git/http/node'),
+				import('node:fs/promises')
+			]);
+
+			gitDependencies = {
+				git: gitModule,
+				http: httpModule,
+				fs: fsModule
+			};
+
+			return gitDependencies;
+		} catch (error) {
+			// Reset promise on error to allow retry
+			gitLoadPromise = null;
+			throw new Error(
+				`Failed to load isomorphic-git modules: ${error instanceof Error ? error.message : String(error)}`
+			);
+		}
+	})();
+
+	return gitLoadPromise;
 }
 
 export interface PaginationConfig {
@@ -33,6 +82,9 @@ export interface AppConfig {
  */
 export class ConfigManager {
 	private configPath: string;
+	private gitOperationInProgress: Promise<void> = Promise.resolve();
+	private isProcessingGitQueue = false;
+	private gitOperationQueue: Array<{ message?: string; resolve: () => void; reject: (error: unknown) => void }> = [];
 
 	constructor() {
 		// Use dynamic content path (local: .content, Vercel: /tmp/.content)
@@ -108,8 +160,9 @@ export class ConfigManager {
 
 			fs.writeFileSync(this.configPath, yamlString, 'utf8');
 
-			// Try to commit and push to Git (async, non-blocking)
-			this.commitAndPush(commitMessage).catch((error) => {
+			// Queue Git operation to prevent concurrent writes
+			// Operations are serialized to avoid conflicts
+			this.queueGitOperation(commitMessage).catch((error) => {
 				console.error('⚠️ Git operations failed for config.yml, but file was saved:', error);
 			});
 
@@ -121,8 +174,65 @@ export class ConfigManager {
 	}
 
 	/**
+	 * Queue a Git operation to prevent concurrent writes
+	 * Operations are serialized to avoid conflicts
+	 */
+	private async queueGitOperation(customMessage?: string): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
+			this.gitOperationQueue.push({ message: customMessage, resolve, reject });
+			this.processGitQueue();
+		});
+	}
+
+	/**
+	 * Process the Git operation queue serially
+	 * Uses a mutex pattern to prevent concurrent Git operations
+	 */
+	private async processGitQueue(): Promise<void> {
+		// If already processing, skip (will be called again when current operation completes)
+		if (this.isProcessingGitQueue) {
+			return;
+		}
+
+		// If queue is empty, nothing to do
+		if (this.gitOperationQueue.length === 0) {
+			return;
+		}
+
+		this.isProcessingGitQueue = true;
+
+		try {
+			// Wait for any in-flight operation to complete
+			await this.gitOperationInProgress;
+
+			// Process all queued operations serially
+			while (this.gitOperationQueue.length > 0) {
+				const operation = this.gitOperationQueue.shift();
+				if (!operation) {
+					break;
+				}
+
+				// Create a new promise for this operation
+				this.gitOperationInProgress = (async () => {
+					try {
+						await this.commitAndPush(operation.message);
+						operation.resolve();
+					} catch (error) {
+						operation.reject(error);
+					}
+				})();
+
+				await this.gitOperationInProgress;
+			}
+		} finally {
+			this.isProcessingGitQueue = false;
+		}
+	}
+
+	/**
 	 * Commit and push config.yml changes to Git
 	 * Similar to how other git services handle commits
+	 * This method is called serially via queueGitOperation to prevent concurrent writes
 	 */
 	private async commitAndPush(customMessage?: string): Promise<void> {
 		// Skip Git operations if DATA_REPOSITORY is not configured
@@ -187,7 +297,7 @@ export class ConfigManager {
 		} catch (error) {
 			// Log error but don't throw - file was already saved successfully
 			// This allows the writeConfig to succeed even if Git operations fail
-			throw error; // Re-throw to be caught by caller
+			console.error('⚠️ Git operations failed for config.yml, but file was saved:', error);
 		}
 	}
 

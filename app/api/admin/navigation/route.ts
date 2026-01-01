@@ -58,8 +58,19 @@ export async function PATCH(req: NextRequest) {
 
 		// Validate items structure
 		for (const item of items) {
-			if (!item || typeof item !== 'object' || !item.label || !item.path) {
-				return NextResponse.json({ error: 'Each item must have "label" and "path" fields' }, { status: 400 });
+			if (
+				!item ||
+				typeof item !== 'object' ||
+				Array.isArray(item) ||
+				typeof item.label !== 'string' ||
+				typeof item.path !== 'string' ||
+				!item.label.trim() ||
+				!item.path.trim()
+			) {
+				return NextResponse.json(
+					{ error: 'Each item must have non-empty "label" and "path" string fields' },
+					{ status: 400 }
+				);
 			}
 		}
 

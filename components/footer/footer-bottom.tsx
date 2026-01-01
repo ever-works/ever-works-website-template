@@ -19,7 +19,8 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
 		{ label: 'footer.COOKIES', href: '/pages/cookies' }
 	];
 
-	// Process custom footer items from config, or use defaults
+	// Process footer items: combine default links with custom footer items
+	// Behavior: custom_footer items are appended to default links (consistent with social-links.tsx)
 	const footerItems: Array<{
 		label: string;
 		href: string;
@@ -27,8 +28,16 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
 		rel?: string;
 	}> = [];
 
+	// Always include default links
+	defaultFooterLinks.forEach((item) => {
+		footerItems.push({
+			...item,
+			label: resolveLabel(item.label, t)
+		});
+	});
+
+	// Add custom footer items alongside defaults (if configured)
 	if (config.custom_footer && Array.isArray(config.custom_footer) && config.custom_footer.length > 0) {
-		// Use custom footer items if configured
 		config.custom_footer.forEach((item: CustomNavigationItem, index: number) => {
 			// Validate item structure
 			if (!item || typeof item !== 'object' || !item.label || !item.path) {
@@ -44,15 +53,6 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
 					target: '_blank',
 					rel: 'noopener noreferrer'
 				})
-			});
-		});
-	} else {
-		// Use default links if no custom_footer is configured
-		// Resolve translation keys using resolveLabel for consistency
-		defaultFooterLinks.forEach((item) => {
-			footerItems.push({
-				...item,
-				label: resolveLabel(item.label, t)
 			});
 		});
 	}

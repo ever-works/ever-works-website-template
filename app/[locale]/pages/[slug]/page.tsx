@@ -38,9 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 	const pageData = await getCachedPageContent(slug, locale);
 
 	if (!pageData) {
-		return {
-			title: 'Page Not Found'
-		};
+		notFound();
 	}
 
 	const title = getPageTitle(pageData.metadata, slug);
