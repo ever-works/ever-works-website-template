@@ -8,9 +8,11 @@ interface ThemeTogglerProps {
   compact?: boolean;
   /** Open dropdown upward instead of downward (useful for footer) */
   openUp?: boolean;
+  /** Show only icon without text or dropdown (useful for header in non-demo mode) */
+  iconOnly?: boolean;
 }
 
-export function ThemeToggler({ compact = false, openUp = false }: ThemeTogglerProps) {
+export function ThemeToggler({ compact = false, openUp = false, iconOnly = false }: ThemeTogglerProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -55,6 +57,22 @@ export function ThemeToggler({ compact = false, openUp = false }: ThemeTogglerPr
 
   if (!mounted) {
     return null;
+  }
+
+  if (iconOnly) {
+    return (
+      <button
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        className="relative inline-flex items-center justify-center h-9 w-9 rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 text-gray-700 dark:text-gray-300"
+        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+      >
+        {theme === "dark" ? (
+          <Sun className="h-5 w-5 text-yellow-500 dark:text-yellow-400" />
+        ) : (
+          <Moon className="h-5 w-5 text-theme-primary" />
+        )}
+      </button>
+    );
   }
 
   if (compact) {

@@ -18,7 +18,7 @@ export function NavigationControls() {
 				</div>
 			)}
 			{settings.languageEnabled && <LanguageSwitcher />}
-			{settings.themeEnabled && <ThemeToggler />}
+			{settings.themeEnabled && <ThemeToggler iconOnly={!isDemo} />}
 		</div>
 	);
 }
