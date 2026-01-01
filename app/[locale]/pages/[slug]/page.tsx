@@ -5,6 +5,7 @@ import { PageContainer } from '@/components/ui/container';
 import { MDX } from '@/components/mdx';
 import { getCachedPageContent } from '@/lib/content';
 import { cleanUrl } from '@/lib/utils/url-cleaner';
+import { siteConfig } from '@/lib/config';
 
 interface PageProps {
 	params: Promise<{ slug: string; locale: string }>;
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 			title,
 			description,
 			url: `${baseUrl}/${locale}/pages/${slug}`,
-			siteName: 'Ever Works',
+			siteName: siteConfig.name,
 			locale,
 			type: 'website'
 		},
