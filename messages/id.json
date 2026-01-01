@@ -2836,6 +2836,97 @@
 			"DESCRIPTION": "Deskripsi",
 			"EDIT_SUBMISSION_TITLE": "Edit Pengajuan",
 			"EDIT_SUBMISSION_DESC": "Perbarui detail pengajuan Anda"
+		},
+		"dashboard": {
+			"TITLE": "Dasbor",
+			"WELCOME_BACK": "Selamat datang kembali, {name}! Berikut ringkasan aktivitas Anda.",
+			"REFRESH": "Segarkan",
+			"FAILED_TO_LOAD": "Gagal memuat statistik dasbor",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "Total Pengajuan",
+				"CONTENT_CREATED": "Konten yang Anda buat",
+				"TOTAL_VIEWS": "Total Tampilan",
+				"VIEWS_ON_CONTENT": "Tampilan konten Anda",
+				"VOTES_RECEIVED": "Suara Diterima",
+				"VOTES_ON_CONTENT": "Suara pada konten Anda",
+				"COMMENTS_RECEIVED": "Komentar Diterima",
+				"COMMENTS_ON_CONTENT": "Komentar pada konten Anda"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "Performa Mingguan",
+				"THIS_WEEK": "Minggu Ini",
+				"LAST_WEEK": "Minggu Lalu",
+				"CHANGE": "Perubahan",
+				"VOTES": "Suara",
+				"COMMENTS": "Komentar",
+				"SUBMISSIONS": "Pengajuan",
+				"VIEWS": "Tampilan",
+				"NO_DATA": "Tidak ada data",
+				"NO_DATA_DESC": "Mulai buat konten untuk melihat perbandingan performa mingguan Anda."
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "Performa Kategori",
+				"SUBTITLE": "Kategori teratas berdasarkan keterlibatan rata-rata",
+				"CATEGORY": "Kategori",
+				"ITEMS": "Item",
+				"AVG_ENGAGEMENT": "Keterlibatan Rata-rata",
+				"TOTAL_ENGAGEMENT": "Total",
+				"NO_DATA": "Tidak ada data kategori",
+				"NO_DATA_DESC": "Ajukan item untuk melihat metrik performa kategori."
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "Tren Persetujuan",
+				"SUBTITLE": "Tingkat keberhasilan persetujuan bulanan",
+				"APPROVAL_RATE": "Tingkat Persetujuan",
+				"APPROVED": "Disetujui",
+				"TOTAL": "Total",
+				"NO_DATA": "Tidak ada data persetujuan",
+				"NO_DATA_DESC": "Ajukan item untuk melacak tingkat persetujuan Anda."
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "Tingkat Keterlibatan",
+				"SUBTITLE": "Keterlibatan per pengajuan dari waktu ke waktu",
+				"RATE": "Tingkat",
+				"NO_DATA": "Tidak ada data keterlibatan",
+				"NO_DATA_DESC": "Buat konten untuk melihat tren keterlibatan Anda."
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "Aktivitas Pengajuan",
+				"SUBTITLE": "Konsistensi pengajuan Anda selama 3 bulan terakhir",
+				"SUBMISSIONS": "pengajuan",
+				"SUBMISSION": "pengajuan",
+				"NO_SUBMISSIONS": "Tidak ada pengajuan",
+				"NO_DATA": "Tidak ada data aktivitas",
+				"NO_DATA_DESC": "Mulai ajukan konten untuk melihat kalender aktivitas Anda.",
+				"LESS": "Sedikit",
+				"MORE": "Banyak"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "Distribusi Keterlibatan",
+				"SUBTITLE": "Bagaimana keterlibatan didistribusikan di antara item teratas Anda",
+				"ENGAGEMENT": "Keterlibatan",
+				"OF_TOTAL": "dari total",
+				"NO_DATA": "Tidak ada data keterlibatan",
+				"NO_DATA_DESC": "Dapatkan suara dan komentar untuk melihat distribusi keterlibatan."
+			},
+
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Rata-rata"
+			},
+
+			"CHARTS": {
+				"LOADING": "Memuat data grafik...",
+				"ERROR": "Gagal memuat grafik",
+				"RETRY": "Coba lagi"
+			}
 		}
 	}
 }

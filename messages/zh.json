@@ -2868,6 +2868,97 @@
 			"DESCRIPTION": "描述",
 			"EDIT_SUBMISSION_TITLE": "编辑提交",
 			"EDIT_SUBMISSION_DESC": "更新您的提交详情"
+		},
+		"dashboard": {
+			"TITLE": "仪表盘",
+			"WELCOME_BACK": "欢迎回来，{name}！这是您的活动概览。",
+			"REFRESH": "刷新",
+			"FAILED_TO_LOAD": "加载仪表盘统计数据失败",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "总提交数",
+				"CONTENT_CREATED": "您创建的内容",
+				"TOTAL_VIEWS": "总浏览量",
+				"VIEWS_ON_CONTENT": "您的内容浏览量",
+				"VOTES_RECEIVED": "获得的投票",
+				"VOTES_ON_CONTENT": "您的内容投票数",
+				"COMMENTS_RECEIVED": "获得的评论",
+				"COMMENTS_ON_CONTENT": "您的内容评论数"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "每周表现",
+				"THIS_WEEK": "本周",
+				"LAST_WEEK": "上周",
+				"CHANGE": "变化",
+				"VOTES": "投票",
+				"COMMENTS": "评论",
+				"SUBMISSIONS": "提交",
+				"VIEWS": "浏览",
+				"NO_DATA": "暂无数据",
+				"NO_DATA_DESC": "开始创建内容以查看您的每周表现对比。"
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "分类表现",
+				"SUBTITLE": "按平均互动量排名的分类",
+				"CATEGORY": "分类",
+				"ITEMS": "项目",
+				"AVG_ENGAGEMENT": "平均互动",
+				"TOTAL_ENGAGEMENT": "总计",
+				"NO_DATA": "暂无分类数据",
+				"NO_DATA_DESC": "提交项目以查看分类表现指标。"
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "审批趋势",
+				"SUBTITLE": "月度审批通过率",
+				"APPROVAL_RATE": "通过率",
+				"APPROVED": "已通过",
+				"TOTAL": "总计",
+				"NO_DATA": "暂无审批数据",
+				"NO_DATA_DESC": "提交项目以跟踪您的审批通过率。"
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "互动率",
+				"SUBTITLE": "每次提交的互动量趋势",
+				"RATE": "比率",
+				"NO_DATA": "暂无互动数据",
+				"NO_DATA_DESC": "创建内容以查看您的互动趋势。"
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "提交活动",
+				"SUBTITLE": "过去3个月的提交一致性",
+				"SUBMISSIONS": "次提交",
+				"SUBMISSION": "次提交",
+				"NO_SUBMISSIONS": "无提交",
+				"NO_DATA": "暂无活动数据",
+				"NO_DATA_DESC": "开始提交内容以查看您的活动日历。",
+				"LESS": "较少",
+				"MORE": "较多"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "互动分布",
+				"SUBTITLE": "互动在您的热门项目中的分布情况",
+				"ENGAGEMENT": "互动",
+				"OF_TOTAL": "占总量",
+				"NO_DATA": "暂无互动数据",
+				"NO_DATA_DESC": "获得投票和评论以查看互动分布情况。"
+			},
+
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "平均"
+			},
+
+			"CHARTS": {
+				"LOADING": "正在加载图表数据...",
+				"ERROR": "加载图表失败",
+				"RETRY": "重试"
+			}
 		}
 	}
 }

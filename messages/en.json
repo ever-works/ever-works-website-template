@@ -2969,6 +2969,97 @@
 			"YOUR_SUBMISSIONS": "Your Submissions",
 			"NEW_SUBMISSION": "New Submission",
 			"TRASH": "Trash"
+		},
+		"dashboard": {
+			"TITLE": "Dashboard",
+			"WELCOME_BACK": "Welcome back, {name}! Here's your activity overview.",
+			"REFRESH": "Refresh",
+			"FAILED_TO_LOAD": "Failed to load dashboard stats",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "Total Submissions",
+				"CONTENT_CREATED": "Content you've created",
+				"TOTAL_VIEWS": "Total Views",
+				"VIEWS_ON_CONTENT": "Views on your content",
+				"VOTES_RECEIVED": "Votes Received",
+				"VOTES_ON_CONTENT": "Votes on your content",
+				"COMMENTS_RECEIVED": "Comments Received",
+				"COMMENTS_ON_CONTENT": "Comments on your content"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "Weekly Performance",
+				"THIS_WEEK": "This Week",
+				"LAST_WEEK": "Last Week",
+				"CHANGE": "Change",
+				"VOTES": "Votes",
+				"COMMENTS": "Comments",
+				"SUBMISSIONS": "Submissions",
+				"VIEWS": "Views",
+				"NO_DATA": "No data available",
+				"NO_DATA_DESC": "Start creating content to see your weekly performance comparison."
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "Category Performance",
+				"SUBTITLE": "Top categories by average engagement",
+				"CATEGORY": "Category",
+				"ITEMS": "Items",
+				"AVG_ENGAGEMENT": "Avg. Engagement",
+				"TOTAL_ENGAGEMENT": "Total",
+				"NO_DATA": "No category data",
+				"NO_DATA_DESC": "Submit items to see category performance metrics."
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "Approval Rate Trend",
+				"SUBTITLE": "Monthly approval success rate",
+				"APPROVAL_RATE": "Approval Rate",
+				"APPROVED": "Approved",
+				"TOTAL": "Total",
+				"NO_DATA": "No approval data",
+				"NO_DATA_DESC": "Submit items to track your approval rate over time."
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "Engagement Rate",
+				"SUBTITLE": "Engagement per submission over time",
+				"RATE": "Rate",
+				"NO_DATA": "No engagement data",
+				"NO_DATA_DESC": "Create content to see your engagement rate trends."
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "Submission Activity",
+				"SUBTITLE": "Your submission consistency over the last 3 months",
+				"SUBMISSIONS": "submissions",
+				"SUBMISSION": "submission",
+				"NO_SUBMISSIONS": "No submissions",
+				"NO_DATA": "No activity data",
+				"NO_DATA_DESC": "Start submitting content to see your activity calendar.",
+				"LESS": "Less",
+				"MORE": "More"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "Engagement Distribution",
+				"SUBTITLE": "How engagement is spread across your top items",
+				"ENGAGEMENT": "Engagement",
+				"OF_TOTAL": "of total",
+				"NO_DATA": "No engagement data",
+				"NO_DATA_DESC": "Get votes and comments to see how engagement is distributed."
+			},
+
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Avg"
+			},
+
+			"CHARTS": {
+				"LOADING": "Loading chart data...",
+				"ERROR": "Failed to load chart",
+				"RETRY": "Retry"
+			}
 		}
 	}
 }
