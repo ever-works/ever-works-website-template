@@ -47,8 +47,10 @@ export function StatusBreakdown({ data, isLoading = false }: StatusBreakdownProp
             cy="50%"
             labelLine={false}
             nameKey="status"
-            label={({ name, percent }: { name?: string; percent?: number }) =>
-              `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
+            label={({ name, percent }: { name?: string; percent?: number }) => {
+              if ((percent ?? 0) === 0) return '';
+              return `${name} ${((percent ?? 0) * 100).toFixed(0)}%`;
+            }}
             outerRadius={80}
             fill="#8884d8"
             dataKey="value"

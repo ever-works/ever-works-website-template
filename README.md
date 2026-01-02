@@ -132,6 +132,23 @@ auth:
     microsoft: true           # Microsoft login
     fb: true                  # Facebook login
     x: true                   # X (Twitter) login
+
+# Custom navigation links
+custom_header:
+  - label: "About"
+    path: "/about"
+  - label: "Documentation"
+    path: "/pages/docs"
+  - label: "Blog"
+    path: "https://blog.example.com"
+
+custom_footer:
+  - label: "Privacy Policy"
+    path: "/pages/privacy-policy"
+  - label: "Terms of Service"
+    path: "/terms"
+  - label: "GitHub"
+    path: "https://github.com/example"
 ```
 
 ### Configuration Options:
@@ -145,6 +162,11 @@ auth:
     - Enable/disable OAuth providers
     - Use `true` to enable, `false` to disable
     - Configure corresponding OAuth keys
+3. **Custom navigation** (see [Custom Navigation Documentation](docs/CUSTOM_NAVIGATION.md))
+    - `custom_header`: Array of navigation items for the header menu
+    - `custom_footer`: Array of links for the footer section
+    - Supports internal routes, markdown pages, and external URLs
+    - Supports i18n translation keys
 
 > 💡 Note: Changes in config.yml are applied after syncing content or restarting the server.
 

@@ -8,7 +8,7 @@ import {
 	formatPaymentMethod,
 	formatBillingDate,
 	getPlanName,
-	getBillingPeriod,
+	getBillingPeriod
 } from '@/lib/payment/services/payment-email.service';
 
 // Import server configuration utility
@@ -227,7 +227,6 @@ export async function POST(request: NextRequest) {
 }
 
 async function handlePaymentSucceeded(data: any) {
-
 	try {
 		const emailConfig = await getEmailConfig();
 		const paymentMethod = formatPaymentMethod(data.payment_method);
@@ -315,10 +314,10 @@ async function handleSubscriptionCreated(data: any) {
 
 		// Extract subscription information
 		const priceId = data.items?.data?.[0]?.price?.id;
-		const planName = getPlanName(priceId);
+		const planName = getPlanName(priceId) || 'Premium Plan';
 		const amount = formatAmount(data.items?.data?.[0]?.price?.unit_amount || 0, data.currency);
 		const billingPeriod = getBillingPeriod(data.items?.data?.[0]?.price?.recurring?.interval);
-		const emailConfig = await getEmailConfig();		
+		const emailConfig = await getEmailConfig();
 
 		// Prepare email data
 		const emailData = {
@@ -361,7 +360,7 @@ async function handleSubscriptionUpdated(data: any) {
 
 		// Extract subscription information
 		const priceId = data.items?.data?.[0]?.price?.id;
-		const planName = getPlanName(priceId);
+		const planName = getPlanName(priceId) || 'Premium Plan';
 		const amount = formatAmount(data.items?.data?.[0]?.price?.unit_amount || 0, data.currency);
 		const billingPeriod = getBillingPeriod(data.items?.data?.[0]?.price?.recurring?.interval);
 
@@ -409,7 +408,7 @@ async function handleSubscriptionCancelled(data: any) {
 		await webhookSubscriptionService.handleSubscriptionCancelled(data);
 		const customerInfo = extractCustomerInfo(data);
 		const priceId = data.items?.data?.[0]?.price?.id;
-		const planName = getPlanName(priceId);
+		const planName = getPlanName(priceId) || 'Premium Plan';
 		const amount = formatAmount(data.items?.data?.[0]?.price?.unit_amount || 0, data.currency);
 		const billingPeriod = getBillingPeriod(data.items?.data?.[0]?.price?.recurring?.interval);
 
@@ -461,7 +460,9 @@ async function handleSubscriptionPaymentSucceeded(data: any) {
 		// Extract payment information
 		const amount = formatAmount(data.amount_paid, data.currency);
 		const subscription = data.subscription;
-		const planName = subscription ? getPlanName(subscription.items?.data?.[0]?.price?.id) : 'Premium Plan';
+		const planName = subscription
+			? getPlanName(subscription.items?.data?.[0]?.price?.id) || 'Premium Plan'
+			: 'Premium Plan';
 		const billingPeriod = subscription
 			? getBillingPeriod(subscription.items?.data?.[0]?.price?.recurring?.interval)
 			: 'month';
@@ -508,7 +509,9 @@ async function handleSubscriptionPaymentFailed(data: any) {
 		// Extract payment information
 		const amount = formatAmount(data.amount_due, data.currency);
 		const subscription = data.subscription;
-		const planName = subscription ? getPlanName(subscription.items?.data?.[0]?.price?.id) : 'Premium Plan';
+		const planName = subscription
+			? getPlanName(subscription.items?.data?.[0]?.price?.id) || 'Premium Plan'
+			: 'Premium Plan';
 		const billingPeriod = subscription
 			? getBillingPeriod(subscription.items?.data?.[0]?.price?.recurring?.interval)
 			: 'month';
@@ -555,7 +558,7 @@ async function handleSubscriptionTrialEnding(data: any) {
 
 		// Extract subscription information
 		const priceId = data.items?.data?.[0]?.price?.id;
-		const planName = getPlanName(priceId);
+		const planName = getPlanName(priceId) || 'Premium Plan';
 		const amount = formatAmount(data.items?.data?.[0]?.price?.unit_amount || 0, data.currency);
 		const billingPeriod = getBillingPeriod(data.items?.data?.[0]?.price?.recurring?.interval);
 
@@ -617,22 +620,38 @@ function getSubscriptionFeatures(planName: string): string[] {
 
 /**
  * Check if subscription metadata indicates a sponsor ad
+ * Handles both checkout.session.completed (subscription_data) and invoice.payment_succeeded (subscription) events
  */
 function isSponsorAdSubscription(data: Record<string, unknown>): boolean {
 	const metadata = data.metadata as Record<string, string> | undefined;
-	const subscriptionMetadata = (data.subscription_data as Record<string, unknown>)?.metadata as Record<string, string> | undefined;
+	const subscriptionDataMetadata = (data.subscription_data as Record<string, unknown>)?.metadata as
+		| Record<string, string>
+		| undefined;
+	const subscriptionMetadata = (data.subscription as Record<string, unknown>)?.metadata as
+		| Record<string, string>
+		| undefined;
 
-	return metadata?.type === 'sponsor_ad' || subscriptionMetadata?.type === 'sponsor_ad';
+	return (
+		metadata?.type === 'sponsor_ad' ||
+		subscriptionDataMetadata?.type === 'sponsor_ad' ||
+		subscriptionMetadata?.type === 'sponsor_ad'
+	);
 }
 
 /**
  * Get sponsor ad ID from subscription metadata
+ * Handles both checkout.session.completed (subscription_data) and invoice.payment_succeeded (subscription) events
  */
 function getSponsorAdId(data: Record<string, unknown>): string | null {
 	const metadata = data.metadata as Record<string, string> | undefined;
-	const subscriptionMetadata = (data.subscription_data as Record<string, unknown>)?.metadata as Record<string, string> | undefined;
+	const subscriptionDataMetadata = (data.subscription_data as Record<string, unknown>)?.metadata as
+		| Record<string, string>
+		| undefined;
+	const subscriptionMetadata = (data.subscription as Record<string, unknown>)?.metadata as
+		| Record<string, string>
+		| undefined;
 
-	return metadata?.sponsorAdId || subscriptionMetadata?.sponsorAdId || null;
+	return metadata?.sponsorAdId || subscriptionDataMetadata?.sponsorAdId || subscriptionMetadata?.sponsorAdId || null;
 }
 
 /**
@@ -653,11 +672,7 @@ async function handleSponsorAdActivation(data: Record<string, unknown>): Promise
 
 		console.log(`🔄 Confirming payment for sponsor ad: ${sponsorAdId}`);
 
-		const confirmedAd = await sponsorAdService.confirmPayment(
-			sponsorAdId,
-			subscriptionId,
-			customerId
-		);
+		const confirmedAd = await sponsorAdService.confirmPayment(sponsorAdId, subscriptionId, customerId);
 
 		if (confirmedAd) {
 			console.log(`✅ Sponsor ad payment confirmed, now pending admin review: ${sponsorAdId}`);
@@ -684,10 +699,7 @@ async function handleSponsorAdCancellation(data: Record<string, unknown>): Promi
 	try {
 		console.log(`🔄 Cancelling sponsor ad: ${sponsorAdId}`);
 
-		const cancelledAd = await sponsorAdService.cancelSponsorAd(
-			sponsorAdId,
-			'Subscription cancelled'
-		);
+		const cancelledAd = await sponsorAdService.cancelSponsorAd(sponsorAdId, 'Subscription cancelled');
 
 		if (cancelledAd) {
 			console.log(`✅ Sponsor ad cancelled successfully: ${sponsorAdId}`);

@@ -41,14 +41,19 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 			return NextResponse.json({ success: true, counted: false, reason: 'bot' });
 		}
 
-		// 3. Owner exclusion (if authenticated) - check before cookie handling
+		// 3. Validate item exists and owner exclusion (if authenticated)
+		const itemRepository = new ItemRepository();
+		const item = await itemRepository.findBySlug(slug);
+
+		// Validate item exists before recording view
+		if (!item) {
+			return NextResponse.json({ success: false, error: 'Item not found' }, { status: 404 });
+		}
+
+		// Owner exclusion (if authenticated) - check before cookie handling
 		const session = await auth();
-		if (session?.user?.id) {
-			const itemRepository = new ItemRepository();
-			const item = await itemRepository.findBySlug(slug);
-			if (item?.submitted_by === session.user.id) {
-				return NextResponse.json({ success: true, counted: false, reason: 'owner' });
-			}
+		if (session?.user?.id && item.submitted_by === session.user.id) {
+			return NextResponse.json({ success: true, counted: false, reason: 'owner' });
 		}
 
 		// 4. Get or create viewer ID from cookie

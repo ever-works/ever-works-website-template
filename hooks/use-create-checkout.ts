@@ -1,10 +1,12 @@
 'use client';
 import { apiUtils, serverClient } from '@/lib/api/server-api-client';
-import { PaymentInterval } from '@/lib/constants';
+import { PaymentInterval, PaymentPlan } from '@/lib/constants';
 import { PricingConfig, PricingPlans } from '@/lib/content';
 import { getQueryClient } from '@/lib/query-client';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useCurrencyContext } from '@/components/context/currency-provider';
+import { getStripePriceConfig } from '@/lib/config/billing/stripe.config';
 
 export interface SubscriptionFormProps {
 	selectedPlan?: PricingPlans;
@@ -64,8 +66,32 @@ class CheckoutSessionError extends Error {
 	}
 }
 
+/**
+ * Validates and maps plan.id to a valid plan name for billing configs
+ * @param planId - The plan ID to validate
+ * @returns The validated plan name ('free' | 'standard' | 'premium')
+ * @throws CheckoutSessionError if planId is not a valid PaymentPlan
+ */
+function validateAndMapPlanName(planId: string): 'free' | 'standard' | 'premium' {
+	const validPlans: Record<string, 'free' | 'standard' | 'premium'> = {
+		[PaymentPlan.FREE]: 'free',
+		[PaymentPlan.STANDARD]: 'standard',
+		[PaymentPlan.PREMIUM]: 'premium'
+	};
+
+	const planName = validPlans[planId];
+	if (!planName) {
+		throw new CheckoutSessionError(
+			`Invalid plan ID: "${planId}". Expected one of: ${Object.values(PaymentPlan).join(', ')}`
+		);
+	}
+
+	return planName;
+}
+
 export const useCreateCheckoutSession = () => {
 	const router = useRouter();
+	const { currency } = useCurrencyContext();
 
 	const invalidateQueries = async () => {
 		const queryClient = getQueryClient();
@@ -95,7 +121,23 @@ export const useCreateCheckoutSession = () => {
 				);
 			}
 
-			const priceId = billingInterval === PaymentInterval.YEARLY ? plan.annualPriceId : plan.stripePriceId;
+			// Get currency-aware price ID using multi-currency configs
+			// Map plan.id to plan name for billing configs with explicit validation
+			const planName = validateAndMapPlanName(plan.id);
+			const interval = billingInterval === PaymentInterval.YEARLY ? 'yearly' : 'monthly';
+
+			// Try to get currency-aware price ID
+			const currencyPriceConfig = getStripePriceConfig(planName, currency, interval);
+
+			// Use currency-aware price ID if available, otherwise fallback to plan's price ID
+			let priceId: string | undefined;
+			if (currencyPriceConfig?.priceId) {
+				priceId = currencyPriceConfig.priceId;
+			} else {
+				// Fallback to plan's configured price ID
+				priceId = billingInterval === PaymentInterval.YEARLY ? plan.annualPriceId : plan.stripePriceId;
+			}
+
 			if (!priceId) {
 				throw new CheckoutSessionError('Invalid price ID');
 			}

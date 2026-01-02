@@ -615,8 +615,14 @@ export const formatBillingDate = (timestamp: number) => {
 
 /**
  * Get plan name from Price ID
+ * @param priceId - The Stripe price ID
+ * @returns The plan name, or null if priceId is not recognized
  */
-export const getPlanName = (priceId: string) => {
+export const getPlanName = (priceId: string | null | undefined): string | null => {
+  if (!priceId) {
+    return null;
+  }
+
   // Mapping of Price IDs to plan names using ConfigService
   const planMapping: Record<string, string> = {
     [paymentConfig.stripe.standardPriceId || '']: 'Standard Plan',
@@ -624,7 +630,14 @@ export const getPlanName = (priceId: string) => {
     [paymentConfig.stripe.freePriceId || '']: 'Free Plan',
   };
 
-  return planMapping[priceId] || 'Premium Plan';
+  const planName = planMapping[priceId];
+  if (!planName) {
+    // Log warning instead of silently defaulting to prevent incorrect pricing
+    console.warn(`Unknown price ID: ${priceId}. Expected one of: ${Object.keys(planMapping).filter(Boolean).join(', ')}`);
+    return null;
+  }
+
+  return planName;
 };
 
 /**
