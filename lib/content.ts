@@ -255,6 +255,24 @@ export interface Settings {
 	footer?: FooterConfigSettings;
 }
 
+export interface CustomHeroConfig {
+	enabled?: boolean;
+	source?: string;
+}
+
+export interface CustomHeroFrontmatter {
+	background_image?: string;
+	theme?: 'light' | 'dark' | 'auto';
+	alignment?: 'left' | 'center' | 'right';
+	min_height?: string;
+	overlay_opacity?: number;
+}
+
+export interface CustomHeroContent {
+	content: string;
+	frontmatter: CustomHeroFrontmatter;
+}
+
 export interface Config {
 	company_name?: string;
 	copyright_year?: number;
@@ -280,6 +298,7 @@ export interface Config {
 	categoriesEnabled?: boolean;
 	settings?: Settings;
 	logo?: LogoSettings;
+	custom_hero?: CustomHeroConfig;
 }
 
 interface FetchOptions {
@@ -1196,6 +1215,102 @@ export async function fetchPageContent(
 	}
 }
 
+/**
+ * Fetch custom hero content from a markdown file
+ * Supports locale-specific files (hero.en.md, hero.fr.md) with fallback
+ * Parses frontmatter for theme, alignment, and background settings
+ */
+export async function fetchHeroContent(
+	source: string,
+	locale: string = 'en'
+): Promise<CustomHeroContent | null> {
+	try {
+		// Ensure content is available (copies from build to runtime on Vercel)
+		const { ensureContentAvailable } = await import('./lib');
+		await ensureContentAvailable();
+
+		const base = getContentPath();
+
+		// Normalize source path (remove leading slash if present)
+		const normalizedSource = source.startsWith('/') ? source.slice(1) : source;
+
+		// Extract directory and filename parts
+		const sourceDir = path.dirname(normalizedSource);
+		const sourceFile = path.basename(normalizedSource, '.md');
+
+		// Sanitize inputs to prevent path traversal
+		if (!validateLanguageCode(locale)) {
+			throw new Error(`Invalid language code: ${locale}`);
+		}
+
+		const blocksDir = path.join(base, sourceDir);
+
+		// Check if blocks directory exists
+		if (!(await dirExists(blocksDir))) {
+			console.warn(`Hero content directory does not exist: ${blocksDir}`);
+			return null;
+		}
+
+		// Try locale-specific version first, then default, then base file
+		const localizedPath = path.join(blocksDir, `${sourceFile}.${locale}.md`);
+		const defaultPath = path.join(blocksDir, `${sourceFile}.en.md`);
+		const basePath = path.join(blocksDir, `${sourceFile}.md`);
+
+		// Validate paths
+		validatePath(localizedPath, base);
+		validatePath(defaultPath, base);
+		validatePath(basePath, base);
+
+		let contentPath: string | null = null;
+
+		// Try localized version first
+		if (locale !== 'en' && (await fsExists(localizedPath))) {
+			contentPath = localizedPath;
+		} else if (await fsExists(defaultPath)) {
+			contentPath = defaultPath;
+		} else if (await fsExists(basePath)) {
+			contentPath = basePath;
+		}
+
+		if (!contentPath) {
+			console.warn(`Hero content not found: ${source} (locale: ${locale})`);
+			return null;
+		}
+
+		// Read file content securely
+		const rawContent = await safeReadFile(contentPath, base);
+
+		// Parse frontmatter if present
+		const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
+		const match = rawContent.match(frontmatterRegex);
+
+		let frontmatter: CustomHeroFrontmatter = {};
+		let content: string = rawContent;
+
+		if (match) {
+			try {
+				const parsed = yaml.parse(match[1]) || {};
+				frontmatter = {
+					background_image: parsed.background_image,
+					theme: parsed.theme,
+					alignment: parsed.alignment,
+					min_height: parsed.min_height,
+					overlay_opacity: parsed.overlay_opacity,
+				};
+				content = match[2];
+			} catch (yamlError) {
+				console.warn(`Failed to parse hero frontmatter for ${source}:`, yamlError);
+				content = rawContent;
+			}
+		}
+
+		return { content, frontmatter };
+	} catch (error) {
+		console.error(`Failed to fetch hero content for ${source}:`, error);
+		return null;
+	}
+}
+
 // ============================================================================
 // CACHED WRAPPERS
 // ============================================================================
@@ -1261,6 +1376,24 @@ export const getCachedPageContent = async (slug: string, locale: string = 'en') 
 		{
 			revalidate: CONTENT_CACHE_TTL.PAGES,
 			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.PAGES, CACHE_TAGS.PAGE(slug)]
+		}
+	)();
+};
+
+/**
+ * Cached version of fetchHeroContent()
+ * Cache key includes source path and locale
+ * Tagged with CONTENT for cache invalidation on repository sync
+ */
+export const getCachedHeroContent = async (source: string, locale: string = 'en') => {
+	return unstable_cache(
+		async () => {
+			return await fetchHeroContent(source, locale);
+		},
+		['hero', source, locale],
+		{
+			revalidate: CONTENT_CACHE_TTL.PAGES,
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.PAGES]
 		}
 	)();
 };

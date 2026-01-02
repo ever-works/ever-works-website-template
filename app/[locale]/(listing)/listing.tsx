@@ -1,8 +1,9 @@
 import { FilterProvider } from "@/components/filters/context/filter-context";
-import { getTranslations } from "next-intl/server";
-import { Category, ItemData, Tag } from "@/lib/content";
+import { getTranslations, getLocale } from "next-intl/server";
+import { Category, ItemData, Tag, getCachedHeroContent } from "@/lib/content";
 import GlobalsClient from "./globals-client";
 import Hero from "@/components/hero";
+import CustomHero from "@/components/custom-hero";
 import { FilterURLParser } from "@/components/filters/filter-url-parser";
 import { configManager } from "@/lib/config-manager";
 
@@ -20,12 +21,26 @@ type ListingProps = {
 
 export default async function Listing(props: ListingProps) {
   const t = await getTranslations("listing");
+  const locale = await getLocale();
   const config = configManager.getConfig();
   const homepageSettings = config.settings?.homepage;
   const heroEnabled = homepageSettings?.hero_enabled ?? true;
   const searchEnabled = homepageSettings?.search_enabled ?? true;
   const defaultView = homepageSettings?.default_view ?? 'classic';
   const defaultSort = homepageSettings?.default_sort ?? 'popularity';
+
+  // Check for custom hero configuration
+  const customHeroConfig = config.custom_hero;
+  const customHeroEnabled = customHeroConfig?.enabled && customHeroConfig?.source;
+
+  // Fetch custom hero content if enabled
+  let customHeroContent = null;
+  if (customHeroEnabled && customHeroConfig?.source) {
+    customHeroContent = await getCachedHeroContent(customHeroConfig.source, locale);
+  }
+
+  // Determine which hero to render
+  const shouldShowCustomHero = customHeroEnabled && customHeroContent;
 
   return (
     <FilterProvider
@@ -34,7 +49,15 @@ export default async function Listing(props: ListingProps) {
       initialSortBy={defaultSort}
     >
       <FilterURLParser />
-      {heroEnabled ? (
+      {shouldShowCustomHero && customHeroContent ? (
+        <CustomHero
+          content={customHeroContent.content}
+          frontmatter={customHeroContent.frontmatter}
+          className="min-h-screen"
+        >
+          <GlobalsClient {...props} searchEnabled={searchEnabled} defaultView={defaultView} />
+        </CustomHero>
+      ) : heroEnabled ? (
         <Hero
           badgeText={t("INTRODUCING_EVER_WORKS")}
           title={
