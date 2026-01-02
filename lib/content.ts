@@ -1299,14 +1299,14 @@ export async function fetchHeroContent(
 				};
 				content = match[2];
 			} catch (yamlError) {
-				console.warn(`Failed to parse hero frontmatter for ${source}:`, yamlError);
+				console.warn('Failed to parse hero frontmatter for %s:', source, yamlError);
 				content = rawContent;
 			}
 		}
 
 		return { content, frontmatter };
 	} catch (error) {
-		console.error(`Failed to fetch hero content for ${source}:`, error);
+		console.error('Failed to fetch hero content for %s:', source, error);
 		return null;
 	}
 }
