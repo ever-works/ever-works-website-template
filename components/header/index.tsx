@@ -31,6 +31,8 @@ import { useHeaderSettings } from '@/hooks/use-header-settings';
 import { useCategoriesExists } from '@/hooks/use-categories-exists';
 import { useCollectionsExists } from '@/hooks/use-collections-exists';
 import { isDemoMode } from '@/lib/utils';
+import { isExternalUrl, resolveLabel } from '@/lib/utils/custom-navigation';
+import type { CustomNavigationItem } from '@/lib/content';
 
 interface NavigationItem {
 	key: string;
@@ -38,6 +40,7 @@ interface NavigationItem {
 	href: string;
 	translationKey?: string;
 	translationNamespace?: 'common' | 'listing' | 'survey';
+	isExternal?: boolean;
 }
 
 interface ChevronProps {
@@ -179,6 +182,7 @@ export default function Header() {
 	const t = useTranslations('common');
 	const tListing = useTranslations('listing');
 	const tSurvey = useTranslations('survey');
+	const tGlobal = useTranslations();
 	const config = useConfig();
 	const pathname = usePathname();
 
@@ -190,8 +194,7 @@ export default function Header() {
 	const hasCollections = collectionsData?.exists ?? false;
 
 	const navigationItems = useMemo((): NavigationItem[] => {
-		return NAVIGATION_CONFIG.filter((item) => {
-			// Hide collections link when there are no collections (but keep it visible while loading to prevent flicker)
+		const defaultItems = NAVIGATION_CONFIG.filter((item) => {
 			if (item.key === 'collections' && !collectionsLoading && !hasCollections) {
 				return false;
 			}
@@ -229,12 +232,38 @@ export default function Header() {
 					: item.translationNamespace === 'survey'
 						? tSurvey(item.translationKey as any)
 						: t(item.translationKey as any)
-				: item.staticLabel || item.key
+				: item.staticLabel || item.key,
+			isExternal: false
 		}));
+
+		// Process custom header items from config
+		const customItems: NavigationItem[] = [];
+		if (config.custom_header && Array.isArray(config.custom_header)) {
+			config.custom_header.forEach((item: CustomNavigationItem, index: number) => {
+				// Validate item structure
+				if (!item || typeof item !== 'object' || !item.label || !item.path) {
+					console.warn(`Invalid custom_header item at index ${index}:`, item);
+					return;
+				}
+
+				const isExternal = isExternalUrl(item.path);
+				customItems.push({
+					key: `custom-header-${index}`,
+					href: item.path,
+					label: resolveLabel(item.label, tGlobal),
+					isExternal
+				});
+			});
+		}
+
+		// Combine default and custom items
+		return [...defaultItems, ...customItems];
 	}, [
 		t,
 		tListing,
 		tSurvey,
+		tGlobal,
+		config.custom_header,
 		session?.user?.id,
 		features.favorites,
 		hasGlobalSurveys,
@@ -282,17 +311,33 @@ export default function Header() {
 	);
 
 	const renderNavigationItem = useCallback(
-		(item: NavigationItem) => (
-			<NavbarItem key={item.key}>
-				<Link
-					className={getLinkClasses(item.href)}
-					href={item.href}
-					{...(isActiveLink(item.href) && { 'aria-current': 'page' })}
-				>
-					{item.label}
-				</Link>
-			</NavbarItem>
-		),
+		(item: NavigationItem) => {
+			const linkClasses = item.isExternal
+				? STYLES.linkBase + ' ' + STYLES.linkInactive
+				: getLinkClasses(item.href);
+
+			if (item.isExternal) {
+				return (
+					<NavbarItem key={item.key}>
+						<a href={item.href} target="_blank" rel="noopener noreferrer" className={linkClasses}>
+							{item.label}
+						</a>
+					</NavbarItem>
+				);
+			}
+
+			return (
+				<NavbarItem key={item.key}>
+					<Link
+						className={linkClasses}
+						href={item.href}
+						{...(isActiveLink(item.href) && { 'aria-current': 'page' })}
+					>
+						{item.label}
+					</Link>
+				</NavbarItem>
+			);
+		},
 		[getLinkClasses, isActiveLink]
 	);
 
@@ -356,18 +401,40 @@ export default function Header() {
 
 			<NavbarMenu>
 				<div className={STYLES.mobileMenu}>
-					{navigationItems.map((item) => (
-						<NavbarMenuItem key={item.key} className={STYLES.mobileMenuItem}>
-							<Link
-								className={`${getLinkClasses(item.href)} ${STYLES.mobileLink}`}
-								href={item.href}
-								onClick={() => setIsMenuOpen(false)}
-								{...(isActiveLink(item.href) && { 'aria-current': 'page' })}
-							>
-								{item.label}
-							</Link>
-						</NavbarMenuItem>
-					))}
+					{navigationItems.map((item) => {
+						const linkClasses = item.isExternal
+							? `${STYLES.linkBase} ${STYLES.linkInactive} ${STYLES.mobileLink}`
+							: `${getLinkClasses(item.href)} ${STYLES.mobileLink}`;
+
+						if (item.isExternal) {
+							return (
+								<NavbarMenuItem key={item.key} className={STYLES.mobileMenuItem}>
+									<a
+										href={item.href}
+										target="_blank"
+										rel="noopener noreferrer"
+										className={linkClasses}
+										onClick={() => setIsMenuOpen(false)}
+									>
+										{item.label}
+									</a>
+								</NavbarMenuItem>
+							);
+						}
+
+						return (
+							<NavbarMenuItem key={item.key} className={STYLES.mobileMenuItem}>
+								<Link
+									className={linkClasses}
+									href={item.href}
+									onClick={() => setIsMenuOpen(false)}
+									{...(isActiveLink(item.href) && { 'aria-current': 'page' })}
+								>
+									{item.label}
+								</Link>
+							</NavbarMenuItem>
+						);
+					})}
 
 					{headerSettings.moreEnabled && (
 						<NavbarMenuItem className={STYLES.mobileMenuItem}>
