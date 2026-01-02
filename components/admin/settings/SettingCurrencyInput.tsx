@@ -107,6 +107,9 @@ export function SettingCurrencyInput({
 	}, []);
 
 	const currencySymbol = getCurrencySymbol(currency);
+	// Calculate padding based on currency symbol length (longer codes need more space)
+	const symbolLength = currencySymbol.length;
+	const paddingClass = symbolLength >= 3 ? 'pl-14' : symbolLength >= 2 ? 'pl-10' : 'pl-8';
 
 	return (
 		<div className="py-3">
@@ -134,7 +137,8 @@ export function SettingCurrencyInput({
 					placeholder={placeholder}
 					disabled={disabled}
 					className={cn(
-						"w-full flex items-center px-3 py-2 pl-8 rounded-lg transition-colors",
+						"w-full flex items-center px-3 py-2 rounded-lg transition-colors",
+						paddingClass,
 						"border border-gray-300 dark:border-gray-600 bg-transparent",
 						"text-gray-900 dark:text-white text-sm",
 						"focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
