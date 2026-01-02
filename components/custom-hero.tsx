@@ -6,6 +6,30 @@ import { Container } from "./ui/container";
 import { CustomHeroFrontmatter } from "@/lib/content";
 import Link from "next/link";
 
+/**
+ * Validates a URL to prevent XSS attacks via javascript: or data: schemes.
+ * Only allows http://, https://, and relative paths.
+ * Returns null if the URL is unsafe.
+ */
+function sanitizeUrl(url: string | undefined): string | null {
+	if (!url) return null;
+
+	const trimmedUrl = url.trim();
+
+	// Allow relative paths (starting with / or not starting with a protocol)
+	if (trimmedUrl.startsWith("/") || !trimmedUrl.includes(":")) {
+		return trimmedUrl;
+	}
+
+	// Allow only http and https protocols
+	if (trimmedUrl.startsWith("http://") || trimmedUrl.startsWith("https://")) {
+		return trimmedUrl;
+	}
+
+	// Block all other protocols (javascript:, data:, vbscript:, etc.)
+	return null;
+}
+
 export interface CustomHeroProps {
 	/** Markdown content to render */
 	content: string;
@@ -20,14 +44,15 @@ export interface CustomHeroProps {
 }
 
 const buttonBaseStyles =
-	"inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-200 no-underline";
+	"inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-200 no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2";
 const primaryStyles =
-	"bg-theme-primary-600 hover:bg-theme-primary-700 text-white shadow-lg hover:shadow-xl";
+	"bg-theme-primary-600 hover:bg-theme-primary-700 text-white shadow-lg hover:shadow-xl focus-visible:ring-theme-primary-500";
 const secondaryStyles =
-	"bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700";
+	"bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 focus-visible:ring-gray-500";
 
 /**
  * Button component for CTA links in hero
+ * Validates URLs to prevent XSS attacks via javascript: or data: schemes
  */
 function HeroButton({
 	href,
@@ -38,7 +63,14 @@ function HeroButton({
 	children: React.ReactNode;
 	variant?: "primary" | "secondary";
 }) {
-	const isExternal = href.startsWith("http://") || href.startsWith("https://");
+	const safeHref = sanitizeUrl(href);
+
+	// If URL is unsafe, render as non-interactive span
+	if (!safeHref) {
+		return <span className="text-gray-500">{children}</span>;
+	}
+
+	const isExternal = safeHref.startsWith("http://") || safeHref.startsWith("https://");
 	const styles = cn(
 		buttonBaseStyles,
 		variant === "primary" ? primaryStyles : secondaryStyles
@@ -46,14 +78,14 @@ function HeroButton({
 
 	if (isExternal) {
 		return (
-			<a href={href} target="_blank" rel="noopener noreferrer" className={styles}>
+			<a href={safeHref} target="_blank" rel="noopener noreferrer" className={styles}>
 				{children}
 			</a>
 		);
 	}
 
 	return (
-		<Link href={href} className={styles}>
+		<Link href={safeHref} className={styles}>
 			{children}
 		</Link>
 	);
@@ -62,6 +94,7 @@ function HeroButton({
 /**
  * Custom link component that supports CTA button styling
  * Regular links are styled as text links
+ * Validates URLs to prevent XSS attacks via javascript: or data: schemes
  */
 function HeroLink({
 	href,
@@ -70,21 +103,26 @@ function HeroLink({
 	href?: string;
 	children?: React.ReactNode;
 }) {
-	if (!href) return <span>{children}</span>;
+	const safeHref = sanitizeUrl(href);
 
-	const isExternal = href.startsWith("http://") || href.startsWith("https://");
-	const linkStyles = "text-theme-primary-600 dark:text-theme-primary-400 hover:underline";
+	// If URL is missing or unsafe, render as non-interactive span
+	if (!safeHref) {
+		return <span>{children}</span>;
+	}
+
+	const isExternal = safeHref.startsWith("http://") || safeHref.startsWith("https://");
+	const linkStyles = "text-theme-primary-600 dark:text-theme-primary-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-2 rounded";
 
 	if (isExternal) {
 		return (
-			<a href={href} target="_blank" rel="noopener noreferrer" className={linkStyles}>
+			<a href={safeHref} target="_blank" rel="noopener noreferrer" className={linkStyles}>
 				{children}
 			</a>
 		);
 	}
 
 	return (
-		<Link href={href} className={linkStyles}>
+		<Link href={safeHref} className={linkStyles}>
 			{children}
 		</Link>
 	);
@@ -168,6 +206,7 @@ function HeroH2({ children }: { children?: React.ReactNode }) {
 /**
  * Custom image component for hero
  * Uses next/image for optimization (lazy loading, responsive sizing, WebP conversion)
+ * Validates src URL to prevent XSS attacks
  */
 function HeroImage({
 	src,
@@ -176,13 +215,16 @@ function HeroImage({
 	src?: string;
 	alt?: string;
 }) {
-	if (!src) return null;
+	const safeSrc = sanitizeUrl(src);
+
+	// If src is missing or unsafe, don't render the image
+	if (!safeSrc) return null;
 
 	return (
 		<div className="my-6 flex justify-center">
 			<div className="relative w-full max-w-3xl aspect-video">
 				<Image
-					src={src}
+					src={safeSrc}
 					alt={alt || "Hero image"}
 					fill
 					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 896px"
@@ -216,6 +258,9 @@ export default function CustomHero({
 		overlay_opacity = 0.5,
 	} = frontmatter;
 
+	// Validate background_image URL to prevent CSS injection
+	const safeBackgroundImage = sanitizeUrl(background_image);
+
 	const alignmentClasses = {
 		left: "text-left items-start",
 		center: "text-center items-center",
@@ -238,10 +283,10 @@ export default function CustomHero({
 			style={{ minHeight: min_height !== "auto" ? min_height : undefined }}
 		>
 			{/* Background Image */}
-			{background_image && (
+			{safeBackgroundImage && (
 				<div
 					className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-					style={{ backgroundImage: `url(${background_image})` }}
+					style={{ backgroundImage: `url(${safeBackgroundImage})` }}
 				>
 					<div
 						className="absolute inset-0 bg-black"
@@ -251,7 +296,7 @@ export default function CustomHero({
 			)}
 
 			{/* Background Effects */}
-			{showBackgroundEffects && !background_image && (
+			{showBackgroundEffects && !safeBackgroundImage && (
 				<div className="absolute inset-0 overflow-hidden pointer-events-none">
 					<div className="absolute top-0 -left-4 w-72 h-72 bg-linear-to-r from-blue-500/10 to-blue-600/10 dark:from-blue-600/20 dark:to-blue-700/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" />
 					<div className="absolute top-0 -right-4 w-72 h-72 bg-linear-to-r from-blue-600/10 to-blue-500/10 dark:from-blue-700/20 dark:to-blue-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000" />
@@ -274,7 +319,7 @@ export default function CustomHero({
 									"prose prose-slate dark:prose-invert max-w-none",
 									"prose-headings:mb-4 prose-p:mb-4",
 									"prose-a:no-underline",
-									background_image && "prose-headings:text-white prose-p:text-gray-200"
+									safeBackgroundImage && "prose-headings:text-white prose-p:text-gray-200"
 								)}
 							>
 								<MDXRemote
