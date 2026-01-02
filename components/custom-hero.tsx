@@ -1,5 +1,6 @@
 import React from "react";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Container } from "./ui/container";
 import { CustomHeroFrontmatter } from "@/lib/content";
@@ -166,26 +167,28 @@ function HeroH2({ children }: { children?: React.ReactNode }) {
 
 /**
  * Custom image component for hero
+ * Uses next/image for optimization (lazy loading, responsive sizing, WebP conversion)
  */
 function HeroImage({
 	src,
 	alt,
-	...props
 }: {
 	src?: string;
 	alt?: string;
-	[key: string]: unknown;
 }) {
 	if (!src) return null;
 
 	return (
 		<div className="my-6 flex justify-center">
-			<img
-				src={src}
-				alt={alt || "Hero image"}
-				className="max-w-full h-auto rounded-lg shadow-lg"
-				{...props}
-			/>
+			<div className="relative w-full max-w-3xl aspect-video">
+				<Image
+					src={src}
+					alt={alt || "Hero image"}
+					fill
+					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 896px"
+					className="object-contain rounded-lg shadow-lg"
+				/>
+			</div>
 		</div>
 	);
 }
