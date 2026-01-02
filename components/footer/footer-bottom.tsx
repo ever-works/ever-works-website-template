@@ -3,62 +3,17 @@ import { ThemeToggler } from '../theme-toggler';
 import { Container } from '../ui/container';
 import { VersionDisplay, VersionTooltip } from '../version';
 import { SiteLogo } from '../shared/site-logo';
-import { isExternalUrl, resolveLabel } from '@/lib/utils/custom-navigation';
-import type { CustomNavigationItem } from '@/lib/content';
+import { processFooterItems } from '@/lib/utils/footer-utils';
+import type { Config } from '@/lib/content';
 
-export function FooterBottom({ config, t }: { config: any; t: any }) {
-	// Default footer links (using translation keys that will be resolved by resolveLabel)
-	const defaultFooterLinks: Array<{
-		label: string; // Translation key or plain text
-		href: string;
-		target?: string;
-		rel?: string;
-	}> = [
-		{ label: 'footer.TERMS_OF_SERVICE', href: '/pages/terms-of-service' },
-		{ label: 'footer.PRIVACY_POLICY', href: '/pages/privacy-policy' },
-		{ label: 'footer.COOKIES', href: '/pages/cookies' }
-	];
+interface FooterBottomProps {
+	config: Config;
+	t: (key: string) => string;
+}
 
+export function FooterBottom({ config, t }: FooterBottomProps) {
 	// Process footer items: use custom footer items if available, otherwise use default links
-	const footerItems: Array<{
-		label: string;
-		href: string;
-		target?: string;
-		rel?: string;
-	}> = [];
-
-	// Check if custom footer items are available
-	const hasCustomFooter =
-		config.custom_footer && Array.isArray(config.custom_footer) && config.custom_footer.length > 0;
-
-	if (hasCustomFooter) {
-		// Use only custom footer items if they are available
-		config.custom_footer.forEach((item: CustomNavigationItem, index: number) => {
-			// Validate item structure
-			if (!item || typeof item !== 'object' || !item.label || !item.path) {
-				console.warn(`Invalid custom_footer item at index ${index}:`, item);
-				return;
-			}
-
-			const isExternal = isExternalUrl(item.path);
-			footerItems.push({
-				label: resolveLabel(item.label, t),
-				href: item.path,
-				...(isExternal && {
-					target: '_blank',
-					rel: 'noopener noreferrer'
-				})
-			});
-		});
-	} else {
-		// Use default links only if no custom footer items are available
-		defaultFooterLinks.forEach((item) => {
-			footerItems.push({
-				...item,
-				label: resolveLabel(item.label, t)
-			});
-		});
-	}
+	const footerItems = processFooterItems(config, t);
 
 	return (
 		<div className="relative backdrop-blur-xl bg-white/5 dark:bg-black/5 border-t border-white/10 dark:border-gray-700/20">
