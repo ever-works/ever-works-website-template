@@ -19,8 +19,7 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
 		{ label: 'footer.COOKIES', href: '/pages/cookies' }
 	];
 
-	// Process footer items: combine default links with custom footer items
-	// Behavior: custom_footer items are appended to default links (consistent with social-links.tsx)
+	// Process footer items: use custom footer items if available, otherwise use default links
 	const footerItems: Array<{
 		label: string;
 		href: string;
@@ -28,16 +27,12 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
 		rel?: string;
 	}> = [];
 
-	// Always include default links
-	defaultFooterLinks.forEach((item) => {
-		footerItems.push({
-			...item,
-			label: resolveLabel(item.label, t)
-		});
-	});
+	// Check if custom footer items are available
+	const hasCustomFooter =
+		config.custom_footer && Array.isArray(config.custom_footer) && config.custom_footer.length > 0;
 
-	// Add custom footer items alongside defaults (if configured)
-	if (config.custom_footer && Array.isArray(config.custom_footer) && config.custom_footer.length > 0) {
+	if (hasCustomFooter) {
+		// Use only custom footer items if they are available
 		config.custom_footer.forEach((item: CustomNavigationItem, index: number) => {
 			// Validate item structure
 			if (!item || typeof item !== 'object' || !item.label || !item.path) {
@@ -53,6 +48,14 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
 					target: '_blank',
 					rel: 'noopener noreferrer'
 				})
+			});
+		});
+	} else {
+		// Use default links only if no custom footer items are available
+		defaultFooterLinks.forEach((item) => {
+			footerItems.push({
+				...item,
+				label: resolveLabel(item.label, t)
 			});
 		});
 	}
