@@ -7,6 +7,7 @@ import { serverClient, apiUtils } from '@/lib/api/server-api-client';
 import { useConfig } from '@/app/[locale]/config';
 import { PaymentProvider } from '@/lib/constants';
 import { useSelectedCheckoutProvider } from './use-selected-checkout-provider';
+import { usePaymentProvider } from '@/lib/utils/payment-provider';
 
 export interface AutoRenewalStatus {
 	subscriptionId: string;
@@ -208,23 +209,8 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 
 	const { getActiveProvider } = useSelectedCheckoutProvider();
 
-	/**
-	 * Determine payment provider with priority:
-	 * 1. User's selected provider from Settings
-	 * 2. Config default provider
-	 * 3. Fallback to Stripe
-	 */
-	const paymentProvider = useMemo(() => {
-		const userSelectedProvider = getActiveProvider();
-
-		// Map from CheckoutProvider type to PaymentProvider enum
-		if (userSelectedProvider === 'stripe') return PaymentProvider.STRIPE;
-		if (userSelectedProvider === 'lemonsqueezy') return PaymentProvider.LEMONSQUEEZY;
-		if (userSelectedProvider === 'polar') return PaymentProvider.POLAR;
-
-		// Fallback to config default if no user selection or provider not configured
-		return config.pricing?.provider || PaymentProvider.STRIPE;
-	}, [getActiveProvider, config.pricing?.provider]);
+	// Determine payment provider: User selection takes precedence over config
+	const paymentProvider = usePaymentProvider(getActiveProvider, config.pricing);
 
 	// ===================== Query =====================
 

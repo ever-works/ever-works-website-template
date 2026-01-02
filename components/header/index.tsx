@@ -29,6 +29,10 @@ import { useSurveysEnabled } from '@/hooks/use-surveys-enabled';
 import { useTagsEnabled } from '@/hooks/use-tags-enabled';
 import { useHeaderSettings } from '@/hooks/use-header-settings';
 import { useCategoriesExists } from '@/hooks/use-categories-exists';
+import { useCollectionsExists } from '@/hooks/use-collections-exists';
+import { isDemoMode } from '@/lib/utils';
+import { isExternalUrl, resolveLabel } from '@/lib/utils/custom-navigation';
+import type { CustomNavigationItem } from '@/lib/content';
 
 interface NavigationItem {
 	key: string;
@@ -36,6 +40,7 @@ interface NavigationItem {
 	href: string;
 	translationKey?: string;
 	translationNamespace?: 'common' | 'listing' | 'survey';
+	isExternal?: boolean;
 }
 
 interface ChevronProps {
@@ -171,21 +176,28 @@ export default function Header() {
 	const { tagsEnabled } = useTagsEnabled();
 	const { settings: headerSettings } = useHeaderSettings();
 	const { data: categoriesData, isLoading: categoriesLoading } = useCategoriesExists();
+	const { data: collectionsData, isLoading: collectionsLoading } = useCollectionsExists();
+	const isDemo = isDemoMode();
 
 	const t = useTranslations('common');
 	const tListing = useTranslations('listing');
 	const tSurvey = useTranslations('survey');
+	const tGlobal = useTranslations();
 	const config = useConfig();
 	const pathname = usePathname();
 
 	// Check if we're still loading essential data for navigation
-	const isNavigationLoading = categoriesLoading;
+	const isNavigationLoading = categoriesLoading || collectionsLoading;
 
 	// Extract hasCategories from React Query data
 	const hasCategories = categoriesData?.exists ?? false;
+	const hasCollections = collectionsData?.exists ?? false;
 
 	const navigationItems = useMemo((): NavigationItem[] => {
-		return NAVIGATION_CONFIG.filter((item) => {
+		const defaultItems = NAVIGATION_CONFIG.filter((item) => {
+			if (item.key === 'collections' && !collectionsLoading && !hasCollections) {
+				return false;
+			}
 			// Hide categories link when categories are disabled
 			if (item.key === 'categories' && (!categoriesEnabled || !hasCategories)) {
 				return false;
@@ -220,12 +232,38 @@ export default function Header() {
 					: item.translationNamespace === 'survey'
 						? tSurvey(item.translationKey as any)
 						: t(item.translationKey as any)
-				: item.staticLabel || item.key
+				: item.staticLabel || item.key,
+			isExternal: false
 		}));
+
+		// Process custom header items from config
+		const customItems: NavigationItem[] = [];
+		if (config.custom_header && Array.isArray(config.custom_header)) {
+			config.custom_header.forEach((item: CustomNavigationItem, index: number) => {
+				// Validate item structure
+				if (!item || typeof item !== 'object' || !item.label || !item.path) {
+					console.warn(`Invalid custom_header item at index ${index}:`, item);
+					return;
+				}
+
+				const isExternal = isExternalUrl(item.path);
+				customItems.push({
+					key: `custom-header-${index}`,
+					href: item.path,
+					label: resolveLabel(item.label, tGlobal),
+					isExternal
+				});
+			});
+		}
+
+		// Combine default and custom items
+		return [...defaultItems, ...customItems];
 	}, [
 		t,
 		tListing,
 		tSurvey,
+		tGlobal,
+		config.custom_header,
 		session?.user?.id,
 		features.favorites,
 		hasGlobalSurveys,
@@ -235,7 +273,9 @@ export default function Header() {
 		surveysEnabled,
 		headerSettings.pricingEnabled,
 		headerSettings.submitEnabled,
-		hasCategories
+		hasCategories,
+		hasCollections,
+		collectionsLoading
 	]);
 
 	const isActiveLink = useCallback(
@@ -271,17 +311,33 @@ export default function Header() {
 	);
 
 	const renderNavigationItem = useCallback(
-		(item: NavigationItem) => (
-			<NavbarItem key={item.key}>
-				<Link
-					className={getLinkClasses(item.href)}
-					href={item.href}
-					{...(isActiveLink(item.href) && { 'aria-current': 'page' })}
-				>
-					{item.label}
-				</Link>
-			</NavbarItem>
-		),
+		(item: NavigationItem) => {
+			const linkClasses = item.isExternal
+				? STYLES.linkBase + ' ' + STYLES.linkInactive
+				: getLinkClasses(item.href);
+
+			if (item.isExternal) {
+				return (
+					<NavbarItem key={item.key}>
+						<a href={item.href} target="_blank" rel="noopener noreferrer" className={linkClasses}>
+							{item.label}
+						</a>
+					</NavbarItem>
+				);
+			}
+
+			return (
+				<NavbarItem key={item.key}>
+					<Link
+						className={linkClasses}
+						href={item.href}
+						{...(isActiveLink(item.href) && { 'aria-current': 'page' })}
+					>
+						{item.label}
+					</Link>
+				</NavbarItem>
+			);
+		},
 		[getLinkClasses, isActiveLink]
 	);
 
@@ -345,18 +401,40 @@ export default function Header() {
 
 			<NavbarMenu>
 				<div className={STYLES.mobileMenu}>
-					{navigationItems.map((item) => (
-						<NavbarMenuItem key={item.key} className={STYLES.mobileMenuItem}>
-							<Link
-								className={`${getLinkClasses(item.href)} ${STYLES.mobileLink}`}
-								href={item.href}
-								onClick={() => setIsMenuOpen(false)}
-								{...(isActiveLink(item.href) && { 'aria-current': 'page' })}
-							>
-								{item.label}
-							</Link>
-						</NavbarMenuItem>
-					))}
+					{navigationItems.map((item) => {
+						const linkClasses = item.isExternal
+							? `${STYLES.linkBase} ${STYLES.linkInactive} ${STYLES.mobileLink}`
+							: `${getLinkClasses(item.href)} ${STYLES.mobileLink}`;
+
+						if (item.isExternal) {
+							return (
+								<NavbarMenuItem key={item.key} className={STYLES.mobileMenuItem}>
+									<a
+										href={item.href}
+										target="_blank"
+										rel="noopener noreferrer"
+										className={linkClasses}
+										onClick={() => setIsMenuOpen(false)}
+									>
+										{item.label}
+									</a>
+								</NavbarMenuItem>
+							);
+						}
+
+						return (
+							<NavbarMenuItem key={item.key} className={STYLES.mobileMenuItem}>
+								<Link
+									className={linkClasses}
+									href={item.href}
+									onClick={() => setIsMenuOpen(false)}
+									{...(isActiveLink(item.href) && { 'aria-current': 'page' })}
+								>
+									{item.label}
+								</Link>
+							</NavbarMenuItem>
+						);
+					})}
 
 					{headerSettings.moreEnabled && (
 						<NavbarMenuItem className={STYLES.mobileMenuItem}>
@@ -371,7 +449,7 @@ export default function Header() {
 					)}
 
 					<div className={STYLES.mobileControls}>
-						{headerSettings.layoutEnabled && (
+						{headerSettings.layoutEnabled && isDemo && (
 							<div className="py-2 flex justify-center">
 								<div className="scale-90 sm:scale-95 md:scale-100 transition-transform duration-200">
 									<LayoutSwitcher inline />

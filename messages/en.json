@@ -89,6 +89,7 @@
 		"BROWSE_CATEGORIES": "Browse Categories",
 		"BROWSE_TAGS": "Browse Tags",
 		"BROWSE_COLLECTIONS": "Browse Collections",
+		"VIEW_COLLECTION": "View collection",
 		"CATEGORIES_DESCRIPTION": "Explore our collection of categories to find what you're looking for.",
 		"TAGS_DESCRIPTION": "Explore our collection of tags to find what you're looking for.",
 		"COLLECTIONS_DESCRIPTION": "Explore our curated collections to discover items organized by theme.",
@@ -134,6 +135,21 @@
 		"MANAGE_COMPANIES_DESC": "View and manage company information",
 		"MANAGE_COLLECTIONS": "Manage Collections",
 		"MANAGE_COLLECTIONS_DESC": "Curate and organize directory items",
+		"ADD_COLLECTION": "Add collection",
+		"CREATE_COLLECTION": "Create Collection",
+		"EDIT_COLLECTION": "Edit Collection",
+		"LOADING_COLLECTIONS": "Loading collections…",
+		"NO_COLLECTIONS_YET": "No collections yet.",
+		"ITEMS_ASSIGNED": "Items assigned",
+		"ASSIGN_ITEMS": "Assign items",
+		"SELECT_ITEMS_DESCRIPTION": "Select which items belong to this collection.",
+		"SELECTED_COUNT": "{count} selected",
+		"SAVE_CHANGES": "Save changes",
+		"TOTAL": "total",
+		"ACTIVE": "Active",
+		"INACTIVE": "Inactive",
+		"SLUG_LABEL": "Slug:",
+		"DELETE_COLLECTION_CONFIRM": "Delete collection \"{name}\"? This will remove assignments from items.",
 		"YOUR_PROFILE": "Your Profile",
 		"YOUR_PROFILE_DESC": "View and edit your profile",
 		"MANAGE_CATEGORIES_DESC": "Manage categories",
@@ -171,6 +187,7 @@
 		"USER": "User",
 		"ANONYMOUS": "Anonymous",
 		"CANCEL": "Cancel",
+		"EDIT": "Edit",
 		"DELETE": "Delete",
 		"SAVING": "Saving...",
 		"FILTERS": "Filters",
@@ -2661,7 +2678,14 @@
 			"FAILED_TO_LOAD_VERIFICATION": "Failed to load security verification. Please refresh the page.",
 			"VERIFICATION_EXPIRED": "Security verification expired. Please complete it again.",
 			"VERIFYING": "Verifying...",
-			"PLEASE_COMPLETE_VERIFICATION": "Please complete the security verification"
+			"PLEASE_COMPLETE_VERIFICATION": "Please complete the security verification",
+			"LOGIN_FAILED": "Login Failed",
+			"ACCOUNT_NOT_FOUND": "No account found with this email address. Please check your email or create a new account.",
+			"INVALID_PASSWORD": "Incorrect password. Please check your password and try again.",
+			"PROFILE_NOT_FOUND": "Account profile not found. Please contact support.",
+			"GENERIC_ERROR_MESSAGE": "An error occurred. Please try again.",
+			"RATE_LIMITED": "Too many attempts. Please wait a few minutes before trying again.",
+			"USE_OAUTH_PROVIDER": "This account uses social login. Please sign in with your social provider."
 		},
 		"FORGOT_PASSWORD_PAGE": {
 			"TITLE": "Forgot Password?",
@@ -2952,6 +2976,97 @@
 			"YOUR_SUBMISSIONS": "Your Submissions",
 			"NEW_SUBMISSION": "New Submission",
 			"TRASH": "Trash"
+		},
+		"dashboard": {
+			"TITLE": "Dashboard",
+			"WELCOME_BACK": "Welcome back, {name}! Here's your activity overview.",
+			"REFRESH": "Refresh",
+			"FAILED_TO_LOAD": "Failed to load dashboard stats",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "Total Submissions",
+				"CONTENT_CREATED": "Content you've created",
+				"TOTAL_VIEWS": "Total Views",
+				"VIEWS_ON_CONTENT": "Views on your content",
+				"VOTES_RECEIVED": "Votes Received",
+				"VOTES_ON_CONTENT": "Votes on your content",
+				"COMMENTS_RECEIVED": "Comments Received",
+				"COMMENTS_ON_CONTENT": "Comments on your content"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "Weekly Performance",
+				"THIS_WEEK": "This Week",
+				"LAST_WEEK": "Last Week",
+				"CHANGE": "Change",
+				"VOTES": "Votes",
+				"COMMENTS": "Comments",
+				"SUBMISSIONS": "Submissions",
+				"VIEWS": "Views",
+				"NO_DATA": "No data available",
+				"NO_DATA_DESC": "Start creating content to see your weekly performance comparison."
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "Category Performance",
+				"SUBTITLE": "Top categories by average engagement",
+				"CATEGORY": "Category",
+				"ITEMS": "Items",
+				"AVG_ENGAGEMENT": "Avg. Engagement",
+				"TOTAL_ENGAGEMENT": "Total",
+				"NO_DATA": "No category data",
+				"NO_DATA_DESC": "Submit items to see category performance metrics."
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "Approval Rate Trend",
+				"SUBTITLE": "Monthly approval success rate",
+				"APPROVAL_RATE": "Approval Rate",
+				"APPROVED": "Approved",
+				"TOTAL": "Total",
+				"NO_DATA": "No approval data",
+				"NO_DATA_DESC": "Submit items to track your approval rate over time."
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "Engagement Rate",
+				"SUBTITLE": "Engagement per submission over time",
+				"RATE": "Rate",
+				"NO_DATA": "No engagement data",
+				"NO_DATA_DESC": "Create content to see your engagement rate trends."
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "Submission Activity",
+				"SUBTITLE": "Your submission consistency over the last 3 months",
+				"SUBMISSIONS": "submissions",
+				"SUBMISSION": "submission",
+				"NO_SUBMISSIONS": "No submissions",
+				"NO_DATA": "No activity data",
+				"NO_DATA_DESC": "Start submitting content to see your activity calendar.",
+				"LESS": "Less",
+				"MORE": "More"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "Engagement Distribution",
+				"SUBTITLE": "How engagement is spread across your top items",
+				"ENGAGEMENT": "Engagement",
+				"OF_TOTAL": "of total",
+				"NO_DATA": "No engagement data",
+				"NO_DATA_DESC": "Get votes and comments to see how engagement is distributed."
+			},
+
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Avg"
+			},
+
+			"CHARTS": {
+				"LOADING": "Loading chart data...",
+				"ERROR": "Failed to load chart",
+				"RETRY": "Retry"
+			}
 		}
 	}
 }

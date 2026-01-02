@@ -29,7 +29,7 @@ import type { SponsorAdStatus, SponsorAdIntervalType } from "@/lib/types/sponsor
  *         in: "query"
  *         schema:
  *           type: string
- *           enum: ["pending", "approved", "rejected", "active", "expired", "cancelled"]
+ *           enum: ["pending_payment", "pending", "rejected", "active", "expired", "cancelled"]
  *       - name: "interval"
  *         in: "query"
  *         schema:

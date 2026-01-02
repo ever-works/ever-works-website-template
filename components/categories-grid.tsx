@@ -4,12 +4,13 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { FiFolder } from 'react-icons/fi';
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { useLayoutTheme } from '@/components/context';
 import { Loader2 } from 'lucide-react';
 import { useInView } from 'react-intersection-observer';
-import { PER_PAGE } from '@/lib/paginate';
+import { PER_PAGE, totalPages } from '@/lib/paginate';
 import { useInfiniteLoading } from '@/hooks/use-infinite-loading';
+import { UniversalPagination } from '@/components/universal-pagination';
 
 const PAGE_SIZE = PER_PAGE;
 
@@ -32,11 +33,12 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
 			const parsedPage = pageParam ? parseInt(pageParam, 10) : 1;
 			// Validate parsed page is a valid number and within bounds
 			const validPage = !isNaN(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
-			if (validPage !== page) {
-				setPage(validPage);
-			}
+			setPage((currentPage) => {
+				// Only update if the page from URL is different from current state
+				return validPage !== currentPage ? validPage : currentPage;
+			});
 		}
-	}, [searchParams, paginationType, page]);
+	}, [searchParams, paginationType]);
 
 	const sortedCategories = useMemo(
 		() =>
@@ -85,6 +87,9 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
 		[sortedCategories, page]
 	);
 
+	// Calculate total pages for standard pagination using exported function
+	const totalPagesCount = totalPages(sortedCategories.length, PAGE_SIZE);
+
 	// Choose which categories to show
 	const categoriesToShow = paginationType === 'infinite' ? loadedCategories : pagedCategories;
 
@@ -92,6 +97,25 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
 		setLoadingCategory(categoryId);
 		router.push(`/?categories=${categoryId}`);
 	};
+
+	// Handle page change for standard pagination
+	const handlePageChange = useCallback(
+		(newPage: number) => {
+			if (paginationType !== 'standard') return;
+
+			const params = new URLSearchParams(searchParams.toString());
+			if (newPage === 1) {
+				params.delete('page');
+			} else {
+				params.set('page', newPage.toString());
+			}
+
+			const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+			router.push(newUrl, { scroll: false });
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		},
+		[paginationType, pathname, router, searchParams]
+	);
 
 	// Don't render if no categories
 	if (!categories || categories.length === 0) {
@@ -202,6 +226,11 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
 					</div>
 				))}
 			</LayoutGrid>
+			{/* Standard Pagination */}
+			{paginationType === 'standard' && totalPagesCount > 1 && (
+				<UniversalPagination page={page} totalPages={totalPagesCount} onPageChange={handlePageChange} />
+			)}
+
 			{/* Infinite Scroll Loader */}
 			{paginationType === 'infinite' && (
 				<div className="flex flex-col items-center gap-6 mt-16 mb-12">
