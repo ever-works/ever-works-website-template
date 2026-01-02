@@ -2848,6 +2848,97 @@
 			"DESCRIPTION": "Beschrijving",
 			"EDIT_SUBMISSION_TITLE": "Inzending Bewerken",
 			"EDIT_SUBMISSION_DESC": "Werk de details van uw inzending bij"
+		},
+		"dashboard": {
+			"TITLE": "Dashboard",
+			"WELCOME_BACK": "Welkom terug, {name}! Hier is uw activiteitenoverzicht.",
+			"REFRESH": "Vernieuwen",
+			"FAILED_TO_LOAD": "Kan dashboardstatistieken niet laden",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "Totaal Inzendingen",
+				"CONTENT_CREATED": "Door u gemaakte inhoud",
+				"TOTAL_VIEWS": "Totaal Weergaven",
+				"VIEWS_ON_CONTENT": "Weergaven van uw inhoud",
+				"VOTES_RECEIVED": "Ontvangen Stemmen",
+				"VOTES_ON_CONTENT": "Stemmen op uw inhoud",
+				"COMMENTS_RECEIVED": "Ontvangen Reacties",
+				"COMMENTS_ON_CONTENT": "Reacties op uw inhoud"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "Wekelijkse Prestaties",
+				"THIS_WEEK": "Deze Week",
+				"LAST_WEEK": "Vorige Week",
+				"CHANGE": "Verandering",
+				"VOTES": "Stemmen",
+				"COMMENTS": "Reacties",
+				"SUBMISSIONS": "Inzendingen",
+				"VIEWS": "Weergaven",
+				"NO_DATA": "Geen gegevens beschikbaar",
+				"NO_DATA_DESC": "Begin met het maken van inhoud om uw wekelijkse prestatievergelijking te zien."
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "Categorieprestaties",
+				"SUBTITLE": "Topcategorieën op gemiddelde betrokkenheid",
+				"CATEGORY": "Categorie",
+				"ITEMS": "Items",
+				"AVG_ENGAGEMENT": "Gem. Betrokk.",
+				"TOTAL_ENGAGEMENT": "Totaal",
+				"NO_DATA": "Geen categoriegegevens",
+				"NO_DATA_DESC": "Dien items in om categorieprestatiemetrieken te zien."
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "Goedkeuringstrend",
+				"SUBTITLE": "Maandelijks goedkeuringspercentage",
+				"APPROVAL_RATE": "Goedkeuringspercentage",
+				"APPROVED": "Goedgekeurd",
+				"TOTAL": "Totaal",
+				"NO_DATA": "Geen goedkeuringsgegevens",
+				"NO_DATA_DESC": "Dien items in om uw goedkeuringspercentage te volgen."
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "Betrokkenheidspercentage",
+				"SUBTITLE": "Betrokkenheid per inzending over tijd",
+				"RATE": "Percentage",
+				"NO_DATA": "Geen betrokkenheidsgegevens",
+				"NO_DATA_DESC": "Maak inhoud om uw betrokkenheidstrends te zien."
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "Inzendingsactiviteit",
+				"SUBTITLE": "Uw inzendingsconsistentie over de afgelopen 3 maanden",
+				"SUBMISSIONS": "inzendingen",
+				"SUBMISSION": "inzending",
+				"NO_SUBMISSIONS": "Geen inzendingen",
+				"NO_DATA": "Geen activiteitsgegevens",
+				"NO_DATA_DESC": "Begin met het indienen van inhoud om uw activiteitskalender te zien.",
+				"LESS": "Minder",
+				"MORE": "Meer"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "Betrokkenheidsverdeling",
+				"SUBTITLE": "Hoe betrokkenheid is verdeeld over uw topitems",
+				"ENGAGEMENT": "Betrokkenheid",
+				"OF_TOTAL": "van totaal",
+				"NO_DATA": "Geen betrokkenheidsgegevens",
+				"NO_DATA_DESC": "Ontvang stemmen en reacties om de betrokkenheidsverdeling te zien."
+			},
+
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Gem."
+			},
+
+			"CHARTS": {
+				"LOADING": "Grafiekgegevens laden...",
+				"ERROR": "Kan grafiek niet laden",
+				"RETRY": "Opnieuw proberen"
+			}
 		}
 	}
 }

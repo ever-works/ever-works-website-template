@@ -1,0 +1,206 @@
+'use client';
+
+import React, { useMemo } from 'react';
+import { Layout, Sparkles } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
+import { useLayoutTheme, LayoutHome } from '@/components/context/LayoutThemeContext';
+import { useTheme } from 'next-themes';
+import Image from 'next/image';
+
+interface SelectLayoutProps {
+	className?: string;
+	disabled?: boolean;
+}
+
+const SelectLayout: React.FC<SelectLayoutProps> = ({ className, disabled = false }) => {
+	const { layoutHome, setLayoutHome } = useLayoutTheme();
+	const { theme, resolvedTheme } = useTheme();
+	const t = useTranslations('common');
+
+	// Determine if we're in dark mode
+	const isDark = resolvedTheme === 'dark' || (theme === 'system' && resolvedTheme === 'dark');
+
+	const layouts = useMemo(
+		() => [
+			{
+				key: LayoutHome.HOME_ONE,
+				name: 'Home 1',
+				label: t('CLASSIC_DESIGN'),
+				description: t('CLASSIC_LAYOUT_DESC'),
+				icon: <Layout className="w-4 h-4" />,
+				imageSrc: isDark ? '/home-1.png' : '/home-light-1.png'
+			},
+			{
+				key: LayoutHome.HOME_TWO,
+				name: 'Home 2',
+				label: t('MODERN_GRID'),
+				description: t('GRID_LAYOUT_DESC'),
+				icon: <Sparkles className="w-4 h-4" />,
+				imageSrc: isDark ? '/home-2.png' : '/home-light-2.png'
+			}
+		],
+		[isDark, t]
+	);
+
+	const handleLayoutChange = (layout: LayoutHome) => {
+		if (disabled || layout === layoutHome) return;
+		setLayoutHome(layout);
+
+		// Toast notification
+		const selectedLayout = layouts.find((l) => l.key === layout);
+		toast.success(selectedLayout?.label || layout, {
+			duration: 2000,
+			description: selectedLayout?.description
+		});
+	};
+
+	return (
+		<div
+			className={cn(
+				// Structure
+				'group p-5 rounded-xl',
+
+				// Blue/Purple gradient - layout/design feel
+				'bg-gradient-to-br from-blue-50/80 via-purple-50/60 to-indigo-50/40',
+				'dark:from-blue-950/40 dark:via-purple-950/30 dark:to-indigo-950/20',
+
+				// Glassmorphism
+				'backdrop-blur-xl backdrop-saturate-150',
+
+				// Border with blue tones
+				'border border-blue-200/40 dark:border-blue-800/30',
+
+				// Enhanced shadow
+				'shadow-lg shadow-black/5 dark:shadow-black/20',
+
+				// Spring animation on hover
+				'transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+
+				// Hover effects - lift and enhanced border
+				'hover:scale-[1.02] hover:-translate-y-1',
+				'hover:shadow-2xl hover:shadow-blue-500/10',
+				'hover:border-blue-300/60 dark:hover:border-blue-700/50',
+
+				// Press feedback
+				'active:scale-[0.98]',
+
+				// Animation entrance
+				'animate-fade-in-up',
+
+				className
+			)}
+		>
+			<div className="flex flex-col gap-4">
+				{/* Icon + Title/Description */}
+				<div className="flex items-start gap-3">
+					{/* Icon container with blue gradient and glassmorphism */}
+					<div
+						className={cn(
+							'p-2 rounded-lg flex-shrink-0',
+							'bg-gradient-to-br from-blue-100 to-purple-200',
+							'dark:from-blue-900/40 dark:to-purple-900/40',
+							'backdrop-blur-md',
+							'border border-blue-300/50 dark:border-blue-700/50',
+							'shadow-inner',
+							// Icon animation
+							'transition-transform duration-700 ease-in-out',
+							'group-hover:scale-110 group-hover:rotate-3'
+						)}
+					>
+						<Layout className="h-5 w-5 text-blue-700 dark:text-blue-300" />
+					</div>
+
+					{/* Text content with improved typography */}
+					<div className="flex-1 min-w-0">
+						<h3 className="text-base font-semibold tracking-tight leading-tight text-gray-900 dark:text-gray-100">
+							{t('LAYOUT')}
+						</h3>
+						<p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mt-1">
+							{t('CHOOSE_PREFERRED_DESIGN')}
+						</p>
+					</div>
+				</div>
+
+				{/* Layout options - side by side */}
+				<div className="grid grid-cols-2 gap-3">
+					{layouts.map((layout) => {
+						const isActive = layoutHome === layout.key;
+						return (
+							<button
+								key={layout.key}
+								onClick={() => handleLayoutChange(layout.key)}
+								disabled={disabled}
+								className={cn(
+									'relative flex flex-col items-center gap-3 p-4 rounded-xl',
+									'transition-all duration-300',
+									'border-2',
+									'overflow-hidden',
+									'group/layout',
+									isActive
+										? 'bg-gradient-to-br from-theme-primary-50/50 via-white to-theme-primary-100/30 dark:from-gray-800 dark:via-gray-900 dark:to-theme-primary-950/30 border-theme-primary-400/50 dark:border-theme-primary-500/50 shadow-lg shadow-theme-primary-200/30 dark:shadow-theme-primary-900/20'
+										: 'bg-white/80 dark:bg-gray-800/80 border-gray-200/50 dark:border-gray-700/50 hover:border-theme-primary-300 dark:hover:border-theme-primary-600 hover:shadow-md',
+									disabled && 'opacity-50 cursor-not-allowed',
+									!disabled && 'hover:scale-[1.02] active:scale-[0.98]'
+								)}
+							>
+								{/* Active indicator */}
+								{isActive && (
+									<div className="absolute top-2 right-2 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse z-10" />
+								)}
+
+								{/* Layout preview image */}
+								<div className="relative w-full h-32 rounded-lg overflow-hidden">
+									<div
+										className={cn(
+											'absolute inset-0',
+											layout.key === LayoutHome.HOME_ONE
+												? 'bg-gradient-to-br from-theme-primary-100/20 to-theme-primary-200/20 dark:from-theme-primary-900/20 dark:to-theme-primary-800/20'
+												: 'bg-gradient-to-br from-purple-100/20 to-pink-100/20 dark:from-purple-900/20 dark:to-pink-900/20'
+										)}
+									/>
+									<Image
+										src={layout.imageSrc}
+										alt={`${layout.name} Layout Preview`}
+										fill
+										className="object-cover object-top transition-all duration-500 group-hover/layout:scale-110"
+										sizes="(max-width: 768px) 50vw, 200px"
+									/>
+									{/* Overlay on hover */}
+									<div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-0 group-hover/layout:opacity-100 transition-opacity duration-300" />
+								</div>
+
+								{/* Layout label and icon */}
+								<div className="flex items-center gap-2">
+									<div
+										className={cn(
+											'p-1.5 rounded-md transition-colors',
+											isActive
+												? 'bg-gradient-to-br from-theme-primary-500 to-theme-primary-600 text-white'
+												: 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+										)}
+									>
+										{layout.icon}
+									</div>
+									<span
+										className={cn(
+											'text-sm font-semibold',
+											isActive
+												? 'text-theme-primary-600 dark:text-theme-primary-400'
+												: 'text-gray-700 dark:text-gray-300'
+										)}
+									>
+										{layout.label}
+									</span>
+								</div>
+							</button>
+						);
+					})}
+				</div>
+			</div>
+		</div>
+	);
+};
+
+export default SelectLayout;

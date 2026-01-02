@@ -2848,6 +2848,97 @@
 			"DESCRIPTION": "설명",
 			"EDIT_SUBMISSION_TITLE": "제출 편집",
 			"EDIT_SUBMISSION_DESC": "제출 세부정보 업데이트"
+		},
+		"dashboard": {
+			"TITLE": "대시보드",
+			"WELCOME_BACK": "다시 오신 것을 환영합니다, {name}님! 활동 개요입니다.",
+			"REFRESH": "새로고침",
+			"FAILED_TO_LOAD": "대시보드 통계를 불러오는데 실패했습니다",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "총 제출 수",
+				"CONTENT_CREATED": "생성한 콘텐츠",
+				"TOTAL_VIEWS": "총 조회수",
+				"VIEWS_ON_CONTENT": "콘텐츠 조회수",
+				"VOTES_RECEIVED": "받은 투표",
+				"VOTES_ON_CONTENT": "콘텐츠 투표수",
+				"COMMENTS_RECEIVED": "받은 댓글",
+				"COMMENTS_ON_CONTENT": "콘텐츠 댓글수"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "주간 성과",
+				"THIS_WEEK": "이번 주",
+				"LAST_WEEK": "지난 주",
+				"CHANGE": "변화",
+				"VOTES": "투표",
+				"COMMENTS": "댓글",
+				"SUBMISSIONS": "제출",
+				"VIEWS": "조회",
+				"NO_DATA": "데이터 없음",
+				"NO_DATA_DESC": "주간 성과 비교를 보려면 콘텐츠를 만들기 시작하세요."
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "카테고리 성과",
+				"SUBTITLE": "평균 참여도 기준 상위 카테고리",
+				"CATEGORY": "카테고리",
+				"ITEMS": "항목",
+				"AVG_ENGAGEMENT": "평균 참여",
+				"TOTAL_ENGAGEMENT": "총계",
+				"NO_DATA": "카테고리 데이터 없음",
+				"NO_DATA_DESC": "카테고리 성과 지표를 보려면 항목을 제출하세요."
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "승인 추세",
+				"SUBTITLE": "월별 승인 성공률",
+				"APPROVAL_RATE": "승인율",
+				"APPROVED": "승인됨",
+				"TOTAL": "총계",
+				"NO_DATA": "승인 데이터 없음",
+				"NO_DATA_DESC": "승인율을 추적하려면 항목을 제출하세요."
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "참여율",
+				"SUBTITLE": "시간에 따른 제출당 참여도",
+				"RATE": "비율",
+				"NO_DATA": "참여 데이터 없음",
+				"NO_DATA_DESC": "참여 추세를 보려면 콘텐츠를 만드세요."
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "제출 활동",
+				"SUBTITLE": "지난 3개월간의 제출 일관성",
+				"SUBMISSIONS": "건 제출",
+				"SUBMISSION": "건 제출",
+				"NO_SUBMISSIONS": "제출 없음",
+				"NO_DATA": "활동 데이터 없음",
+				"NO_DATA_DESC": "활동 캘린더를 보려면 콘텐츠 제출을 시작하세요.",
+				"LESS": "적음",
+				"MORE": "많음"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "참여 분포",
+				"SUBTITLE": "상위 항목에 대한 참여 분포",
+				"ENGAGEMENT": "참여",
+				"OF_TOTAL": "전체의",
+				"NO_DATA": "참여 데이터 없음",
+				"NO_DATA_DESC": "참여 분포를 보려면 투표와 댓글을 받으세요."
+			},
+
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "평균"
+			},
+
+			"CHARTS": {
+				"LOADING": "차트 데이터 로딩 중...",
+				"ERROR": "차트를 불러오는데 실패했습니다",
+				"RETRY": "재시도"
+			}
 		}
 	}
 }

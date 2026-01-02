@@ -2848,6 +2848,97 @@
 			"DESCRIPTION": "Descrição",
 			"EDIT_SUBMISSION_TITLE": "Editar Submissão",
 			"EDIT_SUBMISSION_DESC": "Atualize os detalhes da sua submissão"
+		},
+		"dashboard": {
+			"TITLE": "Painel de Controle",
+			"WELCOME_BACK": "Bem-vindo de volta, {name}! Aqui está sua visão geral de atividades.",
+			"REFRESH": "Atualizar",
+			"FAILED_TO_LOAD": "Falha ao carregar estatísticas do painel",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "Total de Submissões",
+				"CONTENT_CREATED": "Conteúdo que você criou",
+				"TOTAL_VIEWS": "Total de Visualizações",
+				"VIEWS_ON_CONTENT": "Visualizações do seu conteúdo",
+				"VOTES_RECEIVED": "Votos Recebidos",
+				"VOTES_ON_CONTENT": "Votos no seu conteúdo",
+				"COMMENTS_RECEIVED": "Comentários Recebidos",
+				"COMMENTS_ON_CONTENT": "Comentários no seu conteúdo"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "Desempenho Semanal",
+				"THIS_WEEK": "Esta Semana",
+				"LAST_WEEK": "Semana Passada",
+				"CHANGE": "Variação",
+				"VOTES": "Votos",
+				"COMMENTS": "Comentários",
+				"SUBMISSIONS": "Submissões",
+				"VIEWS": "Visualizações",
+				"NO_DATA": "Sem dados disponíveis",
+				"NO_DATA_DESC": "Comece a criar conteúdo para ver sua comparação de desempenho semanal."
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "Desempenho por Categoria",
+				"SUBTITLE": "Principais categorias por engajamento médio",
+				"CATEGORY": "Categoria",
+				"ITEMS": "Itens",
+				"AVG_ENGAGEMENT": "Engaj. Médio",
+				"TOTAL_ENGAGEMENT": "Total",
+				"NO_DATA": "Sem dados de categoria",
+				"NO_DATA_DESC": "Submeta itens para ver métricas de desempenho por categoria."
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "Tendência de Aprovação",
+				"SUBTITLE": "Taxa de sucesso de aprovação mensal",
+				"APPROVAL_RATE": "Taxa de Aprovação",
+				"APPROVED": "Aprovados",
+				"TOTAL": "Total",
+				"NO_DATA": "Sem dados de aprovação",
+				"NO_DATA_DESC": "Submeta itens para acompanhar sua taxa de aprovação ao longo do tempo."
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "Taxa de Engajamento",
+				"SUBTITLE": "Engajamento por submissão ao longo do tempo",
+				"RATE": "Taxa",
+				"NO_DATA": "Sem dados de engajamento",
+				"NO_DATA_DESC": "Crie conteúdo para ver suas tendências de engajamento."
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "Atividade de Submissões",
+				"SUBTITLE": "Sua consistência de submissões nos últimos 3 meses",
+				"SUBMISSIONS": "submissões",
+				"SUBMISSION": "submissão",
+				"NO_SUBMISSIONS": "Sem submissões",
+				"NO_DATA": "Sem dados de atividade",
+				"NO_DATA_DESC": "Comece a submeter conteúdo para ver seu calendário de atividades.",
+				"LESS": "Menos",
+				"MORE": "Mais"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "Distribuição de Engajamento",
+				"SUBTITLE": "Como o engajamento é distribuído entre seus principais itens",
+				"ENGAGEMENT": "Engajamento",
+				"OF_TOTAL": "do total",
+				"NO_DATA": "Sem dados de engajamento",
+				"NO_DATA_DESC": "Receba votos e comentários para ver como o engajamento é distribuído."
+			},
+
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Méd."
+			},
+
+			"CHARTS": {
+				"LOADING": "Carregando dados do gráfico...",
+				"ERROR": "Falha ao carregar gráfico",
+				"RETRY": "Tentar novamente"
+			}
 		}
 	}
 }

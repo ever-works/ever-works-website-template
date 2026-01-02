@@ -149,23 +149,21 @@ export async function handleSubscriptionCreated(data: PolarWebhookData): Promise
 			const rawEmailConfig = await getEmailConfig();
 			const emailConfig = normalizeEmailConfig(rawEmailConfig);
 
-		const emailData = {
-			customerName: customerInfo.customerName,
-			customerEmail: customerInfo.customerEmail,
-			planName,
-			amount,
-			currency: data.currency || DEFAULT_CURRENCY,
-			billingPeriod,
-			nextBillingDate: data.current_period_end
-				? formatBillingDate(data.current_period_end)
-				: undefined,
-			subscriptionId: data.id || '',
-			manageSubscriptionUrl: `${APP_URL}/settings/subscription`,
-			companyName: emailConfig.companyName,
-			companyUrl: emailConfig.companyUrl,
-			supportEmail: emailConfig.supportEmail || '',
-			features: getSubscriptionFeatures(planName)
-		};
+			const emailData = {
+				customerName: customerInfo.customerName,
+				customerEmail: customerInfo.customerEmail,
+				planName,
+				amount,
+				currency: data.currency || DEFAULT_CURRENCY,
+				billingPeriod,
+				nextBillingDate: data.current_period_end ? formatBillingDate(data.current_period_end) : undefined,
+				subscriptionId: data.id || '',
+				manageSubscriptionUrl: `${APP_URL}/settings/subscription`,
+				companyName: emailConfig.companyName,
+				companyUrl: emailConfig.companyUrl,
+				supportEmail: emailConfig.supportEmail || '',
+				features: getSubscriptionFeatures(planName)
+			};
 
 			const emailResult = await paymentEmailService.sendNewSubscriptionEmail(emailData);
 
@@ -209,23 +207,21 @@ export async function handleSubscriptionUpdated(data: PolarWebhookData): Promise
 			const rawEmailConfig = await getEmailConfig();
 			const emailConfig = normalizeEmailConfig(rawEmailConfig);
 
-		const emailData = {
-			customerName: customerInfo.customerName,
-			customerEmail: customerInfo.customerEmail,
-			planName,
-			amount,
-			currency: data.currency || DEFAULT_CURRENCY,
-			billingPeriod,
-			nextBillingDate: data.current_period_end
-				? formatBillingDate(data.current_period_end)
-				: undefined,
-			subscriptionId: data.id || '',
-			manageSubscriptionUrl: `${APP_URL}/settings/subscription`,
-			companyName: emailConfig.companyName,
-			companyUrl: emailConfig.companyUrl,
-			supportEmail: emailConfig.supportEmail || '',
-			features: getSubscriptionFeatures(planName)
-		};
+			const emailData = {
+				customerName: customerInfo.customerName,
+				customerEmail: customerInfo.customerEmail,
+				planName,
+				amount,
+				currency: data.currency || DEFAULT_CURRENCY,
+				billingPeriod,
+				nextBillingDate: data.current_period_end ? formatBillingDate(data.current_period_end) : undefined,
+				subscriptionId: data.id || '',
+				manageSubscriptionUrl: `${APP_URL}/settings/subscription`,
+				companyName: emailConfig.companyName,
+				companyUrl: emailConfig.companyUrl,
+				supportEmail: emailConfig.supportEmail || '',
+				features: getSubscriptionFeatures(planName)
+			};
 
 			const emailResult = await paymentEmailService.sendUpdatedSubscriptionEmail(emailData);
 
@@ -276,24 +272,25 @@ export async function handleSubscriptionCancelled(data: PolarWebhookData): Promi
 			const rawEmailConfig = await getEmailConfig();
 			const emailConfig = normalizeEmailConfig(rawEmailConfig);
 
-		const emailData = {
-			...createEmailData(
-				{
-					customerName: customerInfo.customerName,
-					customerEmail: customerInfo.customerEmail,
-					planName,
-					amount,
-					currency: data.currency || DEFAULT_CURRENCY,
-					billingPeriod,
-					subscriptionId: data.id || '',
-					cancellationDate: data.canceled_at ? formatBillingDate(data.canceled_at) : undefined,
-					cancellationReason:
-						data.cancellation_details?.reason || 'Cancellation requested by user',
-					reactivateUrl: data.id ? `${APP_URL}/subscription/reactivate?subscription=${data.id}` : `${APP_URL}/subscription/reactivate`
-				},
-				emailConfig
-			)
-		};
+			const emailData = {
+				...createEmailData(
+					{
+						customerName: customerInfo.customerName,
+						customerEmail: customerInfo.customerEmail,
+						planName,
+						amount,
+						currency: data.currency || DEFAULT_CURRENCY,
+						billingPeriod,
+						subscriptionId: data.id || '',
+						cancellationDate: data.canceled_at ? formatBillingDate(data.canceled_at) : undefined,
+						cancellationReason: data.cancellation_details?.reason || 'Cancellation requested by user',
+						reactivateUrl: data.id
+							? `${APP_URL}/subscription/reactivate?subscription=${data.id}`
+							: `${APP_URL}/subscription/reactivate`
+					},
+					emailConfig
+				)
+			};
 
 			const emailResult = await paymentEmailService.sendCancelledSubscriptionEmail(emailData);
 
@@ -344,28 +341,25 @@ export async function handleSubscriptionPaymentSucceeded(data: PolarWebhookData)
 			const rawEmailConfig = await getEmailConfig();
 			const emailConfig = normalizeEmailConfig(rawEmailConfig);
 
-		const emailData = {
-			...createEmailData(
-				{
-					customerName: customerInfo.customerName,
-					customerEmail: customerInfo.customerEmail,
-					amount: formatAmount(
-						data.amount_paid || data.amount || 0,
-						data.currency || DEFAULT_CURRENCY
-					),
-					currency: data.currency || DEFAULT_CURRENCY,
-					paymentMethod: 'Credit Card',
-					transactionId: data.id || '',
-					planName,
-					billingPeriod,
-					nextBillingDate: subscription?.current_period_end
-						? formatBillingDate(subscription.current_period_end)
-						: undefined,
-					receiptUrl: data.receipt_url
-				},
-				emailConfig
-			)
-		};
+			const emailData = {
+				...createEmailData(
+					{
+						customerName: customerInfo.customerName,
+						customerEmail: customerInfo.customerEmail,
+						amount: formatAmount(data.amount_paid || data.amount || 0, data.currency || DEFAULT_CURRENCY),
+						currency: data.currency || DEFAULT_CURRENCY,
+						paymentMethod: 'Credit Card',
+						transactionId: data.id || '',
+						planName,
+						billingPeriod,
+						nextBillingDate: subscription?.current_period_end
+							? formatBillingDate(subscription.current_period_end)
+							: undefined,
+						receiptUrl: data.receipt_url
+					},
+					emailConfig
+				)
+			};
 
 			const emailResult = await paymentEmailService.sendSubscriptionPaymentSuccessEmail(emailData);
 
@@ -409,27 +403,26 @@ export async function handleSubscriptionPaymentFailed(data: PolarWebhookData): P
 			const rawEmailConfig = await getEmailConfig();
 			const emailConfig = normalizeEmailConfig(rawEmailConfig);
 
-		const emailData = {
-			...createEmailData(
-				{
-					customerName: customerInfo.customerName,
-					customerEmail: customerInfo.customerEmail,
-					amount: formatAmount(
-						data.amount_due || data.amount || 0,
-						data.currency || DEFAULT_CURRENCY
-					),
-					currency: data.currency || DEFAULT_CURRENCY,
-					paymentMethod: 'Credit Card',
-					transactionId: data.id || '',
-					planName,
-					billingPeriod,
-					errorMessage: data.last_payment_error?.message || 'Payment declined',
-					retryUrl: data.id ? `${APP_URL}/subscription/retry?invoice=${data.id}` : `${APP_URL}/subscription/retry`,
-					updatePaymentUrl: `${APP_URL}/settings/payment-methods`
-				},
-				emailConfig
-			)
-		};
+			const emailData = {
+				...createEmailData(
+					{
+						customerName: customerInfo.customerName,
+						customerEmail: customerInfo.customerEmail,
+						amount: formatAmount(data.amount_due || data.amount || 0, data.currency || DEFAULT_CURRENCY),
+						currency: data.currency || DEFAULT_CURRENCY,
+						paymentMethod: 'Credit Card',
+						transactionId: data.id || '',
+						planName,
+						billingPeriod,
+						errorMessage: data.last_payment_error?.message || 'Payment declined',
+						retryUrl: data.id
+							? `${APP_URL}/subscription/retry?invoice=${data.id}`
+							: `${APP_URL}/subscription/retry`,
+						updatePaymentUrl: `${APP_URL}/settings/payment-methods`
+					},
+					emailConfig
+				)
+			};
 
 			const emailResult = await paymentEmailService.sendSubscriptionPaymentFailedEmail(emailData);
 
@@ -491,28 +484,26 @@ async function handleSponsorAdActivation(data: PolarWebhookData): Promise<void> 
 		return;
 	}
 
+	const subscriptionId = data.id || '';
+	const customerId = data.customer_id || data.customer?.id || '';
+
+	logger.info('Confirming payment for sponsor ad via Polar', { sponsorAdId });
+
 	try {
-		const subscriptionId = data.id || '';
-		const customerId = data.customer_id || data.customer?.id || '';
-
-		logger.info('Confirming payment for sponsor ad via Polar', { sponsorAdId });
-
-		const confirmedAd = await sponsorAdService.confirmPayment(
-			sponsorAdId,
-			subscriptionId,
-			customerId
-		);
+		const confirmedAd = await sponsorAdService.confirmPayment(sponsorAdId, subscriptionId, customerId);
 
 		if (confirmedAd) {
 			logger.info('Sponsor ad payment confirmed, now pending admin review', { sponsorAdId });
 		} else {
 			logger.error('Failed to confirm sponsor ad payment', { sponsorAdId });
+			throw new Error(`Failed to confirm sponsor ad payment for ${sponsorAdId}`);
 		}
 	} catch (error) {
 		logger.error('Error confirming sponsor ad payment', {
 			sponsorAdId,
 			error: error instanceof Error ? error.message : 'Unknown error'
 		});
+		throw error;
 	}
 }
 
@@ -527,24 +518,23 @@ async function handleSponsorAdCancellation(data: PolarWebhookData): Promise<void
 		return;
 	}
 
-	try {
-		logger.info('Cancelling sponsor ad via Polar', { sponsorAdId });
+	logger.info('Cancelling sponsor ad via Polar', { sponsorAdId });
 
-		const cancelledAd = await sponsorAdService.cancelSponsorAd(
-			sponsorAdId,
-			'Polar subscription cancelled'
-		);
+	try {
+		const cancelledAd = await sponsorAdService.cancelSponsorAd(sponsorAdId, 'Polar subscription cancelled');
 
 		if (cancelledAd) {
 			logger.info('Sponsor ad cancelled successfully', { sponsorAdId });
 		} else {
 			logger.error('Failed to cancel sponsor ad', { sponsorAdId });
+			throw new Error(`Failed to cancel sponsor ad ${sponsorAdId}`);
 		}
 	} catch (error) {
 		logger.error('Error cancelling sponsor ad', {
 			sponsorAdId,
 			error: error instanceof Error ? error.message : 'Unknown error'
 		});
+		throw error;
 	}
 }
 
@@ -559,20 +549,22 @@ async function handleSponsorAdRenewal(data: PolarWebhookData): Promise<void> {
 		return;
 	}
 
-	try {
-		logger.info('Renewing sponsor ad via Polar', { sponsorAdId });
+	logger.info('Renewing sponsor ad via Polar', { sponsorAdId });
 
+	try {
 		const renewedAd = await sponsorAdService.renewSponsorAd(sponsorAdId);
 
 		if (renewedAd) {
 			logger.info('Sponsor ad renewed successfully', { sponsorAdId });
 		} else {
 			logger.error('Failed to renew sponsor ad', { sponsorAdId });
+			throw new Error(`Failed to renew sponsor ad ${sponsorAdId}`);
 		}
 	} catch (error) {
 		logger.error('Error renewing sponsor ad', {
 			sponsorAdId,
 			error: error instanceof Error ? error.message : 'Unknown error'
 		});
+		throw error;
 	}
 }

@@ -54,7 +54,7 @@ export default function AdminSponsorshipsPage() {
 		deleteSponsorAd,
 		setStatusFilter,
 		setSearchTerm: setHookSearchTerm,
-		setCurrentPage,
+		setCurrentPage
 	} = useAdminSponsorAds();
 
 	// Calculate active filters
@@ -63,9 +63,7 @@ export default function AdminSponsorshipsPage() {
 	// Sync debounced search term to hook (only when debounced value changes)
 	useEffect(() => {
 		setHookSearchTerm(debouncedSearchTerm);
-		if (debouncedSearchTerm !== '') {
-			setCurrentPage(1); // Reset to page 1 when search changes
-		}
+		setCurrentPage(1); // Reset to page 1 when search changes (including when cleared)
 	}, [debouncedSearchTerm, setHookSearchTerm, setCurrentPage]);
 
 	// Handlers
@@ -73,10 +71,13 @@ export default function AdminSponsorshipsPage() {
 		setSearchTerm(value);
 	}, []);
 
-	const handleStatusChange = useCallback((value: SponsorAdStatus | undefined) => {
-		setLocalStatusFilter(value);
-		setStatusFilter(value);
-	}, [setStatusFilter]);
+	const handleStatusChange = useCallback(
+		(value: SponsorAdStatus | undefined) => {
+			setLocalStatusFilter(value);
+			setStatusFilter(value);
+		},
+		[setStatusFilter]
+	);
 
 	const handleClearFilters = useCallback(() => {
 		setSearchTerm('');
@@ -86,20 +87,25 @@ export default function AdminSponsorshipsPage() {
 		setCurrentPage(1);
 	}, [setHookSearchTerm, setStatusFilter, setCurrentPage]);
 
-	const handleApprove = useCallback(async (id: string) => {
-		const result = await approveSponsorAd(id);
-		if (result.requiresForceApprove) {
-			// Show confirmation modal for force approve
-			setPendingApproveId(id);
-			setForceApproveModalOpen(true);
-		}
-	}, [approveSponsorAd]);
+	const handleApprove = useCallback(
+		async (id: string) => {
+			const result = await approveSponsorAd(id);
+			if (result.requiresForceApprove) {
+				// Show confirmation modal for force approve
+				setPendingApproveId(id);
+				setForceApproveModalOpen(true);
+			}
+		},
+		[approveSponsorAd]
+	);
 
 	const handleForceApprove = useCallback(async () => {
 		if (!pendingApproveId) return;
-		await approveSponsorAd(pendingApproveId, true);
-		setForceApproveModalOpen(false);
-		setPendingApproveId(null);
+		const result = await approveSponsorAd(pendingApproveId, true);
+		if (result.success) {
+			setForceApproveModalOpen(false);
+			setPendingApproveId(null);
+		}
 	}, [pendingApproveId, approveSponsorAd]);
 
 	const handleCloseForceApproveModal = useCallback(() => {
@@ -127,23 +133,32 @@ export default function AdminSponsorshipsPage() {
 		}
 	}, [selectedSponsorAd, rejectionReason, rejectSponsorAd, handleCloseRejectModal]);
 
-	const handleCancel = useCallback(async (id: string) => {
-		if (!confirm(t('CONFIRM_CANCEL'))) return;
-		await cancelSponsorAd(id);
-	}, [t, cancelSponsorAd]);
+	const handleCancel = useCallback(
+		async (id: string) => {
+			if (!confirm(t('CONFIRM_CANCEL'))) return;
+			await cancelSponsorAd(id);
+		},
+		[t, cancelSponsorAd]
+	);
 
-	const handleDelete = useCallback(async (id: string) => {
-		if (confirmDeleteId !== id) {
-			setConfirmDeleteId(id);
-			return;
-		}
-		await deleteSponsorAd(id);
-		setConfirmDeleteId(null);
-	}, [confirmDeleteId, deleteSponsorAd]);
+	const handleDelete = useCallback(
+		async (id: string) => {
+			if (confirmDeleteId !== id) {
+				setConfirmDeleteId(id);
+				return;
+			}
+			await deleteSponsorAd(id);
+			setConfirmDeleteId(null);
+		},
+		[confirmDeleteId, deleteSponsorAd]
+	);
 
-	const handlePageChange = useCallback((page: number) => {
-		setCurrentPage(page);
-	}, [setCurrentPage]);
+	const handlePageChange = useCallback(
+		(page: number) => {
+			setCurrentPage(page);
+		},
+		[setCurrentPage]
+	);
 
 	// Loading state
 	if (isLoading && sponsorAds.length === 0) {
@@ -185,11 +200,7 @@ export default function AdminSponsorshipsPage() {
 			{/* Pagination */}
 			{totalPages > 1 && (
 				<div className="flex flex-col items-center mt-8 space-y-4">
-					<UniversalPagination
-						page={currentPage}
-						totalPages={totalPages}
-						onPageChange={handlePageChange}
-					/>
+					<UniversalPagination page={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
 				</div>
 			)}
 
@@ -205,33 +216,20 @@ export default function AdminSponsorshipsPage() {
 			/>
 
 			{/* Force Approve Modal */}
-			<Modal
-				isOpen={forceApproveModalOpen}
-				onClose={handleCloseForceApproveModal}
-				size="md"
-			>
+			<Modal isOpen={forceApproveModalOpen} onClose={handleCloseForceApproveModal} size="md">
 				<ModalContent>
 					<ModalHeader className="flex items-center gap-2">
 						<AlertTriangle className="w-5 h-5 text-amber-500" />
 						{t('FORCE_APPROVE_TITLE')}
 					</ModalHeader>
 					<ModalBody>
-						<p className="text-gray-600 dark:text-gray-400">
-							{t('FORCE_APPROVE_MESSAGE')}
-						</p>
+						<p className="text-gray-600 dark:text-gray-400">{t('FORCE_APPROVE_MESSAGE')}</p>
 					</ModalBody>
 					<ModalFooter>
-						<Button
-							variant="light"
-							onPress={handleCloseForceApproveModal}
-						>
+						<Button variant="light" onPress={handleCloseForceApproveModal}>
 							{t('CANCEL')}
 						</Button>
-						<Button
-							color="warning"
-							onPress={handleForceApprove}
-							isLoading={isSubmitting}
-						>
+						<Button color="warning" onPress={handleForceApprove} isLoading={isSubmitting}>
 							{t('FORCE_APPROVE')}
 						</Button>
 					</ModalFooter>

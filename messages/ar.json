@@ -2868,6 +2868,97 @@
 			"DESCRIPTION": "الوصف",
 			"EDIT_SUBMISSION_TITLE": "تعديل التقديم",
 			"EDIT_SUBMISSION_DESC": "تحديث تفاصيل تقديمك"
+		},
+		"dashboard": {
+			"TITLE": "لوحة التحكم",
+			"WELCOME_BACK": "مرحباً بعودتك، {name}! إليك نظرة عامة على نشاطك.",
+			"REFRESH": "تحديث",
+			"FAILED_TO_LOAD": "فشل في تحميل إحصائيات لوحة التحكم",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "إجمالي التقديمات",
+				"CONTENT_CREATED": "المحتوى الذي أنشأته",
+				"TOTAL_VIEWS": "إجمالي المشاهدات",
+				"VIEWS_ON_CONTENT": "مشاهدات محتواك",
+				"VOTES_RECEIVED": "الأصوات المستلمة",
+				"VOTES_ON_CONTENT": "أصوات على محتواك",
+				"COMMENTS_RECEIVED": "التعليقات المستلمة",
+				"COMMENTS_ON_CONTENT": "تعليقات على محتواك"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "الأداء الأسبوعي",
+				"THIS_WEEK": "هذا الأسبوع",
+				"LAST_WEEK": "الأسبوع الماضي",
+				"CHANGE": "التغيير",
+				"VOTES": "الأصوات",
+				"COMMENTS": "التعليقات",
+				"SUBMISSIONS": "التقديمات",
+				"VIEWS": "المشاهدات",
+				"NO_DATA": "لا توجد بيانات",
+				"NO_DATA_DESC": "ابدأ بإنشاء محتوى لرؤية مقارنة أدائك الأسبوعي."
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "أداء الفئات",
+				"SUBTITLE": "أفضل الفئات حسب متوسط التفاعل",
+				"CATEGORY": "الفئة",
+				"ITEMS": "العناصر",
+				"AVG_ENGAGEMENT": "متوسط التفاعل",
+				"TOTAL_ENGAGEMENT": "الإجمالي",
+				"NO_DATA": "لا توجد بيانات للفئات",
+				"NO_DATA_DESC": "قدم عناصر لرؤية مقاييس أداء الفئات."
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "اتجاه الموافقة",
+				"SUBTITLE": "معدل نجاح الموافقة الشهري",
+				"APPROVAL_RATE": "معدل الموافقة",
+				"APPROVED": "موافق عليه",
+				"TOTAL": "الإجمالي",
+				"NO_DATA": "لا توجد بيانات موافقة",
+				"NO_DATA_DESC": "قدم عناصر لتتبع معدل الموافقة عبر الزمن."
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "معدل التفاعل",
+				"SUBTITLE": "التفاعل لكل تقديم عبر الزمن",
+				"RATE": "المعدل",
+				"NO_DATA": "لا توجد بيانات تفاعل",
+				"NO_DATA_DESC": "أنشئ محتوى لرؤية اتجاهات تفاعلك."
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "نشاط التقديم",
+				"SUBTITLE": "انتظامك في التقديم خلال الـ 3 أشهر الماضية",
+				"SUBMISSIONS": "تقديمات",
+				"SUBMISSION": "تقديم",
+				"NO_SUBMISSIONS": "لا توجد تقديمات",
+				"NO_DATA": "لا توجد بيانات نشاط",
+				"NO_DATA_DESC": "ابدأ بتقديم محتوى لرؤية تقويم نشاطك.",
+				"LESS": "أقل",
+				"MORE": "أكثر"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "توزيع التفاعل",
+				"SUBTITLE": "كيف يتوزع التفاعل على أفضل عناصرك",
+				"ENGAGEMENT": "التفاعل",
+				"OF_TOTAL": "من الإجمالي",
+				"NO_DATA": "لا توجد بيانات تفاعل",
+				"NO_DATA_DESC": "احصل على أصوات وتعليقات لرؤية توزيع التفاعل."
+			},
+
+			"COMMON": {
+				"VS": "مقابل",
+				"AVG": "المعدل"
+			},
+
+			"CHARTS": {
+				"LOADING": "جاري تحميل بيانات الرسم البياني...",
+				"ERROR": "فشل في تحميل الرسم البياني",
+				"RETRY": "إعادة المحاولة"
+			}
 		}
 	}
 }

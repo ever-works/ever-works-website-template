@@ -4,21 +4,15 @@ import { useTranslations } from 'next-intl';
 import Hero from '@/components/hero';
 import Link from 'next/link';
 import CategoriesGrid from '@/components/categories-grid';
-import { Category, ItemData, Tag } from '@/lib/content';
+import { Category } from '@/lib/content';
 import { useLayoutTheme, LayoutHome } from '@/components/context';
-import { Paginate } from '@/components/filters/components/pagination/paginate';
-import { totalPages } from '@/lib/paginate';
 import { ListingSkeleton } from '@/components/ui/skeleton';
 import { Container } from '@/components/ui/container';
 
 interface ListingCategoriesProps {
-	total: number;
-	start: number;
 	page: number;
 	basePath: string;
 	categories: Category[];
-	tags: Tag[];
-	items: ItemData[];
 }
 
 function ListingCategoriesContent(props: ListingCategoriesProps) {
@@ -41,15 +35,6 @@ function ListingCategoriesContent(props: ListingCategoriesProps) {
 			>
 				{layoutHome === LayoutHome.HOME_ONE && <HomeOneLayout categories={props.categories} />}
 				{layoutHome === LayoutHome.HOME_TWO && <HomeTwoLayout categories={props.categories} />}
-				{paginationType === 'standard' && totalPages(props.categories.length) > 1 && (
-					<footer className="flex items-center justify-center">
-						<Paginate
-							basePath={props.basePath}
-							initialPage={props.page}
-							total={totalPages(props.categories.length)}
-						/>
-					</footer>
-				)}
 			</Hero>
 		</>
 	);
@@ -123,11 +108,7 @@ function HomeOneLayout({ categories }: { categories: Category[] }) {
 	);
 }
 
-function HomeTwoLayout({
-	categories
-}: {
-	categories: Category[];
-}) {
+function HomeTwoLayout({ categories }: { categories: Category[] }) {
 	const t = useTranslations();
 
 	return (

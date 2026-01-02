@@ -1,35 +1,31 @@
-import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
-import { collectionRepository } from "@/lib/repositories/collection.repository";
-import { COLLECTION_VALIDATION, UpdateCollectionRequest } from "@/types/collection";
-import { auth } from "@/lib/auth";
-import { invalidateContentCaches } from "@/lib/cache-invalidation";
-import { z } from "zod";
+import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
+import { collectionRepository } from '@/lib/repositories/collection.repository';
+import { COLLECTION_VALIDATION, UpdateCollectionRequest } from '@/types/collection';
+import { auth } from '@/lib/auth';
+import { invalidateContentCaches } from '@/lib/cache-invalidation';
+import { z } from 'zod';
 
 interface RouteParams {
-  params: Promise<{ id: string }>;
+	params: Promise<{ id: string }>;
 }
 
 const updateCollectionSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(COLLECTION_VALIDATION.NAME_MIN_LENGTH)
-    .max(COLLECTION_VALIDATION.NAME_MAX_LENGTH)
-    .optional(),
-  slug: z
-    .string()
-    .trim()
-    .min(COLLECTION_VALIDATION.ID_MIN_LENGTH)
-    .max(COLLECTION_VALIDATION.ID_MAX_LENGTH)
-    .optional(),
-  description: z
-    .string()
-    .trim()
-    .max(COLLECTION_VALIDATION.DESCRIPTION_MAX_LENGTH)
-    .optional(),
-  icon_url: z.string().trim().optional(),
-  isActive: z.boolean().optional()
+	name: z
+		.string()
+		.trim()
+		.min(COLLECTION_VALIDATION.NAME_MIN_LENGTH)
+		.max(COLLECTION_VALIDATION.NAME_MAX_LENGTH)
+		.optional(),
+	slug: z
+		.string()
+		.trim()
+		.min(COLLECTION_VALIDATION.ID_MIN_LENGTH)
+		.max(COLLECTION_VALIDATION.ID_MAX_LENGTH)
+		.optional(),
+	description: z.string().trim().max(COLLECTION_VALIDATION.DESCRIPTION_MAX_LENGTH).optional(),
+	icon_url: z.string().trim().optional(),
+	isActive: z.boolean().optional()
 });
 
 /**
@@ -100,30 +96,30 @@ const updateCollectionSchema = z.object({
  *         description: Server error
  */
 export async function GET(_request: NextRequest, { params }: RouteParams) {
-  try {
-    const session = await auth();
-    if (!session?.user?.isAdmin) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized. Admin access required." },
-        { status: 401 }
-      );
-    }
+	try {
+		const session = await auth();
+		if (!session?.user?.isAdmin) {
+			return NextResponse.json(
+				{ success: false, error: 'Unauthorized. Admin access required.' },
+				{ status: 401 }
+			);
+		}
 
-    const { id } = await params;
-    const collection = await collectionRepository.findById(id);
+		const { id } = await params;
+		const collection = await collectionRepository.findById(id);
 
-    if (!collection) {
-      return NextResponse.json({ success: false, error: "Collection not found" }, { status: 404 });
-    }
+		if (!collection) {
+			return NextResponse.json({ success: false, error: 'Collection not found' }, { status: 404 });
+		}
 
-    return NextResponse.json({ success: true, data: collection });
-  } catch (error) {
-    console.error("Failed to fetch collection:", error);
-    return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Failed to fetch collection" },
-      { status: 500 }
-    );
-  }
+		return NextResponse.json({ success: true, data: collection });
+	} catch (error) {
+		console.error('Failed to fetch collection:', error);
+		return NextResponse.json(
+			{ success: false, error: error instanceof Error ? error.message : 'Failed to fetch collection' },
+			{ status: 500 }
+		);
+	}
 }
 
 /**
@@ -214,60 +210,64 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
  *         description: Server error
  */
 export async function PUT(request: NextRequest, { params }: RouteParams) {
-  try {
-    const session = await auth();
-    if (!session?.user?.isAdmin) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized. Admin access required." },
-        { status: 401 }
-      );
-    }
+	try {
+		const session = await auth();
+		if (!session?.user?.isAdmin) {
+			return NextResponse.json(
+				{ success: false, error: 'Unauthorized. Admin access required.' },
+				{ status: 401 }
+			);
+		}
 
-    const { id } = await params;
-    const body = await request.json();
-    const parsed = updateCollectionSchema.safeParse(body);
+		const { id } = await params;
+		const body = await request.json();
+		const parsed = updateCollectionSchema.safeParse(body);
 
-    if (!parsed.success) {
-      return NextResponse.json(
-        { success: false, error: "Invalid collection payload", details: parsed.error.flatten() },
-        { status: 400 }
-      );
-    }
+		if (!parsed.success) {
+			return NextResponse.json(
+				{ success: false, error: 'Invalid collection payload', details: parsed.error.flatten() },
+				{ status: 400 }
+			);
+		}
 
-    const updateData: UpdateCollectionRequest = {
-      id,
-      ...parsed.data,
-    };
+		const updateData: UpdateCollectionRequest = {
+			id,
+			...parsed.data
+		};
 
-    const beforeUpdate = await collectionRepository.findById(id);
-    const updated = await collectionRepository.update(updateData);
-    await invalidateContentCaches();
+		const beforeUpdate = await collectionRepository.findById(id);
+		if (!beforeUpdate) {
+			return NextResponse.json({ success: false, error: 'Collection not found' }, { status: 404 });
+		}
 
-    // Revalidate both old and new slugs if slug changed
-    if (beforeUpdate && beforeUpdate.slug !== (updateData.slug || id)) {
-      revalidatePath(`/collections/${beforeUpdate.slug}`); // old slug
-    }
-    const targetSlug = updated.slug || updateData.slug || id;
-    revalidatePath(`/collections/${targetSlug}`); // new slug
-    revalidatePath(`/collections`);
+		const updated = await collectionRepository.update(updateData);
+		await invalidateContentCaches();
 
-    return NextResponse.json({ success: true, data: updated, message: "Collection updated successfully" });
-  } catch (error) {
-    console.error("Failed to update collection:", error);
+		// Revalidate both old and new slugs if slug changed
+		if (beforeUpdate && beforeUpdate.slug !== (updateData.slug || id)) {
+			revalidatePath(`/collections/${beforeUpdate.slug}`); // old slug
+		}
+		const targetSlug = updated.slug || updateData.slug || id;
+		revalidatePath(`/collections/${targetSlug}`); // new slug
+		revalidatePath(`/collections`);
 
-    if (error instanceof Error && error.message.includes("already exists")) {
-      return NextResponse.json({ success: false, error: error.message }, { status: 409 });
-    }
+		return NextResponse.json({ success: true, data: updated, message: 'Collection updated successfully' });
+	} catch (error) {
+		console.error('Failed to update collection:', error);
 
-    if (error instanceof Error && error.message.includes("must")) {
-      return NextResponse.json({ success: false, error: error.message }, { status: 400 });
-    }
+		if (error instanceof Error && error.message.includes('already exists')) {
+			return NextResponse.json({ success: false, error: error.message }, { status: 409 });
+		}
 
-    return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Failed to update collection" },
-      { status: 500 }
-    );
-  }
+		if (error instanceof Error && error.message.includes('must')) {
+			return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+		}
+
+		return NextResponse.json(
+			{ success: false, error: error instanceof Error ? error.message : 'Failed to update collection' },
+			{ status: 500 }
+		);
+	}
 }
 
 /**
@@ -308,34 +308,41 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
  *         description: Server error
  */
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
-  try {
-    const session = await auth();
-    if (!session?.user?.isAdmin) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized. Admin access required." },
-        { status: 401 }
-      );
-    }
+	try {
+		const session = await auth();
+		if (!session?.user?.isAdmin) {
+			return NextResponse.json(
+				{ success: false, error: 'Unauthorized. Admin access required.' },
+				{ status: 401 }
+			);
+		}
 
-    const { id } = await params;
-    await collectionRepository.delete(id);
-    await invalidateContentCaches();
+		const { id } = await params;
 
-    // Invalidate collection detail/list pages for removed collection
-    revalidatePath(`/collections/${id}`);
-    revalidatePath(`/collections`);
+		// Fetch collection before deleting to get its slug for proper cache invalidation
+		const collection = await collectionRepository.findById(id);
+		if (!collection) {
+			return NextResponse.json({ success: false, error: 'Collection not found' }, { status: 404 });
+		}
 
-    return NextResponse.json({ success: true, message: "Collection deleted successfully" });
-  } catch (error) {
-    console.error("Failed to delete collection:", error);
+		await collectionRepository.delete(id);
+		await invalidateContentCaches();
 
-    if (error instanceof Error && error.message.includes("not found")) {
-      return NextResponse.json({ success: false, error: error.message }, { status: 404 });
-    }
+		// Invalidate collection detail/list pages for removed collection using slug
+		revalidatePath(`/collections/${collection.slug}`);
+		revalidatePath(`/collections`);
 
-    return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Failed to delete collection" },
-      { status: 500 }
-    );
-  }
+		return NextResponse.json({ success: true, message: 'Collection deleted successfully' });
+	} catch (error) {
+		console.error('Failed to delete collection:', error);
+
+		if (error instanceof Error && error.message.includes('not found')) {
+			return NextResponse.json({ success: false, error: error.message }, { status: 404 });
+		}
+
+		return NextResponse.json(
+			{ success: false, error: error instanceof Error ? error.message : 'Failed to delete collection' },
+			{ status: 500 }
+		);
+	}
 }

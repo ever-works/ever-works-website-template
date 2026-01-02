@@ -2848,6 +2848,97 @@
 			"DESCRIPTION": "Descrizione",
 			"EDIT_SUBMISSION_TITLE": "Modifica Invio",
 			"EDIT_SUBMISSION_DESC": "Aggiorna i dettagli del tuo invio"
+		},
+		"dashboard": {
+			"TITLE": "Dashboard",
+			"WELCOME_BACK": "Bentornato, {name}! Ecco la panoramica delle tue attività.",
+			"REFRESH": "Aggiorna",
+			"FAILED_TO_LOAD": "Impossibile caricare le statistiche della dashboard",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "Invii Totali",
+				"CONTENT_CREATED": "Contenuti che hai creato",
+				"TOTAL_VIEWS": "Visualizzazioni Totali",
+				"VIEWS_ON_CONTENT": "Visualizzazioni dei tuoi contenuti",
+				"VOTES_RECEIVED": "Voti Ricevuti",
+				"VOTES_ON_CONTENT": "Voti sui tuoi contenuti",
+				"COMMENTS_RECEIVED": "Commenti Ricevuti",
+				"COMMENTS_ON_CONTENT": "Commenti sui tuoi contenuti"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "Performance Settimanale",
+				"THIS_WEEK": "Questa Settimana",
+				"LAST_WEEK": "Settimana Scorsa",
+				"CHANGE": "Variazione",
+				"VOTES": "Voti",
+				"COMMENTS": "Commenti",
+				"SUBMISSIONS": "Invii",
+				"VIEWS": "Visualizzazioni",
+				"NO_DATA": "Nessun dato disponibile",
+				"NO_DATA_DESC": "Inizia a creare contenuti per vedere il confronto delle performance settimanali."
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "Performance per Categoria",
+				"SUBTITLE": "Migliori categorie per coinvolgimento medio",
+				"CATEGORY": "Categoria",
+				"ITEMS": "Elementi",
+				"AVG_ENGAGEMENT": "Coinv. Medio",
+				"TOTAL_ENGAGEMENT": "Totale",
+				"NO_DATA": "Nessun dato categoria",
+				"NO_DATA_DESC": "Invia elementi per vedere le metriche di performance per categoria."
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "Trend di Approvazione",
+				"SUBTITLE": "Tasso di successo approvazione mensile",
+				"APPROVAL_RATE": "Tasso di Approvazione",
+				"APPROVED": "Approvati",
+				"TOTAL": "Totale",
+				"NO_DATA": "Nessun dato approvazione",
+				"NO_DATA_DESC": "Invia elementi per monitorare il tuo tasso di approvazione nel tempo."
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "Tasso di Coinvolgimento",
+				"SUBTITLE": "Coinvolgimento per invio nel tempo",
+				"RATE": "Tasso",
+				"NO_DATA": "Nessun dato coinvolgimento",
+				"NO_DATA_DESC": "Crea contenuti per vedere i trend di coinvolgimento."
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "Attività Invii",
+				"SUBTITLE": "La tua costanza negli invii negli ultimi 3 mesi",
+				"SUBMISSIONS": "invii",
+				"SUBMISSION": "invio",
+				"NO_SUBMISSIONS": "Nessun invio",
+				"NO_DATA": "Nessun dato attività",
+				"NO_DATA_DESC": "Inizia a inviare contenuti per vedere il tuo calendario attività.",
+				"LESS": "Meno",
+				"MORE": "Più"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "Distribuzione Coinvolgimento",
+				"SUBTITLE": "Come il coinvolgimento è distribuito tra i tuoi migliori elementi",
+				"ENGAGEMENT": "Coinvolgimento",
+				"OF_TOTAL": "del totale",
+				"NO_DATA": "Nessun dato coinvolgimento",
+				"NO_DATA_DESC": "Ricevi voti e commenti per vedere come è distribuito il coinvolgimento."
+			},
+
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Media"
+			},
+
+			"CHARTS": {
+				"LOADING": "Caricamento dati grafico...",
+				"ERROR": "Impossibile caricare il grafico",
+				"RETRY": "Riprova"
+			}
 		}
 	}
 }

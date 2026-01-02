@@ -2848,6 +2848,97 @@
 			"DESCRIPTION": "説明",
 			"EDIT_SUBMISSION_TITLE": "提出を編集",
 			"EDIT_SUBMISSION_DESC": "提出の詳細を更新"
+		},
+		"dashboard": {
+			"TITLE": "ダッシュボード",
+			"WELCOME_BACK": "おかえりなさい、{name}さん！活動の概要はこちらです。",
+			"REFRESH": "更新",
+			"FAILED_TO_LOAD": "ダッシュボード統計の読み込みに失敗しました",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "総提出数",
+				"CONTENT_CREATED": "作成したコンテンツ",
+				"TOTAL_VIEWS": "総閲覧数",
+				"VIEWS_ON_CONTENT": "コンテンツの閲覧数",
+				"VOTES_RECEIVED": "獲得した投票",
+				"VOTES_ON_CONTENT": "コンテンツへの投票",
+				"COMMENTS_RECEIVED": "獲得したコメント",
+				"COMMENTS_ON_CONTENT": "コンテンツへのコメント"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "週間パフォーマンス",
+				"THIS_WEEK": "今週",
+				"LAST_WEEK": "先週",
+				"CHANGE": "変化",
+				"VOTES": "投票",
+				"COMMENTS": "コメント",
+				"SUBMISSIONS": "提出",
+				"VIEWS": "閲覧",
+				"NO_DATA": "データがありません",
+				"NO_DATA_DESC": "週間パフォーマンス比較を見るにはコンテンツの作成を始めてください。"
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "カテゴリパフォーマンス",
+				"SUBTITLE": "平均エンゲージメント順のトップカテゴリ",
+				"CATEGORY": "カテゴリ",
+				"ITEMS": "アイテム",
+				"AVG_ENGAGEMENT": "平均エンゲージ",
+				"TOTAL_ENGAGEMENT": "合計",
+				"NO_DATA": "カテゴリデータがありません",
+				"NO_DATA_DESC": "カテゴリパフォーマンス指標を見るにはアイテムを提出してください。"
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "承認トレンド",
+				"SUBTITLE": "月間承認成功率",
+				"APPROVAL_RATE": "承認率",
+				"APPROVED": "承認済み",
+				"TOTAL": "合計",
+				"NO_DATA": "承認データがありません",
+				"NO_DATA_DESC": "承認率を追跡するにはアイテムを提出してください。"
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "エンゲージメント率",
+				"SUBTITLE": "時系列での提出あたりのエンゲージメント",
+				"RATE": "率",
+				"NO_DATA": "エンゲージメントデータがありません",
+				"NO_DATA_DESC": "エンゲージメントトレンドを見るにはコンテンツを作成してください。"
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "提出アクティビティ",
+				"SUBTITLE": "過去3ヶ月の提出の一貫性",
+				"SUBMISSIONS": "件の提出",
+				"SUBMISSION": "件の提出",
+				"NO_SUBMISSIONS": "提出なし",
+				"NO_DATA": "アクティビティデータがありません",
+				"NO_DATA_DESC": "アクティビティカレンダーを見るにはコンテンツの提出を始めてください。",
+				"LESS": "少ない",
+				"MORE": "多い"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "エンゲージメント分布",
+				"SUBTITLE": "トップアイテム間でのエンゲージメントの分布",
+				"ENGAGEMENT": "エンゲージメント",
+				"OF_TOTAL": "全体の",
+				"NO_DATA": "エンゲージメントデータがありません",
+				"NO_DATA_DESC": "エンゲージメント分布を見るには投票やコメントを獲得してください。"
+			},
+
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "平均"
+			},
+
+			"CHARTS": {
+				"LOADING": "チャートデータを読み込み中...",
+				"ERROR": "チャートの読み込みに失敗しました",
+				"RETRY": "再試行"
+			}
 		}
 	}
 }

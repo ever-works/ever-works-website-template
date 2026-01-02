@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { sponsorAdService } from "@/lib/services/sponsor-ad.service";
-import { SponsorAdStatus, SponsorAdInterval } from "@/lib/db/schema";
-import { PaymentProvider } from "@/lib/constants";
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
+import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
+import { SponsorAdStatus, SponsorAdInterval } from '@/lib/db/schema';
+import { PaymentProvider } from '@/lib/constants';
 import {
 	getOrCreateStripeProvider,
 	getOrCreateLemonsqueezyProvider,
-	getOrCreatePolarProvider,
-} from "@/lib/payment/config/payment-provider-manager";
-import type { CheckoutSessionParams } from "@/lib/payment/types/payment-types";
+	getOrCreatePolarProvider
+} from '@/lib/payment/config/payment-provider-manager';
+import type { CheckoutSessionParams } from '@/lib/payment/types/payment-types';
 
 // Environment variables for sponsor ad price IDs
 const STRIPE_SPONSOR_WEEKLY_PRICE_ID = process.env.STRIPE_SPONSOR_WEEKLY_PRICE_ID;
@@ -21,8 +21,41 @@ const POLAR_SPONSOR_MONTHLY_PRICE_ID = process.env.POLAR_SPONSOR_MONTHLY_PRICE_I
 // Determine which payment provider to use
 const ACTIVE_PAYMENT_PROVIDER = process.env.NEXT_PUBLIC_PAYMENT_PROVIDER || PaymentProvider.STRIPE;
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ??
-	(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+const appUrl =
+	process.env.NEXT_PUBLIC_APP_URL ??
+	(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+
+/**
+ * Validates that a URL belongs to the application domain to prevent open redirect vulnerabilities.
+ * @param url - The URL to validate
+ * @param allowedOrigin - The allowed origin (defaults to appUrl)
+ * @returns The validated URL if it belongs to the allowed origin, null otherwise
+ */
+function validateRedirectUrl(url: string | undefined, allowedOrigin: string = appUrl): string | null {
+	if (!url) {
+		return null;
+	}
+
+	try {
+		const urlObj = new URL(url, allowedOrigin);
+		const allowedUrlObj = new URL(allowedOrigin);
+
+		// Check if the URL belongs to the same origin (protocol, hostname, port)
+		if (
+			urlObj.protocol === allowedUrlObj.protocol &&
+			urlObj.hostname === allowedUrlObj.hostname &&
+			urlObj.port === allowedUrlObj.port
+		) {
+			return urlObj.toString();
+		}
+
+		// Reject URLs from different origins
+		return null;
+	} catch {
+		// Invalid URL format - reject
+		return null;
+	}
+}
 
 /**
  * @swagger
@@ -70,36 +103,27 @@ export async function POST(request: NextRequest) {
 		const session = await auth();
 
 		if (!session?.user?.id) {
-			return NextResponse.json(
-				{ success: false, error: "Unauthorized" },
-				{ status: 401 }
-			);
+			return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 		}
 
 		const body = await request.json();
 		const { sponsorAdId, successUrl, cancelUrl } = body;
 
 		if (!sponsorAdId) {
-			return NextResponse.json(
-				{ success: false, error: "Sponsor ad ID is required" },
-				{ status: 400 }
-			);
+			return NextResponse.json({ success: false, error: 'Sponsor ad ID is required' }, { status: 400 });
 		}
 
 		// Get the sponsor ad
 		const sponsorAd = await sponsorAdService.getSponsorAdById(sponsorAdId);
 
 		if (!sponsorAd) {
-			return NextResponse.json(
-				{ success: false, error: "Sponsor ad not found" },
-				{ status: 404 }
-			);
+			return NextResponse.json({ success: false, error: 'Sponsor ad not found' }, { status: 404 });
 		}
 
 		// Verify ownership
 		if (sponsorAd.userId !== session.user.id) {
 			return NextResponse.json(
-				{ success: false, error: "You do not have permission to pay for this sponsor ad" },
+				{ success: false, error: 'You do not have permission to pay for this sponsor ad' },
 				{ status: 403 }
 			);
 		}
@@ -119,19 +143,40 @@ export async function POST(request: NextRequest) {
 		const priceId = getPriceId(sponsorAd.interval, ACTIVE_PAYMENT_PROVIDER);
 
 		if (!priceId) {
-			console.error(`Price not configured for ${sponsorAd.interval} interval with ${ACTIVE_PAYMENT_PROVIDER} provider`);
+			console.error(
+				`Price not configured for ${sponsorAd.interval} interval with ${ACTIVE_PAYMENT_PROVIDER} provider`
+			);
 			return NextResponse.json(
 				{
 					success: false,
-					error: "Payment configuration is incomplete. Please contact support."
+					error: 'Payment configuration is incomplete. Please contact support.'
 				},
 				{ status: 400 }
 			);
 		}
 
-		// Build success/cancel URLs
-		const finalSuccessUrl = successUrl || `${appUrl}/sponsor/success?sponsorAdId=${sponsorAdId}`;
-		const finalCancelUrl = cancelUrl || `${appUrl}/sponsor?cancelled=true`;
+		// Build success/cancel URLs with validation to prevent open redirect vulnerabilities
+		const validatedSuccessUrl = validateRedirectUrl(successUrl);
+		const validatedCancelUrl = validateRedirectUrl(cancelUrl);
+
+		// Log warning if invalid URLs were provided (potential security issue)
+		if (successUrl && !validatedSuccessUrl) {
+			console.warn('Invalid successUrl provided, using default:', {
+				providedUrl: successUrl,
+				userId: session.user.id,
+				sponsorAdId
+			});
+		}
+		if (cancelUrl && !validatedCancelUrl) {
+			console.warn('Invalid cancelUrl provided, using default:', {
+				providedUrl: cancelUrl,
+				userId: session.user.id,
+				sponsorAdId
+			});
+		}
+
+		const finalSuccessUrl = validatedSuccessUrl || `${appUrl}/sponsor/success?sponsorAdId=${sponsorAdId}`;
+		const finalCancelUrl = validatedCancelUrl || `${appUrl}/sponsor?cancelled=true`;
 
 		// Create checkout session based on provider
 		let checkoutResult: { id: string; url: string | null };
@@ -170,7 +215,7 @@ export async function POST(request: NextRequest) {
 			default:
 				console.error(`Unsupported payment provider: ${ACTIVE_PAYMENT_PROVIDER}`);
 				return NextResponse.json(
-					{ success: false, error: "Payment configuration is incomplete. Please contact support." },
+					{ success: false, error: 'Payment configuration is incomplete. Please contact support.' },
 					{ status: 400 }
 				);
 		}
@@ -180,20 +225,15 @@ export async function POST(request: NextRequest) {
 			data: {
 				checkoutId: checkoutResult.id,
 				checkoutUrl: checkoutResult.url,
-				provider: ACTIVE_PAYMENT_PROVIDER,
+				provider: ACTIVE_PAYMENT_PROVIDER
 			},
-			message: "Checkout session created successfully",
+			message: 'Checkout session created successfully'
 		});
 	} catch (error) {
-		console.error("Error creating sponsor ad checkout:", error);
+		console.error('Error creating sponsor ad checkout:', error);
 
-		const errorMessage =
-			error instanceof Error ? error.message : "Failed to create checkout session";
-
-		return NextResponse.json(
-			{ success: false, error: errorMessage },
-			{ status: 500 }
-		);
+		// Use generic message for 500 errors to avoid exposing sensitive details
+		return NextResponse.json({ success: false, error: 'Failed to create checkout session' }, { status: 500 });
 	}
 }
 
@@ -248,41 +288,41 @@ async function createStripeCheckout(
 	const customerId = await stripeProvider.getCustomerId(user as Parameters<typeof stripeProvider.getCustomerId>[0]);
 
 	if (!customerId) {
-		throw new Error("Failed to create Stripe customer");
+		throw new Error('Failed to create Stripe customer');
 	}
 
 	const checkoutParams: CheckoutSessionParams = {
 		customer: customerId,
-		mode: "subscription",
+		mode: 'subscription',
 		line_items: [
 			{
 				price: priceId,
-				quantity: 1,
-			},
+				quantity: 1
+			}
 		],
 		success_url: successUrl,
 		cancel_url: cancelUrl,
-		billing_address_collection: "auto",
+		billing_address_collection: 'auto',
 		metadata: {
 			sponsorAdId: sponsorAd.id,
 			itemSlug: sponsorAd.itemSlug,
-			type: "sponsor_ad",
+			type: 'sponsor_ad'
 		},
 		subscription_data: {
 			metadata: {
-				userId: user.id || "",
+				userId: user.id || '',
 				sponsorAdId: sponsorAd.id,
 				itemSlug: sponsorAd.itemSlug,
-				type: "sponsor_ad",
-			},
-		},
+				type: 'sponsor_ad'
+			}
+		}
 	};
 
 	const checkoutSession = await stripe.checkout.sessions.create(checkoutParams);
 
 	return {
 		id: checkoutSession.id,
-		url: checkoutSession.url,
+		url: checkoutSession.url
 	};
 }
 
@@ -302,19 +342,20 @@ async function createLemonSqueezyCheckout(
 		variantId: Number(variantId),
 		email: user.email || undefined,
 		metadata: {
-			userId: user.id || "",
+			userId: user.id || '',
 			sponsorAdId: sponsorAd.id,
 			itemSlug: sponsorAd.itemSlug,
-			type: "sponsor_ad",
+			type: 'sponsor_ad',
 			successUrl: successUrl,
+			cancelUrl: cancelUrl,
 			name: sponsorAd.itemSlug,
-			description: `Sponsor ad for ${sponsorAd.itemSlug}`,
-		},
+			description: `Sponsor ad for ${sponsorAd.itemSlug}`
+		}
 	});
 
 	return {
-		id: result.id || "",
-		url: result.checkoutData?.url || null,
+		id: result.id || '',
+		url: result.checkoutData?.url || null
 	};
 }
 
@@ -333,21 +374,25 @@ async function createPolarCheckout(
 	// Get or create customer ID
 	const customerId = await polarProvider.getCustomerId(user as Parameters<typeof polarProvider.getCustomerId>[0]);
 
+	if (!customerId) {
+		throw new Error('Failed to create Polar customer');
+	}
+
 	const result = await polarProvider.createSubscription({
-		customerId: customerId || "",
+		customerId: customerId,
 		priceId: priceId,
 		metadata: {
-			userId: user.id || "",
+			userId: user.id || '',
 			sponsorAdId: sponsorAd.id,
 			itemSlug: sponsorAd.itemSlug,
-			type: "sponsor_ad",
+			type: 'sponsor_ad',
 			successUrl: successUrl,
-			cancelUrl: cancelUrl,
-		},
+			cancelUrl: cancelUrl
+		}
 	});
 
 	return {
-		id: result.id || "",
-		url: result.checkoutData?.url || null,
+		id: result.id || '',
+		url: result.checkoutData?.url || null
 	};
 }

@@ -2870,6 +2870,97 @@
 			"DESCRIPTION": "Descripción",
 			"EDIT_SUBMISSION_TITLE": "Editar Envío",
 			"EDIT_SUBMISSION_DESC": "Actualiza los detalles de tu envío"
+		},
+		"dashboard": {
+			"TITLE": "Panel de Control",
+			"WELCOME_BACK": "¡Bienvenido de nuevo, {name}! Aquí está tu resumen de actividad.",
+			"REFRESH": "Actualizar",
+			"FAILED_TO_LOAD": "Error al cargar las estadísticas del panel",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "Total de Envíos",
+				"CONTENT_CREATED": "Contenido que has creado",
+				"TOTAL_VIEWS": "Vistas Totales",
+				"VIEWS_ON_CONTENT": "Vistas en tu contenido",
+				"VOTES_RECEIVED": "Votos Recibidos",
+				"VOTES_ON_CONTENT": "Votos en tu contenido",
+				"COMMENTS_RECEIVED": "Comentarios Recibidos",
+				"COMMENTS_ON_CONTENT": "Comentarios en tu contenido"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "Rendimiento Semanal",
+				"THIS_WEEK": "Esta Semana",
+				"LAST_WEEK": "Semana Pasada",
+				"CHANGE": "Cambio",
+				"VOTES": "Votos",
+				"COMMENTS": "Comentarios",
+				"SUBMISSIONS": "Envíos",
+				"VIEWS": "Vistas",
+				"NO_DATA": "Sin datos disponibles",
+				"NO_DATA_DESC": "Comienza a crear contenido para ver tu comparación de rendimiento semanal."
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "Rendimiento por Categoría",
+				"SUBTITLE": "Principales categorías por participación promedio",
+				"CATEGORY": "Categoría",
+				"ITEMS": "Elementos",
+				"AVG_ENGAGEMENT": "Particip. Prom.",
+				"TOTAL_ENGAGEMENT": "Total",
+				"NO_DATA": "Sin datos de categoría",
+				"NO_DATA_DESC": "Envía elementos para ver métricas de rendimiento por categoría."
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "Tendencia de Aprobación",
+				"SUBTITLE": "Tasa de éxito de aprobación mensual",
+				"APPROVAL_RATE": "Tasa de Aprobación",
+				"APPROVED": "Aprobados",
+				"TOTAL": "Total",
+				"NO_DATA": "Sin datos de aprobación",
+				"NO_DATA_DESC": "Envía elementos para seguir tu tasa de aprobación a lo largo del tiempo."
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "Tasa de Participación",
+				"SUBTITLE": "Participación por envío a lo largo del tiempo",
+				"RATE": "Tasa",
+				"NO_DATA": "Sin datos de participación",
+				"NO_DATA_DESC": "Crea contenido para ver tus tendencias de participación."
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "Actividad de Envíos",
+				"SUBTITLE": "Tu consistencia de envíos en los últimos 3 meses",
+				"SUBMISSIONS": "envíos",
+				"SUBMISSION": "envío",
+				"NO_SUBMISSIONS": "Sin envíos",
+				"NO_DATA": "Sin datos de actividad",
+				"NO_DATA_DESC": "Comienza a enviar contenido para ver tu calendario de actividad.",
+				"LESS": "Menos",
+				"MORE": "Más"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "Distribución de Participación",
+				"SUBTITLE": "Cómo se distribuye la participación entre tus principales elementos",
+				"ENGAGEMENT": "Participación",
+				"OF_TOTAL": "del total",
+				"NO_DATA": "Sin datos de participación",
+				"NO_DATA_DESC": "Obtén votos y comentarios para ver cómo se distribuye la participación."
+			},
+
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Prom."
+			},
+
+			"CHARTS": {
+				"LOADING": "Cargando datos del gráfico...",
+				"ERROR": "Error al cargar el gráfico",
+				"RETRY": "Reintentar"
+			}
 		}
 	}
 }

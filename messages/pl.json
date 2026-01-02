@@ -2848,6 +2848,97 @@
 			"DESCRIPTION": "Opis",
 			"EDIT_SUBMISSION_TITLE": "Edytuj Zgłoszenie",
 			"EDIT_SUBMISSION_DESC": "Zaktualizuj szczegóły swojego zgłoszenia"
+		},
+		"dashboard": {
+			"TITLE": "Panel",
+			"WELCOME_BACK": "Witaj ponownie, {name}! Oto przegląd Twojej aktywności.",
+			"REFRESH": "Odśwież",
+			"FAILED_TO_LOAD": "Nie udało się załadować statystyk panelu",
+
+			"STATS": {
+				"TOTAL_SUBMISSIONS": "Łączna Liczba Zgłoszeń",
+				"CONTENT_CREATED": "Utworzona przez Ciebie treść",
+				"TOTAL_VIEWS": "Łączna Liczba Wyświetleń",
+				"VIEWS_ON_CONTENT": "Wyświetlenia Twoich treści",
+				"VOTES_RECEIVED": "Otrzymane Głosy",
+				"VOTES_ON_CONTENT": "Głosy na Twoje treści",
+				"COMMENTS_RECEIVED": "Otrzymane Komentarze",
+				"COMMENTS_ON_CONTENT": "Komentarze do Twoich treści"
+			},
+
+			"PERIOD_COMPARISON": {
+				"TITLE": "Wydajność Tygodniowa",
+				"THIS_WEEK": "Ten Tydzień",
+				"LAST_WEEK": "Poprzedni Tydzień",
+				"CHANGE": "Zmiana",
+				"VOTES": "Głosy",
+				"COMMENTS": "Komentarze",
+				"SUBMISSIONS": "Zgłoszenia",
+				"VIEWS": "Wyświetlenia",
+				"NO_DATA": "Brak dostępnych danych",
+				"NO_DATA_DESC": "Zacznij tworzyć treści, aby zobaczyć porównanie wydajności tygodniowej."
+			},
+
+			"CATEGORY_PERFORMANCE": {
+				"TITLE": "Wydajność Kategorii",
+				"SUBTITLE": "Najlepsze kategorie według średniego zaangażowania",
+				"CATEGORY": "Kategoria",
+				"ITEMS": "Elementy",
+				"AVG_ENGAGEMENT": "Śr. Zaangaż.",
+				"TOTAL_ENGAGEMENT": "Łącznie",
+				"NO_DATA": "Brak danych kategorii",
+				"NO_DATA_DESC": "Prześlij elementy, aby zobaczyć metryki wydajności kategorii."
+			},
+
+			"APPROVAL_TREND": {
+				"TITLE": "Trend Zatwierdzania",
+				"SUBTITLE": "Miesięczny wskaźnik sukcesu zatwierdzania",
+				"APPROVAL_RATE": "Wskaźnik Zatwierdzania",
+				"APPROVED": "Zatwierdzono",
+				"TOTAL": "Łącznie",
+				"NO_DATA": "Brak danych zatwierdzania",
+				"NO_DATA_DESC": "Prześlij elementy, aby śledzić swój wskaźnik zatwierdzania."
+			},
+
+			"ENGAGEMENT_RATE": {
+				"TITLE": "Wskaźnik Zaangażowania",
+				"SUBTITLE": "Zaangażowanie na zgłoszenie w czasie",
+				"RATE": "Wskaźnik",
+				"NO_DATA": "Brak danych zaangażowania",
+				"NO_DATA_DESC": "Twórz treści, aby zobaczyć trendy zaangażowania."
+			},
+
+			"SUBMISSION_CALENDAR": {
+				"TITLE": "Aktywność Zgłoszeń",
+				"SUBTITLE": "Twoja regularność zgłoszeń w ciągu ostatnich 3 miesięcy",
+				"SUBMISSIONS": "zgłoszeń",
+				"SUBMISSION": "zgłoszenie",
+				"NO_SUBMISSIONS": "Brak zgłoszeń",
+				"NO_DATA": "Brak danych aktywności",
+				"NO_DATA_DESC": "Zacznij przesyłać treści, aby zobaczyć kalendarz aktywności.",
+				"LESS": "Mniej",
+				"MORE": "Więcej"
+			},
+
+			"ENGAGEMENT_DISTRIBUTION": {
+				"TITLE": "Rozkład Zaangażowania",
+				"SUBTITLE": "Jak zaangażowanie jest rozłożone wśród Twoich najlepszych elementów",
+				"ENGAGEMENT": "Zaangażowanie",
+				"OF_TOTAL": "z całości",
+				"NO_DATA": "Brak danych zaangażowania",
+				"NO_DATA_DESC": "Otrzymuj głosy i komentarze, aby zobaczyć rozkład zaangażowania."
+			},
+
+			"COMMON": {
+				"VS": "vs",
+				"AVG": "Śr."
+			},
+
+			"CHARTS": {
+				"LOADING": "Ładowanie danych wykresu...",
+				"ERROR": "Nie udało się załadować wykresu",
+				"RETRY": "Ponów"
+			}
 		}
 	}
 }
