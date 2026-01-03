@@ -11,6 +11,7 @@ import { unstable_cache } from 'next/cache';
 import { PaymentInterval, PaymentProvider } from './constants';
 import { CACHE_TAGS, CACHE_TTL as CONTENT_CACHE_TTL } from './cache-config';
 import { Collection } from '@/types/collection';
+import { z } from 'zod';
 
 // Security utility functions
 function validateLanguageCode(lang: string): boolean {
@@ -56,6 +57,50 @@ async function safeReadFile(filepath: string, basePath: string): Promise<string>
 	}
 	return fs.promises.readFile(realResolvedPath, { encoding: 'utf8' });
 }
+
+/**
+ * Validates a URL to ensure it's safe (http/https or relative path).
+ * Blocks javascript:, data:, vbscript: and other dangerous protocols.
+ */
+function isValidUrl(url: string): boolean {
+	const trimmed = url.trim();
+	// Allow relative paths
+	if (trimmed.startsWith('/') || !trimmed.includes(':')) {
+		return true;
+	}
+	// Allow only http and https
+	return trimmed.startsWith('http://') || trimmed.startsWith('https://');
+}
+
+/**
+ * Validates CSS length/size values (e.g., "100px", "50vh", "auto")
+ */
+function isValidCssSize(value: string): boolean {
+	const trimmed = value.trim();
+	// Allow common keywords
+	if (['auto', 'inherit', 'initial', 'unset'].includes(trimmed)) {
+		return true;
+	}
+	// Allow numeric values with valid CSS units
+	const cssPattern = /^\d+(\.\d+)?(px|em|rem|vh|vw|%|pt|cm|mm|in)?$/;
+	return cssPattern.test(trimmed);
+}
+
+/**
+ * Zod schema for validating CustomHeroFrontmatter from YAML
+ */
+const customHeroFrontmatterSchema = z.object({
+	background_image: z.string().refine(isValidUrl, {
+		message: 'Invalid URL: must be http, https, or relative path'
+	}).optional(),
+	theme: z.enum(['light', 'dark', 'auto']).optional(),
+	alignment: z.enum(['left', 'center', 'right']).optional(),
+	min_height: z.string().refine(isValidCssSize, {
+		message: 'Invalid CSS size value'
+	}).optional(),
+	overlay_opacity: z.number().min(0).max(1).optional(),
+}).partial();
+
 interface PrUpdate {
 	branch: string;
 	title: string;
@@ -1297,13 +1342,27 @@ export async function fetchHeroContent(
 		if (match) {
 			try {
 				const parsed = yaml.parse(match[1]) || {};
-				frontmatter = {
+
+				// Validate frontmatter with Zod schema
+				const validationResult = customHeroFrontmatterSchema.safeParse({
 					background_image: parsed.background_image,
 					theme: parsed.theme,
 					alignment: parsed.alignment,
 					min_height: parsed.min_height,
-					overlay_opacity: parsed.overlay_opacity,
-				};
+					overlay_opacity: typeof parsed.overlay_opacity === 'number' ? parsed.overlay_opacity : undefined,
+				});
+
+				if (validationResult.success) {
+					frontmatter = validationResult.data;
+				} else {
+					// Log validation errors but continue with empty frontmatter
+					console.warn(
+						'Invalid hero frontmatter for %s: %s',
+						source,
+						validationResult.error.issues.map(i => i.message).join(', ')
+					);
+				}
+
 				content = match[2];
 			} catch (yamlError) {
 				console.warn('Failed to parse hero frontmatter for %s:', source, yamlError);
