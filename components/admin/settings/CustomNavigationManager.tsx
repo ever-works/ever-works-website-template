@@ -23,7 +23,7 @@ interface NavigationItemWithId extends CustomNavigationItem {
 
 export function CustomNavigationManager({ type, items, onUpdate, disabled = false }: CustomNavigationManagerProps) {
 	// Generate unique IDs for items
-	const generateId = useCallback(() => `nav-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, []);
+	const generateId = useCallback(() => `nav-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`, []);
 
 	// Convert items to internal format with IDs
 	const itemsWithIds = useCallback(

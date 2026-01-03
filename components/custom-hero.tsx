@@ -1,10 +1,10 @@
-import React from "react";
-import { MDXRemote } from "next-mdx-remote/rsc";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
-import { Container } from "./ui/container";
-import { CustomHeroFrontmatter } from "@/lib/content";
-import Link from "next/link";
+import React from 'react';
+import { MDXRemote } from 'next-mdx-remote/rsc';
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
+import { Container } from './ui/container';
+import { CustomHeroFrontmatter } from '@/lib/content';
+import Link from 'next/link';
 
 /**
  * Validates a URL to prevent XSS attacks via javascript: or data: schemes.
@@ -16,13 +16,13 @@ function sanitizeUrl(url: string | undefined): string | null {
 
 	const trimmedUrl = url.trim();
 
-	// Allow relative paths (starting with / or not starting with a protocol)
-	if (trimmedUrl.startsWith("/") || !trimmedUrl.includes(":")) {
+	// Allow relative paths (starting with /)
+	if (trimmedUrl.startsWith('/') && !trimmedUrl.startsWith('//')) {
 		return trimmedUrl;
 	}
 
 	// Allow only http and https protocols
-	if (trimmedUrl.startsWith("http://") || trimmedUrl.startsWith("https://")) {
+	if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
 		return trimmedUrl;
 	}
 
@@ -44,11 +44,11 @@ export interface CustomHeroProps {
 }
 
 const buttonBaseStyles =
-	"inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-200 no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2";
+	'inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-200 no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
 const primaryStyles =
-	"bg-theme-primary-600 hover:bg-theme-primary-700 text-white shadow-lg hover:shadow-xl focus-visible:ring-theme-primary-500";
+	'bg-theme-primary-600 hover:bg-theme-primary-700 text-white shadow-lg hover:shadow-xl focus-visible:ring-theme-primary-500';
 const secondaryStyles =
-	"bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 focus-visible:ring-gray-500";
+	'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 focus-visible:ring-gray-500';
 
 /**
  * Button component for CTA links in hero
@@ -57,11 +57,11 @@ const secondaryStyles =
 function HeroButton({
 	href,
 	children,
-	variant = "primary",
+	variant = 'primary'
 }: {
 	href: string;
 	children: React.ReactNode;
-	variant?: "primary" | "secondary";
+	variant?: 'primary' | 'secondary';
 }) {
 	const safeHref = sanitizeUrl(href);
 
@@ -70,11 +70,8 @@ function HeroButton({
 		return <span className="text-gray-500">{children}</span>;
 	}
 
-	const isExternal = safeHref.startsWith("http://") || safeHref.startsWith("https://");
-	const styles = cn(
-		buttonBaseStyles,
-		variant === "primary" ? primaryStyles : secondaryStyles
-	);
+	const isExternal = safeHref.startsWith('http://') || safeHref.startsWith('https://');
+	const styles = cn(buttonBaseStyles, variant === 'primary' ? primaryStyles : secondaryStyles);
 
 	if (isExternal) {
 		return (
@@ -96,13 +93,7 @@ function HeroButton({
  * Regular links are styled as text links
  * Validates URLs to prevent XSS attacks via javascript: or data: schemes
  */
-function HeroLink({
-	href,
-	children,
-}: {
-	href?: string;
-	children?: React.ReactNode;
-}) {
+function HeroLink({ href, children }: { href?: string; children?: React.ReactNode }) {
 	const safeHref = sanitizeUrl(href);
 
 	// If URL is missing or unsafe, render as non-interactive span
@@ -110,8 +101,9 @@ function HeroLink({
 		return <span>{children}</span>;
 	}
 
-	const isExternal = safeHref.startsWith("http://") || safeHref.startsWith("https://");
-	const linkStyles = "text-theme-primary-600 dark:text-theme-primary-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-2 rounded";
+	const isExternal = safeHref.startsWith('http://') || safeHref.startsWith('https://');
+	const linkStyles =
+		'text-theme-primary-600 dark:text-theme-primary-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-2 rounded';
 
 	if (isExternal) {
 		return (
@@ -134,8 +126,7 @@ interface LinkProps {
 }
 
 function isLinkElement(child: React.ReactNode): child is React.ReactElement<LinkProps> {
-	return React.isValidElement(child) &&
-		typeof (child.props as LinkProps).href === "string";
+	return React.isValidElement(child) && typeof (child.props as LinkProps).href === 'string';
 }
 
 /**
@@ -148,7 +139,7 @@ function HeroParagraph({ children }: { children?: React.ReactNode }) {
 
 	// Filter out whitespace-only text nodes
 	const meaningfulChildren = childArray.filter((child) => {
-		if (typeof child === "string") return child.trim() !== "";
+		if (typeof child === 'string') return child.trim() !== '';
 		return true;
 	});
 
@@ -161,12 +152,12 @@ function HeroParagraph({ children }: { children?: React.ReactNode }) {
 		return (
 			<div className="flex flex-wrap items-center justify-center gap-4 mt-6 not-prose">
 				{React.Children.map(children, (child) => {
-					if (typeof child === "string" && child.trim() === "") return null;
+					if (typeof child === 'string' && child.trim() === '') return null;
 					if (isLinkElement(child)) {
-						const variant = linkIndex === 0 ? "primary" : "secondary";
+						const variant = linkIndex === 0 ? 'primary' : 'secondary';
 						linkIndex++;
 						return (
-							<HeroButton href={child.props.href || ""} variant={variant}>
+							<HeroButton href={child.props.href || ''} variant={variant}>
 								{child.props.children}
 							</HeroButton>
 						);
@@ -177,11 +168,7 @@ function HeroParagraph({ children }: { children?: React.ReactNode }) {
 		);
 	}
 
-	return (
-		<p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
-			{children}
-		</p>
-	);
+	return <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">{children}</p>;
 }
 
 /**
@@ -197,9 +184,7 @@ function HeroH1({ children }: { children?: React.ReactNode }) {
 
 function HeroH2({ children }: { children?: React.ReactNode }) {
 	return (
-		<h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
-			{children}
-		</h2>
+		<h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">{children}</h2>
 	);
 }
 
@@ -208,13 +193,7 @@ function HeroH2({ children }: { children?: React.ReactNode }) {
  * Uses next/image for optimization (lazy loading, responsive sizing, WebP conversion)
  * Validates src URL to prevent XSS attacks
  */
-function HeroImage({
-	src,
-	alt,
-}: {
-	src?: string;
-	alt?: string;
-}) {
+function HeroImage({ src, alt }: { src?: string; alt?: string }) {
 	const safeSrc = sanitizeUrl(src);
 
 	// If src is missing or unsafe, don't render the image
@@ -225,7 +204,7 @@ function HeroImage({
 			<div className="relative w-full max-w-3xl aspect-video">
 				<Image
 					src={safeSrc}
-					alt={alt || "Hero image"}
+					alt={alt || 'Hero image'}
 					fill
 					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 896px"
 					className="object-contain rounded-lg shadow-lg"
@@ -240,47 +219,43 @@ const heroComponents = {
 	p: HeroParagraph,
 	h1: HeroH1,
 	h2: HeroH2,
-	img: HeroImage,
+	img: HeroImage
 };
 
 export default function CustomHero({
 	content,
 	frontmatter = {},
-	className = "",
+	className = '',
 	showBackgroundEffects = true,
-	children,
+	children
 }: CustomHeroProps) {
 	const {
 		background_image,
-		theme = "auto",
-		alignment = "center",
-		min_height = "auto",
-		overlay_opacity = 0.5,
+		theme = 'auto',
+		alignment = 'center',
+		min_height = 'auto',
+		overlay_opacity = 0.5
 	} = frontmatter;
 
 	// Validate background_image URL to prevent CSS injection
 	const safeBackgroundImage = sanitizeUrl(background_image);
 
 	const alignmentClasses = {
-		left: "text-left items-start",
-		center: "text-center items-center",
-		right: "text-right items-end",
+		left: 'text-left items-start',
+		center: 'text-center items-center',
+		right: 'text-right items-end'
 	};
 
 	const themeClasses = {
-		light: "bg-gradient-to-br from-gray-50 via-white to-gray-100",
-		dark: "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white",
-		auto: "bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900",
+		light: 'bg-gradient-to-br from-gray-50 via-white to-gray-100',
+		dark: 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white',
+		auto: 'bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900'
 	};
 
 	return (
 		<div
-			className={cn(
-				"w-full relative transition-colors duration-300",
-				themeClasses[theme],
-				className
-			)}
-			style={{ minHeight: min_height !== "auto" ? min_height : undefined }}
+			className={cn('w-full relative transition-colors duration-300', themeClasses[theme], className)}
+			style={{ minHeight: min_height !== 'auto' ? min_height : undefined }}
 		>
 			{/* Background Image */}
 			{safeBackgroundImage && (
@@ -288,10 +263,7 @@ export default function CustomHero({
 					className="absolute inset-0 bg-cover bg-center bg-no-repeat"
 					style={{ backgroundImage: `url(${safeBackgroundImage})` }}
 				>
-					<div
-						className="absolute inset-0 bg-black"
-						style={{ opacity: overlay_opacity }}
-					/>
+					<div className="absolute inset-0 bg-black" style={{ opacity: overlay_opacity }} />
 				</div>
 			)}
 
@@ -308,24 +280,16 @@ export default function CustomHero({
 			<div className="relative z-10 w-full">
 				<div className="pt-12 pb-8 sm:pt-16 sm:pb-12 lg:pt-20 lg:pb-16">
 					<Container maxWidth="2xl" padding="default">
-						<div
-							className={cn(
-								"flex flex-col",
-								alignmentClasses[alignment]
-							)}
-						>
+						<div className={cn('flex flex-col', alignmentClasses[alignment])}>
 							<div
 								className={cn(
-									"prose prose-slate dark:prose-invert max-w-none",
-									"prose-headings:mb-4 prose-p:mb-4",
-									"prose-a:no-underline",
-									safeBackgroundImage && "prose-headings:text-white prose-p:text-gray-200"
+									'prose prose-slate dark:prose-invert max-w-none',
+									'prose-headings:mb-4 prose-p:mb-4',
+									'prose-a:no-underline',
+									safeBackgroundImage && 'prose-headings:text-white prose-p:text-gray-200'
 								)}
 							>
-								<MDXRemote
-									source={content}
-									components={heroComponents}
-								/>
+								<MDXRemote source={content} components={heroComponents} />
 							</div>
 						</div>
 					</Container>

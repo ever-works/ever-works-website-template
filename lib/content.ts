@@ -64,8 +64,8 @@ async function safeReadFile(filepath: string, basePath: string): Promise<string>
  */
 function isValidUrl(url: string): boolean {
 	const trimmed = url.trim();
-	// Allow relative paths
-	if (trimmed.startsWith('/') || !trimmed.includes(':')) {
+	// Allow relative paths (starting with /)
+	if (trimmed.startsWith('/') && !trimmed.startsWith('//')) {
 		return true;
 	}
 	// Allow only http and https
@@ -89,17 +89,25 @@ function isValidCssSize(value: string): boolean {
 /**
  * Zod schema for validating CustomHeroFrontmatter from YAML
  */
-const customHeroFrontmatterSchema = z.object({
-	background_image: z.string().refine(isValidUrl, {
-		message: 'Invalid URL: must be http, https, or relative path'
-	}).optional(),
-	theme: z.enum(['light', 'dark', 'auto']).optional(),
-	alignment: z.enum(['left', 'center', 'right']).optional(),
-	min_height: z.string().refine(isValidCssSize, {
-		message: 'Invalid CSS size value'
-	}).optional(),
-	overlay_opacity: z.number().min(0).max(1).optional(),
-}).partial();
+const customHeroFrontmatterSchema = z
+	.object({
+		background_image: z
+			.string()
+			.refine(isValidUrl, {
+				message: 'Invalid URL: must be http, https, or relative path'
+			})
+			.optional(),
+		theme: z.enum(['light', 'dark', 'auto']).optional(),
+		alignment: z.enum(['left', 'center', 'right']).optional(),
+		min_height: z
+			.string()
+			.refine(isValidCssSize, {
+				message: 'Invalid CSS size value'
+			})
+			.optional(),
+		overlay_opacity: z.number().min(0).max(1).optional()
+	})
+	.partial();
 
 interface PrUpdate {
 	branch: string;
@@ -1272,10 +1280,7 @@ export async function fetchPageContent(
  * Supports locale-specific files (hero.en.md, hero.fr.md) with fallback
  * Parses frontmatter for theme, alignment, and background settings
  */
-export async function fetchHeroContent(
-	source: string,
-	locale: string = 'en'
-): Promise<CustomHeroContent | null> {
+export async function fetchHeroContent(source: string, locale: string = 'en'): Promise<CustomHeroContent | null> {
 	try {
 		// Ensure content is available (copies from build to runtime on Vercel)
 		const { ensureContentAvailable } = await import('./lib');
@@ -1349,7 +1354,7 @@ export async function fetchHeroContent(
 					theme: parsed.theme,
 					alignment: parsed.alignment,
 					min_height: parsed.min_height,
-					overlay_opacity: typeof parsed.overlay_opacity === 'number' ? parsed.overlay_opacity : undefined,
+					overlay_opacity: typeof parsed.overlay_opacity === 'number' ? parsed.overlay_opacity : undefined
 				});
 
 				if (validationResult.success) {
@@ -1359,7 +1364,7 @@ export async function fetchHeroContent(
 					console.warn(
 						'Invalid hero frontmatter for %s: %s',
 						source,
-						validationResult.error.issues.map(i => i.message).join(', ')
+						validationResult.error.issues.map((i) => i.message).join(', ')
 					);
 				}
 
