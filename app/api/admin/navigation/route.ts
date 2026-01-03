@@ -182,7 +182,7 @@ export async function GET(req: NextRequest) {
  *                       example: "About"
  *                     path:
  *                       type: string
- *                       description: URL path (must start with / for internal routes, or http:///https:// for external URLs)
+ *                       description: URL path (must start with / for internal routes, or "http://" or "https://" for external URLs)
  *                       minLength: 1
  *                       example: "/about"
  *           examples:
