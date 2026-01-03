@@ -75,7 +75,7 @@ export function SiteLogo({ size = 'md', className = '', showText = true, linkToH
 			const logoSrc = getLogoImage();
 			if (!logoSrc) return null;
 
-			// Use unoptimized prop for external URLs to bypass Next.js image optimization
+			// Use next/image with unoptimized for external URLs to avoid Next.js optimization issues
 			return (
 				<Image
 					src={logoSrc}
