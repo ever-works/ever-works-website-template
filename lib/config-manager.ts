@@ -43,7 +43,7 @@ async function getGit(): Promise<GitDependencies> {
 		try {
 			const [gitModule, httpModule, fsModule] = await Promise.all([
 				import('isomorphic-git').then((m) => m.default),
-				import('isomorphic-git/http/node'),
+				import('isomorphic-git/http/node').then((m) => m.default),
 				import('node:fs/promises')
 			]);
 
@@ -285,7 +285,25 @@ export class ConfigManager {
 				committer
 			});
 
-			// Push to GitHub (pushes to current branch, which should be the configured branch)
+			// Ensure we're on the correct branch before pushing
+			try {
+				const currentBranch = await git.currentBranch({
+					fs: gitFs,
+					dir: contentPath
+				});
+				if (currentBranch !== branch) {
+					// Switch to the configured branch if we're not already on it
+					await git.checkout({
+						fs: gitFs,
+						dir: contentPath,
+						ref: branch
+					});
+				}
+			} catch (checkoutError) {
+				console.warn(`⚠️ Could not checkout branch ${branch}, proceeding with push:`, checkoutError);
+			}
+
+			// Push to GitHub (pushes the current branch, which is now ensured to be the configured branch)
 			await git.push({
 				onAuth: () => auth,
 				fs: gitFs,

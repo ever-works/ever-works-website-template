@@ -143,6 +143,7 @@
 		"ITEMS_ASSIGNED": "Items assigned",
 		"ASSIGN_ITEMS": "Assign items",
 		"SELECT_ITEMS_DESCRIPTION": "Select which items belong to this collection.",
+		"THIS_COLLECTION": "this collection",
 		"SELECTED_COUNT": "{count} selected",
 		"SAVE_CHANGES": "Save changes",
 		"TOTAL": "total",
