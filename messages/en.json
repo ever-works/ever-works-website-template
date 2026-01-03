@@ -143,6 +143,7 @@
 		"ITEMS_ASSIGNED": "Items assigned",
 		"ASSIGN_ITEMS": "Assign items",
 		"SELECT_ITEMS_DESCRIPTION": "Select which items belong to this collection.",
+		"THIS_COLLECTION": "this collection",
 		"SELECTED_COUNT": "{count} selected",
 		"SAVE_CHANGES": "Save changes",
 		"TOTAL": "total",
@@ -3046,6 +3047,10 @@
 				"NO_DATA_DESC": "Start submitting content to see your activity calendar.",
 				"LESS": "Less",
 				"MORE": "More"
+			},
+
+			"STATUS_BREAKDOWN": {
+				"TITLE": "Submission Status"
 			},
 
 			"ENGAGEMENT_DISTRIBUTION": {
