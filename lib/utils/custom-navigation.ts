@@ -5,10 +5,10 @@ import { IntlErrorCode } from 'next-intl';
  */
 
 /**
- * Checks if a URL is external (starts with http:// or https://)
+ * Checks if a URL is external (starts with http://, https://, or //)
  */
 export function isExternalUrl(path: string): boolean {
-	return /^https?:\/\//i.test(path);
+	return /^(https?:)?\/\//i.test(path);
 }
 
 /**
