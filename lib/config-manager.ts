@@ -127,16 +127,20 @@ export class ConfigManager {
 	 */
 	private readConfig(): AppConfig {
 		try {
-			if (!fs.existsSync(this.configPath)) {
+			// Always recalculate path to avoid stale singleton issues
+			const currentPath = path.join(getContentPath(), 'config.yml');
+			this.configPath = currentPath;
+
+			if (!fs.existsSync(currentPath)) {
 				// Only warn in development when DATA_REPOSITORY is configured
 				// Suppress warnings during CI/linting since the code handles missing files gracefully
 				if (!this.shouldSuppressWarnings()) {
-					console.warn('Config file not found at:', this.configPath);
+					console.warn('Config file not found at:', currentPath);
 				}
 				return this.getDefaultConfig();
 			}
 
-			const fileContents = fs.readFileSync(this.configPath, 'utf8');
+			const fileContents = fs.readFileSync(currentPath, 'utf8');
 			const config = yaml.load(fileContents) as AppConfig;
 			return { ...this.getDefaultConfig(), ...config };
 		} catch (error) {
@@ -151,6 +155,10 @@ export class ConfigManager {
 	 */
 	private writeConfig(config: AppConfig, commitMessage?: string): boolean {
 		try {
+			// Always recalculate path to avoid stale singleton issues
+			const currentPath = path.join(getContentPath(), 'config.yml');
+			this.configPath = currentPath;
+
 			const yamlString = yaml.dump(config, {
 				indent: 2,
 				lineWidth: -1,
@@ -158,7 +166,7 @@ export class ConfigManager {
 				sortKeys: false
 			});
 
-			fs.writeFileSync(this.configPath, yamlString, 'utf8');
+			fs.writeFileSync(currentPath, yamlString, 'utf8');
 
 			// Queue Git operation to prevent concurrent writes
 			// Operations are serialized to avoid conflicts
