@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/lib/auth';
-import { getUserCurrency, updateUserCurrency } from '@/lib/services/currency.service';
+import { updateUserCurrency } from '@/lib/services/currency.service';
 import { SUPPORTED_CURRENCIES } from '@/lib/config/billing';
+import {
+	CountryHeaderProvider,
+	getCountryFromHeaders,
+	getCurrencyFromCountry
+} from '@/lib/services/currency-detection.service';
+import { Logger } from '@/lib/logger';
+const logger = Logger.create('currencyService');
 
 const currencyUpdateSchema = z.object({
 	currency: z
@@ -13,7 +20,13 @@ const currencyUpdateSchema = z.object({
 		.toUpperCase()
 		.refine((val) => SUPPORTED_CURRENCIES.includes(val as (typeof SUPPORTED_CURRENCIES)[number]), {
 			message: `Currency code must be a valid ISO 4217 code. Supported codes: ${SUPPORTED_CURRENCIES.join(', ')}`
-		})
+		}),
+	country: z
+		.string()
+		.trim()
+		.min(1, 'Country code is required')
+		.max(2, 'Country code must be 2 characters')
+		.toUpperCase()
 });
 
 /**
@@ -23,17 +36,22 @@ const currencyUpdateSchema = z.object({
 export async function GET(request: NextRequest) {
 	try {
 		const session = await auth();
-
 		if (!session?.user?.id) {
-			return NextResponse.json({ currency: 'USD' }, { status: 200 });
+			return NextResponse.json({ currency: 'USD', country: 'US' }, { status: 200 });
 		}
+		const { searchParams } = new URL(request.url);
+		const provider = (searchParams.get('provider') || 'smart') as CountryHeaderProvider;
+		const headers = request.headers;
 
-		const currency = await getUserCurrency(session.user.id, request);
+		const detectedCountry = getCountryFromHeaders(headers, provider);
+		const currency = detectedCountry ? getCurrencyFromCountry(detectedCountry) : 'USD';
 
-		return NextResponse.json({ currency });
+		console.log('detectedCountry', detectedCountry, 'currency', currency);
+
+		return NextResponse.json({ currency, country: detectedCountry });
 	} catch (error) {
-		console.error('[API] Error getting user currency:', error);
-		return NextResponse.json({ currency: 'USD' }, { status: 200 });
+		logger.error('Error getting user currency:', error);
+		return NextResponse.json({ currency: 'USD', country: 'US' }, { status: 200 });
 	}
 }
 
@@ -54,7 +72,7 @@ export async function PUT(request: NextRequest) {
 		try {
 			body = await request.json();
 		} catch (parseError) {
-			console.error('[API] Invalid JSON in currency update request:', parseError);
+			logger.error('Invalid JSON in currency update request:', parseError);
 			return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
 		}
 
@@ -66,17 +84,17 @@ export async function PUT(request: NextRequest) {
 			return NextResponse.json({ error: errorMessage }, { status: 400 });
 		}
 
-		const { currency } = validationResult.data;
+		const { currency, country } = validationResult.data;
 
-		const success = await updateUserCurrency(session.user.id, currency);
+		const success = await updateUserCurrency(session.user.id, currency, country);
 
 		if (!success) {
 			return NextResponse.json({ error: 'Failed to update currency' }, { status: 500 });
 		}
 
-		return NextResponse.json({ currency });
+		return NextResponse.json({ currency, country });
 	} catch (error) {
-		console.error('[API] Error updating user currency:', error);
+		logger.error('Error updating user currency:', error);
 		return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
 	}
 }

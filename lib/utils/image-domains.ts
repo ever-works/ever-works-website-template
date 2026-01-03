@@ -40,6 +40,11 @@ export function generateImageRemotePatterns() {
 			hostname: 'platform-lookaside.fbsbx.com',
 			pathname: '/platform/**'
 		},
+		// {
+		// 	protocol: 'https' as const,
+		// 	hostname: 'raw.githubusercontent.com',
+		// 	pathname: '/**'
+		// },
 		{
 			protocol: 'https' as const,
 			hostname: 'pbs.twimg.com',
@@ -132,7 +137,8 @@ export function isProblematicUrl(url: string) {
 		const u = new URL(url);
 		const host = u.hostname.toLowerCase();
 		const path = u.pathname.toLowerCase();
-		if ((host === 'flaticon.com' || host.endsWith('.flaticon.com')) && path.includes('/icone-gratuite/')) return true;
+		if ((host === 'flaticon.com' || host.endsWith('.flaticon.com')) && path.includes('/icone-gratuite/'))
+			return true;
 		if (u.search.includes('related_id=') || u.search.includes('origin=')) return true;
 		const hasImageExt = /\.(jpg|jpeg|png|gif|webp|svg|ico)$/i.test(path);
 		return !hasImageExt;
