@@ -169,7 +169,8 @@ export function useAdminItems(params: ItemsListParams = {}) {
     mutationFn: deleteItem,
     onSuccess: () => {
       toast.success('Item deleted successfully');
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items });
+      // Invalidate and refetch items list and stats
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items, refetchType: 'all' });
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to delete item');
@@ -181,7 +182,8 @@ export function useAdminItems(params: ItemsListParams = {}) {
     mutationFn: ({ id, data }: { id: string; data: ReviewItemRequest }) => reviewItem(id, data),
     onSuccess: (data) => {
       toast.success(`Item ${data.message || 'reviewed successfully'}`);
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items });
+      // Invalidate and refetch items list and stats
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items, refetchType: 'all' });
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to review item');

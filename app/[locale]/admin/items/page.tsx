@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@heroui/react";
 import { MultiStepItemForm } from "@/components/admin/items/multi-step-item-form";
 import { ItemRejectModal } from "@/components/admin/items/item-reject-modal";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
@@ -372,12 +373,25 @@ export default function AdminItemsPage() {
             {items.map((item) => {
               const statusColors = getStatusColor(item.status);
               const categories = Array.isArray(item.category) ? item.category : [item.category];
-              
+              const isProcessingThisItem = pendingItemId === item.id && (isApproving || isRejecting || isDeleting);
+
               return (
                 <div
                   key={item.id}
-                  className="group bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-theme-primary/30 hover:shadow-lg transition-all duration-300 overflow-hidden"
+                  className="group relative bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-theme-primary/30 hover:shadow-lg transition-all duration-300 overflow-hidden"
                 >
+                  {/* Loading overlay */}
+                  {isProcessingThisItem && (
+                    <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-xl flex items-center justify-center z-20 transition-opacity duration-300">
+                      <div className="flex flex-col items-center gap-2">
+                        <Spinner size="lg" color="primary" />
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {isApproving ? t('APPROVING') : isRejecting ? t('REJECTING') : t('DELETING')}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="p-6">
                     <div className="flex items-start justify-between">
                       {/* Left Section: Item Info */}
