@@ -229,6 +229,12 @@ export function useAdminItems(params: ItemsListParams = {}) {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items });
   }, [queryClient]);
 
+  // Per-action loading states for granular UI feedback
+  const isApproving = reviewItemMutation.isPending && reviewItemMutation.variables?.data.status === 'approved';
+  const isRejecting = reviewItemMutation.isPending && reviewItemMutation.variables?.data.status === 'rejected';
+  const isDeleting = deleteItemMutation.isPending;
+  const pendingItemId = reviewItemMutation.variables?.id || deleteItemMutation.variables || null;
+
   return {
     // Data
     items: itemsData?.items || [],
@@ -242,18 +248,24 @@ export function useAdminItems(params: ItemsListParams = {}) {
       approved: 0,
       rejected: 0,
     },
-    
+
     // Loading states
     isLoading,
     isStatsLoading,
     isSubmitting: createItemMutation.isPending || updateItemMutation.isPending || deleteItemMutation.isPending || reviewItemMutation.isPending,
-    
+
+    // Per-action loading states
+    isApproving,
+    isRejecting,
+    isDeleting,
+    pendingItemId,
+
     // Actions
     createItem: handleCreateItem,
     updateItem: handleUpdateItem,
     deleteItem: handleDeleteItem,
     reviewItem: handleReviewItem,
-    
+
     // Utility
     refetch,
     refreshData,
