@@ -153,15 +153,10 @@ export function CustomNavigationManager({ type, items, onUpdate, disabled = fals
 								className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 space-y-3"
 							>
 								<div className="flex items-start gap-3">
-									{/* Drag handle */}
-									<button
-										type="button"
-										className="mt-2 cursor-move text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-										disabled={disabled || isSaving}
-										title="Drag to reorder"
-									>
+									{/* Decorative drag handle indicator */}
+									<div className="mt-2 text-gray-400" aria-hidden="true">
 										<GripVertical className="w-5 h-5" />
-									</button>
+									</div>
 
 									{/* Move buttons */}
 									<div className="flex flex-col gap-1 mt-2">

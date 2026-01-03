@@ -3049,6 +3049,10 @@
 				"MORE": "More"
 			},
 
+			"STATUS_BREAKDOWN": {
+				"TITLE": "Submission Status"
+			},
+
 			"ENGAGEMENT_DISTRIBUTION": {
 				"TITLE": "Engagement Distribution",
 				"SUBTITLE": "How engagement is spread across your top items",

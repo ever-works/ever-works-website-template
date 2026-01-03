@@ -51,7 +51,7 @@ import { collectionRepository } from '@/lib/repositories/collection.repository';
  *                   example: 0
  *                 error:
  *                   type: string
- *                   description: "Error message describing what went wrong"
+ *                   description: "Generic error message (detailed errors are logged server-side only)"
  *                   example: "Failed to check collections existence"
  *               required: ["exists", "count", "error"]
  */
@@ -67,12 +67,14 @@ export async function GET(request: NextRequest) {
 			count: collections?.length || 0
 		});
 	} catch (error) {
+		// Log detailed error server-side for debugging
 		console.error('Error checking collections existence:', error);
+		// Return generic error message to client to avoid information disclosure
 		return NextResponse.json(
 			{
 				exists: false,
 				count: 0,
-				error: error instanceof Error ? error.message : 'Failed to check collections existence'
+				error: 'Failed to check collections existence'
 			},
 			{ status: 500 }
 		);

@@ -266,6 +266,28 @@ export class ConfigManager {
 				email: process.env.GIT_EMAIL || 'website@ever.works'
 			};
 
+			// Ensure we're on the correct branch BEFORE committing
+			// Fail fast if checkout fails to prevent committing to wrong branch
+			const currentBranch = await git.currentBranch({
+				fs: gitFs,
+				dir: contentPath
+			});
+			if (currentBranch !== branch) {
+				// Switch to the configured branch if we're not already on it
+				try {
+					await git.checkout({
+						fs: gitFs,
+						dir: contentPath,
+						ref: branch
+					});
+				} catch (checkoutError) {
+					throw new Error(
+						`Failed to checkout branch '${branch}' before commit. Cannot safely commit to ensure correct branch. ` +
+							`Current branch: ${currentBranch || 'unknown'}. Error: ${checkoutError instanceof Error ? checkoutError.message : String(checkoutError)}`
+					);
+				}
+			}
+
 			// Add config.yml to git
 			await git.add({
 				fs: gitFs,
@@ -276,7 +298,7 @@ export class ConfigManager {
 			// Create commit message
 			const commitMessage = customMessage || `Update config.yml - ${new Date().toISOString()}`;
 
-			// Commit changes
+			// Commit changes (now on the correct branch)
 			await git.commit({
 				fs: gitFs,
 				dir: contentPath,
@@ -284,24 +306,6 @@ export class ConfigManager {
 				author: committer,
 				committer
 			});
-
-			// Ensure we're on the correct branch before pushing
-			try {
-				const currentBranch = await git.currentBranch({
-					fs: gitFs,
-					dir: contentPath
-				});
-				if (currentBranch !== branch) {
-					// Switch to the configured branch if we're not already on it
-					await git.checkout({
-						fs: gitFs,
-						dir: contentPath,
-						ref: branch
-					});
-				}
-			} catch (checkoutError) {
-				console.warn(`⚠️ Could not checkout branch ${branch}, proceeding with push:`, checkoutError);
-			}
 
 			// Push to GitHub (pushes the current branch, which is now ensured to be the configured branch)
 			await git.push({

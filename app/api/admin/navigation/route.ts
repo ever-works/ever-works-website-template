@@ -6,10 +6,16 @@ import { getCachedApiSession } from '@/lib/auth/cached-session';
  * Validates that a navigation path is safe to use as a link href
  * Only allows paths starting with /, http://, or https://
  * This prevents XSS attacks via dangerous URL schemes like javascript:, data:, etc.
+ * Also prevents protocol-relative URLs (//evil.com) which browsers interpret as external URLs.
  */
 function isValidNavigationPath(path: string): boolean {
 	const trimmed = path.trim();
 	if (trimmed.length === 0) {
+		return false;
+	}
+
+	// Reject protocol-relative URLs (//evil.com) - browsers interpret these as external URLs
+	if (trimmed.startsWith('//')) {
 		return false;
 	}
 

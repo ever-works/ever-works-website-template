@@ -1,6 +1,7 @@
 'use client';
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { useTranslations } from 'next-intl';
 
 interface StatusBreakdownData {
 	status: 'Approved' | 'Pending' | 'Rejected';
@@ -23,6 +24,8 @@ const tooltipContentStyle = {
 };
 
 export function StatusBreakdown({ data, isLoading = false }: StatusBreakdownProps) {
+	const t = useTranslations('client.dashboard.STATUS_BREAKDOWN');
+
 	if (isLoading) {
 		return (
 			<div className="bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700 p-6">
@@ -36,7 +39,7 @@ export function StatusBreakdown({ data, isLoading = false }: StatusBreakdownProp
 
 	return (
 		<div className="bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700 p-6">
-			<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Submission Status</h3>
+			<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('TITLE')}</h3>
 			<ResponsiveContainer width="100%" height={250}>
 				<PieChart>
 					<Pie
