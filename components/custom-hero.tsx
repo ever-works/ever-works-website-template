@@ -16,17 +16,31 @@ function sanitizeUrl(url: string | undefined): string | null {
 
 	const trimmedUrl = url.trim();
 
-	// Allow relative paths (starting with /)
+	// Allow relative paths (starting with /, but not protocol-relative //)
 	if (trimmedUrl.startsWith('/') && !trimmedUrl.startsWith('//')) {
 		return trimmedUrl;
 	}
 
-	// Allow only http and https protocols
-	if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
-		return trimmedUrl;
+	// Block protocol-relative URLs (//evil.com)
+	if (trimmedUrl.startsWith('//')) {
+		return null;
 	}
 
-	// Block all other protocols (javascript:, data:, vbscript:, etc.)
+	// Check if URL contains a protocol (has : before any /)
+	const protocolIndex = trimmedUrl.indexOf(':');
+	const slashIndex = trimmedUrl.indexOf('/');
+	const hasProtocol = protocolIndex !== -1 && (slashIndex === -1 || protocolIndex < slashIndex);
+
+	if (hasProtocol) {
+		// Allow only http and https protocols
+		// Explicitly block all other protocols (mailto:, tel:, ftp:, javascript:, data:, etc.)
+		if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
+			return trimmedUrl;
+		}
+		return null;
+	}
+
+	// No protocol and doesn't start with / - not a valid URL for hero component
 	return null;
 }
 
