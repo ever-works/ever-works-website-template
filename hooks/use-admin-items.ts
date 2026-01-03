@@ -167,10 +167,10 @@ export function useAdminItems(params: ItemsListParams = {}) {
   // Delete item mutation
   const deleteItemMutation = useMutation({
     mutationFn: deleteItem,
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success('Item deleted successfully');
-      // Invalidate and refetch items list and stats
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items, refetchType: 'all' });
+      // Force refetch items list and stats
+      await queryClient.refetchQueries({ queryKey: QUERY_KEYS.items });
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to delete item');
@@ -180,10 +180,10 @@ export function useAdminItems(params: ItemsListParams = {}) {
   // Review item mutation
   const reviewItemMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: ReviewItemRequest }) => reviewItem(id, data),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       toast.success(`Item ${data.message || 'reviewed successfully'}`);
-      // Invalidate and refetch items list and stats
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items, refetchType: 'all' });
+      // Force refetch items list and stats
+      await queryClient.refetchQueries({ queryKey: QUERY_KEYS.items });
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to review item');
