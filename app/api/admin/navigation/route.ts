@@ -25,7 +25,9 @@ function isValidNavigationPath(path: string): boolean {
 	}
 
 	// Allow external URLs (starting with http:// or https://)
-	if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+	// URL schemes are case-insensitive per RFC 3986
+	const lowerPath = trimmed.toLowerCase();
+	if (lowerPath.startsWith('http://') || lowerPath.startsWith('https://')) {
 		return true;
 	}
 
