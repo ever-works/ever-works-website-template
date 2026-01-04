@@ -40,11 +40,6 @@ export function generateImageRemotePatterns() {
 			hostname: 'platform-lookaside.fbsbx.com',
 			pathname: '/platform/**'
 		},
-		// {
-		// 	protocol: 'https' as const,
-		// 	hostname: 'raw.githubusercontent.com',
-		// 	pathname: '/**'
-		// },
 		{
 			protocol: 'https' as const,
 			hostname: 'pbs.twimg.com',

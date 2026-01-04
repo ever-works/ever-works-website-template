@@ -31103,18 +31103,30 @@
                     },
                     "country": {
                       "type": "string",
-                      "description": "Updated ISO 3166-1 alpha-2 country code",
+                      "nullable": true,
+                      "description": "Updated ISO 3166-1 alpha-2 country code (or null if not provided)",
                       "example": "FR"
                     }
                   },
                   "required": [
-                    "currency",
-                    "country"
+                    "currency"
                   ]
                 },
-                "example": {
-                  "currency": "EUR",
-                  "country": "FR"
+                "examples": {
+                  "with_country": {
+                    "summary": "With country code",
+                    "value": {
+                      "currency": "EUR",
+                      "country": "FR"
+                    }
+                  },
+                  "without_country": {
+                    "summary": "Without country code",
+                    "value": {
+                      "currency": "EUR",
+                      "country": null
+                    }
+                  }
                 }
               }
             }
@@ -31145,10 +31157,10 @@
                       "error": "Currency code must be a valid ISO 4217 code. Supported codes: USD, EUR, GBP, JPY, CNY, CAD, AUD, CHF, INR, BRL, MXN, KRW, RUB, TRY, ZAR, SGD, HKD, NOK, SEK, DKK, PLN, CZK, HUF, NZD, THB, ILS, CLP, PHP, AED, ..."
                     }
                   },
-                  "invalid_country": {
-                    "summary": "Invalid country code",
+                  "invalid_country_format": {
+                    "summary": "Invalid country code format (if provided)",
                     "value": {
-                      "error": "Country code is required"
+                      "error": "Country code must be 2 characters"
                     }
                   }
                 }
