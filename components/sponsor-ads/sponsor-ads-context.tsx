@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, ReactNode, useMemo } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { useActiveSponsorAds } from '@/hooks/use-active-sponsor-ads';
 import type { SponsorAd } from '@/lib/db/schema';
 import type { ItemData } from '@/lib/content';
@@ -26,30 +26,21 @@ const SponsorAdsContext = createContext<SponsorAdsContextValue | null>(null);
 
 interface SponsorAdsProviderProps {
 	children: ReactNode;
-	items: ItemData[];
+	/** @deprecated items prop is no longer needed - data is fetched with items from API */
+	items?: ItemData[];
 	limit?: number;
 }
 
-export function SponsorAdsProvider({ children, items, limit = 10 }: SponsorAdsProviderProps) {
+/**
+ * Provider for sponsor ads context.
+ * Note: The items prop is deprecated and no longer needed since the API now returns
+ * sponsors with their associated item data (server-side join).
+ */
+export function SponsorAdsProvider({ children, limit = 10 }: SponsorAdsProviderProps) {
 	const { sponsors, isLoading, isError } = useActiveSponsorAds({ limit });
 
-	// Create a map for fast item lookup by slug
-	const itemsMap = useMemo(() => {
-		const map = new Map<string, ItemData>();
-		items.forEach((item) => map.set(item.slug, item));
-		return map;
-	}, [items]);
-
-	// Merge sponsors with their item data
-	const sponsorsWithItems = useMemo(() => {
-		return sponsors.map((sponsor) => ({
-			sponsor,
-			item: itemsMap.get(sponsor.itemSlug) || null,
-		}));
-	}, [sponsors, itemsMap]);
-
 	return (
-		<SponsorAdsContext.Provider value={{ sponsors: sponsorsWithItems, isLoading, isError }}>
+		<SponsorAdsContext.Provider value={{ sponsors, isLoading, isError }}>
 			{children}
 		</SponsorAdsContext.Provider>
 	);
