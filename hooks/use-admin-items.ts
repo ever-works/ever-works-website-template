@@ -141,6 +141,8 @@ export function useAdminItems(params: ItemsListParams = {}) {
 
   // Helper to refetch both items and stats
   const refetchAll = useCallback(async () => {
+    // Clear server client cache to ensure fresh data
+    serverClient.clearCache();
     await Promise.all([refetch(), refetchStats()]);
   }, [refetch, refetchStats]);
 
