@@ -16,6 +16,7 @@ import { useSelectedCheckoutProvider } from './use-selected-checkout-provider';
 import { useCurrencyContext } from '@/components/context/currency-provider';
 import { getLemonSqueezyPriceConfig } from '@/lib/config/billing/lemonsqueezy.config';
 import { usePaymentProvider } from '@/lib/utils/payment-provider';
+import { getCurrencySymbol } from '@/lib/utils/currency-format';
 
 export interface UsePricingSectionParams {
 	onSelectPlan?: (plan: PaymentPlan) => void;
@@ -86,6 +87,10 @@ export interface UsePricingSectionReturn extends UsePricingSectionState, UsePric
 	tBilling: any;
 	router: any;
 	loginModal: LoginModalStore;
+	// Currency-related
+	currency: string;
+	currencySymbol: string;
+	formatPrice: (amount: number) => string;
 }
 
 /**
@@ -208,6 +213,21 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	);
 
 	/**
+	 * Get the currency symbol for the current currency
+	 */
+	const currencySymbol = useMemo(() => getCurrencySymbol(currency), [currency]);
+
+	/**
+	 * Format a price amount with the current currency symbol
+	 */
+	const formatPrice = useCallback(
+		(amount: number): string => {
+			return `${currencySymbol}${amount}`;
+		},
+		[currencySymbol]
+	);
+
+	/**
 	 * Get savings text for yearly billing
 	 */
 	const getSavingsText = useCallback(
@@ -219,9 +239,9 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 			const monthlyTotal = plan.price * 12;
 			const yearlyPrice = calculatePrice(plan);
 			const savings = monthlyTotal - yearlyPrice;
-			return `Save $${savings}/year`;
+			return `Save ${currencySymbol}${savings}/year`;
 		},
-		[billingInterval, calculatePrice]
+		[billingInterval, calculatePrice, currencySymbol]
 	);
 
 	/**
@@ -413,6 +433,11 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 		t,
 		tBilling,
 		router,
-		loginModal
+		loginModal,
+
+		// Currency-related
+		currency,
+		currencySymbol,
+		formatPrice
 	} satisfies UsePricingSectionReturn;
 }

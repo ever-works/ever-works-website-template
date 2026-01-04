@@ -131,11 +131,16 @@ export const useCreateCheckoutSession = () => {
 
 			// Use currency-aware price ID if available, otherwise fallback to plan's price ID
 			let priceId: string | undefined;
+			let trialAmountId: string | undefined;
+
 			if (currencyPriceConfig?.priceId) {
 				priceId = currencyPriceConfig.priceId;
+				// Use currency-aware setup fee (trial amount) to avoid currency mismatch
+				trialAmountId = currencyPriceConfig.setupFeeId;
 			} else {
 				// Fallback to plan's configured price ID
 				priceId = billingInterval === PaymentInterval.YEARLY ? plan.annualPriceId : plan.stripePriceId;
+				trialAmountId = plan.trialAmountId;
 			}
 
 			if (!priceId) {
@@ -150,7 +155,7 @@ export const useCreateCheckoutSession = () => {
 				successUrl: `${window.location.origin}/pricing/success?session_id={CHECKOUT_SESSION_ID}`,
 				cancelUrl: `${window.location.origin}/pricing?cancelled=true`,
 				customerId: user.id,
-				trialAmountId: plan.trialAmountId,
+				trialAmountId,
 				isAuthorizedTrialAmount: plan.isAuthorizedTrialAmount,
 				metadata: {
 					planId: plan.id,
