@@ -125,6 +125,21 @@ export function Select({
     };
   }, [isOpen]);
 
+  // Close dropdown on scroll when using portal (prevents misalignment)
+  React.useEffect(() => {
+    if (!isOpen || !usePortal) return;
+
+    const handleScroll = () => {
+      setIsOpen(false);
+    };
+
+    window.addEventListener('scroll', handleScroll, { capture: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll, { capture: true });
+    };
+  }, [isOpen, usePortal]);
+
   const handleSelectionChange = (keys: string[]) => {
     setInternalSelectedKeys(keys);
     onSelectionChange?.(keys);
