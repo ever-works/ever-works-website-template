@@ -11,7 +11,6 @@ import {
 	type NewSponsorAd,
 	type SponsorAdStatusValues,
 } from "@/lib/db/schema";
-import { SponsorAdPricing } from "@/lib/constants";
 import {
 	getSponsorAdWeeklyPrice,
 	getSponsorAdMonthlyPrice,
@@ -341,18 +340,15 @@ export class SponsorAdService {
 
 	/**
 	 * Get amount for interval
-	 * Uses configurable pricing from settings with fallback to constants
+	 * Uses configurable pricing from settings (getSponsorAdWeeklyPrice/getSponsorAdMonthlyPrice
+	 * already have built-in defaults, so no additional fallback needed)
 	 */
 	getAmountForInterval(interval: string): number {
 		if (interval === SponsorAdInterval.WEEKLY) {
-			// Try to get configurable price, fallback to constant
-			const configuredPrice = getSponsorAdWeeklyPrice();
-			return configuredPrice ?? SponsorAdPricing.WEEKLY;
+			return getSponsorAdWeeklyPrice();
 		}
 		if (interval === SponsorAdInterval.MONTHLY) {
-			// Try to get configurable price, fallback to constant
-			const configuredPrice = getSponsorAdMonthlyPrice();
-			return configuredPrice ?? SponsorAdPricing.MONTHLY;
+			return getSponsorAdMonthlyPrice();
 		}
 		throw new Error(`Invalid interval: ${interval}`);
 	}
