@@ -168,7 +168,10 @@ async function handlePaymentSucceeded(data: any) {
 		const baseEmailData = {
 			customerName: customerInfo.customerName,
 			customerEmail: customerInfo.customerEmail,
-			amount: formatAmount(data.total / 100), // Convert cents to dollars
+			// Note: formatAmount expects cents and handles conversion internally (divides by 100).
+			// LemonSqueezy API returns amounts in cents, so pass data.total directly.
+			// Previously had "data.total / 100" which caused double division (amounts 100× too small).
+			amount: formatAmount(data.total, data.currency),
 			currency: data.currency?.toUpperCase() || 'USD',
 			paymentMethod: paymentMethod,
 			transactionId: data.id,
