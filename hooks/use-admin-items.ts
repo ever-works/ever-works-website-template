@@ -224,14 +224,18 @@ export function useAdminItems(params: ItemsListParams = {}) {
   }, [reviewItemMutation, refetchAll]);
 
   const refreshData = useCallback(() => {
-    refetchAll();
+    return refetchAll();
   }, [refetchAll]);
 
   // Per-action loading states for granular UI feedback
   const isApproving = reviewItemMutation.isPending && reviewItemMutation.variables?.data.status === 'approved';
   const isRejecting = reviewItemMutation.isPending && reviewItemMutation.variables?.data.status === 'rejected';
   const isDeleting = deleteItemMutation.isPending;
-  const pendingItemId = reviewItemMutation.variables?.id || deleteItemMutation.variables || null;
+  // Only return pendingItemId when a mutation is actually pending to avoid stale values
+  const pendingItemId =
+    (reviewItemMutation.isPending ? reviewItemMutation.variables?.id : null) ||
+    (deleteItemMutation.isPending ? deleteItemMutation.variables : null) ||
+    null;
 
   return {
     // Data
