@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Layout, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
@@ -16,11 +16,17 @@ interface SelectLayoutProps {
 
 const SelectLayout: React.FC<SelectLayoutProps> = ({ className, disabled = false }) => {
 	const { layoutHome, setLayoutHome } = useLayoutTheme();
-	const { theme, resolvedTheme } = useTheme();
+	const { resolvedTheme } = useTheme();
 	const t = useTranslations('common');
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	// Determine if we're in dark mode
-	const isDark = resolvedTheme === 'dark' || (theme === 'system' && resolvedTheme === 'dark');
+	// Use false as default during SSR to avoid hydration mismatch
+	const isDark = mounted && resolvedTheme === 'dark';
 
 	const layouts = useMemo(
 		() => [

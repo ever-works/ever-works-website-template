@@ -366,13 +366,13 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 									{t('SPONSOR_STARTING_FROM')}
 								</div>
 								<div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-									${SponsorAdPricing.WEEKLY / 100}
+									${SponsorAdPricing.WEEKLY}
 									<span className="text-base font-normal text-gray-500 dark:text-gray-400">
 										/{t('SPONSOR_WEEK')}
 									</span>
 								</div>
 								<div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-									{t('SPONSOR_OR')} ${SponsorAdPricing.MONTHLY / 100}/{t('SPONSOR_MONTH')}
+									{t('SPONSOR_OR')} ${SponsorAdPricing.MONTHLY}/{t('SPONSOR_MONTH')}
 								</div>
 								<Link href="/sponsor">
 									<Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-2.5 px-6 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">

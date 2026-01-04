@@ -15,6 +15,7 @@ interface SettingSelectProps {
 	onChange: (value: string) => void;
 	options: SelectOption[];
 	disabled?: boolean;
+	usePortal?: boolean;
 }
 
 export function SettingSelect({
@@ -23,7 +24,8 @@ export function SettingSelect({
 	value,
 	onChange,
 	options,
-	disabled = false
+	disabled = false,
+	usePortal = false
 }: SettingSelectProps) {
 	const handleSelectionChange = (keys: string[]) => {
 		if (keys.length > 0) {
@@ -46,6 +48,7 @@ export function SettingSelect({
 				onSelectionChange={handleSelectionChange}
 				disabled={disabled}
 				className="max-w-md"
+				usePortal={usePortal}
 			>
 				{options.map((option) => (
 					<SelectItem key={option.value} value={option.value}>

@@ -43,7 +43,7 @@ async function getGit(): Promise<GitDependencies> {
 		try {
 			const [gitModule, httpModule, fsModule] = await Promise.all([
 				import('isomorphic-git').then((m) => m.default),
-				import('isomorphic-git/http/node'),
+				import('isomorphic-git/http/node').then((m) => m.default),
 				import('node:fs/promises')
 			]);
 
@@ -127,16 +127,20 @@ export class ConfigManager {
 	 */
 	private readConfig(): AppConfig {
 		try {
-			if (!fs.existsSync(this.configPath)) {
+			// Always recalculate path to avoid stale singleton issues
+			const currentPath = path.join(getContentPath(), 'config.yml');
+			this.configPath = currentPath;
+
+			if (!fs.existsSync(currentPath)) {
 				// Only warn in development when DATA_REPOSITORY is configured
 				// Suppress warnings during CI/linting since the code handles missing files gracefully
 				if (!this.shouldSuppressWarnings()) {
-					console.warn('Config file not found at:', this.configPath);
+					console.warn('Config file not found at:', currentPath);
 				}
 				return this.getDefaultConfig();
 			}
 
-			const fileContents = fs.readFileSync(this.configPath, 'utf8');
+			const fileContents = fs.readFileSync(currentPath, 'utf8');
 			const config = yaml.load(fileContents) as AppConfig;
 			return { ...this.getDefaultConfig(), ...config };
 		} catch (error) {
@@ -151,6 +155,10 @@ export class ConfigManager {
 	 */
 	private writeConfig(config: AppConfig, commitMessage?: string): boolean {
 		try {
+			// Always recalculate path to avoid stale singleton issues
+			const currentPath = path.join(getContentPath(), 'config.yml');
+			this.configPath = currentPath;
+
 			const yamlString = yaml.dump(config, {
 				indent: 2,
 				lineWidth: -1,
@@ -158,7 +166,7 @@ export class ConfigManager {
 				sortKeys: false
 			});
 
-			fs.writeFileSync(this.configPath, yamlString, 'utf8');
+			fs.writeFileSync(currentPath, yamlString, 'utf8');
 
 			// Queue Git operation to prevent concurrent writes
 			// Operations are serialized to avoid conflicts
@@ -266,6 +274,28 @@ export class ConfigManager {
 				email: process.env.GIT_EMAIL || 'website@ever.works'
 			};
 
+			// Ensure we're on the correct branch BEFORE committing
+			// Fail fast if checkout fails to prevent committing to wrong branch
+			const currentBranch = await git.currentBranch({
+				fs: gitFs,
+				dir: contentPath
+			});
+			if (currentBranch !== branch) {
+				// Switch to the configured branch if we're not already on it
+				try {
+					await git.checkout({
+						fs: gitFs,
+						dir: contentPath,
+						ref: branch
+					});
+				} catch (checkoutError) {
+					throw new Error(
+						`Failed to checkout branch '${branch}' before commit. Cannot safely commit to ensure correct branch. ` +
+							`Current branch: ${currentBranch || 'unknown'}. Error: ${checkoutError instanceof Error ? checkoutError.message : String(checkoutError)}`
+					);
+				}
+			}
+
 			// Add config.yml to git
 			await git.add({
 				fs: gitFs,
@@ -276,7 +306,7 @@ export class ConfigManager {
 			// Create commit message
 			const commitMessage = customMessage || `Update config.yml - ${new Date().toISOString()}`;
 
-			// Commit changes
+			// Commit changes (now on the correct branch)
 			await git.commit({
 				fs: gitFs,
 				dir: contentPath,
@@ -285,7 +315,7 @@ export class ConfigManager {
 				committer
 			});
 
-			// Push to GitHub (pushes to current branch, which should be the configured branch)
+			// Push to GitHub (pushes the current branch, which is now ensured to be the configured branch)
 			await git.push({
 				onAuth: () => auth,
 				fs: gitFs,

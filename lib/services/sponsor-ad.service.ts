@@ -11,7 +11,11 @@ import {
 	type NewSponsorAd,
 	type SponsorAdStatusValues,
 } from "@/lib/db/schema";
-import { SponsorAdPricing } from "@/lib/constants";
+import {
+	getSponsorAdWeeklyPrice,
+	getSponsorAdMonthlyPrice,
+	getSponsorAdCurrency,
+} from "@/lib/utils/settings";
 import type {
 	SponsorAdListOptions,
 	SponsorAdStats,
@@ -335,16 +339,25 @@ export class SponsorAdService {
 	// ===================== Helper Methods =====================
 
 	/**
-	 * Get amount in cents for interval
+	 * Get amount for interval
+	 * Uses configurable pricing from settings (getSponsorAdWeeklyPrice/getSponsorAdMonthlyPrice
+	 * already have built-in defaults, so no additional fallback needed)
 	 */
 	getAmountForInterval(interval: string): number {
 		if (interval === SponsorAdInterval.WEEKLY) {
-			return SponsorAdPricing.WEEKLY;
+			return getSponsorAdWeeklyPrice();
 		}
 		if (interval === SponsorAdInterval.MONTHLY) {
-			return SponsorAdPricing.MONTHLY;
+			return getSponsorAdMonthlyPrice();
 		}
 		throw new Error(`Invalid interval: ${interval}`);
+	}
+
+	/**
+	 * Get configured currency for sponsor ads
+	 */
+	getCurrency(): string {
+		return getSponsorAdCurrency();
 	}
 
 	/**
@@ -367,12 +380,12 @@ export class SponsorAdService {
 	/**
 	 * Format amount for display
 	 */
-	formatAmount(amountInCents: number, currency: string = "usd"): string {
+	formatAmount(amount: number, currency: string = "usd"): string {
 		const formatter = new Intl.NumberFormat("en-US", {
 			style: "currency",
 			currency: currency.toUpperCase(),
 		});
-		return formatter.format(amountInCents / 100);
+		return formatter.format(amount);
 	}
 
 	/**

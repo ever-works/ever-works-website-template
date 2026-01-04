@@ -358,7 +358,7 @@ export default function AdminCollectionsPage() {
 			<AssignItemsModal
 				isOpen={assignDisclosure.isOpen}
 				onClose={assignDisclosure.onClose}
-				collectionName={selectedCollection?.name || 'this collection'}
+				collectionName={selectedCollection?.name || t('THIS_COLLECTION')}
 				initialSelected={assignInitialIds}
 				onSave={handleAssignSave}
 			/>
