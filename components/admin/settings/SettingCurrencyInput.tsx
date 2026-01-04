@@ -3,6 +3,7 @@
 import { Label } from '@/components/ui/label';
 import { useState, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import { getCurrencySymbol } from '@/lib/utils/currency-format';
 
 interface SettingCurrencyInputProps {
 	label: string;
@@ -40,20 +41,6 @@ function parseFormattedValue(value: string): number {
 	const cleaned = value.replace(/,/g, '');
 	const parsed = parseFloat(cleaned);
 	return isNaN(parsed) ? 0 : parsed;
-}
-
-/**
- * Gets the currency symbol for a given currency code
- */
-function getCurrencySymbol(currency: string): string {
-	const symbols: Record<string, string> = {
-		USD: '$',
-		EUR: '€',
-		GBP: '£',
-		CAD: 'C$',
-		AUD: 'A$',
-	};
-	return symbols[currency] || currency;
 }
 
 export function SettingCurrencyInput({
