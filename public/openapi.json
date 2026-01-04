@@ -30984,10 +30984,17 @@
                     }
                   },
                   "default": {
-                    "summary": "Default fallback",
+                    "summary": "Default fallback (also used on error)",
                     "value": {
                       "currency": "USD",
-                      "country": "US"
+                      "country": null
+                    }
+                  },
+                  "error_fallback": {
+                    "summary": "Error fallback - always returns 200",
+                    "value": {
+                      "currency": "USD",
+                      "country": null
                     }
                   }
                 }
@@ -30995,7 +31002,7 @@
             }
           },
           "500": {
-            "description": "Internal server error - defaults to USD",
+            "description": "Internal server error - defaults to USD with country: null",
             "content": {
               "application/json": {
                 "schema": {
@@ -31007,7 +31014,8 @@
                     },
                     "country": {
                       "type": "string",
-                      "example": "US"
+                      "nullable": true,
+                      "example": null
                     }
                   }
                 }
@@ -31036,22 +31044,22 @@
                 "properties": {
                   "currency": {
                     "type": "string",
-                    "minLength": 1,
+                    "minLength": 3,
                     "maxLength": 3,
                     "description": "ISO 4217 currency code (3 characters, uppercase)",
                     "example": "EUR"
                   },
                   "country": {
                     "type": "string",
-                    "minLength": 1,
+                    "nullable": true,
+                    "minLength": 2,
                     "maxLength": 2,
-                    "description": "ISO 3166-1 alpha-2 country code (2 characters, uppercase)",
+                    "description": "ISO 3166-1 alpha-2 country code (2 characters, uppercase). Optional - can be null if country is not available or not provided.",
                     "example": "FR"
                   }
                 },
                 "required": [
-                  "currency",
-                  "country"
+                  "currency"
                 ]
               },
               "examples": {
