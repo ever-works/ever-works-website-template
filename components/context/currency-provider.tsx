@@ -18,8 +18,6 @@ const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined
  */
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
 	const { currency, country, isLoading, updateCurrency } = useCurrency();
-	console.log('country', country, 'currency', currency);
-
 	return (
 		<CurrencyContext.Provider
 			value={{
