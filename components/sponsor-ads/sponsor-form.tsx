@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Card, CardBody, Button } from "@heroui/react";
 import { Megaphone, Calendar, CheckCircle, AlertCircle, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatCurrencyAmount } from "@/lib/utils/currency-format";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { SearchableSelect, type SearchableSelectItem } from "@/components/ui/searchable-select";
@@ -13,7 +14,7 @@ import type { ItemData } from "@/lib/content";
 
 // ######################### Types #########################
 
-interface PricingConfig {
+interface SponsorPricingConfig {
 	weeklyPrice: number;
 	monthlyPrice: number;
 	currency: string;
@@ -23,7 +24,7 @@ interface SponsorFormProps {
 	items: ItemData[];
 	locale: string;
 	onSuccess?: (sponsorAdId: string) => void;
-	pricingConfig: PricingConfig;
+	pricingConfig: SponsorPricingConfig;
 }
 
 type IntervalType = "weekly" | "monthly";
@@ -51,14 +52,7 @@ const SUBMIT_BUTTON = "w-full bg-linear-to-r from-blue-600 to-indigo-600 text-wh
 
 // ######################### Helper Functions #########################
 
-function formatCurrency(amount: number, currency: string = "USD"): string {
-	return new Intl.NumberFormat("en-US", {
-		style: "currency",
-		currency: currency.toUpperCase(),
-	}).format(amount);
-}
-
-function getPricingOptions(pricingConfig: PricingConfig): PricingOption[] {
+function getPricingOptions(pricingConfig: SponsorPricingConfig): PricingOption[] {
 	return [
 		{
 			id: "weekly",
@@ -257,7 +251,7 @@ export function SponsorForm({ items, locale, onSuccess, pricingConfig }: Sponsor
 								</div>
 								<div className="flex items-baseline gap-1 mb-2">
 									<span className="text-3xl font-bold text-gray-900 dark:text-white">
-										{formatCurrency(option.price, pricingConfig.currency)}
+										{formatCurrencyAmount(option.price, pricingConfig.currency)}
 									</span>
 								</div>
 								<p className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
@@ -311,7 +305,7 @@ export function SponsorForm({ items, locale, onSuccess, pricingConfig }: Sponsor
 										</div>
 									</div>
 									<p className="text-2xl font-bold text-gray-900 dark:text-white">
-										{formatCurrency(selectedPricing.price, pricingConfig.currency)}
+										{formatCurrencyAmount(selectedPricing.price, pricingConfig.currency)}
 									</p>
 								</div>
 							</div>
