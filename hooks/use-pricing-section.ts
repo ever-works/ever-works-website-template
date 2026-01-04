@@ -16,7 +16,7 @@ import { useSelectedCheckoutProvider } from './use-selected-checkout-provider';
 import { useCurrencyContext } from '@/components/context/currency-provider';
 import { getLemonSqueezyPriceConfig } from '@/lib/config/billing/lemonsqueezy.config';
 import { usePaymentProvider } from '@/lib/utils/payment-provider';
-import { getCurrencySymbol } from '@/lib/utils/currency-format';
+import { getCurrencySymbol, formatAmountWithSymbol } from '@/lib/utils/currency-format';
 
 export interface UsePricingSectionParams {
 	onSelectPlan?: (plan: PaymentPlan) => void;
@@ -219,12 +219,14 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 
 	/**
 	 * Format a price amount with the current currency symbol
+	 * Uses formatAmountWithSymbol for proper decimal handling per currency
+	 * (e.g., JPY uses 0 decimals, USD uses 2)
 	 */
 	const formatPrice = useCallback(
 		(amount: number): string => {
-			return `${currencySymbol}${amount}`;
+			return formatAmountWithSymbol(amount, currency);
 		},
-		[currencySymbol]
+		[currency]
 	);
 
 	/**
@@ -239,9 +241,9 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 			const monthlyTotal = plan.price * 12;
 			const yearlyPrice = calculatePrice(plan);
 			const savings = monthlyTotal - yearlyPrice;
-			return `Save ${currencySymbol}${savings}/year`;
+			return `Save ${formatAmountWithSymbol(savings, currency)}/year`;
 		},
-		[billingInterval, calculatePrice, currencySymbol]
+		[billingInterval, calculatePrice, currency]
 	);
 
 	/**
