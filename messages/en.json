@@ -2990,6 +2990,41 @@
 			"NEW_SUBMISSION": "New Submission",
 			"TRASH": "Trash"
 		},
+		"sponsorships": {
+			"PAGE_TITLE": "My Sponsorships",
+			"PAGE_DESCRIPTION": "Track and manage your sponsor ad submissions.",
+			"YOUR_SPONSORSHIPS": "Your Sponsorships",
+			"NEW_SPONSORSHIP": "New Sponsorship",
+
+			"TOTAL_SPONSORSHIPS": "Total",
+			"ACTIVE": "Active",
+			"PENDING": "Pending",
+			"EXPIRED": "Expired",
+
+			"STATUS_ALL": "All",
+			"STATUS_ACTIVE": "Active",
+			"STATUS_PENDING": "Pending",
+			"STATUS_EXPIRED": "Expired",
+			"STATUS_CANCELLED": "Cancelled",
+			"STATUS_PENDING_PAYMENT": "Awaiting Payment",
+			"STATUS_PENDING_REVIEW": "Under Review",
+			"STATUS_REJECTED": "Rejected",
+
+			"INTERVAL_WEEKLY": "Weekly",
+			"INTERVAL_MONTHLY": "Monthly",
+
+			"SEARCH_PLACEHOLDER": "Search by item name...",
+			"EMPTY_STATE_TITLE": "No sponsorships yet",
+			"EMPTY_STATE_DESC": "Boost your project's visibility by creating a sponsorship. Featured items get prominent placement across the directory.",
+			"CREATE_FIRST_SPONSORSHIP": "Create Your First Sponsorship",
+
+			"SHOWING_PAGE": "Page {page} of {totalPages}",
+			"PREVIOUS": "Previous",
+			"NEXT": "Next",
+
+			"REJECTION_REASON": "Reason",
+			"CANCEL_REASON": "Cancellation reason"
+		},
 		"dashboard": {
 			"TITLE": "Dashboard",
 			"WELCOME_BACK": "Welcome back, {name}! Here's your activity overview.",

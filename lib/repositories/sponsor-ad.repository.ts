@@ -403,6 +403,95 @@ export async function getSponsorAdStats(): Promise<SponsorAdStats> {
 }
 
 /**
+ * Get sponsor ad statistics for a specific user
+ */
+export async function getSponsorAdStatsByUser(userId: string): Promise<SponsorAdStats> {
+	// Get counts by status for this user
+	const statusCounts = await db
+		.select({
+			status: sponsorAds.status,
+			count: count(),
+		})
+		.from(sponsorAds)
+		.where(eq(sponsorAds.userId, userId))
+		.groupBy(sponsorAds.status);
+
+	// Get counts by interval for this user
+	const intervalCounts = await db
+		.select({
+			interval: sponsorAds.interval,
+			count: count(),
+		})
+		.from(sponsorAds)
+		.where(eq(sponsorAds.userId, userId))
+		.groupBy(sponsorAds.interval);
+
+	// Get revenue from active sponsors for this user
+	const revenueResult = await db
+		.select({
+			totalRevenue: sql<number>`COALESCE(SUM(${sponsorAds.amount}), 0)`,
+		})
+		.from(sponsorAds)
+		.where(
+			and(
+				eq(sponsorAds.userId, userId),
+				eq(sponsorAds.status, SponsorAdStatus.ACTIVE)
+			)
+		);
+
+	// Build stats object
+	const overview = {
+		total: 0,
+		pendingPayment: 0,
+		pending: 0,
+		active: 0,
+		rejected: 0,
+		expired: 0,
+		cancelled: 0,
+	};
+
+	// Map status to overview keys
+	const statusMap: Record<string, keyof typeof overview> = {
+		pending_payment: 'pendingPayment',
+		pending: 'pending',
+		active: 'active',
+		rejected: 'rejected',
+		expired: 'expired',
+		cancelled: 'cancelled',
+	};
+
+	for (const row of statusCounts) {
+		overview.total += row.count;
+		if (row.status && statusMap[row.status]) {
+			overview[statusMap[row.status]] = row.count;
+		}
+	}
+
+	const byInterval = {
+		weekly: 0,
+		monthly: 0,
+	};
+
+	for (const row of intervalCounts) {
+		if (row.interval === "weekly") {
+			byInterval.weekly = row.count;
+		} else if (row.interval === "monthly") {
+			byInterval.monthly = row.count;
+		}
+	}
+
+	return {
+		overview,
+		byInterval,
+		revenue: {
+			totalRevenue: Number(revenueResult[0]?.totalRevenue || 0),
+			weeklyRevenue: 0,
+			monthlyRevenue: 0,
+		},
+	};
+}
+
+/**
  * Check if user has pending sponsor ad for an item
  * Checks both PENDING_PAYMENT and PENDING statuses
  */
