@@ -95,6 +95,8 @@ export default function AdminItemsPage() {
   };
 
   const handleRejectConfirm = async () => {
+    // Prevent multiple clicks while rejecting
+    if (isRejecting) return;
     if (!selectedItemForReject || rejectionReason.length < 10) return;
 
     const success = await reviewItem(selectedItemForReject.id, 'rejected', rejectionReason);
