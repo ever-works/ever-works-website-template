@@ -5,6 +5,7 @@ import { useCurrency, type UpdateCurrencyOptions } from '@/hooks/use-currency';
 
 interface CurrencyContextType {
 	currency: string;
+	country: string | null;
 	isLoading: boolean;
 	updateCurrency: (currency: string, options?: UpdateCurrencyOptions) => void;
 }
@@ -16,12 +17,12 @@ const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined
  * Provides currency context to the entire application
  */
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-	const { currency, isLoading, updateCurrency } = useCurrency();
-
+	const { currency, country, isLoading, updateCurrency } = useCurrency();
 	return (
 		<CurrencyContext.Provider
 			value={{
 				currency,
+				country,
 				isLoading,
 				updateCurrency
 			}}

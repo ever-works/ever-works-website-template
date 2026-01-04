@@ -30464,6 +30464,743 @@
           }
         }
       }
+    },
+    "/api/admin/navigation": {
+      "get": {
+        "summary": "Get custom navigation configuration",
+        "description": "Retrieves custom_header and custom_footer navigation items from config.yml. Admin access required.",
+        "tags": [
+          "Admin - Navigation"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Navigation configuration retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "custom_header": {
+                      "type": "array",
+                      "description": "Custom header navigation items",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string",
+                            "description": "Display label (plain text or translation key)",
+                            "example": "About"
+                          },
+                          "path": {
+                            "type": "string",
+                            "description": "URL path (must start with /, http://, or https://)",
+                            "example": "/about"
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "path"
+                        ]
+                      }
+                    },
+                    "custom_footer": {
+                      "type": "array",
+                      "description": "Custom footer navigation items",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string",
+                            "description": "Display label (plain text or translation key)",
+                            "example": "GitHub"
+                          },
+                          "path": {
+                            "type": "string",
+                            "description": "URL path (must start with /, http://, or https://)",
+                            "example": "https://github.com/example"
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "path"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "with_items": {
+                    "summary": "Navigation with custom items",
+                    "value": {
+                      "custom_header": [
+                        {
+                          "label": "About",
+                          "path": "/about"
+                        },
+                        {
+                          "label": "Documentation",
+                          "path": "/pages/docs"
+                        }
+                      ],
+                      "custom_footer": [
+                        {
+                          "label": "GitHub",
+                          "path": "https://github.com/example"
+                        }
+                      ]
+                    }
+                  },
+                  "empty": {
+                    "summary": "Empty navigation (default)",
+                    "value": {
+                      "custom_header": [],
+                      "custom_footer": []
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to fetch navigation"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update custom navigation configuration",
+        "description": "Updates custom_header or custom_footer navigation items in config.yml. Validates path format to prevent XSS attacks. Only paths starting with /, http://, or https:// are allowed. Admin access required.",
+        "tags": [
+          "Admin - Navigation"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "type",
+                  "items"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "header",
+                      "footer"
+                    ],
+                    "description": "Type of navigation to update",
+                    "example": "header"
+                  },
+                  "items": {
+                    "type": "array",
+                    "description": "Array of navigation items",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "label",
+                        "path"
+                      ],
+                      "properties": {
+                        "label": {
+                          "type": "string",
+                          "description": "Display label (plain text or i18n translation key like \"footer.PRIVACY_POLICY\")",
+                          "minLength": 1,
+                          "example": "About"
+                        },
+                        "path": {
+                          "type": "string",
+                          "description": "URL path (must start with / for internal routes, or \"http://\" or \"https://\" for external URLs)",
+                          "minLength": 1,
+                          "example": "/about"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "header_navigation": {
+                  "summary": "Update header navigation",
+                  "value": {
+                    "type": "header",
+                    "items": [
+                      {
+                        "label": "About",
+                        "path": "/about"
+                      },
+                      {
+                        "label": "Documentation",
+                        "path": "/pages/docs"
+                      },
+                      {
+                        "label": "Blog",
+                        "path": "https://blog.example.com"
+                      }
+                    ]
+                  }
+                },
+                "footer_navigation": {
+                  "summary": "Update footer navigation",
+                  "value": {
+                    "type": "footer",
+                    "items": [
+                      {
+                        "label": "GitHub",
+                        "path": "https://github.com/example"
+                      },
+                      {
+                        "label": "footer.PRIVACY_POLICY",
+                        "path": "/pages/privacy-policy"
+                      }
+                    ]
+                  }
+                },
+                "empty_navigation": {
+                  "summary": "Clear navigation (empty array)",
+                  "value": {
+                    "type": "header",
+                    "items": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Navigation updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "header",
+                        "footer"
+                      ],
+                      "example": "header"
+                    },
+                    "items": {
+                      "type": "array",
+                      "description": "Updated navigation items",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "type": "header",
+                  "items": [
+                    {
+                      "label": "About",
+                      "path": "/about"
+                    },
+                    {
+                      "label": "Documentation",
+                      "path": "/pages/docs"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalid_type": {
+                    "value": {
+                      "error": "Type must be \"header\" or \"footer\""
+                    }
+                  },
+                  "invalid_items": {
+                    "value": {
+                      "error": "Items must be an array"
+                    }
+                  },
+                  "invalid_item_structure": {
+                    "value": {
+                      "error": "Each item must have non-empty \"label\" and \"path\" string fields"
+                    }
+                  },
+                  "invalid_path_format": {
+                    "value": {
+                      "error": "Invalid path format. Paths must start with \"/\" for internal routes or \"http://\"/\"https://\" for external URLs."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to update navigation"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/collections/exists": {
+      "get": {
+        "tags": [
+          "Collections"
+        ],
+        "summary": "Check if collections exist",
+        "description": "Checks if there are any active collections available in the system. Returns a boolean indicating existence and the count of active collections. This is a public endpoint that doesn't require authentication.",
+        "responses": {
+          "200": {
+            "description": "Collections existence checked successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "exists": {
+                      "type": "boolean",
+                      "description": "Whether any active collections exist",
+                      "example": true
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Number of active collections",
+                      "example": 5
+                    }
+                  },
+                  "required": [
+                    "exists",
+                    "count"
+                  ]
+                },
+                "examples": {
+                  "collections_exist": {
+                    "summary": "Collections exist",
+                    "value": {
+                      "exists": true,
+                      "count": 5
+                    }
+                  },
+                  "no_collections": {
+                    "summary": "No collections exist",
+                    "value": {
+                      "exists": false,
+                      "count": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - Failed to check collections existence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "exists": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "count": {
+                      "type": "integer",
+                      "example": 0
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Generic error message (detailed errors are logged server-side only)",
+                      "example": "Failed to check collections existence"
+                    }
+                  },
+                  "required": [
+                    "exists",
+                    "count",
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/currency": {
+      "get": {
+        "tags": [
+          "User - Currency"
+        ],
+        "summary": "Get user's currency preference",
+        "description": "Detects and returns the user's currency preference based on HTTP headers (Cloudflare, Vercel, CloudFront, etc.) or defaults to USD. Supports multiple detection providers for accurate country-based currency detection.",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "cloudflare",
+                "vercel",
+                "cloudfront",
+                "fastly",
+                "generic",
+                "auto",
+                "smart"
+              ],
+              "default": "smart"
+            },
+            "description": "Country detection provider to use. 'smart' automatically detects the best available provider.",
+            "example": "smart"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Currency preference retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "currency": {
+                      "type": "string",
+                      "description": "ISO 4217 currency code (3 characters)",
+                      "example": "USD"
+                    },
+                    "country": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "ISO 3166-1 alpha-2 country code (2 characters) or null if detection failed",
+                      "example": "US"
+                    }
+                  },
+                  "required": [
+                    "currency"
+                  ]
+                },
+                "examples": {
+                  "us_user": {
+                    "summary": "US user",
+                    "value": {
+                      "currency": "USD",
+                      "country": "US"
+                    }
+                  },
+                  "eu_user": {
+                    "summary": "EU user",
+                    "value": {
+                      "currency": "EUR",
+                      "country": "FR"
+                    }
+                  },
+                  "default": {
+                    "summary": "Default fallback (also used on error)",
+                    "value": {
+                      "currency": "USD",
+                      "country": null
+                    }
+                  },
+                  "error_fallback": {
+                    "summary": "Error fallback - always returns 200",
+                    "value": {
+                      "currency": "USD",
+                      "country": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - defaults to USD with country: null",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "currency": {
+                      "type": "string",
+                      "example": "USD"
+                    },
+                    "country": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "User - Currency"
+        ],
+        "summary": "Update user's currency preference",
+        "description": "Updates the authenticated user's currency and country preference. Requires valid authentication session. Currency code must be a valid ISO 4217 code from the supported currencies list.",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 3,
+                    "description": "ISO 4217 currency code (3 characters, uppercase)",
+                    "example": "EUR"
+                  },
+                  "country": {
+                    "type": "string",
+                    "nullable": true,
+                    "minLength": 2,
+                    "maxLength": 2,
+                    "description": "ISO 3166-1 alpha-2 country code (2 characters, uppercase). Optional - can be null if country is not available or not provided.",
+                    "example": "FR"
+                  }
+                },
+                "required": [
+                  "currency"
+                ]
+              },
+              "examples": {
+                "euro": {
+                  "summary": "Set to Euro",
+                  "value": {
+                    "currency": "EUR",
+                    "country": "FR"
+                  }
+                },
+                "usd": {
+                  "summary": "Set to US Dollar",
+                  "value": {
+                    "currency": "USD",
+                    "country": "US"
+                  }
+                },
+                "gbp": {
+                  "summary": "Set to British Pound",
+                  "value": {
+                    "currency": "GBP",
+                    "country": "GB"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Currency preference updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "currency": {
+                      "type": "string",
+                      "description": "Updated ISO 4217 currency code",
+                      "example": "EUR"
+                    },
+                    "country": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Updated ISO 3166-1 alpha-2 country code (or null if not provided)",
+                      "example": "FR"
+                    }
+                  },
+                  "required": [
+                    "currency"
+                  ]
+                },
+                "examples": {
+                  "with_country": {
+                    "summary": "With country code",
+                    "value": {
+                      "currency": "EUR",
+                      "country": "FR"
+                    }
+                  },
+                  "without_country": {
+                    "summary": "Without country code",
+                    "value": {
+                      "currency": "EUR",
+                      "country": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid JSON payload or validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message describing the validation failure"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalid_json": {
+                    "summary": "Invalid JSON",
+                    "value": {
+                      "error": "Invalid JSON payload"
+                    }
+                  },
+                  "invalid_currency": {
+                    "summary": "Invalid currency code",
+                    "value": {
+                      "error": "Currency code must be a valid ISO 4217 code. Supported codes: USD, EUR, GBP, JPY, CNY, CAD, AUD, CHF, INR, BRL, MXN, KRW, RUB, TRY, ZAR, SGD, HKD, NOK, SEK, DKK, PLN, CZK, HUF, NZD, THB, ILS, CLP, PHP, AED, ..."
+                    }
+                  },
+                  "invalid_country_format": {
+                    "summary": "Invalid country code format (if provided)",
+                    "value": {
+                      "error": "Country code must be 2 characters"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - User not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - Failed to update currency",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to update currency"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "tags": []

@@ -78,6 +78,21 @@ const COUNTRY_TO_CURRENCY: Record<string, string> = {
 	RU: 'RUB',
 	UA: 'UAH'
 };
+/**
+ * Provider types for country detection
+ */
+export type CountryHeaderProvider = 'cloudflare' | 'vercel' | 'cloudfront' | 'fastly' | 'generic' | 'auto' | 'smart';
+
+/**
+ * Header names mapping for each provider
+ */
+const HEADER_NAMES: Record<Exclude<CountryHeaderProvider, 'auto' | 'smart'>, string> = {
+	cloudflare: 'cf-ipcountry',
+	vercel: 'x-vercel-ip-country',
+	cloudfront: 'cloudfront-viewer-country',
+	fastly: 'fastly-geo-country-code',
+	generic: 'x-country'
+};
 
 // Default currencies by region (fallback)
 const DEFAULT_CURRENCIES = {
@@ -89,18 +104,6 @@ const DEFAULT_CURRENCIES = {
 	OCEANIA: 'AUD',
 	DEFAULT: 'USD'
 } as const;
-
-/**
- * Get currency from country code (ISO 3166-1 alpha-2)
- */
-export function getCurrencyFromCountry(countryCode: string | null | undefined): string {
-	if (!countryCode) {
-		return DEFAULT_CURRENCIES.DEFAULT;
-	}
-
-	const normalizedCountry = countryCode.toUpperCase().trim();
-	return COUNTRY_TO_CURRENCY[normalizedCountry] || DEFAULT_CURRENCIES.DEFAULT;
-}
 
 /**
  * Extract country code from location string
@@ -200,38 +203,132 @@ export function extractCountryCode(location: string | null | undefined): string 
 }
 
 /**
- * Get user's country from request headers (CDN/Proxy headers)
- * Many hosting providers and CDNs include country information in headers
- * This avoids external API calls
+ * Get currency from country code (ISO 3166-1 alpha-2)
  */
-export function getCountryFromHeaders(headers: Headers): string | null {
+export function getCurrencyFromCountry(countryCode: string | null | undefined): string {
+	if (!countryCode) {
+		return DEFAULT_CURRENCIES.DEFAULT;
+	}
+
+	const normalizedCountry = countryCode.toUpperCase().trim();
+	return COUNTRY_TO_CURRENCY[normalizedCountry] || DEFAULT_CURRENCIES.DEFAULT;
+}
+
+/**
+ * Detect the best provider based on environment and available headers
+ * This is the recommended approach as it automatically selects the optimal provider
+ */
+function detectBestProvider(headers: Headers): Exclude<CountryHeaderProvider, 'auto' | 'smart'> | null {
+	// Priority 1: Check environment variables (most reliable)
+	if (process.env.VERCEL === '1') {
+		if (headers.get('x-vercel-ip-country')) {
+			return 'vercel';
+		}
+	}
+
+	// Priority 2: Check for Cloudflare (common when using Cloudflare as CDN)
+	if (headers.get('cf-ipcountry')) {
+		return 'cloudflare';
+	}
+
+	// Priority 3: Check for Vercel header (even if not explicitly on Vercel)
+	if (headers.get('x-vercel-ip-country')) {
+		return 'vercel';
+	}
+
+	// Priority 4: Check for AWS CloudFront
+	if (headers.get('cloudfront-viewer-country')) {
+		return 'cloudfront';
+	}
+
+	// Priority 5: Check for Fastly
+	if (headers.get('fastly-geo-country-code')) {
+		return 'fastly';
+	}
+
+	// Priority 6: Check for generic header
+	if (headers.get('x-country')) {
+		return 'generic';
+	}
+
+	return null;
+}
+
+/**
+ * Normalize and validate a country code from header
+ * Handles lowercase, uppercase, and whitespace
+ * @param country - Raw country code from header
+ * @returns Normalized country code (uppercase) or null if invalid
+ */
+function normalizeCountryCode(country: string | null): string | null {
+	if (!country) {
+		return null;
+	}
+
+	// Trim whitespace and convert to uppercase
+	const normalized = country.trim().toUpperCase();
+
+	// Validate: must be exactly 2 letters (ISO 3166-1 alpha-2)
+	if (/^[A-Z]{2}$/.test(normalized)) {
+		return normalized;
+	}
+
+	return null;
+}
+
+export function getCountryFromHeaders(headers: Headers, provider: CountryHeaderProvider = 'smart'): string | null {
+	// Smart mode: Automatically detect the best provider (recommended)
+	if (provider === 'smart') {
+		const bestProvider = detectBestProvider(headers);
+		if (bestProvider) {
+			const headerName = HEADER_NAMES[bestProvider];
+			const country = normalizeCountryCode(headers.get(headerName));
+			if (country) {
+				return country;
+			}
+		}
+		// If smart detection fails, fall back to auto mode
+		provider = 'auto';
+	}
+
+	// If a specific provider is requested, check only that one
+	if (provider !== 'auto') {
+		const headerName = HEADER_NAMES[provider];
+		const country = normalizeCountryCode(headers.get(headerName));
+		if (country) {
+			return country;
+		}
+		return null;
+	}
+
+	// Auto mode: check all providers in priority order
 	// Cloudflare provides country in CF-IPCountry header
-	const cfCountry = headers.get('cf-ipcountry');
-	if (cfCountry && /^[A-Z]{2}$/.test(cfCountry)) {
+	const cfCountry = normalizeCountryCode(headers.get('cf-ipcountry'));
+	if (cfCountry) {
 		return cfCountry;
 	}
 
 	// Vercel provides country in x-vercel-ip-country header
-	const vercelCountry = headers.get('x-vercel-ip-country');
-	if (vercelCountry && /^[A-Z]{2}$/.test(vercelCountry)) {
+	const vercelCountry = normalizeCountryCode(headers.get('x-vercel-ip-country'));
+	if (vercelCountry) {
 		return vercelCountry;
 	}
 
 	// AWS CloudFront provides country in CloudFront-Viewer-Country header
-	const cloudfrontCountry = headers.get('cloudfront-viewer-country');
-	if (cloudfrontCountry && /^[A-Z]{2}$/.test(cloudfrontCountry)) {
+	const cloudfrontCountry = normalizeCountryCode(headers.get('cloudfront-viewer-country'));
+	if (cloudfrontCountry) {
 		return cloudfrontCountry;
 	}
 
 	// Fastly provides country in Fastly-Geo-Country-Code header
-	const fastlyCountry = headers.get('fastly-geo-country-code');
-	if (fastlyCountry && /^[A-Z]{2}$/.test(fastlyCountry)) {
+	const fastlyCountry = normalizeCountryCode(headers.get('fastly-geo-country-code'));
+	if (fastlyCountry) {
 		return fastlyCountry;
 	}
 
 	// Generic x-country header (some proxies use this)
-	const genericCountry = headers.get('x-country');
-	if (genericCountry && /^[A-Z]{2}$/.test(genericCountry)) {
+	const genericCountry = normalizeCountryCode(headers.get('x-country'));
+	if (genericCountry) {
 		return genericCountry;
 	}
 
