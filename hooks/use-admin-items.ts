@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
 import { ItemData, CreateItemRequest, UpdateItemRequest } from '@/lib/types/item';
@@ -112,8 +112,6 @@ const reviewItem = async (id: string, data: ReviewItemRequest): Promise<ItemsLis
 
 // Hook
 export function useAdminItems(params: ItemsListParams = {}) {
-  const queryClient = useQueryClient();
-
   // Fetch items
   const {
     data: itemsData,
@@ -133,6 +131,7 @@ export function useAdminItems(params: ItemsListParams = {}) {
   const {
     data: stats,
     isLoading: isStatsLoading,
+    refetch: refetchStats,
   } = useQuery({
     queryKey: QUERY_KEYS.itemStats(),
     queryFn: fetchItemStats,
@@ -140,12 +139,17 @@ export function useAdminItems(params: ItemsListParams = {}) {
     gcTime: 10 * 60 * 1000,
   });
 
+  // Helper to refetch both items and stats
+  const refetchAll = useCallback(async () => {
+    await Promise.all([refetch(), refetchStats()]);
+  }, [refetch, refetchStats]);
+
   // Create item mutation
   const createItemMutation = useMutation({
     mutationFn: createItem,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       toast.success(data.message || 'Item created successfully');
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items });
+      await refetchAll();
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to create item');
@@ -155,9 +159,9 @@ export function useAdminItems(params: ItemsListParams = {}) {
   // Update item mutation
   const updateItemMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateItemRequest }) => updateItem(id, data),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       toast.success(data.message || 'Item updated successfully');
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items });
+      await refetchAll();
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to update item');
@@ -169,8 +173,8 @@ export function useAdminItems(params: ItemsListParams = {}) {
     mutationFn: deleteItem,
     onSuccess: async () => {
       toast.success('Item deleted successfully');
-      // Force refetch items list and stats
-      await queryClient.refetchQueries({ queryKey: QUERY_KEYS.items });
+      // Directly refetch items list and stats
+      await refetchAll();
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to delete item');
@@ -182,8 +186,8 @@ export function useAdminItems(params: ItemsListParams = {}) {
     mutationFn: ({ id, data }: { id: string; data: ReviewItemRequest }) => reviewItem(id, data),
     onSuccess: async (data) => {
       toast.success(`Item ${data.message || 'reviewed successfully'}`);
-      // Force refetch items list and stats
-      await queryClient.refetchQueries({ queryKey: QUERY_KEYS.items });
+      // Directly refetch items list and stats
+      await refetchAll();
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to review item');
@@ -228,8 +232,8 @@ export function useAdminItems(params: ItemsListParams = {}) {
   }, [reviewItemMutation]);
 
   const refreshData = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items });
-  }, [queryClient]);
+    refetchAll();
+  }, [refetchAll]);
 
   // Per-action loading states for granular UI feedback
   const isApproving = reviewItemMutation.isPending && reviewItemMutation.variables?.data.status === 'approved';
