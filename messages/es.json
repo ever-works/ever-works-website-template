@@ -2554,14 +2554,14 @@
 			"MONETIZATION_DESC": "Configurar ajustes de ingresos y pagos",
 			"MONETIZATION_SPONSOR_ADS_TITLE": "Anuncios Patrocinados",
 			"MONETIZATION_SPONSOR_ADS_DESC": "Configura los precios de anuncios patrocinados mostrados a los usuarios. Nota: Los cargos reales están determinados por los IDs de precio de tu proveedor de pagos.",
-			"SPONSOR_ADS_ENABLED_LABEL": "Enable Sponsor Ads",
-			"SPONSOR_ADS_ENABLED_DESC": "Allow users to sponsor items for premium visibility.",
+			"SPONSOR_ADS_ENABLED_LABEL": "Habilitar anuncios patrocinados",
+			"SPONSOR_ADS_ENABLED_DESC": "Permitir a los usuarios patrocinar elementos para visibilidad premium.",
 			"SPONSOR_ADS_WEEKLY_PRICE_LABEL": "Precio semanal",
 			"SPONSOR_ADS_WEEKLY_PRICE_DESC": "Precio de visualización para patrocinio semanal (ej. 100.00).",
 			"SPONSOR_ADS_MONTHLY_PRICE_LABEL": "Precio mensual",
 			"SPONSOR_ADS_MONTHLY_PRICE_DESC": "Precio de visualización para patrocinio mensual (ej. 300.00).",
-			"SPONSOR_ADS_CURRENCY_LABEL": "Currency",
-			"SPONSOR_ADS_CURRENCY_DESC": "Currency for displaying sponsor ad prices."
+			"SPONSOR_ADS_CURRENCY_LABEL": "Moneda",
+			"SPONSOR_ADS_CURRENCY_DESC": "Moneda para mostrar precios de anuncios patrocinados."
 		},
 		"AUTH_FORM": {
 			"ADMIN_WELCOME_TITLE": "Bienvenido al Panel de Administración",
@@ -2743,9 +2743,13 @@
 		"COOKIES_DESCRIPTION": "Conoce nuestro uso de cookies"
 	},
 	"sponsor": {
-		"PAGE_TITLE": "Conviértete en Patrocinador",
-		"PAGE_DESCRIPTION": "Obtén visibilidad premium para tu producto con una ubicación patrocinada.",
-		"BENEFIT_VISIBILITY_TITLE": "Visibilidad Global",
+		"BADGE_TEXT": "Ubicación Patrocinada",
+		"PAGE_TITLE_PART1": "Promociona Tu Producto",
+		"PAGE_TITLE_PART2": "Destaca en Todas Partes",
+		"PAGE_DESCRIPTION": "Presenta tu producto a miles de visitantes con una ubicación prominente [ANUNCIO] en cada página.",
+		"TRUST_SECURE": "Pago Seguro",
+		"TRUST_INSTANT": "Revisado por Admin",
+		"BENEFIT_VISIBILITY_TITLE": "Ubicación en Inicio",
 		"BENEFIT_VISIBILITY_DESCRIPTION": "Tu producto aparece en todas las páginas con una insignia [ANUNCIO].",
 		"BENEFIT_TRAFFIC_TITLE": "Mayor Tráfico",
 		"BENEFIT_TRAFFIC_DESCRIPTION": "Atrae más visitantes a la página de tu producto.",
