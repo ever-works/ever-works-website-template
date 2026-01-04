@@ -133,3 +133,59 @@ export function getHeaderThemeDefault(): string {
 	const themeDefault = configManager.getNestedValue('settings.header.theme_default');
 	return themeDefault ?? 'light';
 }
+
+// ===================== Sponsor Ads Settings =====================
+
+/**
+ * Server-side utility to check if sponsor ads are enabled
+ * @returns boolean - true if sponsor ads are enabled, false otherwise
+ */
+export function getSponsorAdsEnabled(): boolean {
+	const enabled = configManager.getNestedValue('settings.monetization.sponsor_ads.enabled');
+	return enabled ?? true;
+}
+
+/**
+ * Server-side utility to get the weekly sponsor ad price
+ * @returns number - weekly price (default: 100)
+ */
+export function getSponsorAdWeeklyPrice(): number {
+	const price = configManager.getNestedValue('settings.monetization.sponsor_ads.weekly_price');
+	return price ?? 100;
+}
+
+/**
+ * Server-side utility to get the monthly sponsor ad price
+ * @returns number - monthly price (default: 300)
+ */
+export function getSponsorAdMonthlyPrice(): number {
+	const price = configManager.getNestedValue('settings.monetization.sponsor_ads.monthly_price');
+	return price ?? 300;
+}
+
+/**
+ * Server-side utility to get the sponsor ad currency
+ * @returns string - currency code (default: 'USD')
+ */
+export function getSponsorAdCurrency(): string {
+	const currency = configManager.getNestedValue('settings.monetization.sponsor_ads.currency');
+	return currency ?? 'USD';
+}
+
+/**
+ * Server-side utility to get all sponsor ad pricing configuration
+ * @returns object - { enabled, weeklyPrice, monthlyPrice, currency }
+ */
+export function getSponsorAdPricingConfig(): {
+	enabled: boolean;
+	weeklyPrice: number;
+	monthlyPrice: number;
+	currency: string;
+} {
+	return {
+		enabled: getSponsorAdsEnabled(),
+		weeklyPrice: getSponsorAdWeeklyPrice(),
+		monthlyPrice: getSponsorAdMonthlyPrice(),
+		currency: getSponsorAdCurrency(),
+	};
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,14 +22,16 @@ interface NavigationItemWithId extends CustomNavigationItem {
 }
 
 export function CustomNavigationManager({ type, items, onUpdate, disabled = false }: CustomNavigationManagerProps) {
-	// Generate unique IDs for items
-	const generateId = useCallback(() => `nav-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, []);
+	// Generate unique IDs for items - use ref to maintain stable function reference
+	const generateId = useRef(() => `nav-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`).current;
 
 	// Convert items to internal format with IDs
 	const itemsWithIds = useCallback(
 		(itemsToConvert: CustomNavigationItem[]): NavigationItemWithId[] =>
 			itemsToConvert.map((item) => ({ ...item, id: generateId() })),
-		[generateId]
+		// generateId is stable via useRef, no need to include in dependencies
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
 	);
 
 	const [localItems, setLocalItems] = useState<NavigationItemWithId[]>(() => itemsWithIds(items));
