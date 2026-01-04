@@ -11,6 +11,32 @@ import {
 import { Logger } from '@/lib/logger';
 const logger = Logger.create('currencyService');
 
+// Valid provider values for country detection
+const VALID_PROVIDERS: readonly CountryHeaderProvider[] = [
+	'cloudflare',
+	'vercel',
+	'cloudfront',
+	'fastly',
+	'generic',
+	'auto',
+	'smart'
+] as const;
+
+/**
+ * Validates and normalizes the provider parameter
+ * @param provider - Raw provider string from query parameter
+ * @returns Valid CountryHeaderProvider or 'smart' as fallback
+ */
+function validateProvider(provider: string | null): CountryHeaderProvider {
+	if (!provider) {
+		return 'smart';
+	}
+	const normalized = provider.toLowerCase().trim();
+	return VALID_PROVIDERS.includes(normalized as CountryHeaderProvider)
+		? (normalized as CountryHeaderProvider)
+		: 'smart';
+}
+
 const currencyUpdateSchema = z.object({
 	currency: z
 		.string()
@@ -21,12 +47,11 @@ const currencyUpdateSchema = z.object({
 		.refine((val) => SUPPORTED_CURRENCIES.includes(val as (typeof SUPPORTED_CURRENCIES)[number]), {
 			message: `Currency code must be a valid ISO 4217 code. Supported codes: ${SUPPORTED_CURRENCIES.join(', ')}`
 		}),
-	country: z
-		.string()
-		.trim()
-		.min(1, 'Country code is required')
-		.max(2, 'Country code must be 2 characters')
-		.toUpperCase()
+	country: z.union([
+		z.string().trim().min(1, 'Country code is required').max(2, 'Country code must be 2 characters').toUpperCase(),
+		z.null(),
+		z.undefined()
+	])
 });
 
 /**
@@ -35,7 +60,7 @@ const currencyUpdateSchema = z.object({
  *   get:
  *     tags: ["User - Currency"]
  *     summary: "Get user's currency preference"
- *     description: "Detects and returns the user's currency preference based on HTTP headers (Cloudflare, Vercel, CloudFront, etc.) or defaults to USD. Supports multiple detection providers for accurate country-based currency detection."
+ *     description: "Detects and returns the user's currency preference based on HTTP headers (Cloudflare, Vercel, CloudFront, etc.) or defaults to USD. Supports multiple detection providers for accurate country-based currency detection. Always returns status 200, even on errors, with default values (USD, country: null)."
  *     parameters:
  *       - name: "provider"
  *         in: "query"
@@ -48,7 +73,7 @@ const currencyUpdateSchema = z.object({
  *         example: "smart"
  *     responses:
  *       200:
- *         description: "Currency preference retrieved successfully"
+ *         description: "Currency preference retrieved successfully. Always returns 200, even on errors, with default values (USD, country: null)."
  *         content:
  *           application/json:
  *             schema:
@@ -75,36 +100,28 @@ const currencyUpdateSchema = z.object({
  *                 value:
  *                   currency: "EUR"
  *                   country: "FR"
- *               default:
- *                 summary: "Default fallback"
+ *               default_fallback:
+ *                 summary: "Default fallback when detection fails"
  *                 value:
  *                   currency: "USD"
- *                   country: "US"
- *       500:
- *         description: "Internal server error - defaults to USD"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 currency:
- *                   type: string
- *                   example: "USD"
- *                 country:
- *                   type: string
- *                   example: "US"
+ *                   country: null
+ *               error_fallback:
+ *                 summary: "Error fallback - always returns 200"
+ *                 value:
+ *                   currency: "USD"
+ *                   country: null
  */
 export async function GET(request: NextRequest) {
 	try {
 		const { searchParams } = new URL(request.url);
-		const provider = (searchParams.get('provider') || 'smart') as CountryHeaderProvider;
+		const provider = validateProvider(searchParams.get('provider'));
 		const headers = request.headers;
 		const detectedCountry = getCountryFromHeaders(headers, provider);
 		const currency = detectedCountry ? getCurrencyFromCountry(detectedCountry) : 'USD';
 		return NextResponse.json({ currency, country: detectedCountry });
 	} catch (error) {
 		logger.error('Error getting user currency:', error);
-		return NextResponse.json({ currency: 'USD', country: 'US' }, { status: 200 });
+		return NextResponse.json({ currency: 'USD', country: null }, { status: 200 });
 	}
 }
 
@@ -132,11 +149,12 @@ export async function GET(request: NextRequest) {
  *                 example: "EUR"
  *               country:
  *                 type: string
+ *                 nullable: true
  *                 minLength: 1
  *                 maxLength: 2
- *                 description: "ISO 3166-1 alpha-2 country code (2 characters, uppercase)"
+ *                 description: "ISO 3166-1 alpha-2 country code (2 characters, uppercase). Optional - can be null if country is not available or not provided."
  *                 example: "FR"
- *             required: ["currency", "country"]
+ *             required: ["currency"]
  *           examples:
  *             euro:
  *               summary: "Set to Euro"
@@ -153,6 +171,11 @@ export async function GET(request: NextRequest) {
  *               value:
  *                 currency: "GBP"
  *                 country: "GB"
+ *             currency_only:
+ *               summary: "Update currency without country"
+ *               value:
+ *                 currency: "EUR"
+ *                 country: null
  *     responses:
  *       200:
  *         description: "Currency preference updated successfully"
@@ -167,12 +190,21 @@ export async function GET(request: NextRequest) {
  *                   example: "EUR"
  *                 country:
  *                   type: string
- *                   description: "Updated ISO 3166-1 alpha-2 country code"
+ *                   nullable: true
+ *                   description: "Updated ISO 3166-1 alpha-2 country code (or null if not provided)"
  *                   example: "FR"
- *               required: ["currency", "country"]
- *             example:
- *               currency: "EUR"
- *               country: "FR"
+ *               required: ["currency"]
+ *             examples:
+ *               with_country:
+ *                 summary: "With country code"
+ *                 value:
+ *                   currency: "EUR"
+ *                   country: "FR"
+ *               without_country:
+ *                 summary: "Without country code"
+ *                 value:
+ *                   currency: "EUR"
+ *                   country: null
  *       400:
  *         description: "Bad request - Invalid JSON payload or validation error"
  *         content:
@@ -192,10 +224,10 @@ export async function GET(request: NextRequest) {
  *                 summary: "Invalid currency code"
  *                 value:
  *                   error: "Currency code must be a valid ISO 4217 code. Supported codes: USD, EUR, GBP, JPY, CNY, CAD, AUD, CHF, INR, BRL, MXN, KRW, RUB, TRY, ZAR, SGD, HKD, NOK, SEK, DKK, PLN, CZK, HUF, NZD, THB, ILS, CLP, PHP, AED, ..."
- *               invalid_country:
- *                 summary: "Invalid country code"
+ *               invalid_country_format:
+ *                 summary: "Invalid country code format (if provided)"
  *                 value:
- *                   error: "Country code is required"
+ *                   error: "Country code must be 2 characters"
  *       401:
  *         description: "Unauthorized - User not authenticated"
  *         content:
@@ -244,7 +276,7 @@ export async function PUT(request: NextRequest) {
 
 		const { currency, country } = validationResult.data;
 
-		const success = await updateUserCurrency(session.user.id, currency, country);
+		const success = await updateUserCurrency(session.user.id, currency, country ?? undefined);
 
 		if (!success) {
 			return NextResponse.json({ error: 'Failed to update currency' }, { status: 500 });

@@ -124,27 +124,16 @@ export function useCurrency() {
 				throw new Error(`Invalid currency code: ${newCurrency}. Expected 3 uppercase letters (e.g., USD, EUR)`);
 			}
 
-			// Get current country from cache to send with the update
-			const currentData = queryClient.getQueryData<{ currency: string; country: string | null }>(
-				CURRENCY_QUERY_KEY
-			);
-			const currentCountry = currentData?.country || null;
+			// Don't use cached country when updating currency to avoid stale data
+			// Omit country property entirely when null - server schema accepts optional/nullable country
+			const payload: { currency: string; country?: string } = {
+				currency: normalizedCurrency
+			};
 
-			const response = await serverClient.put<CurrencyResponse>('/api/user/currency', {
-				currency: normalizedCurrency,
-				country: currentCountry
-			});
+			const response = await serverClient.put<CurrencyResponse>('/api/user/currency', payload);
 
 			if (!apiUtils.isSuccess(response)) {
 				throw new Error(apiUtils.getErrorMessage(response) || 'Failed to update currency');
-			}
-
-			// Update cache with the response data (includes currency and country)
-			if (response.data) {
-				queryClient.setQueryData(CURRENCY_QUERY_KEY, {
-					currency: normalizeCurrency(response.data.currency || normalizedCurrency),
-					country: response.data.country || currentCountry
-				});
 			}
 
 			return normalizedCurrency;
@@ -174,13 +163,8 @@ export function useCurrency() {
 				queryClient.setQueryData(CURRENCY_QUERY_KEY, context.previousData);
 			}
 		},
-		onSuccess: (newCurrency) => {
-			// Cache is already updated in mutationFn with the API response
-			// Just invalidate to ensure consistency with server state
-			queryClient.invalidateQueries({ queryKey: CURRENCY_QUERY_KEY });
-		},
 		onSettled: () => {
-			// Always refetch after mutation to ensure consistency
+			// Invalidate to refetch from server and ensure consistency
 			queryClient.invalidateQueries({ queryKey: CURRENCY_QUERY_KEY });
 		}
 	});
