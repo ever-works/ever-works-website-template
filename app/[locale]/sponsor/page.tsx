@@ -1,10 +1,11 @@
 import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getCachedItems } from "@/lib/content";
 import { SponsorForm } from "@/components/sponsor-ads";
 import { Megaphone, Globe, TrendingUp, BadgeCheck, Sparkles, Shield } from "lucide-react";
 import Link from "next/link";
+import { getSponsorAdPricingConfig, getSponsorAdsEnabled } from "@/lib/utils/settings";
 
 // Styling constants
 const PAGE_WRAPPER = "min-h-screen bg-linear-to-b from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950";
@@ -25,6 +26,15 @@ export default async function SponsorPage({
 	const { locale } = await params;
 	const session = await auth();
 	const t = await getTranslations("sponsor");
+
+	// Check if sponsor ads feature is enabled
+	const sponsorAdsEnabled = getSponsorAdsEnabled();
+	if (!sponsorAdsEnabled) {
+		notFound();
+	}
+
+	// Get pricing configuration
+	const pricingConfig = getSponsorAdPricingConfig();
 
 	// Check if user is authenticated
 	if (!session?.user?.id) {
@@ -141,7 +151,7 @@ export default async function SponsorPage({
 				{/* Form or Empty State */}
 				{userItems.length > 0 ? (
 					<div className="mx-auto max-w-2xl">
-						<SponsorForm items={userItems} locale={locale} />
+						<SponsorForm items={userItems} locale={locale} pricingConfig={pricingConfig} />
 					</div>
 				) : (
 					<div className={EMPTY_STATE_WRAPPER}>

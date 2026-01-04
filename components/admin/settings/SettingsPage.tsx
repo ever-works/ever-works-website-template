@@ -5,6 +5,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/
 import { Sliders } from 'lucide-react';
 import { SettingSwitch } from './SettingSwitch';
 import { SettingSelect } from './SettingSelect';
+import { SettingCurrencyInput } from './SettingCurrencyInput';
 import { CustomNavigationManager } from './CustomNavigationManager';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
@@ -115,6 +116,17 @@ interface FooterConfigSettings {
 	theme_selector_enabled?: boolean;
 }
 
+interface SponsorAdsSettings {
+	enabled?: boolean;
+	weekly_price?: number;
+	monthly_price?: number;
+	currency?: string;
+}
+
+interface MonetizationConfigSettings {
+	sponsor_ads?: SponsorAdsSettings;
+}
+
 interface Settings {
 	categories_enabled?: boolean;
 	companies_enabled?: boolean;
@@ -123,6 +135,7 @@ interface Settings {
 	header?: HeaderConfigSettings;
 	homepage?: HomepageSettings;
 	footer?: FooterConfigSettings;
+	monetization?: MonetizationConfigSettings;
 	[key: string]: unknown;
 }
 
@@ -264,6 +277,7 @@ export function SettingsPage() {
 			throw error; // Re-throw to let CustomNavigationManager handle the error
 		}
 	};
+
 	return (
 		<div className="space-y-8">
 			{/* Welcome Section with Gradient */}
@@ -505,6 +519,96 @@ export function SettingsPage() {
 										value={settings.footer?.theme_selector_enabled ?? false}
 										onChange={(value) => updateSetting('footer.theme_selector_enabled', value)}
 										disabled={saving}
+									/>
+								</>
+							)}
+						</AccordionContent>
+					</AccordionItem>
+
+					{/* Monetization Settings Section */}
+					<AccordionItem value="monetization" className={ACCORDION_ITEM_CLASSES}>
+						<AccordionTrigger>
+							<div className="text-left w-full">
+								<h3 className={ACCORDION_TITLE_CLASSES}>{t('MONETIZATION_TITLE')}</h3>
+								<p className={ACCORDION_DESC_CLASSES}>{t('MONETIZATION_DESC')}</p>
+							</div>
+						</AccordionTrigger>
+						<AccordionContent className={ACCORDION_CONTENT_CLASSES}>
+							{loading ? (
+								<p className={PLACEHOLDER_TEXT_CLASSES}>Loading settings...</p>
+							) : (
+								<>
+									{/* Sponsor Ads Subsection */}
+									<div className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
+										<h4 className="text-base font-medium text-gray-800 dark:text-gray-200 mb-1">
+											{t('MONETIZATION_SPONSOR_ADS_TITLE')}
+										</h4>
+										<p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+											{t('MONETIZATION_SPONSOR_ADS_DESC')}
+										</p>
+									</div>
+									<SettingSwitch
+										label={t('SPONSOR_ADS_ENABLED_LABEL')}
+										description={t('SPONSOR_ADS_ENABLED_DESC')}
+										value={settings.monetization?.sponsor_ads?.enabled ?? true}
+										onChange={(value) => updateSetting('monetization.sponsor_ads.enabled', value)}
+										disabled={saving}
+									/>
+									<SettingCurrencyInput
+										label={t('SPONSOR_ADS_WEEKLY_PRICE_LABEL')}
+										description={t('SPONSOR_ADS_WEEKLY_PRICE_DESC')}
+										value={settings.monetization?.sponsor_ads?.weekly_price ?? 100}
+										onChange={(value) => updateSetting('monetization.sponsor_ads.weekly_price', value)}
+										currency={settings.monetization?.sponsor_ads?.currency ?? 'USD'}
+										placeholder="100.00"
+										disabled={saving}
+									/>
+									<SettingCurrencyInput
+										label={t('SPONSOR_ADS_MONTHLY_PRICE_LABEL')}
+										description={t('SPONSOR_ADS_MONTHLY_PRICE_DESC')}
+										value={settings.monetization?.sponsor_ads?.monthly_price ?? 300}
+										onChange={(value) => updateSetting('monetization.sponsor_ads.monthly_price', value)}
+										currency={settings.monetization?.sponsor_ads?.currency ?? 'USD'}
+										placeholder="300.00"
+										disabled={saving}
+									/>
+									<SettingSelect
+										label={t('SPONSOR_ADS_CURRENCY_LABEL')}
+										description={t('SPONSOR_ADS_CURRENCY_DESC')}
+										value={settings.monetization?.sponsor_ads?.currency ?? 'USD'}
+										onChange={(value) => updateSetting('monetization.sponsor_ads.currency', value)}
+										options={[
+											// Major currencies
+											{ value: 'USD', label: 'USD - US Dollar' },
+											{ value: 'EUR', label: 'EUR - Euro' },
+											{ value: 'GBP', label: 'GBP - British Pound' },
+											// Americas
+											{ value: 'CAD', label: 'CAD - Canadian Dollar' },
+											{ value: 'BRL', label: 'BRL - Brazilian Real' },
+											{ value: 'MXN', label: 'MXN - Mexican Peso' },
+											// Asia Pacific
+											{ value: 'AUD', label: 'AUD - Australian Dollar' },
+											{ value: 'JPY', label: 'JPY - Japanese Yen' },
+											{ value: 'CNY', label: 'CNY - Chinese Yuan' },
+											{ value: 'KRW', label: 'KRW - South Korean Won' },
+											{ value: 'INR', label: 'INR - Indian Rupee' },
+											{ value: 'IDR', label: 'IDR - Indonesian Rupiah' },
+											{ value: 'THB', label: 'THB - Thai Baht' },
+											{ value: 'VND', label: 'VND - Vietnamese Dong' },
+											// Europe
+											{ value: 'PLN', label: 'PLN - Polish Zloty' },
+											{ value: 'BGN', label: 'BGN - Bulgarian Lev' },
+											{ value: 'RUB', label: 'RUB - Russian Ruble' },
+											{ value: 'UAH', label: 'UAH - Ukrainian Hryvnia' },
+											{ value: 'TRY', label: 'TRY - Turkish Lira' },
+											{ value: 'CHF', label: 'CHF - Swiss Franc' },
+											// Middle East
+											{ value: 'ILS', label: 'ILS - Israeli Shekel' },
+											{ value: 'SAR', label: 'SAR - Saudi Riyal' },
+											{ value: 'AED', label: 'AED - UAE Dirham' }
+										]}
+										disabled={saving}
+										usePortal={true}
 									/>
 								</>
 							)}

@@ -681,7 +681,7 @@ export const sponsorAds = pgTable(
 			enum: [SponsorAdInterval.WEEKLY, SponsorAdInterval.MONTHLY]
 		}).notNull(),
 
-		// Pricing (in cents)
+		// Pricing (in dollars)
 		amount: integer('amount').notNull(),
 		currency: text('currency').notNull().default('usd'),
 
