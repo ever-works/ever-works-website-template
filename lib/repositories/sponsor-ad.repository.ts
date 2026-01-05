@@ -321,11 +321,18 @@ export async function deleteSponsorAd(id: string): Promise<void> {
 // ######################### Statistics #########################
 
 /**
- * Get sponsor ad statistics
+ * Internal helper for building sponsor ad statistics
+ * @param userId - Optional user ID to filter stats for a specific user
  */
-export async function getSponsorAdStats(): Promise<SponsorAdStats> {
+async function buildSponsorAdStats(userId?: string): Promise<SponsorAdStats> {
+	// Build WHERE clause based on whether we're filtering by user
+	const userFilter = userId ? eq(sponsorAds.userId, userId) : undefined;
+	const activeFilter = userId
+		? and(eq(sponsorAds.userId, userId), eq(sponsorAds.status, SponsorAdStatus.ACTIVE))
+		: eq(sponsorAds.status, SponsorAdStatus.ACTIVE);
+
 	// Get counts by status
-	const statusCounts = await db
+	const statusCountsQuery = db
 		.select({
 			status: sponsorAds.status,
 			count: count(),
@@ -333,14 +340,22 @@ export async function getSponsorAdStats(): Promise<SponsorAdStats> {
 		.from(sponsorAds)
 		.groupBy(sponsorAds.status);
 
+	const statusCounts = userFilter
+		? await statusCountsQuery.where(userFilter)
+		: await statusCountsQuery;
+
 	// Get counts by interval
-	const intervalCounts = await db
+	const intervalCountsQuery = db
 		.select({
 			interval: sponsorAds.interval,
 			count: count(),
 		})
 		.from(sponsorAds)
 		.groupBy(sponsorAds.interval);
+
+	const intervalCounts = userFilter
+		? await intervalCountsQuery.where(userFilter)
+		: await intervalCountsQuery;
 
 	// Get revenue from active sponsors
 	const revenueResult = await db
@@ -348,9 +363,9 @@ export async function getSponsorAdStats(): Promise<SponsorAdStats> {
 			totalRevenue: sql<number>`COALESCE(SUM(${sponsorAds.amount}), 0)`,
 		})
 		.from(sponsorAds)
-		.where(eq(sponsorAds.status, SponsorAdStatus.ACTIVE));
+		.where(activeFilter);
 
-	// Build stats object
+	// Build overview object
 	const overview = {
 		total: 0,
 		pendingPayment: 0,
@@ -361,7 +376,7 @@ export async function getSponsorAdStats(): Promise<SponsorAdStats> {
 		cancelled: 0,
 	};
 
-	// Map status to overview keys
+	// Map DB status values to overview keys
 	const statusMap: Record<string, keyof typeof overview> = {
 		pending_payment: 'pendingPayment',
 		pending: 'pending',
@@ -378,95 +393,7 @@ export async function getSponsorAdStats(): Promise<SponsorAdStats> {
 		}
 	}
 
-	const byInterval = {
-		weekly: 0,
-		monthly: 0,
-	};
-
-	for (const row of intervalCounts) {
-		if (row.interval === "weekly") {
-			byInterval.weekly = row.count;
-		} else if (row.interval === "monthly") {
-			byInterval.monthly = row.count;
-		}
-	}
-
-	return {
-		overview,
-		byInterval,
-		revenue: {
-			totalRevenue: Number(revenueResult[0]?.totalRevenue || 0),
-			weeklyRevenue: 0, // Will be calculated in service layer if needed
-			monthlyRevenue: 0, // Will be calculated in service layer if needed
-		},
-	};
-}
-
-/**
- * Get sponsor ad statistics for a specific user
- */
-export async function getSponsorAdStatsByUser(userId: string): Promise<SponsorAdStats> {
-	// Get counts by status for this user
-	const statusCounts = await db
-		.select({
-			status: sponsorAds.status,
-			count: count(),
-		})
-		.from(sponsorAds)
-		.where(eq(sponsorAds.userId, userId))
-		.groupBy(sponsorAds.status);
-
-	// Get counts by interval for this user
-	const intervalCounts = await db
-		.select({
-			interval: sponsorAds.interval,
-			count: count(),
-		})
-		.from(sponsorAds)
-		.where(eq(sponsorAds.userId, userId))
-		.groupBy(sponsorAds.interval);
-
-	// Get revenue from active sponsors for this user
-	const revenueResult = await db
-		.select({
-			totalRevenue: sql<number>`COALESCE(SUM(${sponsorAds.amount}), 0)`,
-		})
-		.from(sponsorAds)
-		.where(
-			and(
-				eq(sponsorAds.userId, userId),
-				eq(sponsorAds.status, SponsorAdStatus.ACTIVE)
-			)
-		);
-
-	// Build stats object
-	const overview = {
-		total: 0,
-		pendingPayment: 0,
-		pending: 0,
-		active: 0,
-		rejected: 0,
-		expired: 0,
-		cancelled: 0,
-	};
-
-	// Map status to overview keys
-	const statusMap: Record<string, keyof typeof overview> = {
-		pending_payment: 'pendingPayment',
-		pending: 'pending',
-		active: 'active',
-		rejected: 'rejected',
-		expired: 'expired',
-		cancelled: 'cancelled',
-	};
-
-	for (const row of statusCounts) {
-		overview.total += row.count;
-		if (row.status && statusMap[row.status]) {
-			overview[statusMap[row.status]] = row.count;
-		}
-	}
-
+	// Build interval counts
 	const byInterval = {
 		weekly: 0,
 		monthly: 0,
@@ -489,6 +416,20 @@ export async function getSponsorAdStatsByUser(userId: string): Promise<SponsorAd
 			monthlyRevenue: 0,
 		},
 	};
+}
+
+/**
+ * Get sponsor ad statistics (all users)
+ */
+export async function getSponsorAdStats(): Promise<SponsorAdStats> {
+	return buildSponsorAdStats();
+}
+
+/**
+ * Get sponsor ad statistics for a specific user
+ */
+export async function getSponsorAdStatsByUser(userId: string): Promise<SponsorAdStats> {
+	return buildSponsorAdStats(userId);
 }
 
 /**
