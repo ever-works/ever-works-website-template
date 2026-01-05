@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Container } from '@/components/ui/container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FiDollarSign, FiPlus, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
@@ -19,14 +19,7 @@ import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
 export function SponsorshipsContent() {
 	const t = useTranslations('client.sponsorships');
 
-	// Local filter state for tabs (all or specific status)
-	const [statusTab, setStatusTab] = useState<SponsorshipStatusFilter>('all');
-	const [searchValue, setSearchValue] = useState('');
-
-	// Convert tab value to hook status filter
-	const hookStatusFilter: SponsorAdStatus | undefined = statusTab === 'all' ? undefined : statusTab;
-
-	// Data fetching
+	// Data fetching - hook manages all filter state internally
 	const {
 		sponsorAds,
 		stats,
@@ -36,6 +29,8 @@ export function SponsorshipsContent() {
 		isFetching,
 		isStatsLoading,
 		isSearching,
+		statusFilter,
+		search,
 		setStatusFilter,
 		setSearch,
 		setCurrentPage,
@@ -43,19 +38,23 @@ export function SponsorshipsContent() {
 		prevPage,
 	} = useUserSponsorAds();
 
-	// Update hook filters when local state changes
-	useEffect(() => {
-		setStatusFilter(hookStatusFilter);
-	}, [hookStatusFilter, setStatusFilter]);
+	// Convert hook status filter to tab value for UI
+	const statusTab: SponsorshipStatusFilter = statusFilter || 'all';
 
-	useEffect(() => {
-		setSearch(searchValue);
-	}, [searchValue, setSearch]);
-
-	// Reset page when filters change
-	useEffect(() => {
+	// Handle tab change - update hook state and reset page
+	const handleStatusChange = useCallback((newStatus: SponsorshipStatusFilter) => {
+		const hookStatus: SponsorAdStatus | undefined = newStatus === 'all' ? undefined : newStatus;
+		setStatusFilter(hookStatus);
 		setCurrentPage(1);
-	}, [statusTab, searchValue, setCurrentPage]);
+	}, [setStatusFilter, setCurrentPage]);
+
+	// Handle search change - update hook state and reset page
+	const handleSearchChange = useCallback((newSearch: string) => {
+		setSearch(newSearch);
+		if (newSearch !== search) {
+			setCurrentPage(1);
+		}
+	}, [setSearch, search, setCurrentPage]);
 
 	// Status counts for filter tabs
 	const statusCounts = useMemo(() => ({
@@ -109,9 +108,9 @@ export function SponsorshipsContent() {
 							{/* Filters */}
 							<SponsorshipFilters
 								status={statusTab}
-								search={searchValue}
-								onStatusChange={setStatusTab}
-								onSearchChange={setSearchValue}
+								search={search}
+								onStatusChange={handleStatusChange}
+								onSearchChange={handleSearchChange}
 								isSearching={isSearching}
 								disabled={isLoading}
 								statusCounts={statusCounts}
