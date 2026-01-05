@@ -2,15 +2,13 @@
 
 import { createContext, useContext, ReactNode } from 'react';
 import { useActiveSponsorAds } from '@/hooks/use-active-sponsor-ads';
-import type { SponsorAd } from '@/lib/db/schema';
 import type { ItemData } from '@/lib/content';
+import type { SponsorWithItem } from '@/lib/types/sponsor-ad';
+
+// Re-export for convenience (maintains backwards compatibility)
+export type { SponsorWithItem } from '@/lib/types/sponsor-ad';
 
 // ######################### Types #########################
-
-export interface SponsorWithItem {
-	sponsor: SponsorAd;
-	item: ItemData | null;
-}
 
 interface SponsorAdsContextValue {
 	sponsors: SponsorWithItem[];

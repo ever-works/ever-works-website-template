@@ -8,7 +8,7 @@ import { FiFolder, FiExternalLink } from 'react-icons/fi';
 import { useParams } from 'next/navigation';
 import { SponsorBadge } from './sponsor-badge';
 import { shouldShowFallback, isProblematicUrl } from '@/lib/utils/image-domains';
-import type { SponsorWithItem } from './sponsor-ads-context';
+import type { SponsorWithItem } from '@/lib/types/sponsor-ad';
 
 interface SponsorCardProps {
 	sponsors: SponsorWithItem[];

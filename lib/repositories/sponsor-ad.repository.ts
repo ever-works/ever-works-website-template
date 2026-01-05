@@ -12,9 +12,9 @@ import type {
 	SponsorAdListOptions,
 	SponsorAdStats,
 	SponsorAdWithUser,
+	SponsorWithItem,
 } from "@/lib/types/sponsor-ad";
 import { getCachedItems, type ItemData } from "@/lib/content";
-import type { SponsorWithItem } from "@/components/sponsor-ads/sponsor-ads-context";
 
 // ######################### Read Operations #########################
 

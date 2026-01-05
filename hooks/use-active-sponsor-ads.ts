@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import type { SponsorWithItem } from "@/components/sponsor-ads/sponsor-ads-context";
+import type { SponsorWithItem } from "@/lib/types/sponsor-ad";
 
 // ######################### Types #########################
 

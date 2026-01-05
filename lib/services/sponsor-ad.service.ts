@@ -21,8 +21,8 @@ import type {
 	SponsorAdStats,
 	SponsorAdWithUser,
 	CreateSponsorAdRequest,
+	SponsorWithItem,
 } from "@/lib/types/sponsor-ad";
-import type { SponsorWithItem } from "@/components/sponsor-ads/sponsor-ads-context";
 
 // ######################### Service Class #########################
 
