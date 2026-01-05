@@ -525,6 +525,10 @@
 				"TITLE": "Submissions",
 				"DESCRIPTION": "View and manage your submissions"
 			},
+			"SPONSORSHIPS": {
+				"TITLE": "Sponsorships",
+				"DESCRIPTION": "Track and manage your sponsorships"
+			},
 			"BILLING": {
 				"TITLE": "Billing",
 				"DESCRIPTION": "Manage your billing information and subscription details"
