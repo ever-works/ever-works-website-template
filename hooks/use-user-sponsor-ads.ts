@@ -214,6 +214,9 @@ export function useUserSponsorAds(
 	const debouncedSearch = useDebounceValue(search, 300);
 	const isSearching = search !== debouncedSearch;
 
+	// Normalize empty search to undefined for consistent cache keys
+	const normalizedSearch = debouncedSearch || undefined;
+
 	// Query client for cache management
 	const queryClient = useQueryClient();
 
@@ -223,8 +226,8 @@ export function useUserSponsorAds(
 		limit,
 		status: statusFilter,
 		interval: intervalFilter,
-		search: debouncedSearch || undefined,
-	}), [currentPage, limit, statusFilter, intervalFilter, debouncedSearch]);
+		search: normalizedSearch,
+	}), [currentPage, limit, statusFilter, intervalFilter, normalizedSearch]);
 
 	// Fetch user's sponsor ads
 	const { data: sponsorAdsData, isLoading, isFetching } = useQuery({
