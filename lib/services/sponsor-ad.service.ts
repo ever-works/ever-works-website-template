@@ -92,6 +92,13 @@ export class SponsorAdService {
 		return await sponsorAdRepo.getSponsorAdStats();
 	}
 
+	/**
+	 * Get sponsor ad statistics for a specific user
+	 */
+	async getSponsorAdStatsByUser(userId: string): Promise<SponsorAdStats> {
+		return await sponsorAdRepo.getSponsorAdStatsByUser(userId);
+	}
+
 	// ===================== Write Operations =====================
 
 	/**

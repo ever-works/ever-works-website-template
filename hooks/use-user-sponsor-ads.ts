@@ -1,8 +1,9 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useDebounceValue } from "@/hooks/use-debounced-value";
 import { serverClient, apiUtils } from "@/lib/api/server-api-client";
-import type { SponsorAdStatus } from "@/lib/types/sponsor-ad";
+import type { SponsorAdStatus, SponsorAdStats } from "@/lib/types/sponsor-ad";
 import type { SponsorAd } from "@/lib/db/schema";
 
 // ######################### Types #########################
@@ -26,6 +27,11 @@ interface CreateSponsorAdResponse {
 	message?: string;
 }
 
+interface UserSponsorAdsStatsResponse {
+	success: boolean;
+	stats: SponsorAdStats;
+}
+
 interface CreateSponsorAdInput {
 	itemSlug: string;
 	itemName: string;
@@ -35,18 +41,25 @@ interface CreateSponsorAdInput {
 	interval: "weekly" | "monthly";
 }
 
+type SponsorAdInterval = 'weekly' | 'monthly';
+
 interface UseUserSponsorAdsOptions {
 	page?: number;
 	limit?: number;
 	status?: SponsorAdStatus;
+	interval?: SponsorAdInterval;
+	search?: string;
 }
 
 interface UseUserSponsorAdsReturn {
 	// Data
 	sponsorAds: SponsorAd[];
+	stats: SponsorAdStats;
 
 	// Loading states
 	isLoading: boolean;
+	isFetching: boolean;
+	isStatsLoading: boolean;
 	isCreating: boolean;
 
 	// Pagination
@@ -56,6 +69,9 @@ interface UseUserSponsorAdsReturn {
 
 	// Filters
 	statusFilter: SponsorAdStatus | undefined;
+	intervalFilter: SponsorAdInterval | undefined;
+	search: string;
+	isSearching: boolean;
 
 	// Actions
 	createSponsorAd: (input: CreateSponsorAdInput) => Promise<SponsorAd | null>;
@@ -63,7 +79,11 @@ interface UseUserSponsorAdsReturn {
 
 	// Filter actions
 	setStatusFilter: (status: SponsorAdStatus | undefined) => void;
+	setIntervalFilter: (interval: SponsorAdInterval | undefined) => void;
+	setSearch: (search: string) => void;
 	setCurrentPage: (page: number) => void;
+	nextPage: () => void;
+	prevPage: () => void;
 
 	// Utility
 	refreshData: () => void;
@@ -76,21 +96,36 @@ const userSponsorAdsQueryKeys = {
 	lists: () => [...userSponsorAdsQueryKeys.all, "list"] as const,
 	list: (filters: Record<string, unknown>) =>
 		[...userSponsorAdsQueryKeys.lists(), filters] as const,
+	stats: () => [...userSponsorAdsQueryKeys.all, "stats"] as const,
 };
 
 // ######################### API Functions #########################
 
 const fetchUserSponsorAds = async (
-	params: UseUserSponsorAdsOptions
+	params: UseUserSponsorAdsOptions & { search?: string }
 ): Promise<UserSponsorAdsResponse> => {
-	const queryParams = apiUtils.createQueryString({
-		page: params.page,
-		limit: params.limit,
-		status: params.status,
-	});
+	const searchParams = new URLSearchParams();
+
+	if (params.page) searchParams.set('page', params.page.toString());
+	if (params.limit) searchParams.set('limit', params.limit.toString());
+	if (params.status) searchParams.set('status', params.status);
+	if (params.interval) searchParams.set('interval', params.interval);
+	if (params.search) searchParams.set('search', params.search);
 
 	const response = await serverClient.get<UserSponsorAdsResponse>(
-		`/api/sponsor-ads/user?${queryParams}`
+		`/api/sponsor-ads/user?${searchParams.toString()}`
+	);
+
+	if (!apiUtils.isSuccess(response)) {
+		throw new Error(apiUtils.getErrorMessage(response));
+	}
+
+	return response.data;
+};
+
+const fetchUserSponsorAdsStats = async (): Promise<UserSponsorAdsStatsResponse> => {
+	const response = await serverClient.get<UserSponsorAdsStatsResponse>(
+		'/api/sponsor-ads/user/stats'
 	);
 
 	if (!apiUtils.isSuccess(response)) {
@@ -132,6 +167,28 @@ const cancelSponsorAdApi = async (
 
 // ######################### Hook #########################
 
+// Default empty stats
+const defaultStats: SponsorAdStats = {
+	overview: {
+		total: 0,
+		pendingPayment: 0,
+		pending: 0,
+		active: 0,
+		rejected: 0,
+		expired: 0,
+		cancelled: 0,
+	},
+	byInterval: {
+		weekly: 0,
+		monthly: 0,
+	},
+	revenue: {
+		totalRevenue: 0,
+		weeklyRevenue: 0,
+		monthlyRevenue: 0,
+	},
+};
+
 export function useUserSponsorAds(
 	options: UseUserSponsorAdsOptions = {}
 ): UseUserSponsorAdsReturn {
@@ -139,6 +196,8 @@ export function useUserSponsorAds(
 		page: initialPage = 1,
 		limit = 10,
 		status: initialStatus,
+		interval: initialInterval,
+		search: initialSearch = "",
 	} = options;
 
 	// State for filters
@@ -146,21 +205,42 @@ export function useUserSponsorAds(
 	const [statusFilter, setStatusFilter] = useState<SponsorAdStatus | undefined>(
 		initialStatus
 	);
+	const [intervalFilter, setIntervalFilter] = useState<SponsorAdInterval | undefined>(
+		initialInterval
+	);
+	const [search, setSearch] = useState(initialSearch);
+
+	// Debounce search value
+	const debouncedSearch = useDebounceValue(search, 300);
+	const isSearching = search !== debouncedSearch;
+
+	// Normalize empty search to undefined for consistent cache keys
+	const normalizedSearch = debouncedSearch || undefined;
 
 	// Query client for cache management
 	const queryClient = useQueryClient();
 
 	// Query parameters
-	const queryParams = {
+	const queryParams = useMemo(() => ({
 		page: currentPage,
 		limit,
 		status: statusFilter,
-	};
+		interval: intervalFilter,
+		search: normalizedSearch,
+	}), [currentPage, limit, statusFilter, intervalFilter, normalizedSearch]);
 
 	// Fetch user's sponsor ads
-	const { data: sponsorAdsData, isLoading } = useQuery({
+	const { data: sponsorAdsData, isLoading, isFetching } = useQuery({
 		queryKey: userSponsorAdsQueryKeys.list(queryParams),
 		queryFn: () => fetchUserSponsorAds(queryParams),
+		staleTime: 2 * 60 * 1000, // 2 minutes
+		gcTime: 5 * 60 * 1000, // 5 minutes
+	});
+
+	// Fetch user's sponsor ads stats (separate query for independent refresh)
+	const { data: statsData, isLoading: isStatsLoading } = useQuery({
+		queryKey: userSponsorAdsQueryKeys.stats(),
+		queryFn: fetchUserSponsorAdsStats,
 		staleTime: 2 * 60 * 1000, // 2 minutes
 		gcTime: 5 * 60 * 1000, // 5 minutes
 	});
@@ -190,6 +270,7 @@ export function useUserSponsorAds(
 
 	// Derived data
 	const sponsorAds = sponsorAdsData?.data || [];
+	const stats = statsData?.stats || defaultStats;
 	const isCreating = createMutation.isPending;
 	const totalPages = sponsorAdsData?.pagination.totalPages || 1;
 	const totalItems = sponsorAdsData?.pagination.total || 0;
@@ -198,6 +279,19 @@ export function useUserSponsorAds(
 	const refreshData = useCallback(() => {
 		queryClient.invalidateQueries({ queryKey: userSponsorAdsQueryKeys.all });
 	}, [queryClient]);
+
+	// Pagination helpers
+	const nextPage = useCallback(() => {
+		if (currentPage < totalPages) {
+			setCurrentPage(currentPage + 1);
+		}
+	}, [currentPage, totalPages]);
+
+	const prevPage = useCallback(() => {
+		if (currentPage > 1) {
+			setCurrentPage(currentPage - 1);
+		}
+	}, [currentPage]);
 
 	// Action handlers
 	const handleCreate = useCallback(
@@ -227,9 +321,12 @@ export function useUserSponsorAds(
 	return {
 		// Data
 		sponsorAds,
+		stats,
 
 		// Loading states
 		isLoading,
+		isFetching,
+		isStatsLoading,
 		isCreating,
 
 		// Pagination
@@ -239,6 +336,9 @@ export function useUserSponsorAds(
 
 		// Filters
 		statusFilter,
+		intervalFilter,
+		search,
+		isSearching,
 
 		// Actions
 		createSponsorAd: handleCreate,
@@ -246,7 +346,11 @@ export function useUserSponsorAds(
 
 		// Filter actions
 		setStatusFilter,
+		setIntervalFilter,
+		setSearch,
 		setCurrentPage,
+		nextPage,
+		prevPage,
 
 		// Utility
 		refreshData,
