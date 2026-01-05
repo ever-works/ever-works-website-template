@@ -51,11 +51,14 @@ export async function GET(request: NextRequest) {
 
 		const { searchParams } = new URL(request.url);
 
-		// Parse query parameters
+		// Parse query parameters - convert null to undefined for proper Zod validation
+		const statusParam = searchParams.get('status');
+		const searchParam = searchParams.get('search');
 		const queryParams = {
 			page: parseInt(searchParams.get('page') || '1', 10),
 			limit: parseInt(searchParams.get('limit') || '10', 10),
-			status: searchParams.get('status') as SponsorAdStatus | undefined,
+			status: statusParam ? (statusParam as SponsorAdStatus) : undefined,
+			search: searchParam || undefined,
 			userId: session.user.id
 		};
 

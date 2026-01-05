@@ -99,15 +99,15 @@ const userSponsorAdsQueryKeys = {
 const fetchUserSponsorAds = async (
 	params: UseUserSponsorAdsOptions & { search?: string }
 ): Promise<UserSponsorAdsResponse> => {
-	const queryParams = apiUtils.createQueryString({
-		page: params.page,
-		limit: params.limit,
-		status: params.status,
-		search: params.search,
-	});
+	const searchParams = new URLSearchParams();
+
+	if (params.page) searchParams.set('page', params.page.toString());
+	if (params.limit) searchParams.set('limit', params.limit.toString());
+	if (params.status) searchParams.set('status', params.status);
+	if (params.search) searchParams.set('search', params.search);
 
 	const response = await serverClient.get<UserSponsorAdsResponse>(
-		`/api/sponsor-ads/user?${queryParams}`
+		`/api/sponsor-ads/user?${searchParams.toString()}`
 	);
 
 	if (!apiUtils.isSuccess(response)) {
