@@ -12,7 +12,9 @@ import type {
 	SponsorAdListOptions,
 	SponsorAdStats,
 	SponsorAdWithUser,
+	SponsorWithItem,
 } from "@/lib/types/sponsor-ad";
+import { getCachedItems, type ItemData } from "@/lib/content";
 
 // ######################### Read Operations #########################
 
@@ -93,6 +95,27 @@ export async function getActiveSponsorAds(limit?: number): Promise<SponsorAd[]> 
 	}
 
 	return await query;
+}
+
+/**
+ * Get active sponsor ads with their associated item data
+ * This performs a server-side join between sponsor ads and items
+ */
+export async function getActiveSponsorAdsWithItems(limit?: number): Promise<SponsorWithItem[]> {
+	const sponsors = await getActiveSponsorAds(limit);
+
+	if (sponsors.length === 0) {
+		return [];
+	}
+
+	// Fetch all items and create a lookup map
+	const { items } = await getCachedItems();
+	const itemsMap = new Map<string, ItemData>(items.map(item => [item.slug, item]));
+
+	return sponsors.map(sponsor => ({
+		sponsor,
+		item: itemsMap.get(sponsor.itemSlug) || null,
+	}));
 }
 
 /**
