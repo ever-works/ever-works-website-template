@@ -41,10 +41,13 @@ interface CreateSponsorAdInput {
 	interval: "weekly" | "monthly";
 }
 
+type SponsorAdInterval = 'weekly' | 'monthly';
+
 interface UseUserSponsorAdsOptions {
 	page?: number;
 	limit?: number;
 	status?: SponsorAdStatus;
+	interval?: SponsorAdInterval;
 	search?: string;
 }
 
@@ -66,6 +69,7 @@ interface UseUserSponsorAdsReturn {
 
 	// Filters
 	statusFilter: SponsorAdStatus | undefined;
+	intervalFilter: SponsorAdInterval | undefined;
 	search: string;
 	isSearching: boolean;
 
@@ -75,6 +79,7 @@ interface UseUserSponsorAdsReturn {
 
 	// Filter actions
 	setStatusFilter: (status: SponsorAdStatus | undefined) => void;
+	setIntervalFilter: (interval: SponsorAdInterval | undefined) => void;
 	setSearch: (search: string) => void;
 	setCurrentPage: (page: number) => void;
 	nextPage: () => void;
@@ -104,6 +109,7 @@ const fetchUserSponsorAds = async (
 	if (params.page) searchParams.set('page', params.page.toString());
 	if (params.limit) searchParams.set('limit', params.limit.toString());
 	if (params.status) searchParams.set('status', params.status);
+	if (params.interval) searchParams.set('interval', params.interval);
 	if (params.search) searchParams.set('search', params.search);
 
 	const response = await serverClient.get<UserSponsorAdsResponse>(
@@ -190,6 +196,7 @@ export function useUserSponsorAds(
 		page: initialPage = 1,
 		limit = 10,
 		status: initialStatus,
+		interval: initialInterval,
 		search: initialSearch = "",
 	} = options;
 
@@ -197,6 +204,9 @@ export function useUserSponsorAds(
 	const [currentPage, setCurrentPage] = useState(initialPage);
 	const [statusFilter, setStatusFilter] = useState<SponsorAdStatus | undefined>(
 		initialStatus
+	);
+	const [intervalFilter, setIntervalFilter] = useState<SponsorAdInterval | undefined>(
+		initialInterval
 	);
 	const [search, setSearch] = useState(initialSearch);
 
@@ -212,8 +222,9 @@ export function useUserSponsorAds(
 		page: currentPage,
 		limit,
 		status: statusFilter,
+		interval: intervalFilter,
 		search: debouncedSearch || undefined,
-	}), [currentPage, limit, statusFilter, debouncedSearch]);
+	}), [currentPage, limit, statusFilter, intervalFilter, debouncedSearch]);
 
 	// Fetch user's sponsor ads
 	const { data: sponsorAdsData, isLoading, isFetching } = useQuery({
@@ -322,6 +333,7 @@ export function useUserSponsorAds(
 
 		// Filters
 		statusFilter,
+		intervalFilter,
 		search,
 		isSearching,
 
@@ -331,6 +343,7 @@ export function useUserSponsorAds(
 
 		// Filter actions
 		setStatusFilter,
+		setIntervalFilter,
 		setSearch,
 		setCurrentPage,
 		nextPage,

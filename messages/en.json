@@ -3010,6 +3010,7 @@
 			"STATUS_PENDING_REVIEW": "Under Review",
 			"STATUS_REJECTED": "Rejected",
 
+			"INTERVAL_ALL": "All Types",
 			"INTERVAL_WEEKLY": "Weekly",
 			"INTERVAL_MONTHLY": "Monthly",
 

@@ -53,11 +53,13 @@ export async function GET(request: NextRequest) {
 
 		// Parse query parameters - convert null to undefined for proper Zod validation
 		const statusParam = searchParams.get('status');
+		const intervalParam = searchParams.get('interval');
 		const searchParam = searchParams.get('search');
 		const queryParams = {
 			page: parseInt(searchParams.get('page') || '1', 10),
 			limit: parseInt(searchParams.get('limit') || '10', 10),
 			status: statusParam ? (statusParam as SponsorAdStatus) : undefined,
+			interval: intervalParam ? (intervalParam as 'weekly' | 'monthly') : undefined,
 			search: searchParam || undefined,
 			userId: session.user.id
 		};

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { Container } from '@/components/ui/container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FiDollarSign, FiPlus, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
@@ -11,6 +11,7 @@ import {
 	SponsorshipFilters,
 	SponsorshipList,
 	type SponsorshipStatusFilter,
+	type SponsorshipIntervalFilter,
 } from '@/components/sponsorships';
 import { useUserSponsorAds } from '@/hooks/use-user-sponsor-ads';
 import { Button } from '@/components/ui/button';
@@ -30,25 +31,35 @@ export function SponsorshipsContent() {
 		isStatsLoading,
 		isSearching,
 		statusFilter,
+		intervalFilter,
 		search,
 		setStatusFilter,
+		setIntervalFilter,
 		setSearch,
 		setCurrentPage,
 		nextPage,
 		prevPage,
 	} = useUserSponsorAds();
 
-	// Convert hook status filter to tab value for UI
-	const statusTab: SponsorshipStatusFilter = statusFilter || 'all';
+	// Convert hook status filter to UI value
+	const statusValue: SponsorshipStatusFilter = statusFilter || 'all';
+	const intervalValue: SponsorshipIntervalFilter = intervalFilter || 'all';
 
-	// Handle tab change - update hook state and reset page
+	// Handle status change
 	const handleStatusChange = useCallback((newStatus: SponsorshipStatusFilter) => {
 		const hookStatus: SponsorAdStatus | undefined = newStatus === 'all' ? undefined : newStatus;
 		setStatusFilter(hookStatus);
 		setCurrentPage(1);
 	}, [setStatusFilter, setCurrentPage]);
 
-	// Handle search change - update hook state and reset page
+	// Handle interval change
+	const handleIntervalChange = useCallback((newInterval: SponsorshipIntervalFilter) => {
+		const hookInterval = newInterval === 'all' ? undefined : newInterval;
+		setIntervalFilter(hookInterval);
+		setCurrentPage(1);
+	}, [setIntervalFilter, setCurrentPage]);
+
+	// Handle search change
 	const handleSearchChange = useCallback((newSearch: string) => {
 		setSearch(newSearch);
 		if (newSearch !== search) {
@@ -56,28 +67,19 @@ export function SponsorshipsContent() {
 		}
 	}, [setSearch, search, setCurrentPage]);
 
-	// Status counts for filter tabs
-	const statusCounts = useMemo(() => ({
-		all: stats.overview.total,
-		active: stats.overview.active,
-		pending: stats.overview.pendingPayment + stats.overview.pending,
-		expired: stats.overview.expired,
-		cancelled: stats.overview.cancelled,
-	}), [stats]);
-
 	return (
 		<div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
 			<Container maxWidth="7xl" padding="default">
-				<div className="space-y-8 py-8">
+				<div className="space-y-6 py-8">
 					{/* Page Header */}
-					<div className="text-center space-y-4">
-						<div className="inline-flex items-center justify-center w-16 h-16 bg-linear-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-2xl mb-4">
-							<FiDollarSign className="w-8 h-8 text-theme-primary-600 dark:text-theme-primary-400" />
+					<div className="text-center space-y-3">
+						<div className="inline-flex items-center justify-center w-14 h-14 bg-linear-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-xl mb-2">
+							<FiDollarSign className="w-7 h-7 text-theme-primary-600 dark:text-theme-primary-400" />
 						</div>
-						<h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+						<h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
 							{t('PAGE_TITLE')}
 						</h1>
-						<p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
+						<p className="text-gray-600 dark:text-gray-300 text-base max-w-xl mx-auto">
 							{t('PAGE_DESCRIPTION')}
 						</p>
 					</div>
@@ -87,33 +89,32 @@ export function SponsorshipsContent() {
 
 					{/* Sponsorships List */}
 					<Card className="hover:shadow-lg hover:shadow-theme-primary-500/10 border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xs">
-						<CardHeader>
+						<CardHeader className="pb-4">
 							<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-								<CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+								<CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
 									<FiDollarSign className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />
 									{t('YOUR_SPONSORSHIPS')}
 								</CardTitle>
-								<div className="flex items-center gap-3">
-									<Link
-										href="/sponsor"
-										className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-lg transition-all duration-300 font-medium shadow-xs hover:shadow-md"
-									>
-										<FiPlus className="w-4 h-4" />
-										{t('NEW_SPONSORSHIP')}
-									</Link>
-								</div>
+								<Link
+									href="/sponsor"
+									className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-lg transition-all duration-300 font-medium shadow-xs hover:shadow-md text-sm"
+								>
+									<FiPlus className="w-4 h-4" />
+									{t('NEW_SPONSORSHIP')}
+								</Link>
 							</div>
 						</CardHeader>
-						<CardContent className="space-y-6">
+						<CardContent className="space-y-4">
 							{/* Filters */}
 							<SponsorshipFilters
-								status={statusTab}
+								status={statusValue}
+								interval={intervalValue}
 								search={search}
 								onStatusChange={handleStatusChange}
+								onIntervalChange={handleIntervalChange}
 								onSearchChange={handleSearchChange}
 								isSearching={isSearching}
 								disabled={isLoading}
-								statusCounts={statusCounts}
 							/>
 
 							{/* List */}

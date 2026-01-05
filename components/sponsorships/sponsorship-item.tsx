@@ -63,6 +63,13 @@ function formatAmount(amount: number, currency: string = 'usd'): string {
 	}).format(amount / 100);
 }
 
+function formatSlugToTitle(slug: string): string {
+	return slug
+		.split('-')
+		.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
+}
+
 export function SponsorshipItem({ sponsorAd }: SponsorshipItemProps) {
 	const t = useTranslations('client.sponsorships');
 
@@ -78,7 +85,7 @@ export function SponsorshipItem({ sponsorAd }: SponsorshipItemProps) {
 					</div>
 					<div className="min-w-0 flex-1">
 						<h3 className="text-base font-medium text-gray-900 dark:text-gray-100 truncate">
-							{sponsorAd.itemSlug}
+							{formatSlugToTitle(sponsorAd.itemSlug)}
 						</h3>
 						<div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-gray-500 dark:text-gray-400">
 							<span className="inline-flex items-center gap-1">
