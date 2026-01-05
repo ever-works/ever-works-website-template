@@ -25,8 +25,7 @@ import { useSurveysEnabled } from '@/hooks/use-surveys-enabled';
 import { useTagsEnabled } from '@/hooks/use-tags-enabled';
 import { ItemDetailSkeleton } from '@/components/ui/skeleton';
 import { Container } from '../ui/container';
-import { SidebarSponsor } from '@/components/sponsor-ads';
-import { useActiveSponsorAds } from '@/hooks/use-active-sponsor-ads';
+import { SidebarSponsor, useSponsorAdsContext } from '@/components/sponsor-ads';
 
 export interface ItemDetailProps {
 	meta: {
@@ -56,7 +55,7 @@ function ItemDetailContent({ meta, renderedContent, categoryName }: ItemDetailPr
 	const { categoriesEnabled } = useCategoriesEnabled();
 	const { surveysEnabled } = useSurveysEnabled();
 	const { tagsEnabled } = useTagsEnabled();
-	const { sponsors } = useActiveSponsorAds({ limit: 5 });
+	const { sponsors } = useSponsorAdsContext();
 	const tagNames = Array.isArray(meta.tags) ? meta.tags.map((tag) => (typeof tag === 'string' ? tag : tag.name)) : [];
 
 	// Generate Product schema for SEO
