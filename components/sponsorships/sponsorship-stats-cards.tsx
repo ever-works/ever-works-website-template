@@ -75,7 +75,7 @@ export function SponsorshipStatsCards({ stats, isLoading = false }: SponsorshipS
 	const t = useTranslations('client.sponsorships');
 
 	return (
-		<div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+		<div className="grid grid-cols-2 md:grid-cols-4 gap-3">
 			{statCardsConfig.map((config) => {
 				const Icon = config.icon;
 				const value = getStatValue(stats, config.key);
@@ -83,21 +83,23 @@ export function SponsorshipStatsCards({ stats, isLoading = false }: SponsorshipS
 				return (
 					<Card
 						key={config.key}
-						className={`hover:shadow-lg ${config.hoverShadow} border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xs`}
+						className={`hover:shadow-md ${config.hoverShadow} border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xs`}
 					>
-						<CardContent className="p-6">
-							<div className="text-center">
-								<div className={`flex items-center justify-center w-12 h-12 bg-linear-to-br ${config.iconBg} rounded-xl mb-3 mx-auto`}>
-									<Icon className={`w-6 h-6 ${config.colorClass}`} />
+						<CardContent className="p-3">
+							<div className="flex items-center gap-3">
+								<div className={`flex items-center justify-center w-9 h-9 bg-linear-to-br ${config.iconBg} rounded-lg shrink-0`}>
+									<Icon className={`w-4 h-4 ${config.colorClass}`} />
 								</div>
-								{isLoading ? (
-									<div className="h-8 w-12 bg-gray-200 dark:bg-gray-700 rounded mx-auto mb-1 animate-pulse" />
-								) : (
-									<div className={`text-2xl font-bold ${config.key === 'total' ? 'text-gray-900 dark:text-gray-100' : config.colorClass}`}>
-										{value}
-									</div>
-								)}
-								<div className="text-sm text-gray-600 dark:text-gray-400">{t(config.labelKey)}</div>
+								<div className="min-w-0">
+									{isLoading ? (
+										<div className="h-6 w-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+									) : (
+										<div className={`text-xl font-bold ${config.key === 'total' ? 'text-gray-900 dark:text-gray-100' : config.colorClass}`}>
+											{value}
+										</div>
+									)}
+									<div className="text-xs text-gray-600 dark:text-gray-400 truncate">{t(config.labelKey)}</div>
+								</div>
 							</div>
 						</CardContent>
 					</Card>
@@ -109,17 +111,19 @@ export function SponsorshipStatsCards({ stats, isLoading = false }: SponsorshipS
 
 export function SponsorshipStatsCardsSkeleton() {
 	return (
-		<div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+		<div className="grid grid-cols-2 md:grid-cols-4 gap-3">
 			{Array.from({ length: 4 }).map((_, index) => (
 				<Card
 					key={index}
 					className="border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xs"
 				>
-					<CardContent className="p-6">
-						<div className="text-center animate-pulse">
-							<div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-xl mb-3 mx-auto" />
-							<div className="h-8 w-12 bg-gray-200 dark:bg-gray-700 rounded mx-auto mb-2" />
-							<div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded mx-auto" />
+					<CardContent className="p-3">
+						<div className="flex items-center gap-3 animate-pulse">
+							<div className="w-9 h-9 bg-gray-200 dark:bg-gray-700 rounded-lg shrink-0" />
+							<div className="min-w-0 flex-1">
+								<div className="h-6 w-8 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
+								<div className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
+							</div>
 						</div>
 					</CardContent>
 				</Card>
