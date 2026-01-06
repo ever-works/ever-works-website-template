@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { Type, FileText, Star, MoreHorizontal, ChevronUp } from 'lucide-react';
+import { useId, useState } from 'react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { Type, FileText, Star, MoreHorizontal, ChevronUp, ChevronDown, Check } from 'lucide-react';
 import { cn, getVideoEmbedUrl } from '@/lib/utils';
 import { useUrlExtraction } from '@/hooks/use-url-extraction';
 import type { Editor } from '@tiptap/react';
@@ -63,7 +64,9 @@ export function BasicInfoStep({
 	const { extractFromUrl, isLoading: isExtracting } = useUrlExtraction();
 	const [showAllTags, setShowAllTags] = useState(false);
 	const [tagsToShow] = useState(DEFAULT_TAGS_TO_SHOW);
+	const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
 	const { toolbarRef } = useEditorToolbar(editor);
+	const categoryDropdownId = useId();
 
 	const handleExtraction = async (url: string) => {
 		if (!setFormData) return;
@@ -172,32 +175,83 @@ export function BasicInfoStep({
 								{t('directory.DETAILS_FORM.CATEGORY')} *
 							</label>
 							<div className="relative">
-								<select
-									id="category"
-									name="category"
-									value={formData.category ?? ''}
-									onChange={handleInputChange}
-									onFocus={() => setFocusedField('category')}
-									onBlur={() => setFocusedField(null)}
-									required
-									className={cn(
-										FORM_FIELD_CLASSES.select.base,
-										focusedField === 'category' && FORM_FIELD_CLASSES.select.focused
-									)}
+								<DropdownMenu.Root
+									open={categoryMenuOpen}
+									modal={false}
+									onOpenChange={(open) => {
+										setCategoryMenuOpen(open);
+										setFocusedField(open ? 'category' : null);
+									}}
 								>
-									<option value="" disabled className="text-gray-500">
-										{t('directory.DETAILS_FORM.CATEGORY_PLACEHOLDER')}
-									</option>
-									{categories?.map((category) => (
-										<option
-											key={category.id}
-											value={category.id}
-											className="py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+									<DropdownMenu.Trigger asChild>
+										<button
+											id="category"
+											type="button"
+											className={cn(
+												'group relative inline-flex w-full items-center justify-between rounded-xl border bg-gray-50 px-3 py-4 text-sm font-medium text-gray-900 transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 dark:border-gray-600/50 dark:bg-gray-900/50 dark:text-white dark:focus:ring-theme-primary-400',
+												categoryMenuOpen && 'ring-2 ring-theme-primary-500 dark:ring-theme-primary-400',
+												focusedField === 'category' && 'border-theme-primary-500 dark:border-theme-primary-400'
+											)}
+											aria-label={t('directory.DETAILS_FORM.CATEGORY')}
+											aria-expanded={categoryMenuOpen}
+											aria-controls={categoryDropdownId}
+											aria-haspopup="listbox"
+											disabled={!categories || categories.length === 0}
 										>
-											{category.name}
-										</option>
-									))}
-								</select>
+											<span className="truncate text-left">
+												{categories?.find((category) => category.id === formData.category)?.name ||
+													t('directory.DETAILS_FORM.CATEGORY_PLACEHOLDER')}
+											</span>
+											<ChevronDown
+												className={cn(
+													'h-4 w-4 text-theme-primary-500 transition-transform duration-300',
+													categoryMenuOpen && 'rotate-180'
+												)}
+											/>
+										</button>
+									</DropdownMenu.Trigger>
+
+									<DropdownMenu.Portal>
+										<DropdownMenu.Content
+											id={categoryDropdownId}
+											sideOffset={6}
+											align="start"
+											className="z-50 w-full min-w-[540px] max-w-[660px] bg-white dark:bg-gray-900/95 border border-gray-200 
+											dark:border-gray-700 rounded-lg shadow-lg shadow-black/10 dark:shadow-black/30 overflow-hidden animate-in 
+											fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 
+											origin-top-left"
+										>
+											<div className="max-h-64 overflow-y-auto p-1.5">
+												<DropdownMenu.RadioGroup
+													value={formData.category ?? ''}
+													onValueChange={(value) =>
+														handleInputChange({
+															target: { name: 'category', value }
+														} as React.ChangeEvent<HTMLSelectElement>)
+													}
+												>
+													{categories?.map((category) => (
+														<DropdownMenu.RadioItem
+															key={category.id}
+															value={category.id}
+															className={cn(
+																'group/item relative flex items-center justify-between rounded-md px-3 py-3 my-1 text-sm outline-hidden transition-all duration-200',
+																'cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100 data-[state=checked]:bg-gray-100',
+																'dark:text-gray-100 dark:hover:bg-gray-800 dark:focus:bg-gray-800 dark:data-[state=checked]:bg-gray-800'
+															)}
+														>
+															<span className="font-medium truncate">{category.name}</span>
+															{formData.category === category.id && (
+																<Check className="h-4 w-4 text-theme-primary-500 dark:text-theme-primary-400" />
+															)}
+														</DropdownMenu.RadioItem>
+													))}
+												</DropdownMenu.RadioGroup>
+											</div>
+											<DropdownMenu.Arrow className="fill-white dark:fill-gray-900" />
+										</DropdownMenu.Content>
+									</DropdownMenu.Portal>
+								</DropdownMenu.Root>
 							</div>
 						</div>
 					)}
