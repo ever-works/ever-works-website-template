@@ -3036,7 +3036,27 @@
 			"NEXT": "Next",
 
 			"REJECTION_REASON": "Reason",
-			"CANCEL_REASON": "Cancellation reason"
+			"CANCEL_REASON": "Cancellation reason",
+			"SPONSORSHIP": "sponsorship",
+
+			"PAY_NOW": "Pay Now",
+			"RENEW": "Renew",
+			"CANCEL": "Cancel",
+			"OPTIONAL": "optional",
+
+			"CANCEL_DIALOG_TITLE": "Cancel Sponsorship",
+			"CANCEL_DIALOG_WARNING": "This action cannot be undone. Your sponsorship will be cancelled immediately and you will lose any remaining time.",
+			"CANCEL_REASON_LABEL": "Cancellation Reason",
+			"CANCEL_REASON_PLACEHOLDER": "Tell us why you're cancelling (optional)...",
+			"KEEP_SPONSORSHIP": "Keep Sponsorship",
+			"CONFIRM_CANCEL": "Cancel Sponsorship",
+
+			"RENEW_DIALOG_TITLE": "Renew Sponsorship",
+			"RENEW_DIALOG_DESCRIPTION": "Extend your sponsorship to continue featuring your item prominently in the directory.",
+			"RENEWAL_PRICE": "Renewal Price",
+			"RENEW_REDIRECT_INFO": "You will be redirected to our payment provider to complete the renewal.",
+			"CANCEL_BUTTON": "Cancel",
+			"PROCEED_TO_PAYMENT": "Proceed to Payment"
 		},
 		"dashboard": {
 			"TITLE": "Dashboard",

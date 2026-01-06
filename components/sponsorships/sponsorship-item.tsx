@@ -1,12 +1,18 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { Button } from '@heroui/react';
 import { FiCalendar, FiDollarSign, FiClock, FiPackage } from 'react-icons/fi';
+import { CreditCard, XCircle, RefreshCw } from 'lucide-react';
 import type { SponsorAd } from '@/lib/db/schema';
 import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
 
 export interface SponsorshipItemProps {
 	sponsorAd: SponsorAd;
+	onCancel?: (sponsorAd: SponsorAd) => void;
+	onPayNow?: (sponsorAd: SponsorAd) => void;
+	onRenew?: (sponsorAd: SponsorAd) => void;
+	isActionDisabled?: boolean;
 }
 
 // Status badge configuration
@@ -70,10 +76,24 @@ function formatSlugToTitle(slug: string): string {
 		.join(' ');
 }
 
-export function SponsorshipItem({ sponsorAd }: SponsorshipItemProps) {
+export function SponsorshipItem({
+	sponsorAd,
+	onCancel,
+	onPayNow,
+	onRenew,
+	isActionDisabled = false,
+}: SponsorshipItemProps) {
 	const t = useTranslations('client.sponsorships');
 
 	const statusConfig = STATUS_CONFIG[sponsorAd.status as SponsorAdStatus] || STATUS_CONFIG.pending;
+	const status = sponsorAd.status as SponsorAdStatus;
+
+	// Determine which actions are available based on status
+	const canPayNow = status === 'pending_payment';
+	const canCancel = status === 'pending_payment' || status === 'pending' || status === 'active';
+	const canRenew = status === 'active' || status === 'expired';
+
+	const hasActions = canPayNow || canCancel || canRenew;
 
 	return (
 		<div className="p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors">
@@ -121,6 +141,48 @@ export function SponsorshipItem({ sponsorAd }: SponsorshipItemProps) {
 					</span>
 				</div>
 			</div>
+
+			{/* Action Buttons */}
+			{hasActions && (
+				<div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 flex flex-wrap items-center gap-2">
+					{canPayNow && onPayNow && (
+						<Button
+							size="sm"
+							color="success"
+							variant="flat"
+							onPress={() => onPayNow(sponsorAd)}
+							isDisabled={isActionDisabled}
+							startContent={<CreditCard className="w-4 h-4" />}
+						>
+							{t('PAY_NOW')}
+						</Button>
+					)}
+					{canRenew && onRenew && (
+						<Button
+							size="sm"
+							color="primary"
+							variant="flat"
+							onPress={() => onRenew(sponsorAd)}
+							isDisabled={isActionDisabled}
+							startContent={<RefreshCw className="w-4 h-4" />}
+						>
+							{t('RENEW')}
+						</Button>
+					)}
+					{canCancel && onCancel && (
+						<Button
+							size="sm"
+							color="danger"
+							variant="light"
+							onPress={() => onCancel(sponsorAd)}
+							isDisabled={isActionDisabled}
+							startContent={<XCircle className="w-4 h-4" />}
+						>
+							{t('CANCEL')}
+						</Button>
+					)}
+				</div>
+			)}
 
 			{/* Rejection reason if rejected */}
 			{sponsorAd.status === 'rejected' && sponsorAd.rejectionReason && (

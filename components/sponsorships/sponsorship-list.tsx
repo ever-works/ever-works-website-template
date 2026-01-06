@@ -12,6 +12,10 @@ export interface SponsorshipListProps {
 	skeletonCount?: number;
 	emptyStateTitle?: string;
 	emptyStateDescription?: string;
+	onCancel?: (sponsorAd: SponsorAd) => void;
+	onPayNow?: (sponsorAd: SponsorAd) => void;
+	onRenew?: (sponsorAd: SponsorAd) => void;
+	isActionDisabled?: boolean;
 }
 
 export function SponsorshipList({
@@ -20,6 +24,10 @@ export function SponsorshipList({
 	skeletonCount = 3,
 	emptyStateTitle,
 	emptyStateDescription,
+	onCancel,
+	onPayNow,
+	onRenew,
+	isActionDisabled = false,
 }: SponsorshipListProps) {
 	const t = useTranslations('client.sponsorships');
 
@@ -62,7 +70,14 @@ export function SponsorshipList({
 	return (
 		<div className="space-y-3">
 			{items.map((item) => (
-				<SponsorshipItem key={item.id} sponsorAd={item} />
+				<SponsorshipItem
+					key={item.id}
+					sponsorAd={item}
+					onCancel={onCancel}
+					onPayNow={onPayNow}
+					onRenew={onRenew}
+					isActionDisabled={isActionDisabled}
+				/>
 			))}
 		</div>
 	);

@@ -8,7 +8,7 @@ import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
  *   post:
  *     tags: ["Sponsor Ads - User"]
  *     summary: "Cancel user's sponsor ad"
- *     description: "Cancels a sponsor ad owned by the authenticated user. Can only cancel pending, approved, or active ads."
+ *     description: "Cancels a sponsor ad owned by the authenticated user. Can only cancel pending_payment, pending, or active ads."
  *     security:
  *       - sessionAuth: []
  *     parameters:
@@ -18,6 +18,15 @@ import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
  *         schema:
  *           type: string
  *         description: "Sponsor ad ID to cancel"
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               cancelReason:
+ *                 type: string
+ *                 description: "Optional reason for cancellation"
  *     responses:
  *       200:
  *         description: "Sponsor ad cancelled successfully"
@@ -42,6 +51,17 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
 		const { id } = await params;
 
+		// Parse optional body for cancel reason
+		let cancelReason = 'Cancelled by user';
+		try {
+			const body = await request.json();
+			if (body.cancelReason && typeof body.cancelReason === 'string' && body.cancelReason.trim()) {
+				cancelReason = body.cancelReason.trim();
+			}
+		} catch {
+			// Body is optional, continue with default reason
+		}
+
 		// Get the sponsor ad to verify ownership
 		const sponsorAd = await sponsorAdService.getSponsorAdById(id);
 
@@ -58,7 +78,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 		}
 
 		// Cancel the sponsor ad
-		const cancelledAd = await sponsorAdService.cancelSponsorAd(id, 'Cancelled by user');
+		const cancelledAd = await sponsorAdService.cancelSponsorAd(id, cancelReason);
 
 		if (!cancelledAd) {
 			return NextResponse.json({ success: false, error: 'Failed to cancel sponsor ad' }, { status: 500 });
