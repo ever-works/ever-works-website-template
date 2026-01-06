@@ -20,7 +20,18 @@ import { Button } from '@/components/ui/button';
 import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
 import type { SponsorAd } from '@/lib/db/schema';
 
-export function SponsorshipsContent() {
+interface PricingConfig {
+	enabled: boolean;
+	weeklyPrice: number;
+	monthlyPrice: number;
+	currency: string;
+}
+
+interface SponsorshipsContentProps {
+	pricingConfig: PricingConfig;
+}
+
+export function SponsorshipsContent({ pricingConfig }: SponsorshipsContentProps) {
 	const t = useTranslations('client.sponsorships');
 
 	// Dialog state
@@ -247,6 +258,7 @@ export function SponsorshipsContent() {
 			<RenewDialog
 				isOpen={renewDialogOpen}
 				sponsorAd={selectedSponsorship}
+				pricingConfig={pricingConfig}
 				isSubmitting={isRenewing}
 				onConfirm={handleRenewConfirm}
 				onClose={handleRenewDialogClose}

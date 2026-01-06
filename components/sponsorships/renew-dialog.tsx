@@ -6,9 +6,17 @@ import { RefreshCw, CreditCard, ExternalLink } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { SponsorAd } from '@/lib/db/schema';
 
+interface PricingConfig {
+	enabled: boolean;
+	weeklyPrice: number;
+	monthlyPrice: number;
+	currency: string;
+}
+
 interface RenewDialogProps {
 	isOpen: boolean;
 	sponsorAd: SponsorAd | null;
+	pricingConfig: PricingConfig;
 	isSubmitting: boolean;
 	onConfirm: () => void;
 	onClose: () => void;
@@ -44,6 +52,7 @@ function formatAmount(amount: number, currency: string = 'usd'): string {
 export function RenewDialog({
 	isOpen,
 	sponsorAd,
+	pricingConfig,
 	isSubmitting,
 	onConfirm,
 	onClose,
@@ -73,6 +82,11 @@ export function RenewDialog({
 	if (!isOpen || !sponsorAd) return null;
 
 	const intervalLabel = t(`INTERVAL_${sponsorAd.interval?.toUpperCase()}`);
+
+	// Get renewal price based on interval from current pricing config
+	const renewalPrice = sponsorAd.interval === 'weekly'
+		? pricingConfig.weeklyPrice
+		: pricingConfig.monthlyPrice;
 
 	return (
 		<div className={MODAL_OVERLAY} onClick={(e) => e.target === e.currentTarget && !isSubmitting && onClose()}>
@@ -115,7 +129,7 @@ export function RenewDialog({
 							</span>
 						</div>
 						<span className="text-xl font-bold text-green-600 dark:text-green-400">
-							{formatAmount(sponsorAd.amount, sponsorAd.currency)}
+							{formatAmount(renewalPrice, pricingConfig.currency)}
 						</span>
 					</div>
 
