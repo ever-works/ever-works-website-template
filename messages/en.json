@@ -3036,7 +3036,30 @@
 			"NEXT": "Next",
 
 			"REJECTION_REASON": "Reason",
-			"CANCEL_REASON": "Cancellation reason"
+			"CANCEL_REASON": "Cancellation reason",
+
+			"VIEW_DETAILS": "View Details",
+			"MODAL_TITLE": "Sponsorship Details",
+			"ITEM_INFORMATION": "Item Information",
+			"SUBSCRIPTION_DETAILS": "Subscription Details",
+			"IMPORTANT_DATES": "Important Dates",
+			"CREATED_DATE": "Created",
+			"START_DATE": "Start Date",
+			"END_DATE": "End Date",
+			"REVIEWED_DATE": "Reviewed",
+			"AMOUNT": "Amount",
+			"INTERVAL": "Billing Interval",
+			"PAYMENT_PROVIDER": "Payment Provider",
+			"PAY_NOW": "Pay Now",
+			"CANCEL_SPONSORSHIP": "Cancel Sponsorship",
+			"RENEW_SPONSORSHIP": "Renew Sponsorship",
+			"CLOSE": "Close",
+			"CONFIRM_CANCEL_MESSAGE": "Are you sure you want to cancel this sponsorship? This action cannot be undone.",
+			"CONFIRM_CANCEL": "Yes, Cancel",
+			"CANCEL_NO": "No, Keep It",
+			"CANCEL_SUCCESS": "Sponsorship cancelled successfully",
+			"LOAD_ERROR": "Failed to load sponsorship details",
+			"RETRY": "Retry"
 		},
 		"dashboard": {
 			"TITLE": "Dashboard",
