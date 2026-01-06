@@ -273,11 +273,6 @@ export function SponsorshipDetailModal({
 											<p className="text-sm text-gray-500 dark:text-gray-400">
 												/{sponsorAd.itemSlug}
 											</p>
-											{sponsorAd.itemCategory && (
-												<span className="inline-block mt-2 px-2 py-0.5 text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded">
-													{sponsorAd.itemCategory}
-												</span>
-											)}
 										</div>
 									</div>
 								</div>
