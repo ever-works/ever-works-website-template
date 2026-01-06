@@ -3054,6 +3054,7 @@
 			"RENEW_DIALOG_TITLE": "Renew Sponsorship",
 			"RENEW_DIALOG_DESCRIPTION": "Extend your sponsorship to continue featuring your item prominently in the directory.",
 			"RENEWAL_PRICE": "Renewal Price",
+			"RENEWAL_DURATION": "Renews for 1 {interval}",
 			"RENEW_REDIRECT_INFO": "You will be redirected to our payment provider to complete the renewal.",
 			"CANCEL_BUTTON": "Cancel",
 			"PROCEED_TO_PAYMENT": "Proceed to Payment"

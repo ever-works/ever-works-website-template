@@ -101,6 +101,9 @@ export function RenewDialog({
 						<p className="text-sm text-gray-500 dark:text-gray-400">
 							{intervalLabel} {t('SPONSORSHIP')}
 						</p>
+						<p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+							{t('RENEWAL_DURATION', { interval: intervalLabel.toLowerCase() })}
+						</p>
 					</div>
 
 					{/* Pricing */}
