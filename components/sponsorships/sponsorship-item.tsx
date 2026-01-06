@@ -1,12 +1,13 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { FiCalendar, FiDollarSign, FiClock, FiPackage } from 'react-icons/fi';
+import { FiCalendar, FiDollarSign, FiClock, FiPackage, FiEye } from 'react-icons/fi';
 import type { SponsorAd } from '@/lib/db/schema';
 import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
 
 export interface SponsorshipItemProps {
 	sponsorAd: SponsorAd;
+	onViewDetails?: (id: string) => void;
 }
 
 // Status badge configuration
@@ -70,10 +71,14 @@ function formatSlugToTitle(slug: string): string {
 		.join(' ');
 }
 
-export function SponsorshipItem({ sponsorAd }: SponsorshipItemProps) {
+export function SponsorshipItem({ sponsorAd, onViewDetails }: SponsorshipItemProps) {
 	const t = useTranslations('client.sponsorships');
 
 	const statusConfig = STATUS_CONFIG[sponsorAd.status as SponsorAdStatus] || STATUS_CONFIG.pending;
+
+	const handleViewDetails = () => {
+		onViewDetails?.(sponsorAd.id);
+	};
 
 	return (
 		<div className="p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors">
@@ -100,7 +105,7 @@ export function SponsorshipItem({ sponsorAd }: SponsorshipItemProps) {
 					</div>
 				</div>
 
-				{/* Status & Dates */}
+				{/* Status, Dates & Actions */}
 				<div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
 					{/* Dates */}
 					<div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
@@ -119,6 +124,17 @@ export function SponsorshipItem({ sponsorAd }: SponsorshipItemProps) {
 					>
 						{t(statusConfig.labelKey)}
 					</span>
+
+					{/* View Details Button */}
+					{onViewDetails && (
+						<button
+							onClick={handleViewDetails}
+							className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-theme-primary-600 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 hover:bg-theme-primary-50 dark:hover:bg-theme-primary-900/20 rounded-lg transition-colors"
+						>
+							<FiEye className="w-4 h-4" />
+							{t('VIEW_DETAILS')}
+						</button>
+					)}
 				</div>
 			</div>
 
