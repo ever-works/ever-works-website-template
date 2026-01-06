@@ -30946,7 +30946,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Currency preference retrieved successfully. Always returns 200, even on errors, with default values (USD, country: null).",
+            "description": "Currency preference retrieved successfully (always returns 200 for graceful degradation)",
             "content": {
               "application/json": {
                 "schema": {
@@ -30954,7 +30954,7 @@
                   "properties": {
                     "currency": {
                       "type": "string",
-                      "description": "ISO 4217 currency code (3 characters)",
+                      "description": "ISO 4217 currency code (3 characters). Defaults to USD if detection fails.",
                       "example": "USD"
                     },
                     "country": {
@@ -30962,10 +30962,16 @@
                       "nullable": true,
                       "description": "ISO 3166-1 alpha-2 country code (2 characters) or null if detection failed",
                       "example": "US"
+                    },
+                    "detected": {
+                      "type": "boolean",
+                      "description": "Whether currency/country was successfully detected (true) or is a fallback value (false)",
+                      "example": true
                     }
                   },
                   "required": [
-                    "currency"
+                    "currency",
+                    "detected"
                   ]
                 },
                 "examples": {
@@ -30973,14 +30979,16 @@
                     "summary": "US user",
                     "value": {
                       "currency": "USD",
-                      "country": "US"
+                      "country": "US",
+                      "detected": true
                     }
                   },
                   "eu_user": {
                     "summary": "EU user",
                     "value": {
                       "currency": "EUR",
-                      "country": "FR"
+                      "country": "FR",
+                      "detected": true
                     }
                   },
                   "default": {
@@ -30992,17 +31000,19 @@
                     }
                   },
                   "error_fallback": {
-                    "summary": "Error fallback - always returns 200",
+                    "summary": "Error occurred - using fallback",
                     "value": {
                       "currency": "USD",
-                      "country": null
+                      "country": null,
+                      "detected": false
                     }
                   },
                   "default_fallback": {
                     "summary": "Default fallback when detection fails",
                     "value": {
                       "currency": "USD",
-                      "country": null
+                      "country": null,
+                      "detected": false
                     }
                   },
                   "us_user_detected": {
