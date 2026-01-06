@@ -152,15 +152,18 @@ export function useCurrency() {
 			await queryClient.cancelQueries({ queryKey: CURRENCY_QUERY_KEY });
 
 			// Snapshot the previous value for rollback
-			const previousData = queryClient.getQueryData<{ currency: string; country: string | null }>(
-				CURRENCY_QUERY_KEY
-			);
+			const previousData = queryClient.getQueryData<{
+				currency: string;
+				country: string | null;
+				detected: boolean;
+			}>(CURRENCY_QUERY_KEY);
 
-			// Optimistically update to the new value (preserve existing country)
+			// Optimistically update to the new value (preserve existing country and detected state)
 			const normalizedCurrency = normalizeCurrency(newCurrency);
 			queryClient.setQueryData(CURRENCY_QUERY_KEY, {
 				currency: normalizedCurrency,
-				country: previousData?.country || null
+				country: previousData?.country || null,
+				detected: previousData?.detected ?? false
 			});
 
 			// Return context with the previous value
