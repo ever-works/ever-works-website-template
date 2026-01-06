@@ -30921,7 +30921,7 @@
           "User - Currency"
         ],
         "summary": "Get user's currency preference",
-        "description": "Detects and returns the user's currency preference based on HTTP headers (Cloudflare, Vercel, CloudFront, etc.) or defaults to USD. Supports multiple detection providers for accurate country-based currency detection.",
+        "description": "Detects and returns the user's currency preference based on HTTP headers (Cloudflare, Vercel, CloudFront, etc.) or defaults to USD. Supports multiple detection providers for accurate country-based currency detection. Always returns status 200, even on errors, with default values (USD, country: null).",
         "parameters": [
           {
             "name": "provider",
@@ -30946,7 +30946,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Currency preference retrieved successfully",
+            "description": "Currency preference retrieved successfully. Always returns 200, even on errors, with default values (USD, country: null).",
             "content": {
               "application/json": {
                 "schema": {
@@ -30992,6 +30992,13 @@
                   },
                   "error_fallback": {
                     "summary": "Error fallback - always returns 200",
+                    "value": {
+                      "currency": "USD",
+                      "country": null
+                    }
+                  },
+                  "default_fallback": {
+                    "summary": "Default fallback when detection fails",
                     "value": {
                       "currency": "USD",
                       "country": null
@@ -31044,7 +31051,7 @@
                 "properties": {
                   "currency": {
                     "type": "string",
-                    "minLength": 3,
+                    "minLength": 1,
                     "maxLength": 3,
                     "description": "ISO 4217 currency code (3 characters, uppercase)",
                     "example": "EUR"
@@ -31052,7 +31059,7 @@
                   "country": {
                     "type": "string",
                     "nullable": true,
-                    "minLength": 2,
+                    "minLength": 1,
                     "maxLength": 2,
                     "description": "ISO 3166-1 alpha-2 country code (2 characters, uppercase). Optional - can be null if country is not available or not provided.",
                     "example": "FR"
@@ -31082,6 +31089,13 @@
                   "value": {
                     "currency": "GBP",
                     "country": "GB"
+                  }
+                },
+                "currency_only": {
+                  "summary": "Update currency without country",
+                  "value": {
+                    "currency": "EUR",
+                    "country": null
                   }
                 }
               }
@@ -31198,6 +31212,31 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/sponsor-ads/user/stats": {
+      "get": {
+        "tags": [
+          "Sponsor Ads - User"
+        ],
+        "summary": "Get user's sponsor ad statistics",
+        "description": "Returns statistics for the authenticated user's sponsor ads including counts by status.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User's sponsor ad statistics retrieved successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
