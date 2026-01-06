@@ -30979,21 +30979,24 @@
                     "summary": "US user",
                     "value": {
                       "currency": "USD",
-                      "country": "US"
+                      "country": "US",
+                      "detected": true
                     }
                   },
                   "eu_user": {
                     "summary": "EU user",
                     "value": {
                       "currency": "EUR",
-                      "country": "FR"
+                      "country": "FR",
+                      "detected": true
                     }
                   },
                   "default": {
                     "summary": "Default fallback (also used on error)",
                     "value": {
                       "currency": "USD",
-                      "country": null
+                      "country": null,
+                      "detected": false
                     }
                   },
                   "error_fallback": {
@@ -31008,7 +31011,8 @@
                     "summary": "Default fallback when detection fails",
                     "value": {
                       "currency": "USD",
-                      "country": null
+                      "country": null,
+                      "detected": false
                     }
                   },
                   "us_user_detected": {
