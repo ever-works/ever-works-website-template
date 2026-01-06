@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { Container } from '@/components/ui/container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FiDollarSign, FiPlus, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
@@ -10,6 +10,7 @@ import {
 	SponsorshipStatsCards,
 	SponsorshipFilters,
 	SponsorshipList,
+	SponsorshipDetailModal,
 	type SponsorshipStatusFilter,
 	type SponsorshipIntervalFilter,
 } from '@/components/sponsorships';
@@ -39,7 +40,12 @@ export function SponsorshipsContent() {
 		setCurrentPage,
 		nextPage,
 		prevPage,
+		refreshData,
 	} = useUserSponsorAds();
+
+	// Modal state
+	const [selectedSponsorshipId, setSelectedSponsorshipId] = useState<string | null>(null);
+	const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
 	// Convert hook status filter to UI value
 	const statusValue: SponsorshipStatusFilter = statusFilter || 'all';
@@ -64,6 +70,23 @@ export function SponsorshipsContent() {
 		setSearch(newSearch);
 		setCurrentPage(1);
 	}, [setSearch, setCurrentPage]);
+
+	// Handle view details
+	const handleViewDetails = useCallback((id: string) => {
+		setSelectedSponsorshipId(id);
+		setIsDetailModalOpen(true);
+	}, []);
+
+	// Handle modal close
+	const handleCloseModal = useCallback(() => {
+		setIsDetailModalOpen(false);
+		setSelectedSponsorshipId(null);
+	}, []);
+
+	// Handle action complete (refresh list after cancel, etc.)
+	const handleActionComplete = useCallback(() => {
+		refreshData();
+	}, [refreshData]);
 
 	return (
 		<div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -121,6 +144,7 @@ export function SponsorshipsContent() {
 								isLoading={isLoading}
 								emptyStateTitle={t('EMPTY_STATE_TITLE')}
 								emptyStateDescription={t('EMPTY_STATE_DESC')}
+								onViewDetails={handleViewDetails}
 							/>
 
 							{/* Pagination */}
@@ -155,6 +179,14 @@ export function SponsorshipsContent() {
 					</Card>
 				</div>
 			</Container>
+
+			{/* Sponsorship Detail Modal */}
+			<SponsorshipDetailModal
+				isOpen={isDetailModalOpen}
+				sponsorshipId={selectedSponsorshipId}
+				onClose={handleCloseModal}
+				onActionComplete={handleActionComplete}
+			/>
 		</div>
 	);
 }
