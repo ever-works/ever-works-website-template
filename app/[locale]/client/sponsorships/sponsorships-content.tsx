@@ -201,6 +201,7 @@ export function SponsorshipsContent({ pricingConfig }: SponsorshipsContentProps)
 							{/* List */}
 							<SponsorshipList
 								items={sponsorAds}
+								pricingConfig={pricingConfig}
 								isLoading={isLoading}
 								emptyStateTitle={t('EMPTY_STATE_TITLE')}
 								emptyStateDescription={t('EMPTY_STATE_DESC')}

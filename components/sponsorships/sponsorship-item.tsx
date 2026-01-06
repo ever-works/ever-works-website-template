@@ -7,8 +7,16 @@ import { CreditCard, XCircle, RefreshCw } from 'lucide-react';
 import type { SponsorAd } from '@/lib/db/schema';
 import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
 
+interface PricingConfig {
+	enabled: boolean;
+	weeklyPrice: number;
+	monthlyPrice: number;
+	currency: string;
+}
+
 export interface SponsorshipItemProps {
 	sponsorAd: SponsorAd;
+	pricingConfig: PricingConfig;
 	onCancel?: (sponsorAd: SponsorAd) => void;
 	onPayNow?: (sponsorAd: SponsorAd) => void;
 	onRenew?: (sponsorAd: SponsorAd) => void;
@@ -78,6 +86,7 @@ function formatSlugToTitle(slug: string): string {
 
 export function SponsorshipItem({
 	sponsorAd,
+	pricingConfig,
 	onCancel,
 	onPayNow,
 	onRenew,
@@ -87,6 +96,11 @@ export function SponsorshipItem({
 
 	const statusConfig = STATUS_CONFIG[sponsorAd.status as SponsorAdStatus] || STATUS_CONFIG.pending;
 	const status = sponsorAd.status as SponsorAdStatus;
+
+	// Get price based on interval from current pricing config
+	const price = sponsorAd.interval === 'weekly'
+		? pricingConfig.weeklyPrice
+		: pricingConfig.monthlyPrice;
 
 	// Determine which actions are available based on status
 	const canPayNow = status === 'pending_payment';
@@ -114,7 +128,7 @@ export function SponsorshipItem({
 							</span>
 							<span className="inline-flex items-center gap-1">
 								<FiDollarSign className="w-3.5 h-3.5" />
-								{formatAmount(sponsorAd.amount, sponsorAd.currency)}
+								{formatAmount(price, pricingConfig.currency)}
 							</span>
 						</div>
 					</div>

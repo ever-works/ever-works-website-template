@@ -6,8 +6,16 @@ import { SponsorshipItem, SponsorshipItemSkeleton } from './sponsorship-item';
 import type { SponsorAd } from '@/lib/db/schema';
 import { Link } from '@/i18n/navigation';
 
+interface PricingConfig {
+	enabled: boolean;
+	weeklyPrice: number;
+	monthlyPrice: number;
+	currency: string;
+}
+
 export interface SponsorshipListProps {
 	items: SponsorAd[];
+	pricingConfig: PricingConfig;
 	isLoading?: boolean;
 	skeletonCount?: number;
 	emptyStateTitle?: string;
@@ -20,6 +28,7 @@ export interface SponsorshipListProps {
 
 export function SponsorshipList({
 	items,
+	pricingConfig,
 	isLoading = false,
 	skeletonCount = 3,
 	emptyStateTitle,
@@ -73,6 +82,7 @@ export function SponsorshipList({
 				<SponsorshipItem
 					key={item.id}
 					sponsorAd={item}
+					pricingConfig={pricingConfig}
 					onCancel={onCancel}
 					onPayNow={onPayNow}
 					onRenew={onRenew}
