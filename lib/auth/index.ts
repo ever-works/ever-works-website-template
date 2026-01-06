@@ -96,76 +96,85 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
 		jwt: async ({ token, user, account }) => {
 			const extendedUser = user as ExtendedUser;
 
-			if (extendedUser?.id && typeof extendedUser.id === 'string') {
-				token.userId = extendedUser.id;
-			}
-			if (!token.userId && typeof token.sub === 'string') {
-				token.userId = token.sub;
-			}
-			if (extendedUser?.clientProfileId && typeof extendedUser.clientProfileId === 'string') {
-				token.clientProfileId = extendedUser.clientProfileId;
-			}
-			if (account?.provider) {
-				token.provider = account.provider;
-			}
+			try {
+				if (extendedUser?.id && typeof extendedUser.id === 'string') {
+					token.userId = extendedUser.id;
+				}
+				if (!token.userId && typeof token.sub === 'string') {
+					token.userId = token.sub;
+				}
+				if (extendedUser?.clientProfileId && typeof extendedUser.clientProfileId === 'string') {
+					token.clientProfileId = extendedUser.clientProfileId;
+				}
+				if (account?.provider) {
+					token.provider = account.provider;
+				}
 
-			// For OAuth users: ensure client profile exists and populate clientProfileId
-			const isOAuthProvider = token.provider && token.provider !== 'credentials';
-			if (isOAuthProvider && !token.clientProfileId && token.userId && isDatabaseAvailable) {
-				try {
-					// Check if client profile already exists
-					let clientProfile = await getClientProfileByUserId(token.userId);
+				// For OAuth users: ensure client profile exists and populate clientProfileId
+				const isOAuthProvider = token.provider && token.provider !== 'credentials';
+				if (isOAuthProvider && !token.clientProfileId && token.userId && isDatabaseAvailable) {
+					try {
+						// Check if client profile already exists
+						let clientProfile = await getClientProfileByUserId(token.userId);
 
-					if (!clientProfile) {
-						// Create client profile for OAuth user
-						const userEmail = token.email || extendedUser?.email || '';
-						const userName = token.name || extendedUser?.email?.split('@')[0] || 'User';
+						if (!clientProfile) {
+							// Create client profile for OAuth user
+							const userEmail = token.email || extendedUser?.email || '';
+							const userName = token.name || extendedUser?.email?.split('@')[0] || 'User';
 
-						if (userEmail) {
-							clientProfile = await createClientProfile({
-								userId: token.userId,
-								email: userEmail,
-								name: userName,
-								displayName: userName
-							});
-							console.log(`[auth][jwt] Created client profile for OAuth user: ${userEmail}`);
+							if (userEmail) {
+								clientProfile = await createClientProfile({
+									userId: token.userId,
+									email: userEmail,
+									name: userName,
+									displayName: userName
+								});
+								console.log(`[auth][jwt] Created client profile for OAuth user: ${userEmail}`);
+							}
 						}
+
+						if (clientProfile) {
+							token.clientProfileId = clientProfile.id;
+						}
+					} catch (error) {
+						// Log error but don't fail the session - user can still authenticate
+						console.error('[auth][jwt] Error creating/fetching client profile for OAuth user:', error);
+						// Profile creation will be retried on next session refresh
 					}
+				}
 
-					if (clientProfile) {
-						token.clientProfileId = clientProfile.id;
+				// Detect and update currency/country for client profiles on login
+				// Note: Full detection with headers happens on first API call with request context
+				// This is just a placeholder - actual detection happens in getUserCurrency with request headers
+
+				if (user) {
+					if (typeof extendedUser?.isClient === 'boolean') {
+						token.isAdmin = !extendedUser.isClient;
+					} else if (typeof extendedUser?.isAdmin === 'boolean') {
+						token.isAdmin = extendedUser.isAdmin;
+					} else if (typeof token.isAdmin !== 'boolean') {
+						// First time without explicit flags: default to non-admin
+						token.isAdmin = false;
 					}
-				} catch (error) {
-					console.error('[auth][jwt] Error creating/fetching client profile for OAuth user:', error);
 				}
-			}
 
-			// Detect and update currency/country for client profiles on login
-			// Note: Full detection with headers happens on first API call with request context
-			// This is just a placeholder - actual detection happens in getUserCurrency with request headers
-
-			if (user) {
-				if (typeof extendedUser?.isClient === 'boolean') {
-					token.isAdmin = !extendedUser.isClient;
-				} else if (typeof extendedUser?.isAdmin === 'boolean') {
-					token.isAdmin = extendedUser.isAdmin;
-				} else if (typeof token.isAdmin !== 'boolean') {
-					// First time without explicit flags: default to non-admin
-					token.isAdmin = false;
+				// Debug (dev only): trace non-PII auth token composition
+				if (coreConfig.NODE_ENV === 'development') {
+					try {
+						console.debug('[auth][jwt] token composed', {
+							provider: token.provider,
+							isAdmin: token.isAdmin,
+							hasUser: !!user,
+							accountProvider: account?.provider,
+							hasClientProfileId: !!token.clientProfileId
+						});
+					} catch {}
 				}
-			}
-
-			// Debug (dev only): trace non-PII auth token composition
-			if (coreConfig.NODE_ENV === 'development') {
-				try {
-					console.debug('[auth][jwt] token composed', {
-						provider: token.provider,
-						isAdmin: token.isAdmin,
-						hasUser: !!user,
-						accountProvider: account?.provider,
-						hasClientProfileId: !!token.clientProfileId
-					});
-				} catch {}
+			} catch (error) {
+				// Catch-all for any unexpected errors in jwt callback
+				// This prevents the entire /api/auth/session endpoint from failing
+				console.error('[auth][jwt] Unexpected error in jwt callback:', error);
+				// Ensure we return a valid token even if there were errors
 			}
 
 			return token;
