@@ -171,10 +171,10 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
 					} catch {}
 				}
 			} catch (error) {
-				// Catch-all for any unexpected errors in jwt callback
-				// This prevents the entire /api/auth/session endpoint from failing
-				console.error('[auth][jwt] Unexpected error in jwt callback:', error);
-				// Ensure we return a valid token even if there were errors
+				// Log unexpected errors for debugging
+				console.error('[auth][jwt] Critical error in jwt callback:', error);
+				// Re-throw: critical token operations failed, auth should not proceed with corrupt token
+				throw error;
 			}
 
 			return token;
