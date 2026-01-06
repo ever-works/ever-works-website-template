@@ -13,6 +13,7 @@ const CURRENCY_QUERY_KEY = ['user-currency'] as const;
 interface CurrencyResponse {
 	currency: string | null;
 	country: string | null;
+	detected: boolean; // Whether currency/country was successfully detected or is a fallback
 }
 
 export interface UpdateCurrencyOptions {
@@ -39,7 +40,7 @@ function normalizeCurrency(currency: string): string {
  * Works for both authenticated and anonymous users
  * @throws {Error} If the API request fails
  */
-async function fetchUserCurrency(): Promise<{ currency: string; country: string | null }> {
+async function fetchUserCurrency(): Promise<{ currency: string; country: string | null; detected: boolean }> {
 	const response = await serverClient.get<CurrencyResponse>('/api/user/currency');
 
 	if (!apiUtils.isSuccess(response)) {
@@ -49,10 +50,17 @@ async function fetchUserCurrency(): Promise<{ currency: string; country: string 
 	// Handle case where currency might be null (fallback to USD)
 	// Always return a valid currency string
 	const currency = response.data.currency ? normalizeCurrency(response.data.currency) : DEFAULT_CURRENCY;
+	const detected = response.data.detected ?? false; // Default to false if not provided (backward compatibility)
+
+	// Log detection failures for monitoring (only in development)
+	if (!detected && process.env.NODE_ENV === 'development') {
+		console.info('[useCurrency] Currency detection failed, using fallback:', currency);
+	}
 
 	return {
 		currency,
-		country: response.data.country || null
+		country: response.data.country || null,
+		detected
 	};
 }
 
@@ -84,7 +92,7 @@ export function useCurrency() {
 		isError,
 		error,
 		refetch
-	} = useQuery<{ currency: string; country: string | null }>({
+	} = useQuery<{ currency: string; country: string | null; detected: boolean }>({
 		queryKey: CURRENCY_QUERY_KEY,
 		queryFn: fetchUserCurrency,
 		// Enable for all users (authenticated and anonymous) since API supports both
@@ -104,11 +112,12 @@ export function useCurrency() {
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: true,
 		// Provide default value to avoid undefined
-		placeholderData: { currency: DEFAULT_CURRENCY, country: null }
+		placeholderData: { currency: DEFAULT_CURRENCY, country: null, detected: false }
 	});
 
 	const currency = currencyData?.currency || DEFAULT_CURRENCY;
 	const country = currencyData?.country || null;
+	const detected = currencyData?.detected ?? false;
 
 	const updateCurrencyMutation = useMutation({
 		mutationFn: async (newCurrency: string): Promise<string> => {
@@ -193,6 +202,7 @@ export function useCurrency() {
 		currency,
 		isLoading,
 		country,
+		detected, // Whether currency was successfully detected or is a fallback
 		isError,
 		error: error instanceof Error ? error : isError ? new Error('Failed to fetch currency') : null,
 		updateCurrency,

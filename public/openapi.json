@@ -30921,7 +30921,7 @@
           "User - Currency"
         ],
         "summary": "Get user's currency preference",
-        "description": "Detects and returns the user's currency preference based on HTTP headers (Cloudflare, Vercel, CloudFront, etc.) or defaults to USD. Supports multiple detection providers for accurate country-based currency detection. Always returns status 200, even on errors, with default values (USD, country: null).",
+        "description": "Detects and returns the user's currency preference based on HTTP headers (Cloudflare, Vercel, CloudFront, etc.) or defaults to USD.\n\n**Detection Strategy:**\n- Tries to detect country from HTTP headers (CDN/proxy headers)\n- Maps country to currency using ISO 4217 standards\n- Falls back to USD if detection fails\n\n**Response Behavior:**\n- Always returns 200 OK with valid data (graceful degradation)\n- Uses `detected: true/false` flag to indicate detection success\n- This design choice prioritizes UX over strict REST conventions:\n  * Application remains functional even if detection fails\n  * Simplifies frontend error handling\n  * Frontend can still monitor detection success via the `detected` flag\n",
         "parameters": [
           {
             "name": "provider",
@@ -30946,7 +30946,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Currency preference retrieved successfully. Always returns 200, even on errors, with default values (USD, country: null).",
+            "description": "Currency preference retrieved successfully (always returns 200 for graceful degradation)",
             "content": {
               "application/json": {
                 "schema": {
@@ -30954,7 +30954,7 @@
                   "properties": {
                     "currency": {
                       "type": "string",
-                      "description": "ISO 4217 currency code (3 characters)",
+                      "description": "ISO 4217 currency code (3 characters). Defaults to USD if detection fails.",
                       "example": "USD"
                     },
                     "country": {
@@ -30962,10 +30962,16 @@
                       "nullable": true,
                       "description": "ISO 3166-1 alpha-2 country code (2 characters) or null if detection failed",
                       "example": "US"
+                    },
+                    "detected": {
+                      "type": "boolean",
+                      "description": "Whether currency/country was successfully detected (true) or is a fallback value (false)",
+                      "example": true
                     }
                   },
                   "required": [
-                    "currency"
+                    "currency",
+                    "detected"
                   ]
                 },
                 "examples": {
@@ -30991,10 +30997,11 @@
                     }
                   },
                   "error_fallback": {
-                    "summary": "Error fallback - always returns 200",
+                    "summary": "Error occurred - using fallback",
                     "value": {
                       "currency": "USD",
-                      "country": null
+                      "country": null,
+                      "detected": false
                     }
                   },
                   "default_fallback": {
@@ -31002,6 +31009,30 @@
                     "value": {
                       "currency": "USD",
                       "country": null
+                    }
+                  },
+                  "us_user_detected": {
+                    "summary": "US user (successfully detected)",
+                    "value": {
+                      "currency": "USD",
+                      "country": "US",
+                      "detected": true
+                    }
+                  },
+                  "eu_user_detected": {
+                    "summary": "EU user (successfully detected)",
+                    "value": {
+                      "currency": "EUR",
+                      "country": "FR",
+                      "detected": true
+                    }
+                  },
+                  "detection_failed": {
+                    "summary": "Detection failed - using fallback",
+                    "value": {
+                      "currency": "USD",
+                      "country": null,
+                      "detected": false
                     }
                   }
                 }
@@ -31051,17 +31082,17 @@
                 "properties": {
                   "currency": {
                     "type": "string",
-                    "minLength": 1,
+                    "minLength": 3,
                     "maxLength": 3,
-                    "description": "ISO 4217 currency code (3 characters, uppercase)",
+                    "description": "ISO 4217 currency code (exactly 3 characters, uppercase)",
                     "example": "EUR"
                   },
                   "country": {
                     "type": "string",
                     "nullable": true,
-                    "minLength": 1,
+                    "minLength": 2,
                     "maxLength": 2,
-                    "description": "ISO 3166-1 alpha-2 country code (2 characters, uppercase). Optional - can be null if country is not available or not provided.",
+                    "description": "ISO 3166-1 alpha-2 country code (exactly 2 characters, uppercase). Optional - can be null if country is not available or not provided.",
                     "example": "FR"
                   }
                 },
@@ -31222,7 +31253,7 @@
           "Sponsor Ads - User"
         ],
         "summary": "Get user's sponsor ad statistics",
-        "description": "Returns statistics for the authenticated user's sponsor ads including counts by status.",
+        "description": "Returns statistics for the authenticated user's sponsor ads including counts by status, interval distribution, and revenue metrics.",
         "security": [
           {
             "sessionAuth": []
@@ -31230,13 +31261,224 @@
         ],
         "responses": {
           "200": {
-            "description": "User's sponsor ad statistics retrieved successfully"
+            "description": "User's sponsor ad statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "stats": {
+                      "type": "object",
+                      "properties": {
+                        "overview": {
+                          "type": "object",
+                          "description": "Breakdown of sponsor ads by status",
+                          "properties": {
+                            "total": {
+                              "type": "integer",
+                              "description": "Total number of sponsor ads",
+                              "example": 15
+                            },
+                            "pendingPayment": {
+                              "type": "integer",
+                              "description": "Ads awaiting payment",
+                              "example": 2
+                            },
+                            "pending": {
+                              "type": "integer",
+                              "description": "Ads pending review",
+                              "example": 3
+                            },
+                            "active": {
+                              "type": "integer",
+                              "description": "Currently active ads",
+                              "example": 5
+                            },
+                            "rejected": {
+                              "type": "integer",
+                              "description": "Rejected ads",
+                              "example": 1
+                            },
+                            "expired": {
+                              "type": "integer",
+                              "description": "Expired ads",
+                              "example": 3
+                            },
+                            "cancelled": {
+                              "type": "integer",
+                              "description": "Cancelled ads",
+                              "example": 1
+                            }
+                          },
+                          "required": [
+                            "total",
+                            "pendingPayment",
+                            "pending",
+                            "active",
+                            "rejected",
+                            "expired",
+                            "cancelled"
+                          ]
+                        },
+                        "byInterval": {
+                          "type": "object",
+                          "description": "Distribution by billing interval",
+                          "properties": {
+                            "weekly": {
+                              "type": "integer",
+                              "description": "Number of weekly ads",
+                              "example": 8
+                            },
+                            "monthly": {
+                              "type": "integer",
+                              "description": "Number of monthly ads",
+                              "example": 7
+                            }
+                          },
+                          "required": [
+                            "weekly",
+                            "monthly"
+                          ]
+                        },
+                        "revenue": {
+                          "type": "object",
+                          "description": "Revenue metrics (in minor currency units, e.g., cents)",
+                          "properties": {
+                            "totalRevenue": {
+                              "type": "number",
+                              "description": "Total revenue from all ads",
+                              "example": 45000
+                            },
+                            "weeklyRevenue": {
+                              "type": "number",
+                              "description": "Revenue from weekly ads",
+                              "example": 20000
+                            },
+                            "monthlyRevenue": {
+                              "type": "number",
+                              "description": "Revenue from monthly ads",
+                              "example": 25000
+                            }
+                          },
+                          "required": [
+                            "totalRevenue",
+                            "weeklyRevenue",
+                            "monthlyRevenue"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "overview",
+                        "byInterval",
+                        "revenue"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "stats"
+                  ]
+                },
+                "examples": {
+                  "typical_user": {
+                    "summary": "User with multiple sponsor ads",
+                    "value": {
+                      "success": true,
+                      "stats": {
+                        "overview": {
+                          "total": 15,
+                          "pendingPayment": 2,
+                          "pending": 3,
+                          "active": 5,
+                          "rejected": 1,
+                          "expired": 3,
+                          "cancelled": 1
+                        },
+                        "byInterval": {
+                          "weekly": 8,
+                          "monthly": 7
+                        },
+                        "revenue": {
+                          "totalRevenue": 45000,
+                          "weeklyRevenue": 20000,
+                          "monthlyRevenue": 25000
+                        }
+                      }
+                    }
+                  },
+                  "new_user": {
+                    "summary": "New user with no sponsor ads",
+                    "value": {
+                      "success": true,
+                      "stats": {
+                        "overview": {
+                          "total": 0,
+                          "pendingPayment": 0,
+                          "pending": 0,
+                          "active": 0,
+                          "rejected": 0,
+                          "expired": 0,
+                          "cancelled": 0
+                        },
+                        "byInterval": {
+                          "weekly": 0,
+                          "monthly": 0
+                        },
+                        "revenue": {
+                          "totalRevenue": 0,
+                          "weeklyRevenue": 0,
+                          "monthlyRevenue": 0
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized - User not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error - Failed to fetch statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to fetch sponsor ad stats"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
