@@ -4,77 +4,19 @@ import { useTranslations } from 'next-intl';
 import { FiCalendar, FiDollarSign, FiClock, FiPackage, FiEye } from 'react-icons/fi';
 import type { SponsorAd } from '@/lib/db/schema';
 import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
+import { formatDateShort } from '@/utils/date';
+import { formatCurrencyAmount } from '@/lib/utils/currency-format';
+import { SPONSOR_STATUS_CONFIG, formatSlugToTitle } from './constants';
 
 export interface SponsorshipItemProps {
 	sponsorAd: SponsorAd;
 	onViewDetails?: (id: string) => void;
 }
 
-// Status badge configuration
-const STATUS_CONFIG: Record<SponsorAdStatus, {
-	bg: string;
-	text: string;
-	labelKey: string
-}> = {
-	pending_payment: {
-		bg: 'bg-yellow-100 dark:bg-yellow-900/30',
-		text: 'text-yellow-700 dark:text-yellow-400',
-		labelKey: 'STATUS_PENDING_PAYMENT',
-	},
-	pending: {
-		bg: 'bg-blue-100 dark:bg-blue-900/30',
-		text: 'text-blue-700 dark:text-blue-400',
-		labelKey: 'STATUS_PENDING_REVIEW',
-	},
-	active: {
-		bg: 'bg-green-100 dark:bg-green-900/30',
-		text: 'text-green-700 dark:text-green-400',
-		labelKey: 'STATUS_ACTIVE',
-	},
-	expired: {
-		bg: 'bg-gray-100 dark:bg-gray-800',
-		text: 'text-gray-700 dark:text-gray-400',
-		labelKey: 'STATUS_EXPIRED',
-	},
-	rejected: {
-		bg: 'bg-red-100 dark:bg-red-900/30',
-		text: 'text-red-700 dark:text-red-400',
-		labelKey: 'STATUS_REJECTED',
-	},
-	cancelled: {
-		bg: 'bg-gray-100 dark:bg-gray-800',
-		text: 'text-gray-700 dark:text-gray-400',
-		labelKey: 'STATUS_CANCELLED',
-	},
-};
-
-function formatDate(date: Date | null | undefined): string {
-	if (!date) return '-';
-	return new Date(date).toLocaleDateString(undefined, {
-		year: 'numeric',
-		month: 'short',
-		day: 'numeric',
-	});
-}
-
-function formatAmount(amount: number, currency: string = 'usd'): string {
-	return new Intl.NumberFormat(undefined, {
-		style: 'currency',
-		currency: currency.toUpperCase(),
-	}).format(amount);
-}
-
-function formatSlugToTitle(slug: string): string {
-	return slug
-		.split('-')
-		.map(word => word.charAt(0).toUpperCase() + word.slice(1))
-		.join(' ');
-}
-
 export function SponsorshipItem({ sponsorAd, onViewDetails }: SponsorshipItemProps) {
 	const t = useTranslations('client.sponsorships');
 
-	const statusConfig = STATUS_CONFIG[sponsorAd.status as SponsorAdStatus] || STATUS_CONFIG.pending;
+	const statusConfig = SPONSOR_STATUS_CONFIG[sponsorAd.status as SponsorAdStatus] || SPONSOR_STATUS_CONFIG.pending;
 
 	const handleViewDetails = () => {
 		onViewDetails?.(sponsorAd.id);
@@ -99,7 +41,7 @@ export function SponsorshipItem({ sponsorAd, onViewDetails }: SponsorshipItemPro
 							</span>
 							<span className="inline-flex items-center gap-1">
 								<FiDollarSign className="w-3.5 h-3.5" />
-								{formatAmount(sponsorAd.amount, sponsorAd.currency)}
+								{formatCurrencyAmount(sponsorAd.amount, sponsorAd.currency)}
 							</span>
 						</div>
 					</div>
@@ -111,7 +53,7 @@ export function SponsorshipItem({ sponsorAd, onViewDetails }: SponsorshipItemPro
 					<div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
 						<FiCalendar className="w-4 h-4 flex-shrink-0" />
 						<span>
-							{formatDate(sponsorAd.startDate)} - {formatDate(sponsorAd.endDate)}
+							{formatDateShort(sponsorAd.startDate)} - {formatDateShort(sponsorAd.endDate)}
 						</span>
 					</div>
 

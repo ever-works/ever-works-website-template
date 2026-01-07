@@ -8,6 +8,9 @@ import { toast } from 'sonner';
 import { useSponsorAdDetail } from '@/hooks/use-sponsor-ad-detail';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
 import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
+import { formatDateShort } from '@/utils/date';
+import { formatCurrencyAmount } from '@/lib/utils/currency-format';
+import { SPONSOR_STATUS_CONFIG, formatSlugToTitle } from './constants';
 
 // ######################### Types #########################
 
@@ -41,64 +44,6 @@ const SECTION_TITLE = 'text-sm font-medium text-gray-500 dark:text-gray-400 mb-2
 const INFO_ROW = 'flex items-center justify-between py-2';
 const INFO_LABEL = 'text-sm text-gray-600 dark:text-gray-400';
 const INFO_VALUE = 'text-sm font-medium text-gray-900 dark:text-gray-100';
-
-const STATUS_CONFIG: Record<SponsorAdStatus, { bg: string; text: string; labelKey: string }> = {
-	pending_payment: {
-		bg: 'bg-yellow-100 dark:bg-yellow-900/30',
-		text: 'text-yellow-700 dark:text-yellow-400',
-		labelKey: 'STATUS_PENDING_PAYMENT',
-	},
-	pending: {
-		bg: 'bg-blue-100 dark:bg-blue-900/30',
-		text: 'text-blue-700 dark:text-blue-400',
-		labelKey: 'STATUS_PENDING_REVIEW',
-	},
-	active: {
-		bg: 'bg-green-100 dark:bg-green-900/30',
-		text: 'text-green-700 dark:text-green-400',
-		labelKey: 'STATUS_ACTIVE',
-	},
-	expired: {
-		bg: 'bg-gray-100 dark:bg-gray-800',
-		text: 'text-gray-700 dark:text-gray-400',
-		labelKey: 'STATUS_EXPIRED',
-	},
-	rejected: {
-		bg: 'bg-red-100 dark:bg-red-900/30',
-		text: 'text-red-700 dark:text-red-400',
-		labelKey: 'STATUS_REJECTED',
-	},
-	cancelled: {
-		bg: 'bg-gray-100 dark:bg-gray-800',
-		text: 'text-gray-700 dark:text-gray-400',
-		labelKey: 'STATUS_CANCELLED',
-	},
-};
-
-// ######################### Helper Functions #########################
-
-function formatDate(date: Date | string | null | undefined): string {
-	if (!date) return '-';
-	return new Date(date).toLocaleDateString(undefined, {
-		year: 'numeric',
-		month: 'short',
-		day: 'numeric',
-	});
-}
-
-function formatAmount(amount: number, currency: string = 'usd'): string {
-	return new Intl.NumberFormat(undefined, {
-		style: 'currency',
-		currency: currency.toUpperCase(),
-	}).format(amount);
-}
-
-function formatSlugToTitle(slug: string): string {
-	return slug
-		.split('-')
-		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-		.join(' ');
-}
 
 // ######################### Component #########################
 
@@ -205,7 +150,7 @@ export function SponsorshipDetailModal({
 
 	if (!isOpen) return null;
 
-	const statusConfig = sponsorAd ? STATUS_CONFIG[sponsorAd.status as SponsorAdStatus] || STATUS_CONFIG.pending : null;
+	const statusConfig = sponsorAd ? SPONSOR_STATUS_CONFIG[sponsorAd.status as SponsorAdStatus] || SPONSOR_STATUS_CONFIG.pending : null;
 	const canPay = sponsorAd?.status === 'pending_payment';
 	const canCancel = sponsorAd?.status === 'pending_payment' || sponsorAd?.status === 'pending' || sponsorAd?.status === 'active';
 	const canRenew = sponsorAd?.status === 'expired';
@@ -297,7 +242,7 @@ export function SponsorshipDetailModal({
 											{t('AMOUNT')}
 										</span>
 										<span className={INFO_VALUE}>
-											{formatAmount(sponsorAd.amount, sponsorAd.currency)}
+											{formatCurrencyAmount(sponsorAd.amount, sponsorAd.currency)}
 										</span>
 									</div>
 									{sponsorAd.paymentProvider && (
@@ -323,24 +268,24 @@ export function SponsorshipDetailModal({
 											<FiCalendar className="w-4 h-4 inline mr-2" />
 											{t('CREATED_DATE')}
 										</span>
-										<span className={INFO_VALUE}>{formatDate(sponsorAd.createdAt)}</span>
+										<span className={INFO_VALUE}>{formatDateShort(sponsorAd.createdAt)}</span>
 									</div>
 									{sponsorAd.startDate && (
 										<div className={INFO_ROW}>
 											<span className={INFO_LABEL}>{t('START_DATE')}</span>
-											<span className={INFO_VALUE}>{formatDate(sponsorAd.startDate)}</span>
+											<span className={INFO_VALUE}>{formatDateShort(sponsorAd.startDate)}</span>
 										</div>
 									)}
 									{sponsorAd.endDate && (
 										<div className={INFO_ROW}>
 											<span className={INFO_LABEL}>{t('END_DATE')}</span>
-											<span className={INFO_VALUE}>{formatDate(sponsorAd.endDate)}</span>
+											<span className={INFO_VALUE}>{formatDateShort(sponsorAd.endDate)}</span>
 										</div>
 									)}
 									{sponsorAd.reviewedAt && (
 										<div className={INFO_ROW}>
 											<span className={INFO_LABEL}>{t('REVIEWED_DATE')}</span>
-											<span className={INFO_VALUE}>{formatDate(sponsorAd.reviewedAt)}</span>
+											<span className={INFO_VALUE}>{formatDateShort(sponsorAd.reviewedAt)}</span>
 										</div>
 									)}
 								</div>
