@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MultiStepItemForm } from "@/components/admin/items/multi-step-item-form";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
@@ -432,57 +433,40 @@ export default function AdminItemsPage() {
                       </div>
 
                       {/* Right Section: Actions */}
-                      <div className="flex items-center space-x-2 ml-4">
+                      <div className="flex items-center gap-2 ml-4">
                         {/* External Link */}
-                        <Button
-                          size="sm"
+                        <IconButton
                           variant="ghost"
+                          tooltip={t('VIEW_SOURCE')}
+                          icon={<ExternalLink />}
+                          size="touch"
                           onClick={() => window.open(item.source_url || '#', '_blank')}
-                          className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20"
-                          title={t('VIEW_SOURCE')}
-                        >
-                          <ExternalLink size={14} />
-                        </Button>
+                          className="hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20"
+                        />
 
                         {/* Review Actions */}
                         {item.status === 'pending' && (
                           <>
-                            <Button
-                              size="sm"
-                              variant="ghost"
+                            <IconButton
+                              variant="success"
+                              tooltip={t('APPROVE')}
+                              loadingTooltip={t('APPROVING')}
+                              icon={<CheckCircle />}
+                              size="touch"
+                              isLoading={reviewingItems.has(item.id)}
                               onClick={() => handleReviewItem(item.id, 'approved')}
-                              disabled={reviewingItems.has(item.id)}
-                              className={`h-8 w-8 p-0 transition-all duration-200 ${
-                                reviewingItems.has(item.id)
-                                  ? 'opacity-50 cursor-not-allowed'
-                                  : 'hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20'
-                              }`}
-                              title={reviewingItems.has(item.id) ? t('APPROVING') : t('APPROVE')}
-                            >
-                              {reviewingItems.has(item.id) ? (
-                                <Loader2 size={14} className="animate-spin" />
-                              ) : (
-                                <CheckCircle size={14} />
-                              )}
-                            </Button>
-                            <Button
-                              size="sm"
+                              className="hover:bg-green-700"
+                            />
+                            <IconButton
                               variant="ghost"
+                              tooltip={t('REJECT')}
+                              loadingTooltip={t('REJECTING')}
+                              icon={<XCircle />}
+                              size="touch"
+                              isLoading={reviewingItems.has(item.id)}
                               onClick={() => handleReviewItem(item.id, 'rejected')}
-                              disabled={reviewingItems.has(item.id)}
-                              className={`h-8 w-8 p-0 transition-all duration-200 ${
-                                reviewingItems.has(item.id)
-                                  ? 'opacity-50 cursor-not-allowed'
-                                  : 'hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20'
-                              }`}
-                              title={reviewingItems.has(item.id) ? t('REJECTING') : t('REJECT')}
-                            >
-                              {reviewingItems.has(item.id) ? (
-                                <Loader2 size={14} className="animate-spin" />
-                              ) : (
-                                <XCircle size={14} />
-                              )}
-                            </Button>
+                              className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
+                            />
                           </>
                         )}
 
@@ -490,43 +474,30 @@ export default function AdminItemsPage() {
                         <AdminSurveyCreationButton
                           itemId={item.id}
                           variant="ghost"
-                          size="sm"
-                          className="w-8 p-0 hover:bg-yellow-500/10 hover:text-yellow-600"
+                          size="touch"
+                          className="hover:bg-yellow-50 hover:text-yellow-600 dark:hover:bg-yellow-900/20"
                         />
 
                         {/* Edit and Delete */}
-                        <Button
-                          size="sm"
+                        <IconButton
                           variant="ghost"
+                          tooltip={t('EDIT')}
+                          icon={<Edit />}
+                          size="touch"
+                          disabled={reviewingItems.has(item.id)}
                           onClick={() => openEditModal(item as any)}
-                          disabled={reviewingItems.has(item.id)}
-                          className={`h-8 w-8 p-0 transition-all duration-200 ${
-                            reviewingItems.has(item.id)
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-theme-primary/10 hover:text-theme-primary'
-                          }`}
-                          title={t('EDIT')}
-                        >
-                          <Edit size={14} />
-                        </Button>
-                        <Button
-                          size="sm"
+                          className="hover:bg-theme-primary/10 hover:text-theme-primary"
+                        />
+                        <IconButton
                           variant="ghost"
+                          tooltip={t('DELETE')}
+                          loadingTooltip={t('DELETING')}
+                          icon={<Trash2 />}
+                          size="touch"
+                          isLoading={reviewingItems.has(item.id)}
                           onClick={() => handleDeleteItem(item.id)}
-                          disabled={reviewingItems.has(item.id)}
-                          className={`h-8 w-8 p-0 transition-all duration-200 ${
-                            reviewingItems.has(item.id)
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20'
-                          }`}
-                          title={reviewingItems.has(item.id) ? t('DELETING') : t('DELETE')}
-                        >
-                          {reviewingItems.has(item.id) ? (
-                            <Loader2 size={14} className="animate-spin" />
-                          ) : (
-                            <Trash2 size={14} />
-                          )}
-                        </Button>
+                          className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
+                        />
                       </div>
                     </div>
                   </div>

@@ -19,6 +19,7 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        success: "bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700",
       },
       size: {
         default: "h-9 px-4 py-2",
@@ -26,6 +27,7 @@ const buttonVariants = cva(
         sm: "h-8 rounded-md px-3 text-xs",
         lg: "h-10 rounded-md px-8",
         icon: "h-9 w-9",
+        "icon-touch": "h-11 w-11 min-h-[44px] min-w-[44px]",
       },
     },
     defaultVariants: {
@@ -40,31 +42,38 @@ export interface ButtonProps extends Omit<React.ComponentPropsWithRef<typeof Her
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, ...props }, ref) => {
     // Map shadcn variants to HeroUI variants
-    const heroVariant = 
+    const heroVariant =
       variant === "default" ? "solid" :
       variant === "destructive" ? "solid" :
       variant === "outline-solid" ? "bordered" :
       variant === "secondary" ? "flat" :
       variant === "ghost" ? "ghost" :
-      variant === "link" ? "light" : "solid";
+      variant === "link" ? "light" :
+      variant === "success" ? "solid" : "solid";
     
     // Map shadcn sizes to HeroUI sizes
-    const heroSize = 
+    const heroSize =
       size === "xs" ? "xs" :
       size === "sm" ? "sm" :
       size === "lg" ? "lg" :
-      "md";
+      size === "icon-touch" ? "md" : "md";
     
     // Add custom classes for variants not directly supported by HeroUI
     let additionalClassNames = "";
     if (variant === "destructive") {
       additionalClassNames += " bg-destructive text-destructive-foreground hover:bg-destructive/90";
     }
+    if (variant === "success") {
+      additionalClassNames += " bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700";
+    }
     if (variant === "link") {
       additionalClassNames += " underline-offset-4 hover:underline";
     }
     if (size === "icon") {
       additionalClassNames += " w-9 h-9 p-0";
+    }
+    if (size === "icon-touch") {
+      additionalClassNames += " w-11 h-11 min-w-[44px] min-h-[44px] p-0";
     }
     
     return (
