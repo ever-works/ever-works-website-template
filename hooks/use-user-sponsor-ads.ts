@@ -41,6 +41,21 @@ interface CreateSponsorAdInput {
 	interval: "weekly" | "monthly";
 }
 
+interface CheckoutResponse {
+	success: boolean;
+	data: {
+		checkoutId: string;
+		checkoutUrl: string | null;
+		provider: string;
+	};
+	message?: string;
+}
+
+interface CancelSponsorAdInput {
+	id: string;
+	cancelReason?: string;
+}
+
 type SponsorAdInterval = 'weekly' | 'monthly';
 
 interface UseUserSponsorAdsOptions {
@@ -75,7 +90,14 @@ interface UseUserSponsorAdsReturn {
 
 	// Actions
 	createSponsorAd: (input: CreateSponsorAdInput) => Promise<SponsorAd | null>;
-	cancelSponsorAd: (id: string) => Promise<boolean>;
+	cancelSponsorAd: (id: string, cancelReason?: string) => Promise<boolean>;
+	payNow: (id: string) => Promise<{ checkoutUrl: string } | null>;
+	renewSponsorship: (id: string) => Promise<{ checkoutUrl: string } | null>;
+
+	// Submitting states for actions
+	isCancelling: boolean;
+	isPayingNow: boolean;
+	isRenewing: boolean;
 
 	// Filter actions
 	setStatusFilter: (status: SponsorAdStatus | undefined) => void;
@@ -151,12 +173,43 @@ const createSponsorAdApi = async (
 };
 
 const cancelSponsorAdApi = async (
-	id: string
+	input: CancelSponsorAdInput
 ): Promise<{ success: boolean; message: string }> => {
+	const body = input.cancelReason ? { cancelReason: input.cancelReason } : {};
 	const response = await serverClient.post<{
 		success: boolean;
 		message: string;
-	}>(`/api/sponsor-ads/user/${id}/cancel`, {});
+	}>(`/api/sponsor-ads/user/${input.id}/cancel`, body);
+
+	if (!apiUtils.isSuccess(response)) {
+		throw new Error(apiUtils.getErrorMessage(response));
+	}
+
+	return response.data;
+};
+
+const payNowApi = async (
+	sponsorAdId: string
+): Promise<CheckoutResponse> => {
+	const response = await serverClient.post<CheckoutResponse>(
+		'/api/sponsor-ads/checkout',
+		{ sponsorAdId }
+	);
+
+	if (!apiUtils.isSuccess(response)) {
+		throw new Error(apiUtils.getErrorMessage(response));
+	}
+
+	return response.data;
+};
+
+const renewSponsorshipApi = async (
+	id: string
+): Promise<CheckoutResponse> => {
+	const response = await serverClient.post<CheckoutResponse>(
+		`/api/sponsor-ads/user/${id}/renew`,
+		{}
+	);
 
 	if (!apiUtils.isSuccess(response)) {
 		throw new Error(apiUtils.getErrorMessage(response));
@@ -268,6 +321,20 @@ export function useUserSponsorAds(
 		},
 	});
 
+	const payNowMutation = useMutation({
+		mutationFn: payNowApi,
+		onError: (error: Error) => {
+			toast.error(`Failed to create checkout: ${error.message}`);
+		},
+	});
+
+	const renewMutation = useMutation({
+		mutationFn: renewSponsorshipApi,
+		onError: (error: Error) => {
+			toast.error(`Failed to create renewal checkout: ${error.message}`);
+		},
+	});
+
 	// Derived data
 	const sponsorAds = sponsorAdsData?.data || [];
 	const stats = statsData?.stats || defaultStats;
@@ -307,15 +374,47 @@ export function useUserSponsorAds(
 	);
 
 	const handleCancel = useCallback(
-		async (id: string): Promise<boolean> => {
+		async (id: string, cancelReason?: string): Promise<boolean> => {
 			try {
-				await cancelMutation.mutateAsync(id);
+				await cancelMutation.mutateAsync({ id, cancelReason });
 				return true;
 			} catch {
 				return false;
 			}
 		},
 		[cancelMutation]
+	);
+
+	const handlePayNow = useCallback(
+		async (id: string): Promise<{ checkoutUrl: string } | null> => {
+			try {
+				const result = await payNowMutation.mutateAsync(id);
+				if (result.data.checkoutUrl) {
+					return { checkoutUrl: result.data.checkoutUrl };
+				}
+				toast.error("Failed to get checkout URL");
+				return null;
+			} catch {
+				return null;
+			}
+		},
+		[payNowMutation]
+	);
+
+	const handleRenew = useCallback(
+		async (id: string): Promise<{ checkoutUrl: string } | null> => {
+			try {
+				const result = await renewMutation.mutateAsync(id);
+				if (result.data.checkoutUrl) {
+					return { checkoutUrl: result.data.checkoutUrl };
+				}
+				toast.error("Failed to get renewal checkout URL");
+				return null;
+			} catch {
+				return null;
+			}
+		},
+		[renewMutation]
 	);
 
 	return {
@@ -343,6 +442,13 @@ export function useUserSponsorAds(
 		// Actions
 		createSponsorAd: handleCreate,
 		cancelSponsorAd: handleCancel,
+		payNow: handlePayNow,
+		renewSponsorship: handleRenew,
+
+		// Submitting states for actions
+		isCancelling: cancelMutation.isPending,
+		isPayingNow: payNowMutation.isPending,
+		isRenewing: renewMutation.isPending,
 
 		// Filter actions
 		setStatusFilter,

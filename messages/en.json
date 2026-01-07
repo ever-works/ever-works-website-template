@@ -3037,6 +3037,7 @@
 
 			"REJECTION_REASON": "Reason",
 			"CANCEL_REASON": "Cancellation reason",
+			"SPONSORSHIP": "sponsorship",
 
 			"VIEW_DETAILS": "View Details",
 			"MODAL_TITLE": "Sponsorship Details",
@@ -3050,16 +3051,35 @@
 			"AMOUNT": "Amount",
 			"INTERVAL": "Billing Interval",
 			"PAYMENT_PROVIDER": "Payment Provider",
+			"CLOSE": "Close",
+			"LOAD_ERROR": "Failed to load sponsorship details",
+			"RETRY": "Retry",
+
 			"PAY_NOW": "Pay Now",
+			"RENEW": "Renew",
+			"CANCEL": "Cancel",
+			"OPTIONAL": "optional",
+
 			"CANCEL_SPONSORSHIP": "Cancel Sponsorship",
 			"RENEW_SPONSORSHIP": "Renew Sponsorship",
-			"CLOSE": "Close",
 			"CONFIRM_CANCEL_MESSAGE": "Are you sure you want to cancel this sponsorship? This action cannot be undone.",
 			"CONFIRM_CANCEL": "Yes, Cancel",
 			"CANCEL_NO": "No, Keep It",
 			"CANCEL_SUCCESS": "Sponsorship cancelled successfully",
-			"LOAD_ERROR": "Failed to load sponsorship details",
-			"RETRY": "Retry"
+
+			"CANCEL_DIALOG_TITLE": "Cancel Sponsorship",
+			"CANCEL_DIALOG_WARNING": "This action cannot be undone. Your sponsorship will be cancelled immediately and you will lose any remaining time.",
+			"CANCEL_REASON_LABEL": "Cancellation Reason",
+			"CANCEL_REASON_PLACEHOLDER": "Tell us why you're cancelling (optional)...",
+			"KEEP_SPONSORSHIP": "Keep Sponsorship",
+
+			"RENEW_DIALOG_TITLE": "Renew Sponsorship",
+			"RENEW_DIALOG_DESCRIPTION": "Extend your sponsorship to continue featuring your item prominently in the directory.",
+			"RENEWAL_PRICE": "Renewal Price",
+			"RENEWAL_DURATION": "Renews for 1 {interval}",
+			"RENEW_REDIRECT_INFO": "You will be redirected to our payment provider to complete the renewal.",
+			"CANCEL_BUTTON": "Cancel",
+			"PROCEED_TO_PAYMENT": "Proceed to Payment"
 		},
 		"dashboard": {
 			"TITLE": "Dashboard",
