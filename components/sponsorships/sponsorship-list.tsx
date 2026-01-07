@@ -6,20 +6,37 @@ import { SponsorshipItem, SponsorshipItemSkeleton } from './sponsorship-item';
 import type { SponsorAd } from '@/lib/db/schema';
 import { Link } from '@/i18n/navigation';
 
+interface PricingConfig {
+	enabled: boolean;
+	weeklyPrice: number;
+	monthlyPrice: number;
+	currency: string;
+}
+
 export interface SponsorshipListProps {
 	items: SponsorAd[];
+	pricingConfig: PricingConfig;
 	isLoading?: boolean;
 	skeletonCount?: number;
 	emptyStateTitle?: string;
 	emptyStateDescription?: string;
+	onCancel?: (sponsorAd: SponsorAd) => void;
+	onPayNow?: (sponsorAd: SponsorAd) => void;
+	onRenew?: (sponsorAd: SponsorAd) => void;
+	isActionDisabled?: boolean;
 }
 
 export function SponsorshipList({
 	items,
+	pricingConfig,
 	isLoading = false,
 	skeletonCount = 3,
 	emptyStateTitle,
 	emptyStateDescription,
+	onCancel,
+	onPayNow,
+	onRenew,
+	isActionDisabled = false,
 }: SponsorshipListProps) {
 	const t = useTranslations('client.sponsorships');
 
@@ -62,7 +79,15 @@ export function SponsorshipList({
 	return (
 		<div className="space-y-3">
 			{items.map((item) => (
-				<SponsorshipItem key={item.id} sponsorAd={item} />
+				<SponsorshipItem
+					key={item.id}
+					sponsorAd={item}
+					pricingConfig={pricingConfig}
+					onCancel={onCancel}
+					onPayNow={onPayNow}
+					onRenew={onRenew}
+					isActionDisabled={isActionDisabled}
+				/>
 			))}
 		</div>
 	);

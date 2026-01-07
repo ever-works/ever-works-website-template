@@ -1,12 +1,26 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { Button } from '@heroui/react';
 import { FiCalendar, FiDollarSign, FiClock, FiPackage } from 'react-icons/fi';
+import { CreditCard, XCircle, RefreshCw } from 'lucide-react';
 import type { SponsorAd } from '@/lib/db/schema';
 import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
 
+interface PricingConfig {
+	enabled: boolean;
+	weeklyPrice: number;
+	monthlyPrice: number;
+	currency: string;
+}
+
 export interface SponsorshipItemProps {
 	sponsorAd: SponsorAd;
+	pricingConfig: PricingConfig;
+	onCancel?: (sponsorAd: SponsorAd) => void;
+	onPayNow?: (sponsorAd: SponsorAd) => void;
+	onRenew?: (sponsorAd: SponsorAd) => void;
+	isActionDisabled?: boolean;
 }
 
 // Status badge configuration
@@ -59,8 +73,8 @@ function formatDate(date: Date | null | undefined): string {
 function formatAmount(amount: number, currency: string = 'usd'): string {
 	return new Intl.NumberFormat(undefined, {
 		style: 'currency',
-		currency: currency.toUpperCase(),
-	}).format(amount / 100);
+		currency: (currency || 'usd').toUpperCase(),
+	}).format(amount);
 }
 
 function formatSlugToTitle(slug: string): string {
@@ -70,10 +84,30 @@ function formatSlugToTitle(slug: string): string {
 		.join(' ');
 }
 
-export function SponsorshipItem({ sponsorAd }: SponsorshipItemProps) {
+export function SponsorshipItem({
+	sponsorAd,
+	pricingConfig,
+	onCancel,
+	onPayNow,
+	onRenew,
+	isActionDisabled = false,
+}: SponsorshipItemProps) {
 	const t = useTranslations('client.sponsorships');
 
 	const statusConfig = STATUS_CONFIG[sponsorAd.status as SponsorAdStatus] || STATUS_CONFIG.pending;
+	const status = sponsorAd.status as SponsorAdStatus;
+
+	// Get price based on interval from current pricing config
+	const price = sponsorAd.interval === 'weekly'
+		? pricingConfig.weeklyPrice
+		: pricingConfig.monthlyPrice;
+
+	// Determine which actions are available based on status
+	const canPayNow = status === 'pending_payment';
+	const canCancel = status === 'pending_payment' || status === 'pending' || status === 'active';
+	const canRenew = status === 'active' || status === 'expired';
+
+	const hasActions = canPayNow || canCancel || canRenew;
 
 	return (
 		<div className="p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors">
@@ -94,7 +128,7 @@ export function SponsorshipItem({ sponsorAd }: SponsorshipItemProps) {
 							</span>
 							<span className="inline-flex items-center gap-1">
 								<FiDollarSign className="w-3.5 h-3.5" />
-								{formatAmount(sponsorAd.amount, sponsorAd.currency)}
+								{formatAmount(price, pricingConfig.currency)}
 							</span>
 						</div>
 					</div>
@@ -121,6 +155,48 @@ export function SponsorshipItem({ sponsorAd }: SponsorshipItemProps) {
 					</span>
 				</div>
 			</div>
+
+			{/* Action Buttons */}
+			{hasActions && (
+				<div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 flex flex-wrap items-center gap-2">
+					{canPayNow && onPayNow && (
+						<Button
+							size="sm"
+							color="success"
+							variant="flat"
+							onPress={() => onPayNow(sponsorAd)}
+							isDisabled={isActionDisabled}
+							startContent={<CreditCard className="w-4 h-4" />}
+						>
+							{t('PAY_NOW')}
+						</Button>
+					)}
+					{canRenew && onRenew && (
+						<Button
+							size="sm"
+							color="primary"
+							variant="flat"
+							onPress={() => onRenew(sponsorAd)}
+							isDisabled={isActionDisabled}
+							startContent={<RefreshCw className="w-4 h-4" />}
+						>
+							{t('RENEW')}
+						</Button>
+					)}
+					{canCancel && onCancel && (
+						<Button
+							size="sm"
+							color="danger"
+							variant="light"
+							onPress={() => onCancel(sponsorAd)}
+							isDisabled={isActionDisabled}
+							startContent={<XCircle className="w-4 h-4" />}
+						>
+							{t('CANCEL')}
+						</Button>
+					)}
+				</div>
+			)}
 
 			{/* Rejection reason if rejected */}
 			{sponsorAd.status === 'rejected' && sponsorAd.rejectionReason && (

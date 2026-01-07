@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Container } from '@/components/ui/container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FiDollarSign, FiPlus, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
@@ -10,15 +10,35 @@ import {
 	SponsorshipStatsCards,
 	SponsorshipFilters,
 	SponsorshipList,
+	CancelDialog,
+	RenewDialog,
 	type SponsorshipStatusFilter,
 	type SponsorshipIntervalFilter,
 } from '@/components/sponsorships';
 import { useUserSponsorAds } from '@/hooks/use-user-sponsor-ads';
 import { Button } from '@/components/ui/button';
 import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
+import type { SponsorAd } from '@/lib/db/schema';
 
-export function SponsorshipsContent() {
+interface PricingConfig {
+	enabled: boolean;
+	weeklyPrice: number;
+	monthlyPrice: number;
+	currency: string;
+}
+
+interface SponsorshipsContentProps {
+	pricingConfig: PricingConfig;
+}
+
+export function SponsorshipsContent({ pricingConfig }: SponsorshipsContentProps) {
 	const t = useTranslations('client.sponsorships');
+
+	// Dialog state
+	const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+	const [renewDialogOpen, setRenewDialogOpen] = useState(false);
+	const [selectedSponsorship, setSelectedSponsorship] = useState<SponsorAd | null>(null);
+	const [cancelReason, setCancelReason] = useState('');
 
 	// Data fetching - hook manages all filter state internally
 	const {
@@ -39,11 +59,20 @@ export function SponsorshipsContent() {
 		setCurrentPage,
 		nextPage,
 		prevPage,
+		cancelSponsorAd,
+		payNow,
+		renewSponsorship,
+		isCancelling,
+		isPayingNow,
+		isRenewing,
 	} = useUserSponsorAds();
 
 	// Convert hook status filter to UI value
 	const statusValue: SponsorshipStatusFilter = statusFilter || 'all';
 	const intervalValue: SponsorshipIntervalFilter = intervalFilter || 'all';
+
+	// Any action is in progress
+	const isActionInProgress = isCancelling || isPayingNow || isRenewing;
 
 	// Handle status change
 	const handleStatusChange = useCallback((newStatus: SponsorshipStatusFilter) => {
@@ -64,6 +93,60 @@ export function SponsorshipsContent() {
 		setSearch(newSearch);
 		setCurrentPage(1);
 	}, [setSearch, setCurrentPage]);
+
+	// Action handlers
+	const handleCancelClick = useCallback((sponsorAd: SponsorAd) => {
+		setSelectedSponsorship(sponsorAd);
+		setCancelReason('');
+		setCancelDialogOpen(true);
+	}, []);
+
+	const handlePayNowClick = useCallback(async (sponsorAd: SponsorAd) => {
+		const result = await payNow(sponsorAd.id);
+		if (result?.checkoutUrl) {
+			window.location.href = result.checkoutUrl;
+		}
+	}, [payNow]);
+
+	const handleRenewClick = useCallback((sponsorAd: SponsorAd) => {
+		setSelectedSponsorship(sponsorAd);
+		setRenewDialogOpen(true);
+	}, []);
+
+	const handleCancelConfirm = useCallback(async () => {
+		if (!selectedSponsorship) return;
+
+		const success = await cancelSponsorAd(selectedSponsorship.id, cancelReason || undefined);
+		if (success) {
+			setCancelDialogOpen(false);
+			setSelectedSponsorship(null);
+			setCancelReason('');
+		}
+	}, [selectedSponsorship, cancelReason, cancelSponsorAd]);
+
+	const handleRenewConfirm = useCallback(async () => {
+		if (!selectedSponsorship) return;
+
+		const result = await renewSponsorship(selectedSponsorship.id);
+		if (result?.checkoutUrl) {
+			window.location.href = result.checkoutUrl;
+		}
+	}, [selectedSponsorship, renewSponsorship]);
+
+	const handleCancelDialogClose = useCallback(() => {
+		if (!isCancelling) {
+			setCancelDialogOpen(false);
+			setSelectedSponsorship(null);
+			setCancelReason('');
+		}
+	}, [isCancelling]);
+
+	const handleRenewDialogClose = useCallback(() => {
+		if (!isRenewing) {
+			setRenewDialogOpen(false);
+			setSelectedSponsorship(null);
+		}
+	}, [isRenewing]);
 
 	return (
 		<div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -118,9 +201,14 @@ export function SponsorshipsContent() {
 							{/* List */}
 							<SponsorshipList
 								items={sponsorAds}
+								pricingConfig={pricingConfig}
 								isLoading={isLoading}
 								emptyStateTitle={t('EMPTY_STATE_TITLE')}
 								emptyStateDescription={t('EMPTY_STATE_DESC')}
+								onCancel={handleCancelClick}
+								onPayNow={handlePayNowClick}
+								onRenew={handleRenewClick}
+								isActionDisabled={isActionInProgress}
 							/>
 
 							{/* Pagination */}
@@ -155,6 +243,27 @@ export function SponsorshipsContent() {
 					</Card>
 				</div>
 			</Container>
+
+			{/* Cancel Dialog */}
+			<CancelDialog
+				isOpen={cancelDialogOpen}
+				sponsorAd={selectedSponsorship}
+				cancelReason={cancelReason}
+				isSubmitting={isCancelling}
+				onReasonChange={setCancelReason}
+				onConfirm={handleCancelConfirm}
+				onClose={handleCancelDialogClose}
+			/>
+
+			{/* Renew Dialog */}
+			<RenewDialog
+				isOpen={renewDialogOpen}
+				sponsorAd={selectedSponsorship}
+				pricingConfig={pricingConfig}
+				isSubmitting={isRenewing}
+				onConfirm={handleRenewConfirm}
+				onClose={handleRenewDialogClose}
+			/>
 		</div>
 	);
 }

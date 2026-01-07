@@ -27,9 +27,6 @@ const appUrl =
 
 /**
  * Validates that a URL belongs to the application domain to prevent open redirect vulnerabilities.
- * @param url - The URL to validate
- * @param allowedOrigin - The allowed origin (defaults to appUrl)
- * @returns The validated URL if it belongs to the allowed origin, null otherwise
  */
 function validateRedirectUrl(url: string | undefined, allowedOrigin: string = appUrl): string | null {
 	if (!url) {
@@ -40,7 +37,6 @@ function validateRedirectUrl(url: string | undefined, allowedOrigin: string = ap
 		const urlObj = new URL(url, allowedOrigin);
 		const allowedUrlObj = new URL(allowedOrigin);
 
-		// Check if the URL belongs to the same origin (protocol, hostname, port)
 		if (
 			urlObj.protocol === allowedUrlObj.protocol &&
 			urlObj.hostname === allowedUrlObj.hostname &&
@@ -49,35 +45,34 @@ function validateRedirectUrl(url: string | undefined, allowedOrigin: string = ap
 			return urlObj.toString();
 		}
 
-		// Reject URLs from different origins
 		return null;
 	} catch {
-		// Invalid URL format - reject
 		return null;
 	}
 }
 
 /**
  * @swagger
- * /api/sponsor-ads/checkout:
+ * /api/sponsor-ads/user/{id}/renew:
  *   post:
- *     tags: ["Sponsor Ads"]
- *     summary: "Create sponsor ad checkout session"
- *     description: "Creates a checkout session for an approved sponsor ad. The sponsor ad must be in 'approved' status."
+ *     tags: ["Sponsor Ads - User"]
+ *     summary: "Renew a sponsor ad"
+ *     description: "Creates a checkout session to renew an active or expired sponsor ad. The sponsor ad must be owned by the authenticated user."
  *     security:
  *       - sessionAuth: []
+ *     parameters:
+ *       - name: "id"
+ *         in: "path"
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: "Sponsor ad ID to renew"
  *     requestBody:
- *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - sponsorAdId
  *             properties:
- *               sponsorAdId:
- *                 type: string
- *                 description: "ID of the approved sponsor ad"
  *               successUrl:
  *                 type: string
  *                 description: "URL to redirect after successful payment"
@@ -86,9 +81,9 @@ function validateRedirectUrl(url: string | undefined, allowedOrigin: string = ap
  *                 description: "URL to redirect after cancelled payment"
  *     responses:
  *       200:
- *         description: "Checkout session created successfully"
+ *         description: "Checkout session created successfully for renewal"
  *       400:
- *         description: "Bad request - Sponsor ad not approved or missing price configuration"
+ *         description: "Bad request - Sponsor ad cannot be renewed or missing price configuration"
  *       401:
  *         description: "Unauthorized"
  *       403:
@@ -98,7 +93,7 @@ function validateRedirectUrl(url: string | undefined, allowedOrigin: string = ap
  *       500:
  *         description: "Internal server error"
  */
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const session = await auth();
 
@@ -106,15 +101,22 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 		}
 
-		const body = await request.json();
-		const { sponsorAdId, successUrl, cancelUrl } = body;
+		const { id } = await params;
 
-		if (!sponsorAdId) {
-			return NextResponse.json({ success: false, error: 'Sponsor ad ID is required' }, { status: 400 });
+		// Parse optional body for redirect URLs
+		let successUrl: string | undefined;
+		let cancelUrl: string | undefined;
+
+		try {
+			const body = await request.json();
+			successUrl = body.successUrl;
+			cancelUrl = body.cancelUrl;
+		} catch {
+			// Body is optional, continue without it
 		}
 
 		// Get the sponsor ad
-		const sponsorAd = await sponsorAdService.getSponsorAdById(sponsorAdId);
+		const sponsorAd = await sponsorAdService.getSponsorAdById(id);
 
 		if (!sponsorAd) {
 			return NextResponse.json({ success: false, error: 'Sponsor ad not found' }, { status: 404 });
@@ -123,17 +125,18 @@ export async function POST(request: NextRequest) {
 		// Verify ownership
 		if (sponsorAd.userId !== session.user.id) {
 			return NextResponse.json(
-				{ success: false, error: 'You do not have permission to pay for this sponsor ad' },
+				{ success: false, error: 'You do not have permission to renew this sponsor ad' },
 				{ status: 403 }
 			);
 		}
 
-		// Check if sponsor ad is awaiting payment
-		if (sponsorAd.status !== SponsorAdStatus.PENDING_PAYMENT) {
+		// Check if sponsor ad can be renewed (active or expired)
+		const renewableStatuses = [SponsorAdStatus.ACTIVE, SponsorAdStatus.EXPIRED];
+		if (!renewableStatuses.includes(sponsorAd.status as typeof SponsorAdStatus.ACTIVE | typeof SponsorAdStatus.EXPIRED)) {
 			return NextResponse.json(
 				{
 					success: false,
-					error: `Sponsor ad is not awaiting payment. Current status: ${sponsorAd.status}`
+					error: `Cannot renew sponsor ad with status: ${sponsorAd.status}. Only active or expired ads can be renewed.`
 				},
 				{ status: 400 }
 			);
@@ -155,35 +158,34 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Build success/cancel URLs with validation to prevent open redirect vulnerabilities
+		// Build success/cancel URLs with validation
 		const validatedSuccessUrl = validateRedirectUrl(successUrl);
 		const validatedCancelUrl = validateRedirectUrl(cancelUrl);
 
-		// Log warning if invalid URLs were provided (potential security issue)
 		if (successUrl && !validatedSuccessUrl) {
 			console.warn('Invalid successUrl provided, using default:', {
 				providedUrl: successUrl,
 				userId: session.user.id,
-				sponsorAdId
+				sponsorAdId: id
 			});
 		}
 		if (cancelUrl && !validatedCancelUrl) {
 			console.warn('Invalid cancelUrl provided, using default:', {
 				providedUrl: cancelUrl,
 				userId: session.user.id,
-				sponsorAdId
+				sponsorAdId: id
 			});
 		}
 
-		const finalSuccessUrl = validatedSuccessUrl || `${appUrl}/sponsor/success?sponsorAdId=${sponsorAdId}`;
-		const finalCancelUrl = validatedCancelUrl || `${appUrl}/sponsor?cancelled=true`;
+		const finalSuccessUrl = validatedSuccessUrl || `${appUrl}/sponsor/success?sponsorAdId=${id}&renewal=true`;
+		const finalCancelUrl = validatedCancelUrl || `${appUrl}/client/sponsorships?cancelled=true`;
 
 		// Create checkout session based on provider
 		let checkoutResult: { id: string; url: string | null };
 
 		switch (ACTIVE_PAYMENT_PROVIDER) {
 			case PaymentProvider.STRIPE:
-				checkoutResult = await createStripeCheckout(
+				checkoutResult = await createStripeRenewalCheckout(
 					session.user,
 					sponsorAd,
 					priceId,
@@ -193,7 +195,7 @@ export async function POST(request: NextRequest) {
 				break;
 
 			case PaymentProvider.LEMONSQUEEZY:
-				checkoutResult = await createLemonSqueezyCheckout(
+				checkoutResult = await createLemonSqueezyRenewalCheckout(
 					session.user,
 					sponsorAd,
 					priceId,
@@ -203,7 +205,7 @@ export async function POST(request: NextRequest) {
 				break;
 
 			case PaymentProvider.POLAR:
-				checkoutResult = await createPolarCheckout(
+				checkoutResult = await createPolarRenewalCheckout(
 					session.user,
 					sponsorAd,
 					priceId,
@@ -225,7 +227,7 @@ export async function POST(request: NextRequest) {
 			console.error('Payment provider did not return checkout URL', {
 				provider: ACTIVE_PAYMENT_PROVIDER,
 				checkoutId: checkoutResult.id,
-				sponsorAdId
+				sponsorAdId: id
 			});
 			return NextResponse.json(
 				{ success: false, error: 'Failed to create checkout URL. Please try again.' },
@@ -240,13 +242,12 @@ export async function POST(request: NextRequest) {
 				checkoutUrl: checkoutResult.url,
 				provider: ACTIVE_PAYMENT_PROVIDER
 			},
-			message: 'Checkout session created successfully'
+			message: 'Renewal checkout session created successfully'
 		});
 	} catch (error) {
-		console.error('Error creating sponsor ad checkout:', error);
+		console.error('Error creating sponsor ad renewal checkout:', error);
 
-		// Use generic message for 500 errors to avoid exposing sensitive details
-		return NextResponse.json({ success: false, error: 'Failed to create checkout session' }, { status: 500 });
+		return NextResponse.json({ success: false, error: 'Failed to create renewal checkout session' }, { status: 500 });
 	}
 }
 
@@ -289,9 +290,9 @@ function getPriceId(interval: string, provider: string): string | null {
 }
 
 /**
- * Create Stripe checkout session
+ * Create Stripe checkout session for renewal
  */
-async function createStripeCheckout(
+async function createStripeRenewalCheckout(
 	user: { id?: string; email?: string | null; name?: string | null },
 	sponsorAd: { id: string; itemSlug: string; interval: string; amount: number },
 	priceId: string,
@@ -301,7 +302,6 @@ async function createStripeCheckout(
 	const stripeProvider = getOrCreateStripeProvider();
 	const stripe = stripeProvider.getStripeInstance();
 
-	// Get or create customer
 	const customerId = await stripeProvider.getCustomerId(user as Parameters<typeof stripeProvider.getCustomerId>[0]);
 
 	if (!customerId) {
@@ -323,14 +323,16 @@ async function createStripeCheckout(
 		metadata: {
 			sponsorAdId: sponsorAd.id,
 			itemSlug: sponsorAd.itemSlug,
-			type: 'sponsor_ad'
+			type: 'sponsor_ad_renewal',
+			isRenewal: 'true'
 		},
 		subscription_data: {
 			metadata: {
 				userId: user.id || '',
 				sponsorAdId: sponsorAd.id,
 				itemSlug: sponsorAd.itemSlug,
-				type: 'sponsor_ad'
+				type: 'sponsor_ad_renewal',
+				isRenewal: 'true'
 			}
 		}
 	};
@@ -344,9 +346,9 @@ async function createStripeCheckout(
 }
 
 /**
- * Create LemonSqueezy checkout session
+ * Create LemonSqueezy checkout session for renewal
  */
-async function createLemonSqueezyCheckout(
+async function createLemonSqueezyRenewalCheckout(
 	user: { id?: string; email?: string | null; name?: string | null },
 	sponsorAd: { id: string; itemSlug: string; interval: string; amount: number },
 	variantId: string,
@@ -362,11 +364,12 @@ async function createLemonSqueezyCheckout(
 			userId: user.id || '',
 			sponsorAdId: sponsorAd.id,
 			itemSlug: sponsorAd.itemSlug,
-			type: 'sponsor_ad',
+			type: 'sponsor_ad_renewal',
+			isRenewal: 'true',
 			successUrl: successUrl,
 			cancelUrl: cancelUrl,
 			name: sponsorAd.itemSlug,
-			description: `Sponsor ad for ${sponsorAd.itemSlug}`
+			description: `Sponsor ad renewal for ${sponsorAd.itemSlug}`
 		}
 	});
 
@@ -377,9 +380,9 @@ async function createLemonSqueezyCheckout(
 }
 
 /**
- * Create Polar checkout session
+ * Create Polar checkout session for renewal
  */
-async function createPolarCheckout(
+async function createPolarRenewalCheckout(
 	user: { id?: string; email?: string | null; name?: string | null },
 	sponsorAd: { id: string; itemSlug: string; interval: string; amount: number },
 	priceId: string,
@@ -388,7 +391,6 @@ async function createPolarCheckout(
 ): Promise<{ id: string; url: string | null }> {
 	const polarProvider = getOrCreatePolarProvider();
 
-	// Get or create customer ID
 	const customerId = await polarProvider.getCustomerId(user as Parameters<typeof polarProvider.getCustomerId>[0]);
 
 	if (!customerId) {
@@ -402,7 +404,8 @@ async function createPolarCheckout(
 			userId: user.id || '',
 			sponsorAdId: sponsorAd.id,
 			itemSlug: sponsorAd.itemSlug,
-			type: 'sponsor_ad',
+			type: 'sponsor_ad_renewal',
+			isRenewal: 'true',
 			successUrl: successUrl,
 			cancelUrl: cancelUrl
 		}
