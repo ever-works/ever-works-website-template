@@ -58,9 +58,10 @@ export class ItemRepository {
       });
     }
 
-    if (options.tag) {
+    if (options.tags && options.tags.length > 0) {
       filteredItems = filteredItems.filter(item => {
-        return item.tags.includes(options.tag!);
+        // AND logic: item must have ALL selected tags
+        return options.tags!.every(tag => item.tags.includes(tag));
       });
     }
 
@@ -90,7 +91,7 @@ export class ItemRepository {
     return await gitService.getItemsPaginated(page, limit, {
       status: options.status,
       category: options.category,
-      tag: options.tag,
+      tags: options.tags,
       includeDeleted: options.includeDeleted,
       submittedBy: options.submittedBy,
       search: options.search,

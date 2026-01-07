@@ -1,14 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MultiStepItemForm } from "@/components/admin/items/multi-step-item-form";
+import { ItemFilters } from "@/components/admin/items/item-filters";
+import { ActiveItemFilters } from "@/components/admin/items/active-item-filters";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
 import { UniversalPagination } from "@/components/universal-pagination";
 import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink, Loader2 } from "lucide-react";
 import { useAdminItems } from "@/hooks/use-admin-items";
+import { useAllCategories } from "@/hooks/use-admin-categories";
+import { useAllTags } from "@/hooks/use-admin-tags";
 import { useTranslations } from 'next-intl';
 import { AdminSurveyCreationButton } from "@/components/surveys/admin-survey-creation-button";
 
@@ -16,8 +20,22 @@ export default function AdminItemsPage() {
   const t = useTranslations('admin.ADMIN_ITEMS_PAGE');
   const PageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  
-  // Use custom hook
+
+  // Filter state
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('');
+  const [tagsFilter, setTagsFilter] = useState<string[]>([]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, categoryFilter, tagsFilter]);
+
+  // Fetch categories and tags for filter dropdowns
+  const { data: allCategories = [] } = useAllCategories();
+  const { data: allTags = [] } = useAllTags();
+
+  // Use custom hook with filter params
   const {
     items,
     total: totalItems,
@@ -29,7 +47,24 @@ export default function AdminItemsPage() {
     updateItem,
     deleteItem,
     reviewItem,
-  } = useAdminItems({ page: currentPage, limit: PageSize });
+  } = useAdminItems({
+    page: currentPage,
+    limit: PageSize,
+    status: statusFilter || undefined,
+    category: categoryFilter || undefined,
+    tags: tagsFilter.length > 0 ? tagsFilter : undefined,
+  });
+
+  // Calculate active filter count
+  const activeFilterCount = (statusFilter ? 1 : 0) + (categoryFilter ? 1 : 0) + tagsFilter.length;
+  const hasActiveFilters = activeFilterCount > 0;
+
+  // Clear all filters
+  const handleClearAllFilters = () => {
+    setStatusFilter('');
+    setCategoryFilter('');
+    setTagsFilter([]);
+  };
 
   // Local state for UI
   const [reviewingItems, setReviewingItems] = useState<Set<string>>(new Set());
@@ -271,6 +306,39 @@ export default function AdminItemsPage() {
           </div>
         </div>
       </div>
+
+      {/* Filter Panel */}
+      <ItemFilters
+        statusFilter={statusFilter}
+        categoryFilter={categoryFilter}
+        tagsFilter={tagsFilter}
+        onStatusChange={setStatusFilter}
+        onCategoryChange={setCategoryFilter}
+        onTagsChange={setTagsFilter}
+        onClearAll={handleClearAllFilters}
+        categories={allCategories.map(c => ({ id: c.id, name: c.name }))}
+        tags={allTags.map(t => ({ id: t.id, name: t.name }))}
+        itemCounts={{
+          draft: stats.draft,
+          pending: stats.pending,
+          approved: stats.approved,
+          rejected: stats.rejected,
+        }}
+        activeFilterCount={activeFilterCount}
+      />
+
+      {/* Active Filter Chips */}
+      <ActiveItemFilters
+        statusFilter={statusFilter}
+        categoryFilter={categoryFilter}
+        tagsFilter={tagsFilter}
+        onRemoveStatus={() => setStatusFilter('')}
+        onRemoveCategory={() => setCategoryFilter('')}
+        onRemoveTag={(tagId) => setTagsFilter(prev => prev.filter(t => t !== tagId))}
+        onClearAll={handleClearAllFilters}
+        categories={allCategories.map(c => ({ id: c.id, name: c.name }))}
+        tags={allTags.map(t => ({ id: t.id, name: t.name }))}
+      />
 
       {/* Enhanced Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -543,19 +611,29 @@ export default function AdminItemsPage() {
                   <Package className="w-8 h-8 text-theme-primary opacity-60" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  {t('NO_ITEMS_FOUND')}
+                  {hasActiveFilters ? t('NO_FILTER_RESULTS') : t('NO_ITEMS_FOUND')}
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-                  {t('NO_ITEMS_DESCRIPTION')}
+                  {hasActiveFilters ? t('NO_FILTER_RESULTS_DESCRIPTION') : t('NO_ITEMS_DESCRIPTION')}
                 </p>
-                <Button
-                  color="primary"
-                  onPress={openCreateModal}
-                  startContent={<Plus size={16} />}
-                  className="bg-linear-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90"
-                >
-                  {t('CREATE_ITEM')}
-                </Button>
+                {hasActiveFilters ? (
+                  <Button
+                    color="primary"
+                    onPress={handleClearAllFilters}
+                    className="bg-linear-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90"
+                  >
+                    {t('CLEAR_ALL')}
+                  </Button>
+                ) : (
+                  <Button
+                    color="primary"
+                    onPress={openCreateModal}
+                    startContent={<Plus size={16} />}
+                    className="bg-linear-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90"
+                  >
+                    {t('CREATE_ITEM')}
+                  </Button>
+                )}
               </div>
             </div>
           )}

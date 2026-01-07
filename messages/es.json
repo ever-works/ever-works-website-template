@@ -2070,7 +2070,22 @@
 			"NO_ITEMS_FOUND": "No se encontraron elementos",
 			"NO_ITEMS_DESCRIPTION": "Cree su primer elemento para comenzar a construir su colección.",
 			"CREATE_ITEM": "Crear Elemento",
-			"CONFIRM_DELETE_ITEM": "¿Está seguro de que desea eliminar este elemento? Esta acción no se puede deshacer."
+			"CONFIRM_DELETE_ITEM": "¿Está seguro de que desea eliminar este elemento? Esta acción no se puede deshacer.",
+			"FILTERS": "Filtros",
+			"FILTER_BY_STATUS": "Filtrar por estado",
+			"FILTER_BY_CATEGORY": "Filtrar por categoría",
+			"FILTER_BY_TAGS": "Filtrar por etiquetas",
+			"ALL_STATUSES": "Todos los Estados",
+			"ALL_CATEGORIES": "Todas las Categorías",
+			"ALL_TAGS": "Todas las Etiquetas",
+			"CLEAR_ALL": "Limpiar Todo",
+			"NO_FILTER_RESULTS": "No hay elementos que coincidan con los filtros seleccionados",
+			"NO_FILTER_RESULTS_DESCRIPTION": "Intente ajustar sus filtros para encontrar lo que busca.",
+			"ACTIVE_FILTERS": "Filtros Activos",
+			"STATUS_LABEL": "Estado",
+			"CATEGORY_LABEL": "Categoría",
+			"TAGS_LABEL": "Etiquetas",
+			"SELECT_TAGS": "Seleccionar etiquetas..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Gestión de Usuarios",

@@ -2048,7 +2048,22 @@
 			"NO_ITEMS_FOUND": "No items found",
 			"NO_ITEMS_DESCRIPTION": "Create your first item to start building your collection.",
 			"CREATE_ITEM": "Create Item",
-			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone."
+			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone.",
+			"FILTERS": "ตัวกรอง",
+			"FILTER_BY_STATUS": "กรองตามสถานะ",
+			"FILTER_BY_CATEGORY": "กรองตามหมวดหมู่",
+			"FILTER_BY_TAGS": "กรองตามแท็ก",
+			"ALL_STATUSES": "สถานะทั้งหมด",
+			"ALL_CATEGORIES": "หมวดหมู่ทั้งหมด",
+			"ALL_TAGS": "แท็กทั้งหมด",
+			"CLEAR_ALL": "ล้างทั้งหมด",
+			"NO_FILTER_RESULTS": "ไม่มีรายการที่ตรงกับตัวกรองที่เลือก",
+			"NO_FILTER_RESULTS_DESCRIPTION": "ลองปรับตัวกรองของคุณเพื่อค้นหาสิ่งที่คุณต้องการ",
+			"ACTIVE_FILTERS": "ตัวกรองที่ใช้งาน",
+			"STATUS_LABEL": "สถานะ",
+			"CATEGORY_LABEL": "หมวดหมู่",
+			"TAGS_LABEL": "แท็ก",
+			"SELECT_TAGS": "เลือกแท็ก..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

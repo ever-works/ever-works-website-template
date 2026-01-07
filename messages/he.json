@@ -2042,7 +2042,22 @@
 			"NO_ITEMS_FOUND": "No items found",
 			"NO_ITEMS_DESCRIPTION": "Create your first item to start building your collection.",
 			"CREATE_ITEM": "Create Item",
-			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone."
+			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone.",
+			"FILTERS": "מסננים",
+			"FILTER_BY_STATUS": "סנן לפי סטטוס",
+			"FILTER_BY_CATEGORY": "סנן לפי קטגוריה",
+			"FILTER_BY_TAGS": "סנן לפי תגיות",
+			"ALL_STATUSES": "כל הסטטוסים",
+			"ALL_CATEGORIES": "כל הקטגוריות",
+			"ALL_TAGS": "כל התגיות",
+			"CLEAR_ALL": "נקה הכל",
+			"NO_FILTER_RESULTS": "אין פריטים התואמים למסננים שנבחרו",
+			"NO_FILTER_RESULTS_DESCRIPTION": "נסה להתאים את המסננים שלך כדי למצוא את מה שאתה מחפש.",
+			"ACTIVE_FILTERS": "מסננים פעילים",
+			"STATUS_LABEL": "סטטוס",
+			"CATEGORY_LABEL": "קטגוריה",
+			"TAGS_LABEL": "תגיות",
+			"SELECT_TAGS": "בחר תגיות..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

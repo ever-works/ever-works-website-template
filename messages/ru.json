@@ -2048,7 +2048,22 @@
 			"NO_ITEMS_FOUND": "No items found",
 			"NO_ITEMS_DESCRIPTION": "Create your first item to start building your collection.",
 			"CREATE_ITEM": "Create Item",
-			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone."
+			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone.",
+			"FILTERS": "Фильтры",
+			"FILTER_BY_STATUS": "Фильтр по статусу",
+			"FILTER_BY_CATEGORY": "Фильтр по категории",
+			"FILTER_BY_TAGS": "Фильтр по тегам",
+			"ALL_STATUSES": "Все статусы",
+			"ALL_CATEGORIES": "Все категории",
+			"ALL_TAGS": "Все теги",
+			"CLEAR_ALL": "Очистить все",
+			"NO_FILTER_RESULTS": "Нет элементов, соответствующих выбранным фильтрам",
+			"NO_FILTER_RESULTS_DESCRIPTION": "Попробуйте изменить фильтры, чтобы найти то, что ищете.",
+			"ACTIVE_FILTERS": "Активные фильтры",
+			"STATUS_LABEL": "Статус",
+			"CATEGORY_LABEL": "Категория",
+			"TAGS_LABEL": "Теги",
+			"SELECT_TAGS": "Выберите теги..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

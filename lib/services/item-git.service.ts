@@ -514,7 +514,7 @@ export class ItemGitService {
   async getItemsPaginated(page: number = 1, limit: number = 10, options: {
     status?: string;
     category?: string;
-    tag?: string;
+    tags?: string[];
     includeDeleted?: boolean;
     submittedBy?: string;
     search?: string;
@@ -543,8 +543,9 @@ export class ItemGitService {
       });
     }
 
-    if (options.tag) {
-      allItems = allItems.filter(item => item.tags.includes(options.tag!));
+    if (options.tags && options.tags.length > 0) {
+      // AND logic: item must have ALL selected tags
+      allItems = allItems.filter(item => options.tags!.every(tag => item.tags.includes(tag)));
     }
 
     // Filter by submitter (for client item management)

@@ -2048,7 +2048,22 @@
 			"NO_ITEMS_FOUND": "No items found",
 			"NO_ITEMS_DESCRIPTION": "Create your first item to start building your collection.",
 			"CREATE_ITEM": "Create Item",
-			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone."
+			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone.",
+			"FILTERS": "필터",
+			"FILTER_BY_STATUS": "상태별 필터",
+			"FILTER_BY_CATEGORY": "카테고리별 필터",
+			"FILTER_BY_TAGS": "태그별 필터",
+			"ALL_STATUSES": "모든 상태",
+			"ALL_CATEGORIES": "모든 카테고리",
+			"ALL_TAGS": "모든 태그",
+			"CLEAR_ALL": "모두 지우기",
+			"NO_FILTER_RESULTS": "선택한 필터와 일치하는 항목이 없습니다",
+			"NO_FILTER_RESULTS_DESCRIPTION": "찾고 있는 것을 찾으려면 필터를 조정해 보세요.",
+			"ACTIVE_FILTERS": "활성 필터",
+			"STATUS_LABEL": "상태",
+			"CATEGORY_LABEL": "카테고리",
+			"TAGS_LABEL": "태그",
+			"SELECT_TAGS": "태그 선택..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

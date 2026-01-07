@@ -48,7 +48,7 @@ export interface UpdateItemRequest extends Partial<CreateItemRequest> {
 export interface ItemListOptions {
   status?: 'draft' | 'pending' | 'approved' | 'rejected';
   category?: string;
-  tag?: string;
+  tags?: string[]; // Changed from single tag to array for multi-tag filtering
   page?: number;
   limit?: number;
   sortBy?: 'name' | 'updated_at' | 'status' | 'submitted_at';

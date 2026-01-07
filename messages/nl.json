@@ -2048,7 +2048,22 @@
 			"NO_ITEMS_FOUND": "No items found",
 			"NO_ITEMS_DESCRIPTION": "Create your first item to start building your collection.",
 			"CREATE_ITEM": "Create Item",
-			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone."
+			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone.",
+			"FILTERS": "Filters",
+			"FILTER_BY_STATUS": "Filteren op status",
+			"FILTER_BY_CATEGORY": "Filteren op categorie",
+			"FILTER_BY_TAGS": "Filteren op tags",
+			"ALL_STATUSES": "Alle statussen",
+			"ALL_CATEGORIES": "Alle categorieën",
+			"ALL_TAGS": "Alle tags",
+			"CLEAR_ALL": "Alles wissen",
+			"NO_FILTER_RESULTS": "Geen items komen overeen met de geselecteerde filters",
+			"NO_FILTER_RESULTS_DESCRIPTION": "Probeer je filters aan te passen om te vinden wat je zoekt.",
+			"ACTIVE_FILTERS": "Actieve filters",
+			"STATUS_LABEL": "Status",
+			"CATEGORY_LABEL": "Categorie",
+			"TAGS_LABEL": "Tags",
+			"SELECT_TAGS": "Selecteer tags..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

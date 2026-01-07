@@ -2048,7 +2048,22 @@
 			"NO_ITEMS_FOUND": "No items found",
 			"NO_ITEMS_DESCRIPTION": "Create your first item to start building your collection.",
 			"CREATE_ITEM": "Create Item",
-			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone."
+			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone.",
+			"FILTERS": "フィルター",
+			"FILTER_BY_STATUS": "ステータスでフィルター",
+			"FILTER_BY_CATEGORY": "カテゴリでフィルター",
+			"FILTER_BY_TAGS": "タグでフィルター",
+			"ALL_STATUSES": "すべてのステータス",
+			"ALL_CATEGORIES": "すべてのカテゴリ",
+			"ALL_TAGS": "すべてのタグ",
+			"CLEAR_ALL": "すべてクリア",
+			"NO_FILTER_RESULTS": "選択したフィルターに一致するアイテムがありません",
+			"NO_FILTER_RESULTS_DESCRIPTION": "フィルターを調整して、お探しのものを見つけてください。",
+			"ACTIVE_FILTERS": "アクティブなフィルター",
+			"STATUS_LABEL": "ステータス",
+			"CATEGORY_LABEL": "カテゴリ",
+			"TAGS_LABEL": "タグ",
+			"SELECT_TAGS": "タグを選択..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

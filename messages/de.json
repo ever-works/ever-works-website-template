@@ -2081,7 +2081,22 @@
 			"NO_ITEMS_FOUND": "Keine Elemente gefunden",
 			"NO_ITEMS_DESCRIPTION": "Erstellen Sie Ihr erstes Element, um mit dem Aufbau Ihrer Sammlung zu beginnen.",
 			"CREATE_ITEM": "Element erstellen",
-			"CONFIRM_DELETE_ITEM": "Sind Sie sicher, dass Sie dieses Element löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+			"CONFIRM_DELETE_ITEM": "Sind Sie sicher, dass Sie dieses Element löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+			"FILTERS": "Filter",
+			"FILTER_BY_STATUS": "Nach Status filtern",
+			"FILTER_BY_CATEGORY": "Nach Kategorie filtern",
+			"FILTER_BY_TAGS": "Nach Tags filtern",
+			"ALL_STATUSES": "Alle Status",
+			"ALL_CATEGORIES": "Alle Kategorien",
+			"ALL_TAGS": "Alle Tags",
+			"CLEAR_ALL": "Alle Löschen",
+			"NO_FILTER_RESULTS": "Keine Elemente entsprechen den ausgewählten Filtern",
+			"NO_FILTER_RESULTS_DESCRIPTION": "Versuchen Sie, Ihre Filter anzupassen, um das Gesuchte zu finden.",
+			"ACTIVE_FILTERS": "Aktive Filter",
+			"STATUS_LABEL": "Status",
+			"CATEGORY_LABEL": "Kategorie",
+			"TAGS_LABEL": "Tags",
+			"SELECT_TAGS": "Tags auswählen..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Benutzerverwaltung",

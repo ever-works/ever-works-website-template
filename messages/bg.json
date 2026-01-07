@@ -2037,7 +2037,22 @@
 			"NO_ITEMS_FOUND": "No items found",
 			"NO_ITEMS_DESCRIPTION": "Create your first item to start building your collection.",
 			"CREATE_ITEM": "Create Item",
-			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone."
+			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone.",
+			"FILTERS": "Филтри",
+			"FILTER_BY_STATUS": "Филтриране по статус",
+			"FILTER_BY_CATEGORY": "Филтриране по категория",
+			"FILTER_BY_TAGS": "Филтриране по тагове",
+			"ALL_STATUSES": "Всички статуси",
+			"ALL_CATEGORIES": "Всички категории",
+			"ALL_TAGS": "Всички тагове",
+			"CLEAR_ALL": "Изчисти всички",
+			"NO_FILTER_RESULTS": "Няма елементи, отговарящи на избраните филтри",
+			"NO_FILTER_RESULTS_DESCRIPTION": "Опитайте да коригирате филтрите си, за да намерите това, което търсите.",
+			"ACTIVE_FILTERS": "Активни филтри",
+			"STATUS_LABEL": "Статус",
+			"CATEGORY_LABEL": "Категория",
+			"TAGS_LABEL": "Тагове",
+			"SELECT_TAGS": "Изберете тагове..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

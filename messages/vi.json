@@ -2037,7 +2037,22 @@
 			"NO_ITEMS_FOUND": "No items found",
 			"NO_ITEMS_DESCRIPTION": "Create your first item to start building your collection.",
 			"CREATE_ITEM": "Create Item",
-			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone."
+			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone.",
+			"FILTERS": "Bộ lọc",
+			"FILTER_BY_STATUS": "Lọc theo trạng thái",
+			"FILTER_BY_CATEGORY": "Lọc theo danh mục",
+			"FILTER_BY_TAGS": "Lọc theo thẻ",
+			"ALL_STATUSES": "Tất cả trạng thái",
+			"ALL_CATEGORIES": "Tất cả danh mục",
+			"ALL_TAGS": "Tất cả thẻ",
+			"CLEAR_ALL": "Xóa tất cả",
+			"NO_FILTER_RESULTS": "Không có mục nào khớp với bộ lọc đã chọn",
+			"NO_FILTER_RESULTS_DESCRIPTION": "Hãy thử điều chỉnh bộ lọc để tìm những gì bạn đang tìm kiếm.",
+			"ACTIVE_FILTERS": "Bộ lọc đang hoạt động",
+			"STATUS_LABEL": "Trạng thái",
+			"CATEGORY_LABEL": "Danh mục",
+			"TAGS_LABEL": "Thẻ",
+			"SELECT_TAGS": "Chọn thẻ..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

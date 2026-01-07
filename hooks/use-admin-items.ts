@@ -20,6 +20,7 @@ export interface ItemsListParams {
   limit?: number;
   status?: string;
   category?: string;
+  tags?: string[];
   search?: string;
 }
 
@@ -51,6 +52,7 @@ const fetchItems = async (params: ItemsListParams = {}): Promise<ItemsListRespon
   if (params.limit) searchParams.set('limit', params.limit.toString());
   if (params.status) searchParams.set('status', params.status);
   if (params.category) searchParams.set('category', params.category);
+  if (params.tags && params.tags.length > 0) searchParams.set('tags', params.tags.join(','));
   if (params.search) searchParams.set('search', params.search);
 
   const response = await serverClient.get<ItemsListResponse>(`/api/admin/items?${searchParams.toString()}`);

@@ -2048,7 +2048,22 @@
 			"NO_ITEMS_FOUND": "No items found",
 			"NO_ITEMS_DESCRIPTION": "Create your first item to start building your collection.",
 			"CREATE_ITEM": "Create Item",
-			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone."
+			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone.",
+			"FILTERS": "Фільтри",
+			"FILTER_BY_STATUS": "Фільтрувати за статусом",
+			"FILTER_BY_CATEGORY": "Фільтрувати за категорією",
+			"FILTER_BY_TAGS": "Фільтрувати за тегами",
+			"ALL_STATUSES": "Усі статуси",
+			"ALL_CATEGORIES": "Усі категорії",
+			"ALL_TAGS": "Усі теги",
+			"CLEAR_ALL": "Очистити все",
+			"NO_FILTER_RESULTS": "Немає елементів, що відповідають вибраним фільтрам",
+			"NO_FILTER_RESULTS_DESCRIPTION": "Спробуйте налаштувати фільтри, щоб знайти те, що шукаєте.",
+			"ACTIVE_FILTERS": "Активні фільтри",
+			"STATUS_LABEL": "Статус",
+			"CATEGORY_LABEL": "Категорія",
+			"TAGS_LABEL": "Теги",
+			"SELECT_TAGS": "Виберіть теги..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

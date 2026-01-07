@@ -2048,7 +2048,22 @@
 			"NO_ITEMS_FOUND": "No items found",
 			"NO_ITEMS_DESCRIPTION": "Create your first item to start building your collection.",
 			"CREATE_ITEM": "Create Item",
-			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone."
+			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone.",
+			"FILTERS": "Filtreler",
+			"FILTER_BY_STATUS": "Duruma göre filtrele",
+			"FILTER_BY_CATEGORY": "Kategoriye göre filtrele",
+			"FILTER_BY_TAGS": "Etiketlere göre filtrele",
+			"ALL_STATUSES": "Tüm Durumlar",
+			"ALL_CATEGORIES": "Tüm Kategoriler",
+			"ALL_TAGS": "Tüm Etiketler",
+			"CLEAR_ALL": "Tümünü Temizle",
+			"NO_FILTER_RESULTS": "Seçilen filtrelere uyan öğe bulunamadı",
+			"NO_FILTER_RESULTS_DESCRIPTION": "Aradığınızı bulmak için filtrelerinizi ayarlamayı deneyin.",
+			"ACTIVE_FILTERS": "Aktif Filtreler",
+			"STATUS_LABEL": "Durum",
+			"CATEGORY_LABEL": "Kategori",
+			"TAGS_LABEL": "Etiketler",
+			"SELECT_TAGS": "Etiket seçin..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

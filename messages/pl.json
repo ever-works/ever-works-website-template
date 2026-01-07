@@ -2048,7 +2048,22 @@
 			"NO_ITEMS_FOUND": "No items found",
 			"NO_ITEMS_DESCRIPTION": "Create your first item to start building your collection.",
 			"CREATE_ITEM": "Create Item",
-			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone."
+			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone.",
+			"FILTERS": "Filtry",
+			"FILTER_BY_STATUS": "Filtruj według statusu",
+			"FILTER_BY_CATEGORY": "Filtruj według kategorii",
+			"FILTER_BY_TAGS": "Filtruj według tagów",
+			"ALL_STATUSES": "Wszystkie statusy",
+			"ALL_CATEGORIES": "Wszystkie kategorie",
+			"ALL_TAGS": "Wszystkie tagi",
+			"CLEAR_ALL": "Wyczyść wszystko",
+			"NO_FILTER_RESULTS": "Brak elementów pasujących do wybranych filtrów",
+			"NO_FILTER_RESULTS_DESCRIPTION": "Spróbuj dostosować filtry, aby znaleźć to, czego szukasz.",
+			"ACTIVE_FILTERS": "Aktywne filtry",
+			"STATUS_LABEL": "Status",
+			"CATEGORY_LABEL": "Kategoria",
+			"TAGS_LABEL": "Tagi",
+			"SELECT_TAGS": "Wybierz tagi..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",
