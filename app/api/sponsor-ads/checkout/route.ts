@@ -220,6 +220,19 @@ export async function POST(request: NextRequest) {
 				);
 		}
 
+		// Validate that checkout URL was returned
+		if (!checkoutResult.url) {
+			console.error('Payment provider did not return checkout URL', {
+				provider: ACTIVE_PAYMENT_PROVIDER,
+				checkoutId: checkoutResult.id,
+				sponsorAdId
+			});
+			return NextResponse.json(
+				{ success: false, error: 'Failed to create checkout URL. Please try again.' },
+				{ status: 500 }
+			);
+		}
+
 		return NextResponse.json({
 			success: true,
 			data: {
