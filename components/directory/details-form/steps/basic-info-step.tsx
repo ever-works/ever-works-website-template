@@ -188,14 +188,14 @@ export function BasicInfoStep({
 											id="category"
 											type="button"
 											className={cn(
-												'group relative inline-flex w-full items-center justify-between rounded-xl border bg-gray-50 px-3 py-4 text-sm font-medium text-gray-900 transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 dark:border-gray-600/50 dark:bg-gray-900/50 dark:text-white dark:focus:ring-theme-primary-400',
+												'group relative inline-flex w-full items-center justify-between rounded-xl border bg-gray-50 px-3 py-3 text-md font-medium text-gray-900 transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 dark:border-gray-600/50 dark:bg-gray-900/50 dark:text-white dark:focus:ring-theme-primary-400',
 												categoryMenuOpen && 'ring-2 ring-theme-primary-500 dark:ring-theme-primary-400',
 												focusedField === 'category' && 'border-theme-primary-500 dark:border-theme-primary-400'
 											)}
 											aria-label={t('directory.DETAILS_FORM.CATEGORY')}
 											aria-expanded={categoryMenuOpen}
 											aria-controls={categoryDropdownId}
-											aria-haspopup="listbox"
+											aria-haspopup="menu"
 											disabled={!categories || categories.length === 0}
 										>
 											<span className="truncate text-left">
@@ -216,10 +216,7 @@ export function BasicInfoStep({
 											id={categoryDropdownId}
 											sideOffset={6}
 											align="start"
-											className="z-50 w-full min-w-[540px] max-w-[660px] bg-white dark:bg-gray-900/95 border border-gray-200 
-											dark:border-gray-700 rounded-lg shadow-lg shadow-black/10 dark:shadow-black/30 overflow-hidden animate-in 
-											fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 
-											origin-top-left"
+											className="z-50 w-auto min-w-[min(90vw,640px)] max-w-[90vw] sm:max-w-lg bg-white dark:bg-gray-900/95 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg shadow-black/10 dark:shadow-black/30 overflow-hidden animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 origin-top-left"
 										>
 											<div className="max-h-64 overflow-y-auto p-1.5">
 												<DropdownMenu.RadioGroup
