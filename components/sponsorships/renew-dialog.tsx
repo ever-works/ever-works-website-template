@@ -41,7 +41,7 @@ function formatSlugToTitle(slug: string): string {
 function formatAmount(amount: number, currency: string = 'usd'): string {
 	return new Intl.NumberFormat(undefined, {
 		style: 'currency',
-		currency: currency.toUpperCase(),
+		currency: (currency || 'usd').toUpperCase(),
 	}).format(amount);
 }
 
