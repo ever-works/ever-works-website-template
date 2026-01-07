@@ -81,23 +81,25 @@ export function RenewDialog({
 
 	if (!isOpen || !sponsorAd) return null;
 
-	const intervalLabel = t(`INTERVAL_${sponsorAd.interval?.toUpperCase()}`);
+	// Fallback to monthly if interval is undefined
+	const interval = sponsorAd.interval || 'monthly';
+	const intervalLabel = t(`INTERVAL_${interval.toUpperCase()}`);
 
 	// Get renewal price based on interval from current pricing config
-	const renewalPrice = sponsorAd.interval === 'weekly'
+	const renewalPrice = interval === 'weekly'
 		? pricingConfig.weeklyPrice
 		: pricingConfig.monthlyPrice;
 
 	return (
 		<div className={MODAL_OVERLAY} onClick={(e) => e.target === e.currentTarget && !isSubmitting && onClose()}>
-			<div className={MODAL_CONTAINER} role="dialog" aria-modal="true">
+			<div className={MODAL_CONTAINER} role="dialog" aria-modal="true" aria-labelledby="renew-dialog-title">
 				{/* Header */}
 				<div className={MODAL_HEADER}>
 					<div className="flex items-center space-x-3">
 						<div className="flex items-center justify-center h-10 w-10 rounded-full bg-white/20">
 							<RefreshCw className="h-6 w-6 text-white" />
 						</div>
-						<h2 className="text-xl font-semibold text-white">{t('RENEW_DIALOG_TITLE')}</h2>
+						<h2 id="renew-dialog-title" className="text-xl font-semibold text-white">{t('RENEW_DIALOG_TITLE')}</h2>
 					</div>
 				</div>
 
