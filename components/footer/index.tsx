@@ -10,12 +10,23 @@ import { FooterBottom } from './footer-bottom';
 import { Container } from '../ui/container';
 import { useCategoriesEnabled } from '@/hooks/use-categories-enabled';
 import { useTagsEnabled } from '@/hooks/use-tags-enabled';
+import { useCategoriesExists } from '@/hooks/use-categories-exists';
+import { useCollectionsExists } from '@/hooks/use-collections-exists';
+import { useTagsExists } from '@/hooks/use-tags-exists';
 
 export function Footer() {
 	const t = useTranslations();
 	const config = useConfig();
 	const { categoriesEnabled } = useCategoriesEnabled();
 	const { tagsEnabled } = useTagsEnabled();
+	const { data: categoriesData } = useCategoriesExists();
+	const { data: collectionsData } = useCollectionsExists();
+	const { data: tagsData } = useTagsExists();
+
+	// Extract existence flags from React Query data
+	const hasCategories = categoriesData?.exists ?? false;
+	const hasCollections = collectionsData?.exists ?? false;
+	const hasTags = tagsData?.exists ?? false;
 
 	return (
 		<footer className="relative w-full overflow-hidden">
@@ -47,12 +58,14 @@ export function Footer() {
 							{/* Enhanced Navigation links section */}
 							<div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
 								{Object.entries(
-									footerNavigation(
-										t as (key: string) => string,
+									footerNavigation(t as (key: string) => string, {
 										categoriesEnabled,
 										tagsEnabled,
-										config.custom_footer || []
-									)
+										hasCategories,
+										hasTags,
+										hasCollections,
+										customFooterItems: config.custom_footer || []
+									})
 								).map(([category, links], categoryIndex) => (
 									<FooterLinkGroup
 										key={category}

@@ -454,7 +454,9 @@ async function readCollection<T extends Identifiable>(
 		const collectionPath = useDir ? path.join(collectionDir, `${type}.yml`) : path.join(contentPath, `${type}.yml`);
 
 		const raw = await safeReadFile(collectionPath, contentPath);
-		const list: T[] = yaml.parse(raw);
+		const parsed = yaml.parse(raw);
+		// Handle empty YAML files or null content
+		const list: T[] = Array.isArray(parsed) ? parsed : [];
 		const collection = new Map(list.map((item) => [item.id, item]));
 
 		if (useDir && options.lang && options.lang !== 'en') {

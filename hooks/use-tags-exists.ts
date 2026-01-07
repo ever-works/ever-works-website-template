@@ -1,25 +1,26 @@
 import { useSettings } from '@/components/providers/settings-provider';
 
-interface CategoriesExistsResult {
+interface TagsExistsResult {
 	exists: boolean;
 }
 
 /**
- * Client-side hook to check if categories exist
+ * Client-side hook to check if tags exist
  * Reads from SettingsProvider context for instant access (no loading delay)
- * @returns Object with exists flag - true if categories exist in database
+ * @returns Object with exists flag - true if tags exist in database
  */
-export function useCategoriesExists(): {
-	data: CategoriesExistsResult | undefined;
+export function useTagsExists(): {
+	data: TagsExistsResult | undefined;
 	isLoading: boolean;
 	error: Error | null;
 } {
-	const { hasCategories } = useSettings();
+	const { hasTags } = useSettings();
 
 	// No loading state since value comes from server-rendered context
 	return {
-		data: { exists: hasCategories },
+		data: { exists: hasTags },
 		isLoading: false,
 		error: null
 	};
 }
+

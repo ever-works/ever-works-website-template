@@ -53,12 +53,25 @@ export const socialLinks = [
 	}
 ].filter((link) => link.href && link.href !== '');
 
-export function footerNavigation(
-	t: (key: string) => string,
-	categoriesEnabled = true,
-	tagsEnabled = true,
-	customFooterItems: CustomNavigationItem[] = []
-) {
+export interface FooterNavigationOptions {
+	categoriesEnabled?: boolean;
+	tagsEnabled?: boolean;
+	hasCategories?: boolean;
+	hasTags?: boolean;
+	hasCollections?: boolean;
+	customFooterItems?: CustomNavigationItem[];
+}
+
+export function footerNavigation(t: (key: string) => string, options: FooterNavigationOptions = {}) {
+	const {
+		categoriesEnabled = true,
+		tagsEnabled = true,
+		hasCategories = true,
+		hasTags = true,
+		hasCollections = true,
+		customFooterItems = []
+	} = options;
+
 	const productLinks = [
 		{ label: t('common.COLLECTION'), href: '/collections' },
 		{ label: t('common.CATEGORY'), href: '/categories' },
@@ -68,8 +81,12 @@ export function footerNavigation(
 	];
 
 	const filteredProductLinks = productLinks.filter((link) => {
-		if (link.href === '/categories' && !categoriesEnabled) return false;
-		if (link.href === '/tags' && !tagsEnabled) return false;
+		// Hide collections link if no collections exist
+		if (link.href === '/collections' && !hasCollections) return false;
+		// Hide categories link when categories are disabled or no categories exist
+		if (link.href === '/categories' && (!categoriesEnabled || !hasCategories)) return false;
+		// Hide tags link when tags are disabled or no tags exist
+		if (link.href === '/tags' && (!tagsEnabled || !hasTags)) return false;
 		return true;
 	});
 
