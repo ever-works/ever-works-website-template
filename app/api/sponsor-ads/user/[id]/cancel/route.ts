@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
+import { cancelSponsorAdSchema } from '@/lib/validations/sponsor-ad';
 
 /**
  * @swagger
@@ -51,16 +52,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
 		const { id } = await params;
 
-		// Parse optional body for cancel reason
-		let cancelReason = 'Cancelled by user';
-		try {
-			const body = await request.json();
-			if (body.cancelReason && typeof body.cancelReason === 'string' && body.cancelReason.trim()) {
-				cancelReason = body.cancelReason.trim();
-			}
-		} catch {
-			// Body is optional, continue with default reason
-		}
+		// Parse and validate optional body for cancel reason using Zod schema
+		const body = await request.json().catch(() => ({}));
+		const parsed = cancelSponsorAdSchema.omit({ id: true }).safeParse(body);
+		const cancelReason = parsed.success && parsed.data.cancelReason?.trim()
+			? parsed.data.cancelReason.trim()
+			: 'Cancelled by user';
 
 		// Get the sponsor ad to verify ownership
 		const sponsorAd = await sponsorAdService.getSponsorAdById(id);
