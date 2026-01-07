@@ -458,14 +458,14 @@ export default function AdminItemsPage() {
                               className="hover:bg-green-700"
                             />
                             <IconButton
-                              variant="ghost"
+                              variant="destructive"
                               tooltip={t('REJECT')}
                               loadingTooltip={t('REJECTING')}
                               icon={<XCircle />}
                               size="touch"
                               isLoading={reviewingItems.has(item.id)}
                               onClick={() => handleReviewItem(item.id, 'rejected')}
-                              className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
+                              className="bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
                             />
                           </>
                         )}
@@ -489,14 +489,14 @@ export default function AdminItemsPage() {
                           className="hover:bg-theme-primary/10 hover:text-theme-primary"
                         />
                         <IconButton
-                          variant="ghost"
+                          variant="destructive"
                           tooltip={t('DELETE')}
                           loadingTooltip={t('DELETING')}
                           icon={<Trash2 />}
                           size="touch"
                           isLoading={reviewingItems.has(item.id)}
                           onClick={() => handleDeleteItem(item.id)}
-                          className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
+                          className="bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
                         />
                       </div>
                     </div>

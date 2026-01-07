@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { Tooltip } from "@heroui/tooltip";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -10,7 +9,7 @@ type IconButtonSize = "sm" | "default" | "touch";
 
 interface IconButtonProps extends Omit<ButtonProps, "size"> {
     tooltip: string;
-    tooltipPlacement?: "top" | "bottom" | "left" | "right";
+    tooltipPlacement?: "top" | "bottom";
     isLoading?: boolean;
     loadingTooltip?: string;
     icon: React.ReactNode;
@@ -28,6 +27,16 @@ const iconSizes: Record<IconButtonSize, number> = {
     sm: 14,
     default: 16,
     touch: 18,
+};
+
+const tooltipPositionClasses = {
+    top: "bottom-full left-1/2 -translate-x-1/2 mb-2",
+    bottom: "top-full left-1/2 -translate-x-1/2 mt-2",
+};
+
+const arrowPositionClasses = {
+    top: "top-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-b-transparent border-t-gray-900 dark:border-t-gray-100",
+    bottom: "bottom-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-t-transparent border-b-gray-900 dark:border-b-gray-100",
 };
 
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
@@ -49,16 +58,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         const displayTooltip = isLoading && loadingTooltip ? loadingTooltip : tooltip;
 
         return (
-            <Tooltip
-                content={displayTooltip}
-                showArrow
-                placement={tooltipPlacement}
-                delay={300}
-                classNames={{
-                    content:
-                        "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2 py-1 rounded-sm text-xs font-medium",
-                }}
-            >
+            <div className="relative group inline-flex">
                 <Button
                     ref={ref}
                     className={cn(
@@ -81,7 +81,28 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
                             : icon
                     )}
                 </Button>
-            </Tooltip>
+                {/* CSS-based Tooltip */}
+                <div
+                    className={cn(
+                        "absolute z-50 pointer-events-none",
+                        "opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-300",
+                        "whitespace-nowrap",
+                        tooltipPositionClasses[tooltipPlacement]
+                    )}
+                    role="tooltip"
+                >
+                    <div className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2 py-1 rounded text-xs font-medium shadow-lg">
+                        {displayTooltip}
+                    </div>
+                    {/* Arrow */}
+                    <div
+                        className={cn(
+                            "absolute w-0 h-0 border-4",
+                            arrowPositionClasses[tooltipPlacement]
+                        )}
+                    />
+                </div>
+            </div>
         );
     }
 );
