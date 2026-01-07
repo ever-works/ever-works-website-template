@@ -50,7 +50,10 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
 				if (isMounted.current) setIsInitialLoad(false);
 			}, 100);
 
-			return () => clearTimeout(timer);
+			return () => {
+				clearTimeout(timer);
+				if (isMounted.current) setIsInitialLoad(false);
+			};
 		}
 
 		// Check if pathname actually changed (client-side navigation)
@@ -64,7 +67,10 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
 				if (isMounted.current) setIsNavigating(false);
 			}, 300);
 
-			return () => clearTimeout(timer);
+			return () => {
+				clearTimeout(timer);
+				if (isMounted.current) setIsNavigating(false);
+			};
 		}
 	}, [pathname]);
 
