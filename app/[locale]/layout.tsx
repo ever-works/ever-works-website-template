@@ -19,6 +19,7 @@ import { Analytics } from './integration/analytics';
 import { SettingsProvider } from '@/components/providers/settings-provider';
 import { SettingsModalProvider } from '@/components/providers/settings-modal-provider';
 import { SettingsModal } from '@/components/settings-modal';
+import { NavigationLoadingBar } from '@/components/navigation-loading-bar';
 import {
 	getCategoriesEnabled,
 	getTagsEnabled,
@@ -33,22 +34,19 @@ import {
 	getHeaderSettingsEnabled,
 	getHeaderLayoutDefault,
 	getHeaderPaginationDefault,
-	getHeaderThemeDefault,
+	getHeaderThemeDefault
 } from '@/lib/utils/settings';
 import { cleanUrl } from '@/lib/utils/url-cleaner';
 
-const rawUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || 
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const rawUrl =
+	process.env.NEXT_PUBLIC_APP_URL?.trim() ||
+	(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://demo.ever.works');
 const appUrl = cleanUrl(rawUrl);
 
 /**
  * Generate metadata dynamically using siteConfig
  */
-export async function generateMetadata({
-	params
-}: {
-	params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
 	const { locale } = await params;
 	return {
 		metadataBase: new URL(appUrl),
@@ -102,7 +100,7 @@ export default async function RootLayout({
 		settingsEnabled: getHeaderSettingsEnabled(),
 		layoutDefault: getHeaderLayoutDefault(),
 		paginationDefault: getHeaderPaginationDefault(),
-		themeDefault: getHeaderThemeDefault(),
+		themeDefault: getHeaderThemeDefault()
 	};
 
 	// Determine if the current locale is RTL
@@ -124,9 +122,11 @@ export default async function RootLayout({
 					>
 						<SettingsModalProvider>
 							<Providers config={config}>
+								{/* Global navigation loading bar */}
+								<NavigationLoadingBar />
 								<ConditionalLayout>{children}</ConditionalLayout>
-							{/* Settings Modal - Shared by header button */}
-							<SettingsModal />
+								{/* Settings Modal - Shared by header button */}
+								<SettingsModal />
 							</Providers>
 						</SettingsModalProvider>
 					</SettingsProvider>

@@ -9,7 +9,8 @@ import {
 	FilterProvider,
 	LayoutProvider,
 	QueryClientProvider,
-	ThemeProvider
+	ThemeProvider,
+	NavigationProvider
 } from '@/components/providers';
 import { SessionProvider } from 'next-auth/react';
 import { LoginModalProvider } from '@/components/auth/login-modal-provider';
@@ -29,26 +30,28 @@ export function Providers({ config, children, dehydratedState }: ProvidersProps)
 
 	return (
 		<SessionProvider>
-			<QueryClientProvider dehydratedState={dehydratedState}>
-				<CurrencyProvider>
-					<LayoutProvider configDefaults={configDefaults}>
-						<ErrorProvider>
-							<ConfirmProvider>
-								<FilterProvider>
-									<ConfigProvider config={config}>
-										<ThemeProvider>
-											<HeroUIProvider>
-												<LoginModalProvider />
-												{children}
-											</HeroUIProvider>
-										</ThemeProvider>
-									</ConfigProvider>
-								</FilterProvider>
-							</ConfirmProvider>
-						</ErrorProvider>
-					</LayoutProvider>
-				</CurrencyProvider>
-			</QueryClientProvider>
+			<NavigationProvider>
+				<QueryClientProvider dehydratedState={dehydratedState}>
+					<CurrencyProvider>
+						<LayoutProvider configDefaults={configDefaults}>
+							<ErrorProvider>
+								<ConfirmProvider>
+									<FilterProvider>
+										<ConfigProvider config={config}>
+											<ThemeProvider>
+												<HeroUIProvider>
+													<LoginModalProvider />
+													{children}
+												</HeroUIProvider>
+											</ThemeProvider>
+										</ConfigProvider>
+									</FilterProvider>
+								</ConfirmProvider>
+							</ErrorProvider>
+						</LayoutProvider>
+					</CurrencyProvider>
+				</QueryClientProvider>
+			</NavigationProvider>
 		</SessionProvider>
 	);
 }
