@@ -21,6 +21,7 @@ import { Analytics } from './integration/analytics';
 import { SettingsProvider } from '@/components/providers/settings-provider';
 import { SettingsModalProvider } from '@/components/providers/settings-modal-provider';
 import { SettingsModal } from '@/components/settings-modal';
+import { NavigationLoadingBar } from '@/components/navigation-loading-bar';
 import {
 	getCategoriesEnabled,
 	getTagsEnabled,
@@ -154,6 +155,8 @@ export default async function RootLayout({
 					>
 						<SettingsModalProvider>
 							<Providers config={config}>
+								{/* Global navigation loading bar */}
+								<NavigationLoadingBar />
 								<ConditionalLayout>{children}</ConditionalLayout>
 								{/* Settings Modal - Shared by header button */}
 								<SettingsModal />
