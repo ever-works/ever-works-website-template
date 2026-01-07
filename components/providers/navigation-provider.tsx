@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef, useTransition } from 'react';
 import { usePathname } from 'next/navigation';
 
 interface NavigationContextType {
@@ -22,13 +22,28 @@ interface NavigationProviderProps {
 	children: React.ReactNode;
 }
 
+/**
+ * Waits for the browser to complete rendering and become idle
+ * Uses requestIdleCallback when available, falls back to requestAnimationFrame
+ */
+function waitForRenderComplete(): Promise<void> {
+	return new Promise((resolve) => {
+		if (typeof requestIdleCallback !== 'undefined') {
+			requestIdleCallback(() => resolve(), { timeout: 200 });
+		} else {
+			requestAnimationFrame(() => resolve());
+		}
+	});
+}
+
 export function NavigationProvider({ children }: NavigationProviderProps) {
-	// Track if this is the initial page load
+	// isInitialLoad remains true until first client-side navigation occurs
+	// This allows pages to show skeletons during their initial data loading
 	const [isInitialLoad, setIsInitialLoad] = useState(true);
 	const [isNavigating, setIsNavigating] = useState(false);
+	const [isPending, startTransition] = useTransition();
 	const pathname = usePathname();
 	const previousPathname = useRef<string | null>(null);
-	const hasHydrated = useRef(false);
 	const isMounted = useRef(true);
 
 	useEffect(() => {
@@ -39,40 +54,39 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
 	}, []);
 
 	useEffect(() => {
-		// Mark as hydrated on first mount
-		if (!hasHydrated.current) {
-			hasHydrated.current = true;
+		// On first render, just track the pathname
+		if (previousPathname.current === null) {
 			previousPathname.current = pathname;
-
-			// After initial render, mark initial load as complete
-			// Small delay to ensure skeleton renders first
-			const timer = setTimeout(() => {
-				if (isMounted.current) setIsInitialLoad(false);
-			}, 100);
-
-			return () => {
-				clearTimeout(timer);
-				if (isMounted.current) setIsInitialLoad(false);
-			};
+			return;
 		}
 
-		// Check if pathname actually changed (client-side navigation)
+		// Detect client-side navigation (pathname changed)
 		if (previousPathname.current !== pathname) {
+			// First navigation marks the end of initial load
+			if (isInitialLoad) {
+				setIsInitialLoad(false);
+			}
+
 			setIsNavigating(true);
 			previousPathname.current = pathname;
 
-			// Reset navigating state after a short delay
-			// This gives time for the new page to render
-			const timer = setTimeout(() => {
-				if (isMounted.current) setIsNavigating(false);
-			}, 300);
-
-			return () => {
-				clearTimeout(timer);
-				if (isMounted.current) setIsNavigating(false);
-			};
+			// Wait for the new page to render before clearing navigation state
+			waitForRenderComplete().then(() => {
+				if (isMounted.current) {
+					startTransition(() => {
+						setIsNavigating(false);
+					});
+				}
+			});
 		}
-	}, [pathname]);
+	}, [pathname, isInitialLoad]);
 
-	return <NavigationContext.Provider value={{ isInitialLoad, isNavigating }}>{children}</NavigationContext.Provider>;
+	// Combine transition pending state with our navigation state
+	const actuallyNavigating = isNavigating || isPending;
+
+	return (
+		<NavigationContext.Provider value={{ isInitialLoad, isNavigating: actuallyNavigating }}>
+			{children}
+		</NavigationContext.Provider>
+	);
 }
