@@ -20,6 +20,7 @@ export interface SponsorshipListProps {
 	skeletonCount?: number;
 	emptyStateTitle?: string;
 	emptyStateDescription?: string;
+	onViewDetails?: (id: string) => void;
 	onCancel?: (sponsorAd: SponsorAd) => void;
 	onPayNow?: (sponsorAd: SponsorAd) => void;
 	onRenew?: (sponsorAd: SponsorAd) => void;
@@ -33,6 +34,7 @@ export function SponsorshipList({
 	skeletonCount = 3,
 	emptyStateTitle,
 	emptyStateDescription,
+	onViewDetails,
 	onCancel,
 	onPayNow,
 	onRenew,
@@ -83,6 +85,7 @@ export function SponsorshipList({
 					key={item.id}
 					sponsorAd={item}
 					pricingConfig={pricingConfig}
+					onViewDetails={onViewDetails}
 					onCancel={onCancel}
 					onPayNow={onPayNow}
 					onRenew={onRenew}

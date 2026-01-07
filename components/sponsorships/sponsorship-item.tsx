@@ -2,10 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { Button } from '@heroui/react';
-import { FiCalendar, FiDollarSign, FiClock, FiPackage } from 'react-icons/fi';
+import { FiCalendar, FiDollarSign, FiClock, FiPackage, FiEye } from 'react-icons/fi';
 import { CreditCard, XCircle, RefreshCw } from 'lucide-react';
 import type { SponsorAd } from '@/lib/db/schema';
 import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
+import { formatDateShort } from '@/utils/date';
+import { formatCurrencyAmount } from '@/lib/utils/currency-format';
+import { SPONSOR_STATUS_CONFIG, formatSlugToTitle } from './constants';
 
 interface PricingConfig {
 	enabled: boolean;
@@ -17,76 +20,17 @@ interface PricingConfig {
 export interface SponsorshipItemProps {
 	sponsorAd: SponsorAd;
 	pricingConfig: PricingConfig;
+	onViewDetails?: (id: string) => void;
 	onCancel?: (sponsorAd: SponsorAd) => void;
 	onPayNow?: (sponsorAd: SponsorAd) => void;
 	onRenew?: (sponsorAd: SponsorAd) => void;
 	isActionDisabled?: boolean;
 }
 
-// Status badge configuration
-const STATUS_CONFIG: Record<SponsorAdStatus, {
-	bg: string;
-	text: string;
-	labelKey: string
-}> = {
-	pending_payment: {
-		bg: 'bg-yellow-100 dark:bg-yellow-900/30',
-		text: 'text-yellow-700 dark:text-yellow-400',
-		labelKey: 'STATUS_PENDING_PAYMENT',
-	},
-	pending: {
-		bg: 'bg-blue-100 dark:bg-blue-900/30',
-		text: 'text-blue-700 dark:text-blue-400',
-		labelKey: 'STATUS_PENDING_REVIEW',
-	},
-	active: {
-		bg: 'bg-green-100 dark:bg-green-900/30',
-		text: 'text-green-700 dark:text-green-400',
-		labelKey: 'STATUS_ACTIVE',
-	},
-	expired: {
-		bg: 'bg-gray-100 dark:bg-gray-800',
-		text: 'text-gray-700 dark:text-gray-400',
-		labelKey: 'STATUS_EXPIRED',
-	},
-	rejected: {
-		bg: 'bg-red-100 dark:bg-red-900/30',
-		text: 'text-red-700 dark:text-red-400',
-		labelKey: 'STATUS_REJECTED',
-	},
-	cancelled: {
-		bg: 'bg-gray-100 dark:bg-gray-800',
-		text: 'text-gray-700 dark:text-gray-400',
-		labelKey: 'STATUS_CANCELLED',
-	},
-};
-
-function formatDate(date: Date | null | undefined): string {
-	if (!date) return '-';
-	return new Date(date).toLocaleDateString(undefined, {
-		year: 'numeric',
-		month: 'short',
-		day: 'numeric',
-	});
-}
-
-function formatAmount(amount: number, currency: string = 'usd'): string {
-	return new Intl.NumberFormat(undefined, {
-		style: 'currency',
-		currency: (currency || 'usd').toUpperCase(),
-	}).format(amount);
-}
-
-function formatSlugToTitle(slug: string): string {
-	return slug
-		.split('-')
-		.map(word => word.charAt(0).toUpperCase() + word.slice(1))
-		.join(' ');
-}
-
 export function SponsorshipItem({
 	sponsorAd,
 	pricingConfig,
+	onViewDetails,
 	onCancel,
 	onPayNow,
 	onRenew,
@@ -94,7 +38,7 @@ export function SponsorshipItem({
 }: SponsorshipItemProps) {
 	const t = useTranslations('client.sponsorships');
 
-	const statusConfig = STATUS_CONFIG[sponsorAd.status as SponsorAdStatus] || STATUS_CONFIG.pending;
+	const statusConfig = SPONSOR_STATUS_CONFIG[sponsorAd.status as SponsorAdStatus] || SPONSOR_STATUS_CONFIG.pending;
 	const status = sponsorAd.status as SponsorAdStatus;
 
 	// Get price based on interval from current pricing config
@@ -108,6 +52,10 @@ export function SponsorshipItem({
 	const canRenew = status === 'active' || status === 'expired';
 
 	const hasActions = canPayNow || canCancel || canRenew;
+
+	const handleViewDetails = () => {
+		onViewDetails?.(sponsorAd.id);
+	};
 
 	return (
 		<div className="p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors">
@@ -128,19 +76,19 @@ export function SponsorshipItem({
 							</span>
 							<span className="inline-flex items-center gap-1">
 								<FiDollarSign className="w-3.5 h-3.5" />
-								{formatAmount(price, pricingConfig.currency)}
+								{formatCurrencyAmount(price, pricingConfig.currency)}
 							</span>
 						</div>
 					</div>
 				</div>
 
-				{/* Status & Dates */}
+				{/* Status, Dates & View Details */}
 				<div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
 					{/* Dates */}
 					<div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
 						<FiCalendar className="w-4 h-4 flex-shrink-0" />
 						<span>
-							{formatDate(sponsorAd.startDate)} - {formatDate(sponsorAd.endDate)}
+							{formatDateShort(sponsorAd.startDate)} - {formatDateShort(sponsorAd.endDate)}
 						</span>
 					</div>
 
@@ -153,6 +101,17 @@ export function SponsorshipItem({
 					>
 						{t(statusConfig.labelKey)}
 					</span>
+
+					{/* View Details Button */}
+					{onViewDetails && (
+						<button
+							onClick={handleViewDetails}
+							className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-theme-primary-600 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 hover:bg-theme-primary-50 dark:hover:bg-theme-primary-900/20 rounded-lg transition-colors"
+						>
+							<FiEye className="w-4 h-4" />
+							{t('VIEW_DETAILS')}
+						</button>
+					)}
 				</div>
 			</div>
 

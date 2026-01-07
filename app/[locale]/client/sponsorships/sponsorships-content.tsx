@@ -10,6 +10,7 @@ import {
 	SponsorshipStatsCards,
 	SponsorshipFilters,
 	SponsorshipList,
+	SponsorshipDetailModal,
 	CancelDialog,
 	RenewDialog,
 	type SponsorshipStatusFilter,
@@ -40,6 +41,10 @@ export function SponsorshipsContent({ pricingConfig }: SponsorshipsContentProps)
 	const [selectedSponsorship, setSelectedSponsorship] = useState<SponsorAd | null>(null);
 	const [cancelReason, setCancelReason] = useState('');
 
+	// Modal state (from HEAD)
+	const [selectedSponsorshipId, setSelectedSponsorshipId] = useState<string | null>(null);
+	const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
 	// Data fetching - hook manages all filter state internally
 	const {
 		sponsorAds,
@@ -59,6 +64,7 @@ export function SponsorshipsContent({ pricingConfig }: SponsorshipsContentProps)
 		setCurrentPage,
 		nextPage,
 		prevPage,
+		refreshData,
 		cancelSponsorAd,
 		payNow,
 		renewSponsorship,
@@ -94,7 +100,24 @@ export function SponsorshipsContent({ pricingConfig }: SponsorshipsContentProps)
 		setCurrentPage(1);
 	}, [setSearch, setCurrentPage]);
 
-	// Action handlers
+	// Handle view details (from HEAD)
+	const handleViewDetails = useCallback((id: string) => {
+		setSelectedSponsorshipId(id);
+		setIsDetailModalOpen(true);
+	}, []);
+
+	// Handle modal close (from HEAD)
+	const handleCloseModal = useCallback(() => {
+		setIsDetailModalOpen(false);
+		setSelectedSponsorshipId(null);
+	}, []);
+
+	// Handle action complete (refresh list after cancel, etc.) (from HEAD)
+	const handleActionComplete = useCallback(() => {
+		refreshData();
+	}, [refreshData]);
+
+	// Inline action handlers (from incoming)
 	const handleCancelClick = useCallback((sponsorAd: SponsorAd) => {
 		setSelectedSponsorship(sponsorAd);
 		setCancelReason('');
@@ -205,6 +228,7 @@ export function SponsorshipsContent({ pricingConfig }: SponsorshipsContentProps)
 								isLoading={isLoading}
 								emptyStateTitle={t('EMPTY_STATE_TITLE')}
 								emptyStateDescription={t('EMPTY_STATE_DESC')}
+								onViewDetails={handleViewDetails}
 								onCancel={handleCancelClick}
 								onPayNow={handlePayNowClick}
 								onRenew={handleRenewClick}
@@ -244,7 +268,15 @@ export function SponsorshipsContent({ pricingConfig }: SponsorshipsContentProps)
 				</div>
 			</Container>
 
-			{/* Cancel Dialog */}
+			{/* Sponsorship Detail Modal (from HEAD) */}
+			<SponsorshipDetailModal
+				isOpen={isDetailModalOpen}
+				sponsorshipId={selectedSponsorshipId}
+				onClose={handleCloseModal}
+				onActionComplete={handleActionComplete}
+			/>
+
+			{/* Cancel Dialog (from incoming) */}
 			<CancelDialog
 				isOpen={cancelDialogOpen}
 				sponsorAd={selectedSponsorship}
@@ -255,7 +287,7 @@ export function SponsorshipsContent({ pricingConfig }: SponsorshipsContentProps)
 				onClose={handleCancelDialogClose}
 			/>
 
-			{/* Renew Dialog */}
+			{/* Renew Dialog (from incoming) */}
 			<RenewDialog
 				isOpen={renewDialogOpen}
 				sponsorAd={selectedSponsorship}
