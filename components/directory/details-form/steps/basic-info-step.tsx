@@ -229,10 +229,13 @@ export function BasicInfoStep({
 																	e.stopPropagation();
 																	setSelectedCategories(prev => prev.filter(id => id !== catId));
 																	if (setFormData) {
-																		setFormData(prev => ({
-																			...prev,
-																			categories: selectedCategories.filter(id => id !== catId)
-																		}));
+																		setFormData(prev => {
+																			const prevCategories = Array.isArray(prev.categories) ? prev.categories : [];
+																			return {
+																				...prev,
+																				categories: prevCategories.filter(id => id !== catId)
+																			};
+																		});
 																	}
 																}}
 															>
@@ -245,7 +248,7 @@ export function BasicInfoStep({
 												})
 											: (
 												<span className="text-theme-primary-400">
-													{t('directory.DETAILS_FORM.CATEGORY_PLACEHOLDER') || 'Select categories...'}
+													{t('directory.DETAILS_FORM.CATEGORY_PLACEHOLDER')}
 												</span>
 											)}
 									</span>
@@ -298,19 +301,20 @@ export function BasicInfoStep({
 														aria-selected={selectedCategories.includes(category.id)}
 														tabIndex={0}
 														onClick={() => {
-															setSelectedCategories((prev) =>
-																prev.includes(category.id)
+															setSelectedCategories((prev) => {
+																const newSelected = prev.includes(category.id)
 																	? prev.filter((id) => id !== category.id)
-																	: [...prev, category.id]
-															);
-															if (setFormData) {
-																setFormData((prev) => ({
-																	...prev,
-																	categories: selectedCategories.includes(category.id)
-																		? selectedCategories.filter((id) => id !== category.id)
-																		: [...selectedCategories, category.id]
-																}));
-															}
+																	: [...prev, category.id];
+
+																if (setFormData) {
+																	setFormData((formPrev) => ({
+																		...formPrev,
+																		categories: newSelected
+																	}));
+																}
+
+																return newSelected;
+															});
 														}}
 													>
 														<span
@@ -324,7 +328,7 @@ export function BasicInfoStep({
 													</div>
 												))}
 											{categories?.filter((cat) => cat.name.toLowerCase().includes(categorySearch.toLowerCase())).length === 0 && (
-												<div className="px-3 py-2 text-theme-primary-500 dark:text-gray-400">No categories found.</div>
+												<div className="px-3 py-2 text-theme-primary-500 dark:text-gray-400">{t('directory.DETAILS_FORM.NO_CATEGORIES_FOUND')}</div>
 											)}
 										</div>
 									</div>

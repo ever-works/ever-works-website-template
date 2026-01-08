@@ -693,7 +693,9 @@
 			"REMOVE_LINK": "Remove link",
 			"REVIEW_AND_SUBMIT": "Review & Submit",
 			"EXTRACT": "Extract",
-			"EXTRACTING": "Extracting..."
+			"EXTRACTING": "Extracting...",
+			"REMOVE_CATEGORY": "Remove category: {name}",
+			"NO_CATEGORIES_FOUND": "No categories found."
 		},
 		"PAYMENT": {
 			"TITLE": "Complete Your Order",
