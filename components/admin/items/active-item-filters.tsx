@@ -1,9 +1,7 @@
 "use client";
 
-import { Button } from '@heroui/react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
 import { ITEM_STATUS_LABELS } from '@/lib/types/item';
 
 interface ActiveItemFiltersProps {
@@ -18,20 +16,21 @@ interface ActiveItemFiltersProps {
 	tags: Array<{ id: string; name: string }>;
 }
 
-// Style constants
-const CHIP_BASE = cn(
-	'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium',
+// Minimal chip style
+const CHIP = cn(
+	'inline-flex items-center gap-1 pl-2 pr-1 py-0.5 text-xs font-medium rounded-full',
 	'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300',
 	'border border-gray-200 dark:border-gray-700'
 );
-const CHIP_REMOVE_BUTTON = cn(
+
+const CHIP_REMOVE = cn(
 	'p-0.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700',
-	'transition-colors focus:outline-none focus:ring-2 focus:ring-theme-primary-500'
+	'transition-colors focus:outline-none'
 );
 
 /**
  * Active Item Filters Component
- * Displays currently active filters as removable chips
+ * Displays currently active filters as minimal removable chips
  */
 export function ActiveItemFilters({
 	statusFilter,
@@ -40,12 +39,9 @@ export function ActiveItemFilters({
 	onRemoveStatus,
 	onRemoveCategory,
 	onRemoveTag,
-	onClearAll,
 	categories,
 	tags,
 }: ActiveItemFiltersProps) {
-	const t = useTranslations('admin.ADMIN_ITEMS_PAGE');
-
 	// Get category name by id
 	const getCategoryName = (categoryId: string): string => {
 		const category = categories.find(c => c.id === categoryId);
@@ -70,69 +66,51 @@ export function ActiveItemFilters({
 	}
 
 	return (
-		<div className="mb-6 flex flex-wrap items-center gap-2">
-			<span className="text-sm font-medium text-gray-500 dark:text-gray-400 mr-2">
-				{t('ACTIVE_FILTERS')}:
-			</span>
-
+		<div className="flex items-center gap-1.5 mb-4 flex-wrap">
 			{/* Status Chip */}
 			{statusFilter && (
-				<span className={CHIP_BASE}>
-					<span className="text-gray-500 dark:text-gray-400">{t('STATUS_LABEL')}:</span>
+				<span className={CHIP}>
 					<span>{getStatusLabel(statusFilter)}</span>
 					<button
 						type="button"
 						onClick={onRemoveStatus}
-						className={CHIP_REMOVE_BUTTON}
+						className={CHIP_REMOVE}
 						aria-label={`Remove ${getStatusLabel(statusFilter)} filter`}
 					>
-						<X className="h-3.5 w-3.5" />
+						<X className="h-3 w-3" />
 					</button>
 				</span>
 			)}
 
 			{/* Category Chip */}
 			{categoryFilter && (
-				<span className={CHIP_BASE}>
-					<span className="text-gray-500 dark:text-gray-400">{t('CATEGORY_LABEL')}:</span>
+				<span className={CHIP}>
 					<span>{getCategoryName(categoryFilter)}</span>
 					<button
 						type="button"
 						onClick={onRemoveCategory}
-						className={CHIP_REMOVE_BUTTON}
+						className={CHIP_REMOVE}
 						aria-label={`Remove ${getCategoryName(categoryFilter)} filter`}
 					>
-						<X className="h-3.5 w-3.5" />
+						<X className="h-3 w-3" />
 					</button>
 				</span>
 			)}
 
 			{/* Tag Chips */}
 			{tagsFilter.map((tagId) => (
-				<span key={tagId} className={CHIP_BASE}>
-					<span className="text-gray-500 dark:text-gray-400">{t('TAGS_LABEL')}:</span>
+				<span key={tagId} className={CHIP}>
 					<span>{getTagName(tagId)}</span>
 					<button
 						type="button"
 						onClick={() => onRemoveTag(tagId)}
-						className={CHIP_REMOVE_BUTTON}
+						className={CHIP_REMOVE}
 						aria-label={`Remove ${getTagName(tagId)} filter`}
 					>
-						<X className="h-3.5 w-3.5" />
+						<X className="h-3 w-3" />
 					</button>
 				</span>
 			))}
-
-			{/* Clear All Button */}
-			<Button
-				size="sm"
-				variant="light"
-				color="danger"
-				onPress={onClearAll}
-				className="ml-2"
-			>
-				{t('CLEAR_ALL')}
-			</Button>
 		</div>
 	);
 }

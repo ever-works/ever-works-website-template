@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
-import { Button, Card, CardBody } from '@heroui/react';
-import * as Select from '@radix-ui/react-select';
-import { Filter, X, ChevronDown, Check, Tag } from 'lucide-react';
+import * as Popover from '@radix-ui/react-popover';
+import { ChevronDown, Check, X, Circle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import { ITEM_STATUS_LABELS } from '@/lib/types/item';
@@ -27,20 +26,42 @@ interface ItemFiltersProps {
 	activeFilterCount: number;
 }
 
-// Style constants
-const FILTER_CARD = 'mb-6 border-0 shadow-lg';
-const FILTER_CARD_BODY = 'p-6';
-const SELECT_TRIGGER = cn(
-	'flex h-12 w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm',
-	'focus:outline-none focus:ring-2 focus:ring-theme-primary-500',
-	'disabled:cursor-not-allowed disabled:opacity-50'
+// Status color mapping
+const STATUS_COLORS: Record<string, string> = {
+	draft: 'bg-gray-400',
+	pending: 'bg-yellow-500',
+	approved: 'bg-green-500',
+	rejected: 'bg-red-500',
+};
+
+// Shared styles
+const FILTER_BUTTON = cn(
+	'inline-flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-md',
+	'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800',
+	'transition-colors cursor-pointer border border-transparent',
+	'focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400'
 );
-const SELECT_CONTENT = 'overflow-hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50';
-const SELECT_ITEM = 'relative flex items-center px-8 py-2 text-sm rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 outline-none data-[highlighted]:bg-gray-100 dark:data-[highlighted]:bg-gray-700';
+
+const FILTER_BUTTON_ACTIVE = cn(
+	FILTER_BUTTON,
+	'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+);
+
+const POPOVER_CONTENT = cn(
+	'min-w-[180px] bg-white dark:bg-gray-900 rounded-lg shadow-lg',
+	'border border-gray-200 dark:border-gray-700 p-1 z-50',
+	'animate-in fade-in-0 zoom-in-95'
+);
+
+const MENU_ITEM = cn(
+	'flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md cursor-pointer',
+	'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800',
+	'transition-colors outline-none'
+);
 
 /**
- * Item Filters Component
- * Provides filter controls for admin items with status, category, and tags
+ * Modern Item Filters Component
+ * Linear-style inline filter buttons with popovers
  */
 export function ItemFilters({
 	statusFilter,
@@ -57,170 +78,184 @@ export function ItemFilters({
 }: ItemFiltersProps) {
 	const t = useTranslations('admin.ADMIN_ITEMS_PAGE');
 
-	// Status options with counts
-	const statusOptions = [
-		{ key: 'all', label: t('ALL_STATUSES') },
-		{ key: 'draft', label: `${ITEM_STATUS_LABELS.draft} (${itemCounts.draft})` },
-		{ key: 'pending', label: `${ITEM_STATUS_LABELS.pending} (${itemCounts.pending})` },
-		{ key: 'approved', label: `${ITEM_STATUS_LABELS.approved} (${itemCounts.approved})` },
-		{ key: 'rejected', label: `${ITEM_STATUS_LABELS.rejected} (${itemCounts.rejected})` },
-	];
+	// Get display label for status
+	const getStatusLabel = () => {
+		if (!statusFilter) return t('STATUS_LABEL');
+		return ITEM_STATUS_LABELS[statusFilter as keyof typeof ITEM_STATUS_LABELS] || statusFilter;
+	};
 
-	// Category options
-	const categoryOptions = [
-		{ key: 'all', label: t('ALL_CATEGORIES') },
-		...categories.map(cat => ({ key: cat.id, label: cat.name })),
-	];
+	// Get display label for category
+	const getCategoryLabel = () => {
+		if (!categoryFilter) return t('CATEGORY_LABEL');
+		const cat = categories.find(c => c.id === categoryFilter);
+		return cat?.name || categoryFilter;
+	};
+
+	// Get display label for tags
+	const getTagsLabel = () => {
+		if (tagsFilter.length === 0) return t('TAGS_LABEL');
+		if (tagsFilter.length === 1) {
+			const tag = tags.find(t => t.id === tagsFilter[0]);
+			return tag?.name || tagsFilter[0];
+		}
+		return `${tagsFilter.length} tags`;
+	};
 
 	return (
-		<Card className={FILTER_CARD}>
-			<CardBody className={FILTER_CARD_BODY}>
-				<div className="flex flex-col gap-4">
-					{/* Header */}
-					<div className="flex items-center justify-between">
-						<div className="flex items-center space-x-2">
-							<Filter className="w-5 h-5 text-gray-400" />
-							<span className="font-medium text-gray-900 dark:text-white">{t('FILTERS')}</span>
-							{activeFilterCount > 0 && (
-								<span className="px-2 py-0.5 text-xs font-medium bg-theme-primary text-white rounded-full">
-									{activeFilterCount}
-								</span>
-							)}
-						</div>
-						{activeFilterCount > 0 && (
-							<Button
-								size="sm"
-								variant="light"
-								color="danger"
-								onPress={onClearAll}
-								startContent={<X className="w-4 h-4" />}
-							>
-								{t('CLEAR_ALL')}
-							</Button>
+		<div className="flex items-center gap-2 mb-4 flex-wrap">
+			{/* Status Filter */}
+			<Popover.Root>
+				<Popover.Trigger asChild>
+					<button className={statusFilter ? FILTER_BUTTON_ACTIVE : FILTER_BUTTON}>
+						{statusFilter && (
+							<Circle className={cn('w-2 h-2 fill-current', STATUS_COLORS[statusFilter]?.replace('bg-', 'text-'))} />
 						)}
-					</div>
-
-					{/* Filter Controls */}
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-						{/* Status Filter */}
-						<Select.Root
-							value={statusFilter || 'all'}
-							onValueChange={(value) => {
-								onStatusChange(value === 'all' ? '' : value);
-							}}
-						>
-							<Select.Trigger className={SELECT_TRIGGER}>
-								<Select.Value placeholder={t('FILTER_BY_STATUS')} />
-								<Select.Icon>
-									<ChevronDown className="h-4 w-4 opacity-50" />
-								</Select.Icon>
-							</Select.Trigger>
-							<Select.Portal>
-								<Select.Content
-									className={SELECT_CONTENT}
-									position="popper"
-									sideOffset={4}
-								>
-									<Select.Viewport className="p-1">
-										{statusOptions.map((status) => (
-											<Select.Item
-												key={status.key}
-												value={status.key}
-												className={SELECT_ITEM}
-											>
-												<Select.ItemIndicator className="absolute left-2 inline-flex items-center">
-													<Check className="h-4 w-4" />
-												</Select.ItemIndicator>
-												<Select.ItemText>{status.label}</Select.ItemText>
-											</Select.Item>
-										))}
-									</Select.Viewport>
-								</Select.Content>
-							</Select.Portal>
-						</Select.Root>
-
-						{/* Category Filter */}
-						<Select.Root
-							value={categoryFilter || 'all'}
-							onValueChange={(value) => {
-								onCategoryChange(value === 'all' ? '' : value);
-							}}
-						>
-							<Select.Trigger className={SELECT_TRIGGER}>
-								<Select.Value placeholder={t('FILTER_BY_CATEGORY')} />
-								<Select.Icon>
-									<ChevronDown className="h-4 w-4 opacity-50" />
-								</Select.Icon>
-							</Select.Trigger>
-							<Select.Portal>
-								<Select.Content
-									className={SELECT_CONTENT}
-									position="popper"
-									sideOffset={4}
-								>
-									<Select.Viewport className="p-1 max-h-60 overflow-y-auto">
-										{categoryOptions.map((category) => (
-											<Select.Item
-												key={category.key}
-												value={category.key}
-												className={SELECT_ITEM}
-											>
-												<Select.ItemIndicator className="absolute left-2 inline-flex items-center">
-													<Check className="h-4 w-4" />
-												</Select.ItemIndicator>
-												<Select.ItemText>{category.label}</Select.ItemText>
-											</Select.Item>
-										))}
-									</Select.Viewport>
-								</Select.Content>
-							</Select.Portal>
-						</Select.Root>
-
-						{/* Tags Multi-Select */}
-						<TagsMultiSelect
-							selectedTags={tagsFilter}
-							availableTags={tags}
-							onTagsChange={onTagsChange}
-							placeholder={t('SELECT_TAGS')}
+						<span>{getStatusLabel()}</span>
+						<ChevronDown className="w-3.5 h-3.5 opacity-50" />
+					</button>
+				</Popover.Trigger>
+				<Popover.Portal>
+					<Popover.Content className={POPOVER_CONTENT} sideOffset={4} align="start">
+						<StatusMenuItem
+							label={t('ALL_STATUSES')}
+							isSelected={!statusFilter}
+							onClick={() => onStatusChange('')}
 						/>
-					</div>
-				</div>
-			</CardBody>
-		</Card>
+						<StatusMenuItem
+							label={ITEM_STATUS_LABELS.draft}
+							count={itemCounts.draft}
+							status="draft"
+							isSelected={statusFilter === 'draft'}
+							onClick={() => onStatusChange('draft')}
+						/>
+						<StatusMenuItem
+							label={ITEM_STATUS_LABELS.pending}
+							count={itemCounts.pending}
+							status="pending"
+							isSelected={statusFilter === 'pending'}
+							onClick={() => onStatusChange('pending')}
+						/>
+						<StatusMenuItem
+							label={ITEM_STATUS_LABELS.approved}
+							count={itemCounts.approved}
+							status="approved"
+							isSelected={statusFilter === 'approved'}
+							onClick={() => onStatusChange('approved')}
+						/>
+						<StatusMenuItem
+							label={ITEM_STATUS_LABELS.rejected}
+							count={itemCounts.rejected}
+							status="rejected"
+							isSelected={statusFilter === 'rejected'}
+							onClick={() => onStatusChange('rejected')}
+						/>
+					</Popover.Content>
+				</Popover.Portal>
+			</Popover.Root>
+
+			{/* Category Filter */}
+			<Popover.Root>
+				<Popover.Trigger asChild>
+					<button className={categoryFilter ? FILTER_BUTTON_ACTIVE : FILTER_BUTTON}>
+						<span>{getCategoryLabel()}</span>
+						<ChevronDown className="w-3.5 h-3.5 opacity-50" />
+					</button>
+				</Popover.Trigger>
+				<Popover.Portal>
+					<Popover.Content className={cn(POPOVER_CONTENT, 'max-h-64 overflow-y-auto')} sideOffset={4} align="start">
+						<button
+							className={MENU_ITEM}
+							onClick={() => onCategoryChange('')}
+						>
+							{!categoryFilter && <Check className="w-3.5 h-3.5 text-gray-900 dark:text-white" />}
+							<span className={!categoryFilter ? 'ml-0' : 'ml-5'}>{t('ALL_CATEGORIES')}</span>
+						</button>
+						{categories.map((category) => (
+							<button
+								key={category.id}
+								className={MENU_ITEM}
+								onClick={() => onCategoryChange(category.id)}
+							>
+								{categoryFilter === category.id && <Check className="w-3.5 h-3.5 text-gray-900 dark:text-white" />}
+								<span className={categoryFilter === category.id ? 'ml-0' : 'ml-5'}>{category.name}</span>
+							</button>
+						))}
+					</Popover.Content>
+				</Popover.Portal>
+			</Popover.Root>
+
+			{/* Tags Filter */}
+			<TagsFilter
+				selectedTags={tagsFilter}
+				availableTags={tags}
+				onTagsChange={onTagsChange}
+				label={getTagsLabel()}
+				isActive={tagsFilter.length > 0}
+			/>
+
+			{/* Clear All */}
+			{activeFilterCount > 0 && (
+				<button
+					onClick={onClearAll}
+					className={cn(
+						'inline-flex items-center gap-1 px-2 py-1.5 text-sm font-medium rounded-md',
+						'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200',
+						'hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors'
+					)}
+				>
+					<X className="w-3.5 h-3.5" />
+					<span>{t('CLEAR_ALL')}</span>
+				</button>
+			)}
+		</div>
 	);
 }
 
-// Tags Multi-Select Component
-interface TagsMultiSelectProps {
-	selectedTags: string[];
-	availableTags: Array<{ id: string; name: string }>;
-	onTagsChange: (tags: string[]) => void;
-	placeholder: string;
+// Status menu item with color dot
+function StatusMenuItem({
+	label,
+	count,
+	status,
+	isSelected,
+	onClick,
+}: {
+	label: string;
+	count?: number;
+	status?: string;
+	isSelected: boolean;
+	onClick: () => void;
+}) {
+	return (
+		<button className={MENU_ITEM} onClick={onClick}>
+			<div className="w-5 flex justify-center">
+				{isSelected ? (
+					<Check className="w-3.5 h-3.5 text-gray-900 dark:text-white" />
+				) : status ? (
+					<Circle className={cn('w-2 h-2 fill-current', STATUS_COLORS[status]?.replace('bg-', 'text-'))} />
+				) : null}
+			</div>
+			<span className="flex-1 text-left">{label}</span>
+			{count !== undefined && (
+				<span className="text-xs text-gray-400">{count}</span>
+			)}
+		</button>
+	);
 }
 
-function TagsMultiSelect({
+// Tags multi-select filter
+function TagsFilter({
 	selectedTags,
 	availableTags,
 	onTagsChange,
-	placeholder,
-}: TagsMultiSelectProps) {
-	const [isOpen, setIsOpen] = useState(false);
-	const containerRef = useRef<HTMLDivElement>(null);
-
-	// Close on click outside
-	useEffect(() => {
-		if (!isOpen) return;
-
-		const handleClickOutside = (event: MouseEvent) => {
-			if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-				setIsOpen(false);
-			}
-		};
-
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, [isOpen]);
-
+	label,
+	isActive,
+}: {
+	selectedTags: string[];
+	availableTags: Array<{ id: string; name: string }>;
+	onTagsChange: (tags: string[]) => void;
+	label: string;
+	isActive: boolean;
+}) {
 	const toggleTag = (tagId: string) => {
 		if (selectedTags.includes(tagId)) {
 			onTagsChange(selectedTags.filter(t => t !== tagId));
@@ -229,68 +264,44 @@ function TagsMultiSelect({
 		}
 	};
 
-	const getDisplayText = () => {
-		if (selectedTags.length === 0) return placeholder;
-		if (selectedTags.length === 1) {
-			const tag = availableTags.find(t => t.id === selectedTags[0]);
-			return tag?.name || selectedTags[0];
-		}
-		return `${selectedTags.length} tags selected`;
-	};
-
 	return (
-		<div ref={containerRef} className="relative">
-			<button
-				type="button"
-				onClick={() => setIsOpen(!isOpen)}
-				className={SELECT_TRIGGER}
-			>
-				<div className="flex items-center gap-2 flex-1 min-w-0">
-					<Tag className="h-4 w-4 text-gray-400 shrink-0" />
-					<span className="truncate text-gray-700 dark:text-gray-300">
-						{getDisplayText()}
-					</span>
-				</div>
-				<ChevronDown className={cn("h-4 w-4 opacity-50 transition-transform", isOpen && "rotate-180")} />
-			</button>
-
-			{isOpen && (
-				<div className={cn(SELECT_CONTENT, "absolute top-full left-0 right-0 mt-1 max-h-60 overflow-y-auto")}>
-					<div className="p-1">
-						{availableTags.length === 0 ? (
-							<div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
-								No tags available
-							</div>
-						) : (
-							availableTags.map((tag) => {
-								const isSelected = selectedTags.includes(tag.id);
-								return (
-									<button
-										key={tag.id}
-										type="button"
-										onClick={() => toggleTag(tag.id)}
-										className={cn(
-											"w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md cursor-pointer",
-											"hover:bg-gray-100 dark:hover:bg-gray-700 text-left",
-											isSelected && "bg-gray-50 dark:bg-gray-700/50"
-										)}
-									>
-										<div className={cn(
-											"w-4 h-4 rounded border flex items-center justify-center shrink-0",
-											isSelected
-												? "bg-theme-primary border-theme-primary"
-												: "border-gray-300 dark:border-gray-600"
-										)}>
-											{isSelected && <Check className="h-3 w-3 text-white" />}
-										</div>
-										<span className="truncate">{tag.name}</span>
-									</button>
-								);
-							})
-						)}
-					</div>
-				</div>
-			)}
-		</div>
+		<Popover.Root>
+			<Popover.Trigger asChild>
+				<button className={isActive ? FILTER_BUTTON_ACTIVE : FILTER_BUTTON}>
+					<span>{label}</span>
+					<ChevronDown className="w-3.5 h-3.5 opacity-50" />
+				</button>
+			</Popover.Trigger>
+			<Popover.Portal>
+				<Popover.Content className={cn(POPOVER_CONTENT, 'max-h-64 overflow-y-auto min-w-[200px]')} sideOffset={4} align="start">
+					{availableTags.length === 0 ? (
+						<div className="px-2 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
+							No tags available
+						</div>
+					) : (
+						availableTags.map((tag) => {
+							const isSelected = selectedTags.includes(tag.id);
+							return (
+								<button
+									key={tag.id}
+									className={MENU_ITEM}
+									onClick={() => toggleTag(tag.id)}
+								>
+									<div className={cn(
+										'w-4 h-4 rounded border flex items-center justify-center shrink-0',
+										isSelected
+											? 'bg-gray-900 dark:bg-white border-gray-900 dark:border-white'
+											: 'border-gray-300 dark:border-gray-600'
+									)}>
+										{isSelected && <Check className="w-3 h-3 text-white dark:text-gray-900" />}
+									</div>
+									<span>{tag.name}</span>
+								</button>
+							);
+						})
+					)}
+				</Popover.Content>
+			</Popover.Portal>
+		</Popover.Root>
 	);
 }
