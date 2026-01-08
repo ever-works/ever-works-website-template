@@ -2098,7 +2098,7 @@
 			"APPLY_FILTERS": "应用",
 			"CANCEL": "取消",
 			"NO_ITEMS_FOUND_SEARCH": "未找到项目",
-			"NO_ITEMS_FOUND_SEARCH_DESC": "没有与"{term}"匹配的项目。请尝试调整筛选条件。",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "没有与\"{term}\"匹配的项目。请尝试调整筛选条件。",
 			"CLEAR_SEARCH": "清除筛选",
 			"REJECT_MODAL_TITLE": "拒绝项目",
 			"REJECT_MODAL_DESCRIPTION": "请提供拒绝此项目的原因。此原因将发送给提交者。",
