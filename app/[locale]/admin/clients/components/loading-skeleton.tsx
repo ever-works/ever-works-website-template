@@ -25,8 +25,8 @@ export function LoadingSkeleton() {
 			</div>
 
 			{/* Loading Stats */}
-			<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-				{Array.from({ length: 16 }, (_, index) => (
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+				{Array.from({ length: 4 }, (_, index) => (
 					<Card key={index} className="border-0 shadow-lg">
 						<CardBody className="p-6">
 							<div className="flex items-center justify-between">
