@@ -79,6 +79,23 @@ export function BasicInfoStep({
 	const { toolbarRef } = useEditorToolbar(editor);
 	const categoryDropdownId = useId();
 
+	const toggleCategory = (categoryId: string) => {
+		setSelectedCategories((prev) => {
+			const newSelected = prev.includes(categoryId)
+				? prev.filter((id) => id !== categoryId)
+				: [...prev, categoryId];
+
+			if (setFormData) {
+				setFormData((formPrev) => ({
+					...formPrev,
+					categories: newSelected
+				}));
+			}
+
+			return newSelected;
+		});
+	};
+
 	// Close dropdown on outside click
 	useEffect(() => {
 		if (!categoryMenuOpen) return;
@@ -223,6 +240,7 @@ export function BasicInfoStep({
 								<button
 									id="categories"
 									type="button"
+									role="combobox"
 									className={cn(
 										'group relative inline-flex w-full items-center justify-between rounded-xl border bg-theme-primary-50 px-3 py-3 text-md font-medium text-theme-primary-900 transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 dark:border-gray-600/50 dark:bg-gray-900/50 dark:text-white dark:focus:ring-theme-primary-400',
 										categoryMenuOpen && 'ring-2 ring-theme-primary-500 dark:ring-theme-primary-400',
@@ -301,13 +319,12 @@ export function BasicInfoStep({
 									<div
 										id={categoryDropdownId}
 										className={cn(
-											'absolute z-50 w-full bg-white dark:bg-gray-900/95 border border-theme-primary-200 dark:border-gray-700 rounded-lg shadow-lg max-h-80 overflow-hidden',
+											'absolute z-50 w-full bg-white dark:bg-gray-900/95 border border-theme-primary-200 dark:border-gray-700 rounded-lg shadow-lg max-h-80 overflow-hidden flex flex-col',
 											categoryDropdownDirection === 'down' ? 'mt-2' : 'bottom-full mb-2'
 										)}
 										role="listbox"
-										style={{ display: 'flex', flexDirection: 'column' }}
 									>
-										<div style={{ position: 'sticky', top: 0, zIndex: 2, background: 'inherit' }}>
+										<div className="sticky top-0 z-20 bg-inherit">
 											<div className="relative">
 												<input
 													type="text"
@@ -315,7 +332,6 @@ export function BasicInfoStep({
 													onChange={(e) => setCategorySearch(e.target.value)}
 													placeholder={t('directory.DETAILS_FORM.SEARCH_CATEGORIES_PLACEHOLDER')}
 													className="w-full pl-10 pr-3 py-2 border-b border-theme-primary-200 dark:border-gray-700 bg-theme-primary-50/50 dark:bg-gray-900/50 text-md focus:outline-none focus:ring-0 focus:border-theme-primary-200 dark:focus:border-gray-700 dark:text-gray-300 placeholder-theme-primary-600 dark:placeholder-gray-500"
-													autoFocus
 												/>
 												<span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-primary-400 dark:text-gray-500 pointer-events-none">
 													<Search className="w-4 h-4" />
@@ -338,21 +354,14 @@ export function BasicInfoStep({
 														role="option"
 														aria-selected={selectedCategories.includes(category.id)}
 																tabIndex={0}
-														onClick={() => {
-															setSelectedCategories((prev) => {
-																const newSelected = prev.includes(category.id)
-																	? prev.filter((id) => id !== category.id)
-																	: [...prev, category.id];
-
-																if (setFormData) {
-																	setFormData((formPrev) => ({
-																		...formPrev,
-																		categories: newSelected
-																	}));
+														onClick={() => toggleCategory(category.id)}
+														onKeyDown={(event) => {
+															if (event.key === 'Enter' || event.key === ' ') {
+																if (event.key === ' ') {
+																	event.preventDefault();
 																}
-
-																return newSelected;
-															});
+																toggleCategory(category.id);
+															}
 														}}
 													>
 														<span
@@ -366,7 +375,14 @@ export function BasicInfoStep({
 													</div>
 												))}
 											{categories?.filter((cat) => cat.name.toLowerCase().includes(categorySearch.toLowerCase())).length === 0 && (
-												<div className="px-3 py-2 text-theme-primary-500 dark:text-gray-400">{t('directory.DETAILS_FORM.NO_CATEGORIES_FOUND')}</div>
+												<div
+													className="px-3 py-2 text-theme-primary-500 dark:text-gray-400"
+													role="status"
+													aria-live="polite"
+													aria-atomic="true"
+												>
+													{t('directory.DETAILS_FORM.NO_CATEGORIES_FOUND')}
+												</div>
 											)}
 										</div>
 									</div>
