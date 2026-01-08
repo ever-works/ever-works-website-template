@@ -2083,7 +2083,15 @@
 			"STATUS_LABEL": "الحالة",
 			"CATEGORY_LABEL": "الفئة",
 			"TAGS_LABEL": "الوسوم",
-			"SELECT_TAGS": "اختر الوسوم..."
+			"SELECT_TAGS": "اختر الوسوم...",
+			"CANCEL": "إلغاء",
+			"REJECT_MODAL_TITLE": "رفض العنصر",
+			"REJECT_MODAL_DESCRIPTION": "يرجى تقديم سبب لرفض هذا العنصر. سيتم إرسال هذا السبب إلى المُرسِل.",
+			"ITEM_PREVIEW_LABEL": "العنصر المراد رفضه",
+			"REJECTION_REASON_LABEL": "سبب الرفض",
+			"REJECTION_REASON_PLACEHOLDER": "اشرح سبب رفض هذا العنصر...",
+			"REJECTION_REASON_MIN_LENGTH": "يجب أن يكون سبب الرفض 10 أحرف على الأقل",
+			"CONFIRM_REJECT": "رفض العنصر"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "إدارة المستخدمين",

@@ -12,7 +12,9 @@ import type {
 	SponsorAdListOptions,
 	SponsorAdStats,
 	SponsorAdWithUser,
+	SponsorWithItem,
 } from "@/lib/types/sponsor-ad";
+import { getCachedItems, type ItemData } from "@/lib/content";
 
 // ######################### Read Operations #########################
 
@@ -93,6 +95,27 @@ export async function getActiveSponsorAds(limit?: number): Promise<SponsorAd[]> 
 	}
 
 	return await query;
+}
+
+/**
+ * Get active sponsor ads with their associated item data
+ * This performs a server-side join between sponsor ads and items
+ */
+export async function getActiveSponsorAdsWithItems(limit?: number): Promise<SponsorWithItem[]> {
+	const sponsors = await getActiveSponsorAds(limit);
+
+	if (sponsors.length === 0) {
+		return [];
+	}
+
+	// Fetch all items and create a lookup map
+	const { items } = await getCachedItems();
+	const itemsMap = new Map<string, ItemData>(items.map(item => [item.slug, item]));
+
+	return sponsors.map(sponsor => ({
+		sponsor,
+		item: itemsMap.get(sponsor.itemSlug) || null,
+	}));
 }
 
 /**
@@ -321,11 +344,18 @@ export async function deleteSponsorAd(id: string): Promise<void> {
 // ######################### Statistics #########################
 
 /**
- * Get sponsor ad statistics
+ * Internal helper for building sponsor ad statistics
+ * @param userId - Optional user ID to filter stats for a specific user
  */
-export async function getSponsorAdStats(): Promise<SponsorAdStats> {
+async function buildSponsorAdStats(userId?: string): Promise<SponsorAdStats> {
+	// Build WHERE clause based on whether we're filtering by user
+	const userFilter = userId ? eq(sponsorAds.userId, userId) : undefined;
+	const activeFilter = userId
+		? and(eq(sponsorAds.userId, userId), eq(sponsorAds.status, SponsorAdStatus.ACTIVE))
+		: eq(sponsorAds.status, SponsorAdStatus.ACTIVE);
+
 	// Get counts by status
-	const statusCounts = await db
+	const statusCountsQuery = db
 		.select({
 			status: sponsorAds.status,
 			count: count(),
@@ -333,8 +363,12 @@ export async function getSponsorAdStats(): Promise<SponsorAdStats> {
 		.from(sponsorAds)
 		.groupBy(sponsorAds.status);
 
+	const statusCounts = userFilter
+		? await statusCountsQuery.where(userFilter)
+		: await statusCountsQuery;
+
 	// Get counts by interval
-	const intervalCounts = await db
+	const intervalCountsQuery = db
 		.select({
 			interval: sponsorAds.interval,
 			count: count(),
@@ -342,15 +376,19 @@ export async function getSponsorAdStats(): Promise<SponsorAdStats> {
 		.from(sponsorAds)
 		.groupBy(sponsorAds.interval);
 
+	const intervalCounts = userFilter
+		? await intervalCountsQuery.where(userFilter)
+		: await intervalCountsQuery;
+
 	// Get revenue from active sponsors
 	const revenueResult = await db
 		.select({
 			totalRevenue: sql<number>`COALESCE(SUM(${sponsorAds.amount}), 0)`,
 		})
 		.from(sponsorAds)
-		.where(eq(sponsorAds.status, SponsorAdStatus.ACTIVE));
+		.where(activeFilter);
 
-	// Build stats object
+	// Build overview object
 	const overview = {
 		total: 0,
 		pendingPayment: 0,
@@ -361,7 +399,7 @@ export async function getSponsorAdStats(): Promise<SponsorAdStats> {
 		cancelled: 0,
 	};
 
-	// Map status to overview keys
+	// Map DB status values to overview keys
 	const statusMap: Record<string, keyof typeof overview> = {
 		pending_payment: 'pendingPayment',
 		pending: 'pending',
@@ -378,6 +416,7 @@ export async function getSponsorAdStats(): Promise<SponsorAdStats> {
 		}
 	}
 
+	// Build interval counts
 	const byInterval = {
 		weekly: 0,
 		monthly: 0,
@@ -396,10 +435,24 @@ export async function getSponsorAdStats(): Promise<SponsorAdStats> {
 		byInterval,
 		revenue: {
 			totalRevenue: Number(revenueResult[0]?.totalRevenue || 0),
-			weeklyRevenue: 0, // Will be calculated in service layer if needed
-			monthlyRevenue: 0, // Will be calculated in service layer if needed
+			weeklyRevenue: 0,
+			monthlyRevenue: 0,
 		},
 	};
+}
+
+/**
+ * Get sponsor ad statistics (all users)
+ */
+export async function getSponsorAdStats(): Promise<SponsorAdStats> {
+	return buildSponsorAdStats();
+}
+
+/**
+ * Get sponsor ad statistics for a specific user
+ */
+export async function getSponsorAdStatsByUser(userId: string): Promise<SponsorAdStats> {
+	return buildSponsorAdStats(userId);
 }
 
 /**

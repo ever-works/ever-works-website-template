@@ -2085,7 +2085,15 @@
 			"STATUS_LABEL": "Estado",
 			"CATEGORY_LABEL": "Categoría",
 			"TAGS_LABEL": "Etiquetas",
-			"SELECT_TAGS": "Seleccionar etiquetas..."
+			"SELECT_TAGS": "Seleccionar etiquetas...",
+			"CANCEL": "Cancelar",
+			"REJECT_MODAL_TITLE": "Rechazar elemento",
+			"REJECT_MODAL_DESCRIPTION": "Por favor proporcione una razón para rechazar este elemento. Esto será enviado al remitente.",
+			"ITEM_PREVIEW_LABEL": "Elemento a rechazar",
+			"REJECTION_REASON_LABEL": "Razón del rechazo",
+			"REJECTION_REASON_PLACEHOLDER": "Explique por qué se rechaza este elemento...",
+			"REJECTION_REASON_MIN_LENGTH": "La razón del rechazo debe tener al menos 10 caracteres",
+			"CONFIRM_REJECT": "Rechazar elemento"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Gestión de Usuarios",

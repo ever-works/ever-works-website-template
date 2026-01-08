@@ -2095,7 +2095,15 @@
 			"STATUS_LABEL": "状态",
 			"CATEGORY_LABEL": "类别",
 			"TAGS_LABEL": "标签",
-			"SELECT_TAGS": "选择标签..."
+			"SELECT_TAGS": "选择标签...",
+			"CANCEL": "取消",
+			"REJECT_MODAL_TITLE": "拒绝项目",
+			"REJECT_MODAL_DESCRIPTION": "请提供拒绝此项目的原因。此原因将发送给提交者。",
+			"ITEM_PREVIEW_LABEL": "待拒绝项目",
+			"REJECTION_REASON_LABEL": "拒绝原因",
+			"REJECTION_REASON_PLACEHOLDER": "请说明拒绝此项目的原因...",
+			"REJECTION_REASON_MIN_LENGTH": "拒绝原因至少需要10个字符",
+			"CONFIRM_REJECT": "拒绝项目"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "用户管理",

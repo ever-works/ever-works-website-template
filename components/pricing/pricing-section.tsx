@@ -48,7 +48,8 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 		freePlanFeatures,
 		standardPlanFeatures,
 		premiumPlanFeatures,
-		loginModal
+		loginModal,
+		formatPrice
 	} = usePricingSection({
 		onSelectPlan: onSelectPlan,
 		initialSelectedPlan: initialSelectedPlan
@@ -147,7 +148,7 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 						<PlanCard
 							plan={PaymentPlan.FREE}
 							title={getPlanConfig(PaymentPlan.FREE).name.toUpperCase()}
-							price={`${config.pricing?.currency}${FREE ? calculatePrice(FREE) : 0}`}
+							price={formatPrice(FREE ? calculatePrice(FREE) : 0)}
 							priceUnit={'/month'}
 							features={freePlanFeatures}
 							isSelected={selectedPlan === PaymentPlan.FREE}
@@ -204,7 +205,7 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 						<PlanCard
 							plan={PaymentPlan.STANDARD}
 							title={getPlanConfig(PaymentPlan.STANDARD).name.toUpperCase()}
-							price={`${config.pricing?.currency}${STANDARD ? calculatePrice(STANDARD) : 0}`}
+							price={formatPrice(STANDARD ? calculatePrice(STANDARD) : 0)}
 							priceUnit={billingInterval === PaymentInterval.YEARLY ? '/year' : '/month'}
 							features={standardPlanFeatures}
 							isPopular={true}
@@ -265,7 +266,7 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 						<PlanCard
 							plan={PaymentPlan.PREMIUM}
 							title={getPlanConfig(PaymentPlan.PREMIUM).name.toUpperCase()}
-							price={`${config.pricing?.currency}${PREMIUM ? calculatePrice(PREMIUM) : 0}`}
+							price={formatPrice(PREMIUM ? calculatePrice(PREMIUM) : 0)}
 							priceUnit={billingInterval === PaymentInterval.YEARLY ? '/year' : '/month'}
 							features={premiumPlanFeatures}
 							isSelected={selectedPlan === PaymentPlan.PREMIUM}

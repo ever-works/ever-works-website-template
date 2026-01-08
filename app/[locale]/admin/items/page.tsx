@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@heroui/react";
 import { MultiStepItemForm } from "@/components/admin/items/multi-step-item-form";
 import { ItemFilters } from "@/components/admin/items/item-filters";
 import { ActiveItemFilters } from "@/components/admin/items/active-item-filters";
+import { ItemRejectModal } from "@/components/admin/items/item-reject-modal";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
 import { UniversalPagination } from "@/components/universal-pagination";
 import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink, Loader2 } from "lucide-react";
@@ -43,6 +45,10 @@ export default function AdminItemsPage() {
     stats,
     isLoading,
     isSubmitting,
+    isApproving,
+    isRejecting,
+    isDeleting,
+    pendingItemId,
     createItem,
     updateItem,
     deleteItem,
@@ -66,13 +72,15 @@ export default function AdminItemsPage() {
     setTagsFilter([]);
   };
 
-  // Local state for UI
-  const [reviewingItems, setReviewingItems] = useState<Set<string>>(new Set());
-  
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [selectedItem, setSelectedItem] = useState<ItemData | undefined>();
+
+  // Reject modal state
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [selectedItemForReject, setSelectedItemForReject] = useState<ItemData | null>(null);
+  const [rejectionReason, setRejectionReason] = useState('');
 
 
   const handleCreateItem = async (data: CreateItemRequest) => {
@@ -92,38 +100,43 @@ export default function AdminItemsPage() {
   };
 
   const handleDeleteItem = async (itemId: string) => {
-    // Prevent multiple clicks
-    if (reviewingItems.has(itemId)) return;
-    
+    // Prevent multiple clicks while deleting
+    if (isDeleting && pendingItemId === itemId) return;
+
     if (!confirm(t('CONFIRM_DELETE_ITEM'))) {
       return;
     }
 
-    try {
-      setReviewingItems(prev => new Set(prev).add(itemId));
-      await deleteItem(itemId);
-    } finally {
-      setReviewingItems(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(itemId);
-        return newSet;
-      });
-    }
+    await deleteItem(itemId);
   };
 
-  const handleReviewItem = async (itemId: string, status: 'approved' | 'rejected', notes?: string) => {
-    // Prevent multiple clicks
-    if (reviewingItems.has(itemId)) return;
-    
-    try {
-      setReviewingItems(prev => new Set(prev).add(itemId));
-      await reviewItem(itemId, status, notes);
-    } finally {
-      setReviewingItems(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(itemId);
-        return newSet;
-      });
+  const handleApproveItem = async (itemId: string) => {
+    // Prevent multiple clicks while approving
+    if (isApproving && pendingItemId === itemId) return;
+
+    await reviewItem(itemId, 'approved');
+  };
+
+  const openRejectModal = (item: ItemData) => {
+    setSelectedItemForReject(item);
+    setRejectionReason('');
+    setRejectModalOpen(true);
+  };
+
+  const closeRejectModal = () => {
+    setRejectModalOpen(false);
+    setSelectedItemForReject(null);
+    setRejectionReason('');
+  };
+
+  const handleRejectConfirm = async () => {
+    // Prevent multiple clicks while rejecting
+    if (isRejecting) return;
+    if (!selectedItemForReject || rejectionReason.length < 10) return;
+
+    const success = await reviewItem(selectedItemForReject.id, 'rejected', rejectionReason);
+    if (success) {
+      closeRejectModal();
     }
   };
 
@@ -430,12 +443,25 @@ export default function AdminItemsPage() {
             {items.map((item) => {
               const statusColors = getStatusColor(item.status);
               const categories = Array.isArray(item.category) ? item.category : [item.category];
-              
+              const isProcessingThisItem = pendingItemId === item.id && (isApproving || isRejecting || isDeleting);
+
               return (
                 <div
                   key={item.id}
-                  className="group bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-theme-primary/30 hover:shadow-lg transition-all duration-300 overflow-hidden"
+                  className="group relative bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-theme-primary/30 hover:shadow-lg transition-all duration-300 overflow-hidden"
                 >
+                  {/* Loading overlay */}
+                  {isProcessingThisItem && (
+                    <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-xl flex items-center justify-center z-20 transition-opacity duration-300">
+                      <div className="flex flex-col items-center gap-2">
+                        <Spinner size="lg" color="primary" />
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {isApproving ? t('APPROVING') : isRejecting ? t('REJECTING') : t('DELETING')}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="p-6">
                     <div className="flex items-start justify-between">
                       {/* Left Section: Item Info */}
@@ -513,46 +539,53 @@ export default function AdminItemsPage() {
                         </Button>
 
                         {/* Review Actions */}
-                        {item.status === 'pending' && (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleReviewItem(item.id, 'approved')}
-                              disabled={reviewingItems.has(item.id)}
-                              className={`h-8 w-8 p-0 transition-all duration-200 ${
-                                reviewingItems.has(item.id)
-                                  ? 'opacity-50 cursor-not-allowed'
-                                  : 'hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20'
-                              }`}
-                              title={reviewingItems.has(item.id) ? t('APPROVING') : t('APPROVE')}
-                            >
-                              {reviewingItems.has(item.id) ? (
-                                <Loader2 size={14} className="animate-spin" />
-                              ) : (
-                                <CheckCircle size={14} />
-                              )}
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleReviewItem(item.id, 'rejected')}
-                              disabled={reviewingItems.has(item.id)}
-                              className={`h-8 w-8 p-0 transition-all duration-200 ${
-                                reviewingItems.has(item.id)
-                                  ? 'opacity-50 cursor-not-allowed'
-                                  : 'hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20'
-                              }`}
-                              title={reviewingItems.has(item.id) ? t('REJECTING') : t('REJECT')}
-                            >
-                              {reviewingItems.has(item.id) ? (
-                                <Loader2 size={14} className="animate-spin" />
-                              ) : (
-                                <XCircle size={14} />
-                              )}
-                            </Button>
-                          </>
-                        )}
+                        {item.status === 'pending' && (() => {
+                          const isApprovingThis = isApproving && pendingItemId === item.id;
+                          const isRejectingThis = isRejecting && pendingItemId === item.id;
+                          const isDeletingThis = isDeleting && pendingItemId === item.id;
+                          const isProcessingThis = isApprovingThis || isRejectingThis || isDeletingThis;
+
+                          return (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => handleApproveItem(item.id)}
+                                disabled={isProcessingThis}
+                                className={`h-8 w-8 p-0 transition-all duration-200 ${
+                                  isProcessingThis
+                                    ? 'opacity-50 cursor-not-allowed'
+                                    : 'hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20'
+                                }`}
+                                title={isApprovingThis ? t('APPROVING') : t('APPROVE')}
+                              >
+                                {isApprovingThis ? (
+                                  <Loader2 size={14} className="animate-spin" />
+                                ) : (
+                                  <CheckCircle size={14} />
+                                )}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => openRejectModal(item)}
+                                disabled={isProcessingThis}
+                                className={`h-8 w-8 p-0 transition-all duration-200 ${
+                                  isProcessingThis
+                                    ? 'opacity-50 cursor-not-allowed'
+                                    : 'hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20'
+                                }`}
+                                title={isRejectingThis ? t('REJECTING') : t('REJECT')}
+                              >
+                                {isRejectingThis ? (
+                                  <Loader2 size={14} className="animate-spin" />
+                                ) : (
+                                  <XCircle size={14} />
+                                )}
+                              </Button>
+                            </>
+                          );
+                        })()}
 
                         {/* Survey Creation */}
                         <AdminSurveyCreationButton
@@ -563,38 +596,49 @@ export default function AdminItemsPage() {
                         />
 
                         {/* Edit and Delete */}
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => openEditModal(item as any)}
-                          disabled={reviewingItems.has(item.id)}
-                          className={`h-8 w-8 p-0 transition-all duration-200 ${
-                            reviewingItems.has(item.id)
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-theme-primary/10 hover:text-theme-primary'
-                          }`}
-                          title={t('EDIT')}
-                        >
-                          <Edit size={14} />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleDeleteItem(item.id)}
-                          disabled={reviewingItems.has(item.id)}
-                          className={`h-8 w-8 p-0 transition-all duration-200 ${
-                            reviewingItems.has(item.id)
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20'
-                          }`}
-                          title={reviewingItems.has(item.id) ? t('DELETING') : t('DELETE')}
-                        >
-                          {reviewingItems.has(item.id) ? (
-                            <Loader2 size={14} className="animate-spin" />
-                          ) : (
-                            <Trash2 size={14} />
-                          )}
-                        </Button>
+                        {(() => {
+                          const isApprovingThis = isApproving && pendingItemId === item.id;
+                          const isRejectingThis = isRejecting && pendingItemId === item.id;
+                          const isDeletingThis = isDeleting && pendingItemId === item.id;
+                          const isProcessingThis = isApprovingThis || isRejectingThis || isDeletingThis;
+
+                          return (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => openEditModal(item as any)}
+                                disabled={isProcessingThis}
+                                className={`h-8 w-8 p-0 transition-all duration-200 ${
+                                  isProcessingThis
+                                    ? 'opacity-50 cursor-not-allowed'
+                                    : 'hover:bg-theme-primary/10 hover:text-theme-primary'
+                                }`}
+                                title={t('EDIT')}
+                              >
+                                <Edit size={14} />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => handleDeleteItem(item.id)}
+                                disabled={isProcessingThis}
+                                className={`h-8 w-8 p-0 transition-all duration-200 ${
+                                  isProcessingThis
+                                    ? 'opacity-50 cursor-not-allowed'
+                                    : 'hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20'
+                                }`}
+                                title={isDeletingThis ? t('DELETING') : t('DELETE')}
+                              >
+                                {isDeletingThis ? (
+                                  <Loader2 size={14} className="animate-spin" />
+                                ) : (
+                                  <Trash2 size={14} />
+                                )}
+                              </Button>
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>
@@ -651,7 +695,7 @@ export default function AdminItemsPage() {
         </div>
       )}
 
-      {/* Modal */}
+      {/* Item Form Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4">
@@ -667,6 +711,17 @@ export default function AdminItemsPage() {
           </div>
         </div>
       )}
+
+      {/* Reject Item Modal */}
+      <ItemRejectModal
+        isOpen={rejectModalOpen}
+        item={selectedItemForReject}
+        rejectionReason={rejectionReason}
+        isSubmitting={isRejecting}
+        onReasonChange={setRejectionReason}
+        onConfirm={handleRejectConfirm}
+        onClose={closeRejectModal}
+      />
     </div>
   );
 } 

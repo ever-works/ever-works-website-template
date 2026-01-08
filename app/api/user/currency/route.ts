@@ -41,14 +41,13 @@ const currencyUpdateSchema = z.object({
 	currency: z
 		.string()
 		.trim()
-		.min(1, 'Currency code is required')
-		.max(3, 'Currency code must be 3 characters')
+		.length(3, 'Currency code must be exactly 3 characters')
 		.toUpperCase()
 		.refine((val) => SUPPORTED_CURRENCIES.includes(val as (typeof SUPPORTED_CURRENCIES)[number]), {
 			message: `Currency code must be a valid ISO 4217 code. Supported codes: ${SUPPORTED_CURRENCIES.join(', ')}`
 		}),
 	country: z.union([
-		z.string().trim().min(1, 'Country code is required').max(2, 'Country code must be 2 characters').toUpperCase(),
+		z.string().trim().length(2, 'Country code must be exactly 2 characters').toUpperCase(),
 		z.null(),
 		z.undefined()
 	])
@@ -60,7 +59,21 @@ const currencyUpdateSchema = z.object({
  *   get:
  *     tags: ["User - Currency"]
  *     summary: "Get user's currency preference"
- *     description: "Detects and returns the user's currency preference based on HTTP headers (Cloudflare, Vercel, CloudFront, etc.) or defaults to USD. Supports multiple detection providers for accurate country-based currency detection. Always returns status 200, even on errors, with default values (USD, country: null)."
+ *     description: |
+ *       Detects and returns the user's currency preference based on HTTP headers (Cloudflare, Vercel, CloudFront, etc.) or defaults to USD.
+ *
+ *       **Detection Strategy:**
+ *       - Tries to detect country from HTTP headers (CDN/proxy headers)
+ *       - Maps country to currency using ISO 4217 standards
+ *       - Falls back to USD if detection fails
+ *
+ *       **Response Behavior:**
+ *       - Always returns 200 OK with valid data (graceful degradation)
+ *       - Uses `detected: true/false` flag to indicate detection success
+ *       - This design choice prioritizes UX over strict REST conventions:
+ *         * Application remains functional even if detection fails
+ *         * Simplifies frontend error handling
+ *         * Frontend can still monitor detection success via the `detected` flag
  *     parameters:
  *       - name: "provider"
  *         in: "query"
@@ -73,7 +86,7 @@ const currencyUpdateSchema = z.object({
  *         example: "smart"
  *     responses:
  *       200:
- *         description: "Currency preference retrieved successfully. Always returns 200, even on errors, with default values (USD, country: null)."
+ *         description: "Currency preference retrieved successfully (always returns 200 for graceful degradation)"
  *         content:
  *           application/json:
  *             schema:
@@ -81,35 +94,43 @@ const currencyUpdateSchema = z.object({
  *               properties:
  *                 currency:
  *                   type: string
- *                   description: "ISO 4217 currency code (3 characters)"
+ *                   description: "ISO 4217 currency code (3 characters). Defaults to USD if detection fails."
  *                   example: "USD"
  *                 country:
  *                   type: string
  *                   nullable: true
  *                   description: "ISO 3166-1 alpha-2 country code (2 characters) or null if detection failed"
  *                   example: "US"
- *               required: ["currency"]
+ *                 detected:
+ *                   type: boolean
+ *                   description: "Whether currency/country was successfully detected (true) or is a fallback value (false)"
+ *                   example: true
+ *               required: ["currency", "detected"]
  *             examples:
- *               us_user:
- *                 summary: "US user"
+ *               us_user_detected:
+ *                 summary: "US user (successfully detected)"
  *                 value:
  *                   currency: "USD"
  *                   country: "US"
- *               eu_user:
- *                 summary: "EU user"
+ *                   detected: true
+ *               eu_user_detected:
+ *                 summary: "EU user (successfully detected)"
  *                 value:
  *                   currency: "EUR"
  *                   country: "FR"
- *               default_fallback:
- *                 summary: "Default fallback when detection fails"
+ *                   detected: true
+ *               detection_failed:
+ *                 summary: "Detection failed - using fallback"
  *                 value:
  *                   currency: "USD"
  *                   country: null
+ *                   detected: false
  *               error_fallback:
- *                 summary: "Error fallback - always returns 200"
+ *                 summary: "Error occurred - using fallback"
  *                 value:
  *                   currency: "USD"
  *                   country: null
+ *                   detected: false
  */
 export async function GET(request: NextRequest) {
 	try {
@@ -118,10 +139,26 @@ export async function GET(request: NextRequest) {
 		const headers = request.headers;
 		const detectedCountry = getCountryFromHeaders(headers, provider);
 		const currency = detectedCountry ? getCurrencyFromCountry(detectedCountry) : 'USD';
-		return NextResponse.json({ currency, country: detectedCountry });
+
+		// Return with detection flag for better monitoring
+		return NextResponse.json({
+			currency,
+			country: detectedCountry,
+			detected: !!detectedCountry // Indicates successful detection vs fallback
+		});
 	} catch (error) {
-		logger.error('Error getting user currency:', error);
-		return NextResponse.json({ currency: 'USD', country: null }, { status: 200 });
+		logger.error('[CurrencyAPI] Error detecting currency:', error);
+
+		// Graceful degradation: return default values with detected:false
+		// This allows the app to continue functioning while still enabling monitoring
+		return NextResponse.json(
+			{
+				currency: 'USD',
+				country: null,
+				detected: false
+			},
+			{ status: 200 }
+		);
 	}
 }
 
@@ -143,16 +180,16 @@ export async function GET(request: NextRequest) {
  *             properties:
  *               currency:
  *                 type: string
- *                 minLength: 1
+ *                 minLength: 3
  *                 maxLength: 3
- *                 description: "ISO 4217 currency code (3 characters, uppercase)"
+ *                 description: "ISO 4217 currency code (exactly 3 characters, uppercase)"
  *                 example: "EUR"
  *               country:
  *                 type: string
  *                 nullable: true
- *                 minLength: 1
+ *                 minLength: 2
  *                 maxLength: 2
- *                 description: "ISO 3166-1 alpha-2 country code (2 characters, uppercase). Optional - can be null if country is not available or not provided."
+ *                 description: "ISO 3166-1 alpha-2 country code (exactly 2 characters, uppercase). Optional - can be null if country is not available or not provided."
  *                 example: "FR"
  *             required: ["currency"]
  *           examples:
