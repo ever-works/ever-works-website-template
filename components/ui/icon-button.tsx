@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useState } from "react";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,16 +30,6 @@ const iconSizes: Record<IconButtonSize, number> = {
     touch: 18,
 };
 
-const tooltipPositionClasses = {
-    top: "bottom-full left-1/2 -translate-x-1/2 mb-2",
-    bottom: "top-full left-1/2 -translate-x-1/2 mt-2",
-};
-
-const arrowPositionClasses = {
-    top: "top-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-b-transparent border-t-gray-900 dark:border-t-gray-100",
-    bottom: "bottom-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-t-transparent border-b-gray-900 dark:border-b-gray-100",
-};
-
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
     (
         {
@@ -55,10 +46,15 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         },
         ref
     ) => {
+        const [showTooltip, setShowTooltip] = useState(false);
         const displayTooltip = isLoading && loadingTooltip ? loadingTooltip : tooltip;
 
         return (
-            <div className="relative group inline-flex">
+            <div
+                className="relative inline-flex"
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+            >
                 <Button
                     ref={ref}
                     className={cn(
@@ -81,27 +77,32 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
                             : icon
                     )}
                 </Button>
-                {/* CSS-based Tooltip */}
-                <div
-                    className={cn(
-                        "absolute z-50 pointer-events-none",
-                        "opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-300",
-                        "whitespace-nowrap",
-                        tooltipPositionClasses[tooltipPlacement]
-                    )}
-                    role="tooltip"
-                >
-                    <div className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2 py-1 rounded text-xs font-medium shadow-lg">
-                        {displayTooltip}
-                    </div>
-                    {/* Arrow */}
+                {/* State-based Tooltip */}
+                {showTooltip && (
                     <div
                         className={cn(
-                            "absolute w-0 h-0 border-4",
-                            arrowPositionClasses[tooltipPlacement]
+                            "absolute z-[9999] pointer-events-none",
+                            "whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-150",
+                            tooltipPlacement === "top"
+                                ? "bottom-full left-1/2 -translate-x-1/2 mb-2"
+                                : "top-full left-1/2 -translate-x-1/2 mt-2"
                         )}
-                    />
-                </div>
+                        role="tooltip"
+                    >
+                        <div className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2 py-1 rounded text-xs font-medium shadow-lg">
+                            {displayTooltip}
+                        </div>
+                        {/* Arrow */}
+                        <div
+                            className={cn(
+                                "absolute w-0 h-0 border-4 left-1/2 -translate-x-1/2",
+                                tooltipPlacement === "top"
+                                    ? "top-full border-l-transparent border-r-transparent border-b-transparent border-t-gray-900 dark:border-t-gray-100"
+                                    : "bottom-full border-l-transparent border-r-transparent border-t-transparent border-b-gray-900 dark:border-b-gray-100"
+                            )}
+                        />
+                    </div>
+                )}
             </div>
         );
     }

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
@@ -30,16 +30,21 @@ export function AdminSurveyCreationButton({
   showLabel = false
 }: AdminSurveyCreationButtonProps) {
   const t = useTranslations('survey');
+  const [showTooltip, setShowTooltip] = useState(false);
 
   // Build URL with query parameters if itemId is provided
   const createSurveyUrl = itemId
     ? `/admin/surveys/create?itemId=${encodeURIComponent(itemId)}`
     : '/admin/surveys/create';
 
-  // Icon-only mode with CSS tooltip
+  // Icon-only mode with tooltip
   if (!showLabel) {
     return (
-      <div className="relative group inline-flex">
+      <div
+        className="relative inline-flex"
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+      >
         <Link href={createSurveyUrl}>
           <Button
             variant={variant}
@@ -54,24 +59,25 @@ export function AdminSurveyCreationButton({
             <FileText className="w-4 h-4" />
           </Button>
         </Link>
-        {/* CSS-based Tooltip */}
-        <div
-          className={cn(
-            "absolute z-50 pointer-events-none",
-            "opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-300",
-            "whitespace-nowrap",
-            "bottom-full left-1/2 -translate-x-1/2 mb-2"
-          )}
-          role="tooltip"
-        >
-          <div className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2 py-1 rounded text-xs font-medium shadow-lg">
-            {t('CREATE_SURVEY')}
-          </div>
-          {/* Arrow */}
+        {/* State-based Tooltip */}
+        {showTooltip && (
           <div
-            className="absolute w-0 h-0 border-4 top-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-b-transparent border-t-gray-900 dark:border-t-gray-100"
-          />
-        </div>
+            className={cn(
+              "absolute z-[9999] pointer-events-none",
+              "whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-150",
+              "bottom-full left-1/2 -translate-x-1/2 mb-2"
+            )}
+            role="tooltip"
+          >
+            <div className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2 py-1 rounded text-xs font-medium shadow-lg">
+              {t('CREATE_SURVEY')}
+            </div>
+            {/* Arrow */}
+            <div
+              className="absolute w-0 h-0 border-4 top-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-b-transparent border-t-gray-900 dark:border-t-gray-100"
+            />
+          </div>
+        )}
       </div>
     );
   }
