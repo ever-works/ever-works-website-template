@@ -1,8 +1,6 @@
 'use client';
 
 import { useId, useState } from 'react';
-import { useTheme } from '@/hooks/use-theme';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Type, FileText, Star, MoreHorizontal, ChevronUp, ChevronDown, Check, Search } from 'lucide-react';
 import { cn, getVideoEmbedUrl } from '@/lib/utils';
 import { useUrlExtraction } from '@/hooks/use-url-extraction';
