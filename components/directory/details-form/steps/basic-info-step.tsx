@@ -1,8 +1,9 @@
 'use client';
 
 import { useId, useState } from 'react';
+import { useTheme } from '@/hooks/use-theme';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Type, FileText, Star, MoreHorizontal, ChevronUp, ChevronDown, Check } from 'lucide-react';
+import { Type, FileText, Star, MoreHorizontal, ChevronUp, ChevronDown, Check, Search } from 'lucide-react';
 import { cn, getVideoEmbedUrl } from '@/lib/utils';
 import { useUrlExtraction } from '@/hooks/use-url-extraction';
 import type { Editor } from '@tiptap/react';
@@ -64,7 +65,13 @@ export function BasicInfoStep({
 	const { extractFromUrl, isLoading: isExtracting } = useUrlExtraction();
 	const [showAllTags, setShowAllTags] = useState(false);
 	const [tagsToShow] = useState(DEFAULT_TAGS_TO_SHOW);
+
+	const [selectedCategories, setSelectedCategories] = useState<string[]>(
+		Array.isArray(formData.categories) ? formData.categories : []
+	);
+	const [categorySearch, setCategorySearch] = useState('');
 	const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
+	const [categoryDropdownDirection, setCategoryDropdownDirection] = useState<'down' | 'up'>('down');
 	const { toolbarRef } = useEditorToolbar(editor);
 	const categoryDropdownId = useId();
 
@@ -171,84 +178,159 @@ export function BasicInfoStep({
 					{/* Category - Only show if categories enabled */}
 					{categoriesEnabled && (
 						<div className="space-y-3">
-							<label htmlFor="category" className={FORM_FIELD_CLASSES.label}>
+							<label htmlFor="categories" className={FORM_FIELD_CLASSES.label}>
 								{t('directory.DETAILS_FORM.CATEGORY')} *
 							</label>
 							<div className="relative">
-								<DropdownMenu.Root
-									open={categoryMenuOpen}
-									modal={false}
-									onOpenChange={(open) => {
-										setCategoryMenuOpen(open);
-										setFocusedField(open ? 'category' : null);
+								<button
+									id="categories"
+									type="button"
+									className={cn(
+										'group relative inline-flex w-full items-center justify-between rounded-xl border bg-theme-primary-50 px-3 py-3 text-md font-medium text-theme-primary-900 transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 dark:border-gray-600/50 dark:bg-gray-900/50 dark:text-white dark:focus:ring-theme-primary-400',
+										categoryMenuOpen && 'ring-2 ring-theme-primary-500 dark:ring-theme-primary-400',
+										focusedField === 'category' && 'border-theme-primary-500 dark:border-theme-primary-400'
+									)}
+									aria-label={t('directory.DETAILS_FORM.CATEGORY')}
+									aria-expanded={categoryMenuOpen}
+									aria-controls={categoryDropdownId}
+									aria-haspopup="listbox"
+									onClick={e => {
+										setCategoryMenuOpen((open) => !open);
+										setFocusedField('category');
+										// Determine if dropdown should open up or down
+										const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+										const spaceBelow = window.innerHeight - rect.bottom;
+										const spaceAbove = rect.top;
+										// 320px is the dropdown max height (80 * 4)
+										if (spaceBelow < 320 && spaceAbove > spaceBelow) {
+											setCategoryDropdownDirection('up');
+										} else {
+											setCategoryDropdownDirection('down');
+										}
 									}}
+									disabled={!categories || categories.length === 0}
 								>
-									<DropdownMenu.Trigger asChild>
-										<button
-											id="category"
-											type="button"
-											className={cn(
-												'group relative inline-flex w-full items-center justify-between rounded-xl border bg-gray-50 px-3 py-3 text-md font-medium text-gray-900 transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 dark:border-gray-600/50 dark:bg-gray-900/50 dark:text-white dark:focus:ring-theme-primary-400',
-												categoryMenuOpen && 'ring-2 ring-theme-primary-500 dark:ring-theme-primary-400',
-												focusedField === 'category' && 'border-theme-primary-500 dark:border-theme-primary-400'
-											)}
-											aria-label={t('directory.DETAILS_FORM.CATEGORY')}
-											aria-expanded={categoryMenuOpen}
-											aria-controls={categoryDropdownId}
-											aria-haspopup="menu"
-											disabled={!categories || categories.length === 0}
-										>
-											<span className="truncate text-left">
-												{categories?.find((category) => category.id === formData.category)?.name ||
-													t('directory.DETAILS_FORM.CATEGORY_PLACEHOLDER')}
-											</span>
-											<ChevronDown
-												className={cn(
-													'h-4 w-4 text-theme-primary-500 transition-transform duration-300',
-													categoryMenuOpen && 'rotate-180'
-												)}
-											/>
-										</button>
-									</DropdownMenu.Trigger>
-
-									<DropdownMenu.Portal>
-										<DropdownMenu.Content
-											id={categoryDropdownId}
-											sideOffset={6}
-											align="start"
-											className="z-50 w-auto min-w-[min(90vw,640px)] max-w-[90vw] sm:max-w-lg bg-white dark:bg-gray-900/95 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg shadow-black/10 dark:shadow-black/30 overflow-hidden animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 origin-top-left"
-										>
-											<div className="max-h-64 overflow-y-auto p-1.5">
-												<DropdownMenu.RadioGroup
-													value={formData.category ?? ''}
-													onValueChange={(value) =>
-														handleInputChange({
-															target: { name: 'category', value }
-														} as React.ChangeEvent<HTMLSelectElement>)
-													}
-												>
-													{categories?.map((category) => (
-														<DropdownMenu.RadioItem
-															key={category.id}
-															value={category.id}
-															className={cn(
-																'group/item relative flex items-center justify-between rounded-md px-3 py-3 my-1 text-sm outline-hidden transition-all duration-200',
-																'cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100 data-[state=checked]:bg-gray-100',
-																'dark:text-gray-100 dark:hover:bg-gray-800 dark:focus:bg-gray-800 dark:data-[state=checked]:bg-gray-800'
-															)}
+									<span className="truncate text-left flex flex-wrap gap-1 items-center min-h-[1.5rem] w-[94%]">
+										{selectedCategories.length > 0
+											? selectedCategories
+												.map((catId) => {
+													const cat = categories?.find((c) => c.id === catId);
+													if (!cat) return null;
+													return (
+														<span
+															key={catId}
+															className="inline-flex items-center rounded-full bg-theme-primary-600 text-white px-2 py-0.5 text-sm font-normal mr-1"
 														>
-															<span className="font-medium truncate">{category.name}</span>
-															{formData.category === category.id && (
-																<Check className="h-4 w-4 text-theme-primary-500 dark:text-theme-primary-400" />
-															)}
-														</DropdownMenu.RadioItem>
-													))}
-												</DropdownMenu.RadioGroup>
+															{cat.name}
+															<button
+																type="button"
+																aria-label={t('directory.DETAILS_FORM.REMOVE_CATEGORY', { name: cat.name })}
+																className="ml-1 cursor-pointer rounded-full hover:bg-theme-primary-700/30 focus:outline-none focus:ring-2 focus:ring-theme-primary-400"
+																tabIndex={-1}
+																onClick={e => {
+																	e.stopPropagation();
+																	setSelectedCategories(prev => prev.filter(id => id !== catId));
+																	if (setFormData) {
+																		setFormData(prev => ({
+																			...prev,
+																			categories: selectedCategories.filter(id => id !== catId)
+																		}));
+																	}
+																}}
+															>
+																<svg className="w-3 h-3 text-white" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+																	<path d="M4.47 4.47a.75.75 0 0 1 1.06 0L8 6.94l2.47-2.47a.75.75 0 1 1 1.06 1.06L9.06 8l2.47 2.47a.75.75 0 0 1-1.06 1.06L8 9.06l-2.47 2.47a.75.75 0 0 1-1.06-1.06L6.94 8 4.47 5.53a.75.75 0 0 1 0-1.06z" fill="currentColor"/>
+																</svg>
+															</button>
+														</span>
+													);
+												})
+											: (
+												<span className="text-theme-primary-400">
+													{t('directory.DETAILS_FORM.CATEGORY_PLACEHOLDER') || 'Select categories...'}
+												</span>
+											)}
+									</span>
+									<ChevronDown
+										className={cn(
+											'h-5 w-5 text-theme-primary-500 transition-transform duration-300',
+											categoryMenuOpen && 'rotate-180'
+										)}
+									/>
+								</button>
+								{categoryMenuOpen && (
+									<div
+										id={categoryDropdownId}
+										className={cn(
+											'absolute z-50 w-full bg-white dark:bg-gray-900/95 border border-theme-primary-200 dark:border-gray-700 rounded-lg shadow-lg max-h-80 overflow-hidden',
+											categoryDropdownDirection === 'down' ? 'mt-2' : 'bottom-full mb-2'
+										)}
+										role="listbox"
+										style={{ display: 'flex', flexDirection: 'column' }}
+									>
+										<div style={{ position: 'sticky', top: 0, zIndex: 2, background: 'inherit' }}>
+											<div className="relative">
+												<input
+													type="text"
+													value={categorySearch}
+													onChange={(e) => setCategorySearch(e.target.value)}
+													placeholder='Search categories...'
+													className="w-full pl-10 pr-3 py-2 border-b border-theme-primary-200 dark:border-gray-700 bg-theme-primary-50/50 dark:bg-gray-900/50 text-md focus:outline-none focus:ring-0 focus:border-theme-primary-200 dark:focus:border-gray-700 dark:text-gray-300 placeholder-theme-primary-600 dark:placeholder-gray-500"
+													autoFocus
+												/>
+												<span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-primary-400 dark:text-gray-500 pointer-events-none">
+													<Search className="w-4 h-4" />
+												</span>
 											</div>
-											<DropdownMenu.Arrow className="fill-white dark:fill-gray-900" />
-										</DropdownMenu.Content>
-									</DropdownMenu.Portal>
-								</DropdownMenu.Root>
+										</div>
+										<div className="overflow-y-auto scrollbar-thin scrollbar-thumb-theme-primary-300 scrollbar-track-transparent [&::-webkit-scrollbar]:w-1.5 overscroll-contain mx-auto"
+											style={{ maxHeight: '20rem', width: '100%', scrollbarWidth: 'thin' }}>
+											{categories
+												?.filter((cat) =>
+													cat.name.toLowerCase().includes(categorySearch.toLowerCase())
+												)
+												.map((category) => (
+													<div
+														key={category.id}
+														className={cn(
+															'flex items-center justify-between px-3 py-3 border-y border-theme-primary-100 dark:border-gray-800 cursor-pointer hover:bg-theme-primary-200 dark:hover:bg-gray-800',
+															selectedCategories.includes(category.id) && 'bg-theme-primary-200 dark:bg-gray-800'
+														)}
+														role="option"
+														aria-selected={selectedCategories.includes(category.id)}
+														tabIndex={0}
+														onClick={() => {
+															setSelectedCategories((prev) =>
+																prev.includes(category.id)
+																	? prev.filter((id) => id !== category.id)
+																	: [...prev, category.id]
+															);
+															if (setFormData) {
+																setFormData((prev) => ({
+																	...prev,
+																	categories: selectedCategories.includes(category.id)
+																		? selectedCategories.filter((id) => id !== category.id)
+																		: [...selectedCategories, category.id]
+																}));
+															}
+														}}
+													>
+														<span
+															className={cn('font-medium truncate text-sm', selectedCategories.includes(category.id) ? 'text-theme-primary-700 dark:text-theme-primary-400' : 'text-theme-primary-900 dark:text-white')}
+														>
+															{category.name}
+														</span>
+														{selectedCategories.includes(category.id) && (
+															<Check className="h-4 w-4 text-theme-primary-500 dark:text-theme-primary-400" />
+														)}
+													</div>
+												))}
+											{categories?.filter((cat) => cat.name.toLowerCase().includes(categorySearch.toLowerCase())).length === 0 && (
+												<div className="px-3 py-2 text-theme-primary-500 dark:text-gray-400">No categories found.</div>
+											)}
+										</div>
+									</div>
+								)}
 							</div>
 						</div>
 					)}
