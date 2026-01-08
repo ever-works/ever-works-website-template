@@ -11,7 +11,6 @@ import type { Category, Tag as TagType } from '@/lib/content';
 import type { FormData } from '../validation/form-validators';
 import { useCategoriesEnabled } from '@/hooks/use-categories-enabled';
 import { useTagsEnabled } from '@/hooks/use-tags-enabled';
-import { useTheme } from '@/hooks/use-theme';
 import {
 	STEP_CARD_CLASSES,
 	FORM_FIELD_CLASSES,
