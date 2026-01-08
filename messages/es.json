@@ -2072,24 +2072,10 @@
 			"CREATE_ITEM": "Crear Elemento",
 			"CONFIRM_DELETE_ITEM": "¿Está seguro de que desea eliminar este elemento? Esta acción no se puede deshacer.",
 			"SEARCH_PLACEHOLDER": "Buscar elementos...",
-			"FILTERS": "Filtros",
-			"CLEAR_ALL": "Borrar todo",
 			"SEARCH_LABEL": "Búsqueda:",
-			"STATUS_FILTER_LABEL": "Estado:",
-			"CATEGORY_FILTER_LABEL": "Categoría:",
-			"FILTER_ITEMS": "Filtrar elementos",
-			"FILTER_SUBTITLE": "Refina tu búsqueda con filtros",
-			"STATUS": "Estado",
-			"ALL_STATUSES": "Todos los estados",
-			"DRAFT": "Borrador",
-			"PENDING": "Pendiente",
-			"CATEGORY": "Categoría",
-			"ALL_CATEGORIES": "Todas las categorías",
-			"APPLY_FILTERS": "Aplicar",
-			"CANCEL": "Cancelar",
 			"NO_ITEMS_FOUND_SEARCH": "No se encontraron elementos",
-			"NO_ITEMS_FOUND_SEARCH_DESC": "Ningún elemento coincide con \"{term}\". Intenta ajustar los filtros.",
-			"CLEAR_SEARCH": "Borrar filtros",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "No hay elementos que coincidan con \"{term}\". Intenta una búsqueda diferente.",
+			"CLEAR_SEARCH": "Limpiar búsqueda",
 			"REJECT_MODAL_TITLE": "Rechazar elemento",
 			"REJECT_MODAL_DESCRIPTION": "Por favor proporcione una razón para rechazar este elemento. Esto será enviado al remitente.",
 			"ITEM_PREVIEW_LABEL": "Elemento a rechazar",
@@ -2906,7 +2892,6 @@
 			"WELCOME_BACK": "¡Bienvenido de nuevo, {name}! Aquí está tu resumen de actividad.",
 			"REFRESH": "Actualizar",
 			"FAILED_TO_LOAD": "Error al cargar las estadísticas del panel",
-
 			"STATS": {
 				"TOTAL_SUBMISSIONS": "Total de Envíos",
 				"CONTENT_CREATED": "Contenido que has creado",
@@ -2917,7 +2902,6 @@
 				"COMMENTS_RECEIVED": "Comentarios Recibidos",
 				"COMMENTS_ON_CONTENT": "Comentarios en tu contenido"
 			},
-
 			"PERIOD_COMPARISON": {
 				"TITLE": "Rendimiento Semanal",
 				"THIS_WEEK": "Esta Semana",
@@ -2930,7 +2914,6 @@
 				"NO_DATA": "Sin datos disponibles",
 				"NO_DATA_DESC": "Comienza a crear contenido para ver tu comparación de rendimiento semanal."
 			},
-
 			"CATEGORY_PERFORMANCE": {
 				"TITLE": "Rendimiento por Categoría",
 				"SUBTITLE": "Principales categorías por participación promedio",
@@ -2941,7 +2924,6 @@
 				"NO_DATA": "Sin datos de categoría",
 				"NO_DATA_DESC": "Envía elementos para ver métricas de rendimiento por categoría."
 			},
-
 			"APPROVAL_TREND": {
 				"TITLE": "Tendencia de Aprobación",
 				"SUBTITLE": "Tasa de éxito de aprobación mensual",
@@ -2951,7 +2933,6 @@
 				"NO_DATA": "Sin datos de aprobación",
 				"NO_DATA_DESC": "Envía elementos para seguir tu tasa de aprobación a lo largo del tiempo."
 			},
-
 			"ENGAGEMENT_RATE": {
 				"TITLE": "Tasa de Participación",
 				"SUBTITLE": "Participación por envío a lo largo del tiempo",
@@ -2959,7 +2940,6 @@
 				"NO_DATA": "Sin datos de participación",
 				"NO_DATA_DESC": "Crea contenido para ver tus tendencias de participación."
 			},
-
 			"SUBMISSION_CALENDAR": {
 				"TITLE": "Actividad de Envíos",
 				"SUBTITLE": "Tu consistencia de envíos en los últimos 3 meses",
@@ -2971,7 +2951,6 @@
 				"LESS": "Menos",
 				"MORE": "Más"
 			},
-
 			"ENGAGEMENT_DISTRIBUTION": {
 				"TITLE": "Distribución de Participación",
 				"SUBTITLE": "Cómo se distribuye la participación entre tus principales elementos",
@@ -2980,12 +2959,10 @@
 				"NO_DATA": "Sin datos de participación",
 				"NO_DATA_DESC": "Obtén votos y comentarios para ver cómo se distribuye la participación."
 			},
-
 			"COMMON": {
 				"VS": "vs",
 				"AVG": "Prom."
 			},
-
 			"CHARTS": {
 				"LOADING": "Cargando datos del gráfico...",
 				"ERROR": "Error al cargar el gráfico",

@@ -14,26 +14,14 @@ import { useAdminItems } from "@/hooks/use-admin-items";
 import { useTranslations } from 'next-intl';
 import { AdminSurveyCreationButton } from "@/components/surveys/admin-survey-creation-button";
 import { useDebounceSearch } from "@/hooks/use-debounced-search";
-import { useItemFilters } from "./hooks/use-item-filters";
-import { ItemFilters } from "./components/item-filters";
+import { ItemSearch } from "./components/item-filters";
 
 export default function AdminItemsPage() {
   const t = useTranslations('admin.ADMIN_ITEMS_PAGE');
   const PageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const isInitialLoad = useRef(true);
-
-  // Filter state
-  const {
-    searchTerm,
-    setSearchTerm,
-    statusFilter,
-    setStatusFilter,
-    categoryFilter,
-    setCategoryFilter,
-    clearFilters,
-    activeFilterCount,
-  } = useItemFilters();
 
   // Debounced search (min 2 characters to trigger, 300ms delay)
   const { debouncedValue: debouncedSearchTerm, isSearching } = useDebounceSearch({
@@ -68,8 +56,6 @@ export default function AdminItemsPage() {
     page: currentPage,
     limit: PageSize,
     search: debouncedSearchTerm || undefined,
-    status: statusFilter || undefined,
-    category: categoryFilter || undefined,
   });
 
   // Modal state
@@ -395,16 +381,10 @@ export default function AdminItemsPage() {
         </Card>
       </div>
 
-      {/* Filters */}
-      <ItemFilters
+      {/* Search */}
+      <ItemSearch
         searchTerm={searchTerm}
-        statusFilter={statusFilter}
-        categoryFilter={categoryFilter}
         onSearchChange={setSearchTerm}
-        onStatusChange={setStatusFilter}
-        onCategoryChange={setCategoryFilter}
-        onClearFilters={clearFilters}
-        activeFilterCount={activeFilterCount}
         isSearching={isSearching}
       />
 
@@ -635,18 +615,18 @@ export default function AdminItemsPage() {
                   <Package className="w-8 h-8 text-theme-primary opacity-60" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  {activeFilterCount > 0 ? t('NO_ITEMS_FOUND_SEARCH') : t('NO_ITEMS_FOUND')}
+                  {searchTerm ? t('NO_ITEMS_FOUND_SEARCH') : t('NO_ITEMS_FOUND')}
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-                  {activeFilterCount > 0
-                    ? t('NO_ITEMS_FOUND_SEARCH_DESC', { term: searchTerm || statusFilter || categoryFilter })
+                  {searchTerm
+                    ? t('NO_ITEMS_FOUND_SEARCH_DESC', { term: searchTerm })
                     : t('NO_ITEMS_DESCRIPTION')
                   }
                 </p>
-                {activeFilterCount > 0 ? (
+                {searchTerm ? (
                   <Button
                     variant="outline"
-                    onPress={clearFilters}
+                    onPress={() => setSearchTerm('')}
                     className="border-theme-primary text-theme-primary hover:bg-theme-primary/10"
                   >
                     {t('CLEAR_SEARCH')}

@@ -2082,24 +2082,10 @@
 			"CREATE_ITEM": "创建项目",
 			"CONFIRM_DELETE_ITEM": "您确定要删除此项目吗？此操作无法撤销。",
 			"SEARCH_PLACEHOLDER": "搜索项目...",
-			"FILTERS": "筛选",
-			"CLEAR_ALL": "清除全部",
 			"SEARCH_LABEL": "搜索：",
-			"STATUS_FILTER_LABEL": "状态：",
-			"CATEGORY_FILTER_LABEL": "分类：",
-			"FILTER_ITEMS": "筛选项目",
-			"FILTER_SUBTITLE": "使用筛选条件优化搜索",
-			"STATUS": "状态",
-			"ALL_STATUSES": "所有状态",
-			"DRAFT": "草稿",
-			"PENDING": "待审核",
-			"CATEGORY": "分类",
-			"ALL_CATEGORIES": "所有分类",
-			"APPLY_FILTERS": "应用",
-			"CANCEL": "取消",
 			"NO_ITEMS_FOUND_SEARCH": "未找到项目",
-			"NO_ITEMS_FOUND_SEARCH_DESC": "没有与\"{term}\"匹配的项目。请尝试调整筛选条件。",
-			"CLEAR_SEARCH": "清除筛选",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "没有与\"{term}\"匹配的项目。请尝试其他搜索。",
+			"CLEAR_SEARCH": "清除搜索",
 			"REJECT_MODAL_TITLE": "拒绝项目",
 			"REJECT_MODAL_DESCRIPTION": "请提供拒绝此项目的原因。此原因将发送给提交者。",
 			"ITEM_PREVIEW_LABEL": "待拒绝项目",
@@ -2912,7 +2898,6 @@
 			"WELCOME_BACK": "欢迎回来，{name}！这是您的活动概览。",
 			"REFRESH": "刷新",
 			"FAILED_TO_LOAD": "加载仪表盘统计数据失败",
-
 			"STATS": {
 				"TOTAL_SUBMISSIONS": "总提交数",
 				"CONTENT_CREATED": "您创建的内容",
@@ -2923,7 +2908,6 @@
 				"COMMENTS_RECEIVED": "获得的评论",
 				"COMMENTS_ON_CONTENT": "您的内容评论数"
 			},
-
 			"PERIOD_COMPARISON": {
 				"TITLE": "每周表现",
 				"THIS_WEEK": "本周",
@@ -2936,7 +2920,6 @@
 				"NO_DATA": "暂无数据",
 				"NO_DATA_DESC": "开始创建内容以查看您的每周表现对比。"
 			},
-
 			"CATEGORY_PERFORMANCE": {
 				"TITLE": "分类表现",
 				"SUBTITLE": "按平均互动量排名的分类",
@@ -2947,7 +2930,6 @@
 				"NO_DATA": "暂无分类数据",
 				"NO_DATA_DESC": "提交项目以查看分类表现指标。"
 			},
-
 			"APPROVAL_TREND": {
 				"TITLE": "审批趋势",
 				"SUBTITLE": "月度审批通过率",
@@ -2957,7 +2939,6 @@
 				"NO_DATA": "暂无审批数据",
 				"NO_DATA_DESC": "提交项目以跟踪您的审批通过率。"
 			},
-
 			"ENGAGEMENT_RATE": {
 				"TITLE": "互动率",
 				"SUBTITLE": "每次提交的互动量趋势",
@@ -2965,7 +2946,6 @@
 				"NO_DATA": "暂无互动数据",
 				"NO_DATA_DESC": "创建内容以查看您的互动趋势。"
 			},
-
 			"SUBMISSION_CALENDAR": {
 				"TITLE": "提交活动",
 				"SUBTITLE": "过去3个月的提交一致性",
@@ -2977,7 +2957,6 @@
 				"LESS": "较少",
 				"MORE": "较多"
 			},
-
 			"ENGAGEMENT_DISTRIBUTION": {
 				"TITLE": "互动分布",
 				"SUBTITLE": "互动在您的热门项目中的分布情况",
@@ -2986,12 +2965,10 @@
 				"NO_DATA": "暂无互动数据",
 				"NO_DATA_DESC": "获得投票和评论以查看互动分布情况。"
 			},
-
 			"COMMON": {
 				"VS": "vs",
 				"AVG": "平均"
 			},
-
 			"CHARTS": {
 				"LOADING": "正在加载图表数据...",
 				"ERROR": "加载图表失败",
