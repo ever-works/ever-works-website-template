@@ -79,7 +79,6 @@ export function BasicInfoStep({
 	const [categoryDropdownDirection, setCategoryDropdownDirection] = useState<'down' | 'up'>('down');
 	const { toolbarRef } = useEditorToolbar(editor);
 	const categoryDropdownId = useId();
-	const { currentTheme } = useTheme();
 
 	// Close dropdown on outside click
 	useEffect(() => {
