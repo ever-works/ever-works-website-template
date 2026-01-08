@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
 import { ItemData, CreateItemRequest, UpdateItemRequest } from '@/lib/types/item';
@@ -118,6 +118,7 @@ export function useAdminItems(params: ItemsListParams = {}) {
   const {
     data: itemsData,
     isLoading,
+    isFetching,
     error,
     refetch,
   } = useQuery({
@@ -127,6 +128,7 @@ export function useAdminItems(params: ItemsListParams = {}) {
     gcTime: 10 * 60 * 1000, // 10 minutes
     refetchInterval: 5 * 60 * 1000, // 5 minutes - reduced from 30 seconds
     retry: 3,
+    placeholderData: keepPreviousData, // Keep previous data while fetching new data
   });
 
   // Fetch stats
@@ -254,7 +256,8 @@ export function useAdminItems(params: ItemsListParams = {}) {
     },
 
     // Loading states
-    isLoading,
+    isLoading, // True only on initial load (no cached data)
+    isFetching, // True when fetching (including background refetch)
     isStatsLoading,
     isSubmitting: createItemMutation.isPending || updateItemMutation.isPending || deleteItemMutation.isPending || reviewItemMutation.isPending,
 

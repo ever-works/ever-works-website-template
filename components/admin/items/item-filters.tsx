@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from 'react';
 import * as Popover from '@radix-ui/react-popover';
-import { Filter, ChevronDown, Check, X } from 'lucide-react';
+import { Filter, Check, X, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import { ITEM_STATUS_LABELS } from '@/lib/types/item';
@@ -39,7 +40,7 @@ const STATUS_TAB_ACTIVE = cn(
 /**
  * Substack-style Item Filters Component
  * - Horizontal status tabs with counts
- * - Filter button for category/tags
+ * - Filter button with searchable category/tags dropdowns
  */
 export function ItemFilters({
 	statusFilter,
@@ -55,10 +56,22 @@ export function ItemFilters({
 	activeFilterCount,
 }: ItemFiltersProps) {
 	const t = useTranslations('admin.ADMIN_ITEMS_PAGE');
+	const [categorySearch, setCategorySearch] = useState('');
+	const [tagSearch, setTagSearch] = useState('');
 
 	const totalCount = itemCounts.draft + itemCounts.pending + itemCounts.approved + itemCounts.rejected;
 	const hasAdvancedFilters = categoryFilter || tagsFilter.length > 0;
 	const advancedFilterCount = (categoryFilter ? 1 : 0) + tagsFilter.length;
+
+	// Filter categories by search
+	const filteredCategories = categories.filter(cat =>
+		cat.name.toLowerCase().includes(categorySearch.toLowerCase())
+	);
+
+	// Filter tags by search
+	const filteredTags = tags.filter(tag =>
+		tag.name.toLowerCase().includes(tagSearch.toLowerCase())
+	);
 
 	// Toggle tag selection
 	const toggleTag = (tagId: string) => {
@@ -73,7 +86,14 @@ export function ItemFilters({
 	const clearAdvancedFilters = () => {
 		onCategoryChange('');
 		onTagsChange([]);
+		setCategorySearch('');
+		setTagSearch('');
 	};
+
+	// Get selected category name
+	const selectedCategoryName = categoryFilter
+		? categories.find(c => c.id === categoryFilter)?.name || categoryFilter
+		: null;
 
 	return (
 		<div className="flex items-center gap-3">
@@ -120,16 +140,16 @@ export function ItemFilters({
 			<Popover.Root>
 				<Popover.Trigger asChild>
 					<button className={cn(
-						'inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md',
+						'inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg',
 						'border border-gray-200 dark:border-gray-700',
 						'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800',
 						'transition-colors cursor-pointer',
 						hasAdvancedFilters && 'bg-gray-50 dark:bg-gray-800'
 					)}>
-						<Filter className="w-3.5 h-3.5" />
+						<Filter className="w-4 h-4" />
 						<span>{t('FILTERS')}</span>
 						{advancedFilterCount > 0 && (
-							<span className="flex items-center justify-center w-4 h-4 text-[10px] font-semibold rounded-full bg-theme-primary text-white">
+							<span className="flex items-center justify-center w-5 h-5 text-xs font-semibold rounded-full bg-theme-primary text-white">
 								{advancedFilterCount}
 							</span>
 						)}
@@ -138,7 +158,7 @@ export function ItemFilters({
 				<Popover.Portal>
 					<Popover.Content
 						className={cn(
-							'w-72 bg-white dark:bg-gray-900 rounded-lg shadow-lg',
+							'w-80 bg-white dark:bg-gray-900 rounded-lg shadow-lg',
 							'border border-gray-200 dark:border-gray-700 p-4 z-50',
 							'animate-in fade-in-0 zoom-in-95'
 						)}
@@ -150,32 +170,61 @@ export function ItemFilters({
 							<label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
 								{t('CATEGORY_LABEL')}
 							</label>
-							<div className="mt-2 space-y-1 max-h-32 overflow-y-auto">
+							{/* Search Input */}
+							<div className="relative mt-2">
+								<Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+								<input
+									type="text"
+									placeholder="Search categories..."
+									value={categorySearch}
+									onChange={(e) => setCategorySearch(e.target.value)}
+									className={cn(
+										'w-full pl-8 pr-3 py-2 text-sm rounded-md',
+										'border border-gray-200 dark:border-gray-700',
+										'bg-gray-50 dark:bg-gray-800',
+										'text-gray-900 dark:text-white placeholder-gray-400',
+										'focus:outline-none focus:ring-2 focus:ring-theme-primary/50'
+									)}
+								/>
+							</div>
+							{/* Category List */}
+							<div className="mt-2 space-y-0.5 max-h-40 overflow-y-auto">
 								<button
-									onClick={() => onCategoryChange('')}
+									onClick={() => {
+										onCategoryChange('');
+										setCategorySearch('');
+									}}
 									className={cn(
 										'flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md',
 										'hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors',
-										!categoryFilter ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'
+										!categoryFilter ? 'text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800' : 'text-gray-600 dark:text-gray-400'
 									)}
 								>
-									{!categoryFilter && <Check className="w-4 h-4" />}
+									{!categoryFilter && <Check className="w-4 h-4 text-theme-primary" />}
 									<span className={!categoryFilter ? '' : 'ml-6'}>{t('ALL_CATEGORIES')}</span>
 								</button>
-								{categories.map((category) => (
+								{filteredCategories.map((category) => (
 									<button
 										key={category.id}
-										onClick={() => onCategoryChange(category.id)}
+										onClick={() => {
+											onCategoryChange(category.id);
+											setCategorySearch('');
+										}}
 										className={cn(
 											'flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md',
 											'hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors',
-											categoryFilter === category.id ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'
+											categoryFilter === category.id ? 'text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800' : 'text-gray-600 dark:text-gray-400'
 										)}
 									>
-										{categoryFilter === category.id && <Check className="w-4 h-4" />}
+										{categoryFilter === category.id && <Check className="w-4 h-4 text-theme-primary" />}
 										<span className={categoryFilter === category.id ? '' : 'ml-6'}>{category.name}</span>
 									</button>
 								))}
+								{filteredCategories.length === 0 && categorySearch && (
+									<p className="text-sm text-gray-500 dark:text-gray-400 px-2 py-2 text-center">
+										No categories found
+									</p>
+								)}
 							</div>
 						</div>
 
@@ -184,13 +233,35 @@ export function ItemFilters({
 							<label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
 								{t('TAGS_LABEL')}
 							</label>
-							<div className="mt-2 space-y-1 max-h-40 overflow-y-auto">
+							{/* Search Input */}
+							<div className="relative mt-2">
+								<Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+								<input
+									type="text"
+									placeholder="Search tags..."
+									value={tagSearch}
+									onChange={(e) => setTagSearch(e.target.value)}
+									className={cn(
+										'w-full pl-8 pr-3 py-2 text-sm rounded-md',
+										'border border-gray-200 dark:border-gray-700',
+										'bg-gray-50 dark:bg-gray-800',
+										'text-gray-900 dark:text-white placeholder-gray-400',
+										'focus:outline-none focus:ring-2 focus:ring-theme-primary/50'
+									)}
+								/>
+							</div>
+							{/* Tags List */}
+							<div className="mt-2 space-y-0.5 max-h-48 overflow-y-auto">
 								{tags.length === 0 ? (
-									<p className="text-sm text-gray-500 dark:text-gray-400 px-2 py-1">
+									<p className="text-sm text-gray-500 dark:text-gray-400 px-2 py-2 text-center">
 										No tags available
 									</p>
+								) : filteredTags.length === 0 && tagSearch ? (
+									<p className="text-sm text-gray-500 dark:text-gray-400 px-2 py-2 text-center">
+										No tags found
+									</p>
 								) : (
-									tags.map((tag) => {
+									filteredTags.map((tag) => {
 										const isSelected = tagsFilter.includes(tag.id);
 										return (
 											<button
@@ -199,16 +270,16 @@ export function ItemFilters({
 												className={cn(
 													'flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md',
 													'hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors',
-													isSelected ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'
+													isSelected ? 'text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800' : 'text-gray-600 dark:text-gray-400'
 												)}
 											>
 												<div className={cn(
 													'w-4 h-4 rounded border flex items-center justify-center shrink-0',
 													isSelected
-														? 'bg-gray-900 dark:bg-white border-gray-900 dark:border-white'
+														? 'bg-theme-primary border-theme-primary'
 														: 'border-gray-300 dark:border-gray-600'
 												)}>
-													{isSelected && <Check className="w-3 h-3 text-white dark:text-gray-900" />}
+													{isSelected && <Check className="w-3 h-3 text-white" />}
 												</div>
 												<span>{tag.name}</span>
 											</button>
@@ -223,9 +294,9 @@ export function ItemFilters({
 							<button
 								onClick={clearAdvancedFilters}
 								className={cn(
-									'flex items-center gap-1.5 w-full px-2 py-1.5 text-sm rounded-md',
-									'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200',
-									'hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors'
+									'flex items-center justify-center gap-1.5 w-full px-3 py-2 text-sm font-medium rounded-md',
+									'text-red-600 dark:text-red-400',
+									'hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors'
 								)}
 							>
 								<X className="w-4 h-4" />

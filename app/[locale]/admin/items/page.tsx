@@ -44,6 +44,7 @@ export default function AdminItemsPage() {
     totalPages,
     stats,
     isLoading,
+    isFetching,
     isSubmitting,
     isApproving,
     isRejecting,
@@ -401,9 +402,14 @@ export default function AdminItemsPage() {
           {/* Table Header with Integrated Filters */}
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
             <div className="flex items-center justify-between gap-4 flex-wrap">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {t('ITEMS_TABLE_TITLE', { count: totalItems })}
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {t('ITEMS_TABLE_TITLE', { count: totalItems })}
+                </h3>
+                {isFetching && !isLoading && (
+                  <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                )}
+              </div>
               <ItemFilters
                 statusFilter={statusFilter}
                 categoryFilter={categoryFilter}
