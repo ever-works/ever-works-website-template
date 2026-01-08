@@ -195,6 +195,7 @@ export async function GET(request: NextRequest) {
     const statusParam = searchParams.get('status');
     const category = searchParams.get('category') || undefined;
     const tag = searchParams.get('tag') || undefined;
+    const search = searchParams.get('search') || undefined;
 
     // Validate status parameter
     const validStatuses = ['draft', 'pending', 'approved', 'rejected'] as const;
@@ -207,6 +208,7 @@ export async function GET(request: NextRequest) {
       status,
       category,
       tag,
+      search,
     });
 
     return NextResponse.json({
