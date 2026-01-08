@@ -11,7 +11,7 @@ import { ItemRejectModal } from "@/components/admin/items/item-reject-modal";
 import { ItemActionsMenu } from "@/components/admin/items/item-actions-menu";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
 import { UniversalPagination } from "@/components/universal-pagination";
-import { Plus, Package, Clock, CheckCircle, XCircle, Star } from "lucide-react";
+import { Plus, Package, Clock, CheckCircle, XCircle, Star, Folder, Tag, Hash, Link2, Calendar } from "lucide-react";
 import { useAdminItems } from "@/hooks/use-admin-items";
 import { useTranslations } from 'next-intl';
 import { AdminSurveyCreationButton } from "@/components/surveys/admin-survey-creation-button";
@@ -430,31 +430,43 @@ export default function AdminItemsPage() {
                               {categories.map((cat, index) => (
                                 <span
                                   key={index}
-                                  className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400"
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400"
                                 >
+                                  <Folder className="w-3 h-3" />
                                   {cat}
                                 </span>
                               ))}
                               {item.tags.slice(0, 3).map((tag, index) => (
                                 <span
                                   key={index}
-                                  className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
                                 >
+                                  <Tag className="w-3 h-3" />
                                   {tag}
                                 </span>
                               ))}
                               {item.tags.length > 3 && (
-                                <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                  <Tag className="w-3 h-3" />
                                   {t('MORE_TAGS', { count: item.tags.length - 3 })}
                                 </span>
                               )}
                             </div>
                             
                             {/* Meta Info */}
-                            <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
-                              <span>{t('ID_LABEL')} {item.id}</span>
-                              <span>{t('SLUG_LABEL')} {item.slug}</span>
-                              <span>{t('UPDATED_LABEL')} {new Date(item.updated_at || Date.now()).toLocaleDateString()}</span>
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
+                              <span className="inline-flex items-center gap-1">
+                                <Hash className="w-3 h-3" />
+                                {item.id}
+                              </span>
+                              <span className="inline-flex items-center gap-1">
+                                <Link2 className="w-3 h-3" />
+                                {item.slug}
+                              </span>
+                              <span className="inline-flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
+                                {new Date(item.updated_at || Date.now()).toLocaleDateString()}
+                              </span>
                             </div>
                           </div>
                         </div>
