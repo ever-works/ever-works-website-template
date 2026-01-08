@@ -2072,7 +2072,6 @@
 			"CREATE_ITEM": "Crear Elemento",
 			"CONFIRM_DELETE_ITEM": "¿Está seguro de que desea eliminar este elemento? Esta acción no se puede deshacer.",
 			"SEARCH_PLACEHOLDER": "Buscar elementos...",
-			"SEARCH_LABEL": "Búsqueda:",
 			"NO_ITEMS_FOUND_SEARCH": "No se encontraron elementos",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "No hay elementos que coincidan con \"{term}\". Intenta una búsqueda diferente.",
 			"CLEAR_SEARCH": "Limpiar búsqueda",

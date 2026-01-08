@@ -2070,7 +2070,6 @@
 			"CREATE_ITEM": "إنشاء عنصر",
 			"CONFIRM_DELETE_ITEM": "هل أنت متأكد من أنك تريد حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء.",
 			"SEARCH_PLACEHOLDER": "البحث في العناصر...",
-			"SEARCH_LABEL": "البحث:",
 			"NO_ITEMS_FOUND_SEARCH": "لم يتم العثور على عناصر",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "لا توجد عناصر تطابق \"{term}\". جرب بحثًا مختلفًا.",
 			"CLEAR_SEARCH": "مسح البحث",

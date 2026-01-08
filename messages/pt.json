@@ -2057,7 +2057,6 @@
 			"REJECTION_REASON_MIN_LENGTH": "O motivo da rejeição deve ter pelo menos 10 caracteres",
 			"CONFIRM_REJECT": "Rejeitar Item",
 			"SEARCH_PLACEHOLDER": "Search items...",
-			"SEARCH_LABEL": "Search:",
 			"NO_ITEMS_FOUND_SEARCH": "No items found",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
 			"CLEAR_SEARCH": "Clear Search"

@@ -2141,7 +2141,6 @@
 			"CREATE_ITEM": "Créer un Élément",
 			"CONFIRM_DELETE_ITEM": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action ne peut pas être annulée.",
 			"SEARCH_PLACEHOLDER": "Rechercher des éléments...",
-			"SEARCH_LABEL": "Recherche :",
 			"NO_ITEMS_FOUND_SEARCH": "Aucun élément trouvé",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Aucun élément ne correspond à \"{term}\". Essayez une autre recherche.",
 			"CLEAR_SEARCH": "Effacer la recherche",

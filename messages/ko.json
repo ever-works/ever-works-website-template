@@ -2057,7 +2057,6 @@
 			"REJECTION_REASON_MIN_LENGTH": "거부 사유는 최소 10자 이상이어야 합니다",
 			"CONFIRM_REJECT": "항목 거부",
 			"SEARCH_PLACEHOLDER": "Search items...",
-			"SEARCH_LABEL": "Search:",
 			"NO_ITEMS_FOUND_SEARCH": "No items found",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
 			"CLEAR_SEARCH": "Clear Search"

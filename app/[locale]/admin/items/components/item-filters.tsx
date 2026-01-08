@@ -1,6 +1,5 @@
 'use client';
 
-import { Chip } from '@heroui/react';
 import { Search, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
@@ -54,15 +53,6 @@ export function ItemSearch(props: ItemSearchProps) {
 					</button>
 				) : null}
 			</div>
-
-			{/* Active Search Chip */}
-			{props.searchTerm && (
-				<div className="flex flex-wrap gap-2">
-					<Chip variant="flat" color="primary" onClose={handleClearSearch}>
-						{t('SEARCH_LABEL')} &ldquo;{props.searchTerm}&rdquo;
-					</Chip>
-				</div>
-			)}
 		</div>
 	);
 }

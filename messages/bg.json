@@ -2039,7 +2039,6 @@
 			"CREATE_ITEM": "Създай елемент",
 			"CONFIRM_DELETE_ITEM": "Сигурни ли сте, че искате да изтриете този елемент? Това действие не може да бъде отменено.",
 			"SEARCH_PLACEHOLDER": "Search items...",
-			"SEARCH_LABEL": "Search:",
 			"NO_ITEMS_FOUND_SEARCH": "No items found",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Няма елементи, съответстващи на \"{term}\". Опитайте друго търсене.",
 			"CLEAR_SEARCH": "Изчисти търсенето",

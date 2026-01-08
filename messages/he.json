@@ -2051,7 +2051,6 @@
 			"REJECTION_REASON_MIN_LENGTH": "סיבת הדחייה חייבת להכיל לפחות 10 תווים",
 			"CONFIRM_REJECT": "דחה פריט",
 			"SEARCH_PLACEHOLDER": "Search items...",
-			"SEARCH_LABEL": "Search:",
 			"NO_ITEMS_FOUND_SEARCH": "No items found",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
 			"CLEAR_SEARCH": "Clear Search"
