@@ -320,39 +320,6 @@ export default function AdminItemsPage() {
         </div>
       </div>
 
-      {/* Filter Panel */}
-      <ItemFilters
-        statusFilter={statusFilter}
-        categoryFilter={categoryFilter}
-        tagsFilter={tagsFilter}
-        onStatusChange={setStatusFilter}
-        onCategoryChange={setCategoryFilter}
-        onTagsChange={setTagsFilter}
-        onClearAll={handleClearAllFilters}
-        categories={allCategories.map(c => ({ id: c.id, name: c.name }))}
-        tags={allTags.map(t => ({ id: t.id, name: t.name }))}
-        itemCounts={{
-          draft: stats.draft,
-          pending: stats.pending,
-          approved: stats.approved,
-          rejected: stats.rejected,
-        }}
-        activeFilterCount={activeFilterCount}
-      />
-
-      {/* Active Filter Chips */}
-      <ActiveItemFilters
-        statusFilter={statusFilter}
-        categoryFilter={categoryFilter}
-        tagsFilter={tagsFilter}
-        onRemoveStatus={() => setStatusFilter('')}
-        onRemoveCategory={() => setCategoryFilter('')}
-        onRemoveTag={(tagId) => setTagsFilter(prev => prev.filter(t => t !== tagId))}
-        onClearAll={handleClearAllFilters}
-        categories={allCategories.map(c => ({ id: c.id, name: c.name }))}
-        tags={allTags.map(t => ({ id: t.id, name: t.name }))}
-      />
-
       {/* Enhanced Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card className="border-0 bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
@@ -431,11 +398,47 @@ export default function AdminItemsPage() {
       {/* Items Table */}
       <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-xs">
         <CardContent className="p-0">
-          {/* Table Header */}
+          {/* Table Header with Integrated Filters */}
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {t('ITEMS_TABLE_TITLE', { count: totalItems })}
-            </h3>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {t('ITEMS_TABLE_TITLE', { count: totalItems })}
+              </h3>
+              <ItemFilters
+                statusFilter={statusFilter}
+                categoryFilter={categoryFilter}
+                tagsFilter={tagsFilter}
+                onStatusChange={setStatusFilter}
+                onCategoryChange={setCategoryFilter}
+                onTagsChange={setTagsFilter}
+                onClearAll={handleClearAllFilters}
+                categories={allCategories.map(c => ({ id: c.id, name: c.name }))}
+                tags={allTags.map(t => ({ id: t.id, name: t.name }))}
+                itemCounts={{
+                  draft: stats.draft,
+                  pending: stats.pending,
+                  approved: stats.approved,
+                  rejected: stats.rejected,
+                }}
+                activeFilterCount={activeFilterCount}
+              />
+            </div>
+            {/* Active Filter Chips */}
+            {(categoryFilter || tagsFilter.length > 0) && (
+              <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                <ActiveItemFilters
+                  statusFilter={statusFilter}
+                  categoryFilter={categoryFilter}
+                  tagsFilter={tagsFilter}
+                  onRemoveStatus={() => setStatusFilter('')}
+                  onRemoveCategory={() => setCategoryFilter('')}
+                  onRemoveTag={(tagId) => setTagsFilter(prev => prev.filter(t => t !== tagId))}
+                  onClearAll={handleClearAllFilters}
+                  categories={allCategories.map(c => ({ id: c.id, name: c.name }))}
+                  tags={allTags.map(t => ({ id: t.id, name: t.name }))}
+                />
+              </div>
+            )}
           </div>
 
           {/* Items List */}

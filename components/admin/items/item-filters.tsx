@@ -25,15 +25,15 @@ interface ItemFiltersProps {
 	activeFilterCount: number;
 }
 
-// Status tab style
+// Status tab style - compact for table header
 const STATUS_TAB = cn(
-	'px-3 py-1.5 text-sm font-medium rounded-md transition-colors cursor-pointer',
+	'px-2.5 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer',
 	'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
 );
 
 const STATUS_TAB_ACTIVE = cn(
-	'px-3 py-1.5 text-sm font-medium rounded-md transition-colors cursor-pointer',
-	'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
+	'px-2.5 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer',
+	'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
 );
 
 /**
@@ -76,9 +76,9 @@ export function ItemFilters({
 	};
 
 	return (
-		<div className="flex items-center justify-between gap-4 mb-6">
+		<div className="flex items-center gap-3">
 			{/* Status Tabs */}
-			<div className="flex items-center gap-1 bg-gray-50 dark:bg-gray-900 rounded-lg p-1">
+			<div className="flex items-center gap-0.5 bg-gray-100/80 dark:bg-gray-800/80 rounded-lg p-0.5">
 				<button
 					onClick={() => onStatusChange('')}
 					className={!statusFilter ? STATUS_TAB_ACTIVE : STATUS_TAB}
@@ -120,16 +120,16 @@ export function ItemFilters({
 			<Popover.Root>
 				<Popover.Trigger asChild>
 					<button className={cn(
-						'inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md',
+						'inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md',
 						'border border-gray-200 dark:border-gray-700',
 						'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800',
 						'transition-colors cursor-pointer',
 						hasAdvancedFilters && 'bg-gray-50 dark:bg-gray-800'
 					)}>
-						<Filter className="w-4 h-4" />
+						<Filter className="w-3.5 h-3.5" />
 						<span>{t('FILTERS')}</span>
 						{advancedFilterCount > 0 && (
-							<span className="flex items-center justify-center w-5 h-5 text-xs font-semibold rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900">
+							<span className="flex items-center justify-center w-4 h-4 text-[10px] font-semibold rounded-full bg-theme-primary text-white">
 								{advancedFilterCount}
 							</span>
 						)}

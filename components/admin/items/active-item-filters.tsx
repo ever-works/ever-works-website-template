@@ -15,14 +15,14 @@ interface ActiveItemFiltersProps {
 	tags: Array<{ id: string; name: string }>;
 }
 
-// Minimal chip style
+// Minimal chip style - compact for table header
 const CHIP = cn(
-	'inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 text-xs font-medium rounded-full',
-	'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+	'inline-flex items-center gap-1 pl-2 pr-1 py-0.5 text-xs font-medium rounded-full',
+	'bg-theme-primary/10 text-theme-primary dark:bg-theme-primary/20'
 );
 
 const CHIP_REMOVE = cn(
-	'p-0.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700',
+	'p-0.5 rounded-full hover:bg-theme-primary/20 dark:hover:bg-theme-primary/30',
 	'transition-colors focus:outline-none'
 );
 
@@ -58,7 +58,7 @@ export function ActiveItemFilters({
 	}
 
 	return (
-		<div className="flex items-center gap-2 mb-4 flex-wrap">
+		<div className="flex items-center gap-1.5 flex-wrap">
 			{/* Category Chip */}
 			{categoryFilter && (
 				<span className={CHIP}>
