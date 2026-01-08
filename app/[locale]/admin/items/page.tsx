@@ -1,22 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { IconButton } from "@/components/ui/icon-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@heroui/react";
 import { MultiStepItemForm } from "@/components/admin/items/multi-step-item-form";
 import { ItemRejectModal } from "@/components/admin/items/item-reject-modal";
+import { ItemActionsMenu } from "@/components/admin/items/item-actions-menu";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
 import { UniversalPagination } from "@/components/universal-pagination";
-import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink, Loader2 } from "lucide-react";
+import { Plus, Package, Clock, CheckCircle, XCircle, Star } from "lucide-react";
 import { useAdminItems } from "@/hooks/use-admin-items";
 import { useTranslations } from 'next-intl';
 import { AdminSurveyCreationButton } from "@/components/surveys/admin-survey-creation-button";
 
 export default function AdminItemsPage() {
   const t = useTranslations('admin.ADMIN_ITEMS_PAGE');
+  const router = useRouter();
   const PageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
   
@@ -458,81 +460,20 @@ export default function AdminItemsPage() {
                         </div>
                       </div>
 
-                      {/* Right Section: Actions */}
-                      <div className="flex items-center gap-2 ml-4">
-                        {/* External Link */}
-                        <IconButton
-                          variant="ghost"
-                          tooltip={t('VIEW_SOURCE')}
-                          icon={<ExternalLink />}
-                          size="touch"
-                          onClick={() => window.open(item.source_url || '#', '_blank')}
-                          className="hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20"
-                        />
-
-                        {/* Review Actions */}
-                        {item.status === 'pending' && (() => {
-                          const isApprovingThis = isApproving && pendingItemId === item.id;
-                          const isRejectingThis = isRejecting && pendingItemId === item.id;
-                          const isDeletingThis = isDeleting && pendingItemId === item.id;
-                          const isProcessingThis = isApprovingThis || isRejectingThis || isDeletingThis;
-
-                          return (
-                            <>
-                              <IconButton
-                                variant="success"
-                                tooltip={t('APPROVE')}
-                                loadingTooltip={t('APPROVING')}
-                                icon={<CheckCircle />}
-                                size="touch"
-                                isLoading={isApprovingThis}
-                                disabled={isProcessingThis}
-                                onClick={() => handleApproveItem(item.id)}
-                                className="hover:bg-green-700"
-                              />
-                              <IconButton
-                                variant="ghost"
-                                tooltip={t('REJECT')}
-                                loadingTooltip={t('REJECTING')}
-                                icon={<XCircle />}
-                                size="touch"
-                                isLoading={isRejectingThis}
-                                disabled={isProcessingThis}
-                                onClick={() => openRejectModal(item)}
-                                className="bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
-                              />
-                            </>
-                          );
-                        })()}
-
-                        {/* Survey Creation */}
-                        <AdminSurveyCreationButton
-                          itemId={item.id}
-                          variant="ghost"
-                          size="touch"
-                          className="hover:bg-yellow-50 hover:text-yellow-600 dark:hover:bg-yellow-900/20"
-                        />
-
-                        {/* Edit and Delete */}
-                        <IconButton
-                          variant="ghost"
-                          tooltip={t('EDIT')}
-                          icon={<Edit />}
-                          size="touch"
-                          disabled={isProcessingThisItem}
-                          onClick={() => openEditModal(item as any)}
-                          className="hover:bg-theme-primary/10 hover:text-theme-primary"
-                        />
-                        <IconButton
-                          variant="ghost"
-                          tooltip={t('DELETE')}
-                          loadingTooltip={t('DELETING')}
-                          icon={<Trash2 />}
-                          size="touch"
-                          isLoading={isDeleting && pendingItemId === item.id}
-                          disabled={isProcessingThisItem}
-                          onClick={() => handleDeleteItem(item.id)}
-                          className="bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
+                      {/* Right Section: Actions Menu */}
+                      <div className="flex items-center ml-4">
+                        <ItemActionsMenu
+                          item={item}
+                          onViewSource={() => window.open(item.source_url || '#', '_blank')}
+                          onEdit={() => openEditModal(item as any)}
+                          onCreateSurvey={() => router.push(`/admin/surveys/create?itemId=${encodeURIComponent(item.id)}`)}
+                          onApprove={() => handleApproveItem(item.id)}
+                          onReject={() => openRejectModal(item)}
+                          onDelete={() => handleDeleteItem(item.id)}
+                          isProcessing={isProcessingThisItem}
+                          isApproving={isApproving && pendingItemId === item.id}
+                          isRejecting={isRejecting && pendingItemId === item.id}
+                          isDeleting={isDeleting && pendingItemId === item.id}
                         />
                       </div>
                     </div>
