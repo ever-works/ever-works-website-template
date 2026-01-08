@@ -2146,7 +2146,12 @@
 			"REJECTION_REASON_LABEL": "Rejection Reason",
 			"REJECTION_REASON_PLACEHOLDER": "Explain why this item is being rejected...",
 			"REJECTION_REASON_MIN_LENGTH": "Rejection reason must be at least 10 characters",
-			"CONFIRM_REJECT": "Reject Item"
+			"CONFIRM_REJECT": "Reject Item",
+			"STATUS_DRAFT": "Draft",
+			"STATUS_PENDING": "Pending",
+			"STATUS_APPROVED": "Approved",
+			"STATUS_REJECTED": "Rejected",
+			"ACTIONS": "Actions"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

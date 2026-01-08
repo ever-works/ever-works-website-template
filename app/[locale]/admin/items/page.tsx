@@ -138,18 +138,35 @@ export default function AdminItemsPage() {
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  // Compact status labels for cleaner UI
+  const getStatusLabel = (status: string) => {
     switch (status) {
       case 'draft':
-        return <Package className="w-4 h-4" />;
+        return t('STATUS_DRAFT');
       case 'pending':
-        return <Clock className="w-4 h-4" />;
+        return t('STATUS_PENDING');
       case 'approved':
-        return <CheckCircle className="w-4 h-4" />;
+        return t('STATUS_APPROVED');
       case 'rejected':
-        return <XCircle className="w-4 h-4" />;
+        return t('STATUS_REJECTED');
       default:
-        return <Package className="w-4 h-4" />;
+        return status;
+    }
+  };
+
+  // Status dot color classes
+  const getStatusDotColor = (status: string) => {
+    switch (status) {
+      case 'draft':
+        return 'bg-gray-400';
+      case 'pending':
+        return 'bg-yellow-400';
+      case 'approved':
+        return 'bg-green-400';
+      case 'rejected':
+        return 'bg-red-400';
+      default:
+        return 'bg-gray-400';
     }
   };
 
@@ -411,13 +428,13 @@ export default function AdminItemsPage() {
                           
                           {/* Item Details */}
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center space-x-2 mb-2">
+                            <div className="flex items-center gap-2 mb-2">
                               <h4 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
                                 {item.name || t('UNTITLED')}
                               </h4>
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors.bg} ${statusColors.text}`}>
-                                {getStatusIcon(item.status)}
-                                <span className="ml-1">{ITEM_STATUS_LABELS[item.status as keyof typeof ITEM_STATUS_LABELS]}</span>
+                              <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${statusColors.bg} ${statusColors.text}`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${getStatusDotColor(item.status)}`} />
+                                {getStatusLabel(item.status)}
                               </span>
                             </div>
                             
