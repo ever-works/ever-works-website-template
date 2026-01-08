@@ -13,14 +13,21 @@ const DEFAULT_HEADER_SETTINGS: HeaderSettings = {
 	settingsEnabled: true,
 	layoutDefault: 'home1',
 	paginationDefault: 'standard',
-	themeDefault: 'light',
+	themeDefault: 'light'
 };
 
 interface SettingsContextValue {
+	// Feature enabled flags (from config)
 	categoriesEnabled: boolean;
 	tagsEnabled: boolean;
 	companiesEnabled: boolean;
 	surveysEnabled: boolean;
+	// Data existence flags (from database/content)
+	hasCategories: boolean;
+	hasTags: boolean;
+	hasCollections: boolean;
+	hasGlobalSurveys: boolean;
+	// Header settings
 	headerSettings: HeaderSettings;
 }
 
@@ -31,6 +38,10 @@ interface SettingsProviderProps extends PropsWithChildren {
 	tagsEnabled: boolean;
 	companiesEnabled: boolean;
 	surveysEnabled: boolean;
+	hasCategories: boolean;
+	hasTags: boolean;
+	hasCollections: boolean;
+	hasGlobalSurveys: boolean;
 	headerSettings: HeaderSettings;
 }
 
@@ -40,10 +51,26 @@ export function SettingsProvider({
 	tagsEnabled,
 	companiesEnabled,
 	surveysEnabled,
-	headerSettings,
+	hasCategories,
+	hasTags,
+	hasCollections,
+	hasGlobalSurveys,
+	headerSettings
 }: SettingsProviderProps) {
 	return (
-		<SettingsContext.Provider value={{ categoriesEnabled, tagsEnabled, companiesEnabled, surveysEnabled, headerSettings }}>
+		<SettingsContext.Provider
+			value={{
+				categoriesEnabled,
+				tagsEnabled,
+				companiesEnabled,
+				surveysEnabled,
+				hasCategories,
+				hasTags,
+				hasCollections,
+				hasGlobalSurveys,
+				headerSettings
+			}}
+		>
 			{children}
 		</SettingsContext.Provider>
 	);
@@ -58,7 +85,11 @@ export function useSettings(): SettingsContextValue {
 			tagsEnabled: true,
 			companiesEnabled: true,
 			surveysEnabled: true,
-			headerSettings: DEFAULT_HEADER_SETTINGS,
+			hasCategories: true,
+			hasTags: true,
+			hasCollections: true,
+			hasGlobalSurveys: false,
+			headerSettings: DEFAULT_HEADER_SETTINGS
 		};
 	}
 	return context;

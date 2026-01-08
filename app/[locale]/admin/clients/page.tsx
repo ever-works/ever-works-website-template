@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useDebounceSearch } from '@/hooks/use-debounced-search';
+import { useSkeletonVisibility } from '@/hooks/use-skeleton-visibility';
 import { useDisclosure } from '@heroui/react';
 import { toast } from 'sonner';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
@@ -54,7 +55,7 @@ export default function ClientsPage() {
 		filtering: false,
 		paginating: false,
 		submitting: false,
-		deleting: null as string | null,
+		deleting: null as string | null
 	});
 
 	// Modals
@@ -86,7 +87,7 @@ export default function ClientsPage() {
 		setCustomDateFrom,
 		setCustomDateTo,
 		setDateFilterType,
-		clearFilters,
+		clearFilters
 	} = useClientFilters();
 
 	// Debounced search
@@ -97,11 +98,22 @@ export default function ClientsPage() {
 			if (!isInitialLoad.current && currentPage !== 1) {
 				setCurrentPage(1);
 			}
-		},
+		}
 	});
 
 	// Data fetching hook
-	const { clients, stats, total: totalCount, page, totalPages, isLoading, isSubmitting, createClient, updateClient, deleteClient } = useAdminClients({
+	const {
+		clients,
+		stats,
+		total: totalCount,
+		page,
+		totalPages,
+		isLoading,
+		isSubmitting,
+		createClient,
+		updateClient,
+		deleteClient
+	} = useAdminClients({
 		params: {
 			page: currentPage,
 			limit,
@@ -115,13 +127,16 @@ export default function ClientsPage() {
 			updatedAfter,
 			updatedBefore,
 			sortBy: 'createdAt',
-			sortOrder: 'desc',
-		},
+			sortOrder: 'desc'
+		}
 	});
 
 	// Calculate active filters
 	const activeFilterCount = calculateActiveFilterCount(filters);
 	const hasActiveFilters = activeFilterCount > 0;
+
+	// Check if skeleton should be shown (only on initial page load)
+	const shouldShowSkeleton = useSkeletonVisibility(isLoading, clients.length > 0);
 
 	// Mark initial load complete
 	useEffect(() => {
@@ -264,8 +279,8 @@ export default function ClientsPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchParams, clients, isLoading]);
 
-	// Loading state
-	if (loadingStates.initial && clients.length === 0) {
+	// Loading state - only show skeleton on initial page load
+	if (shouldShowSkeleton) {
 		return <LoadingSkeleton />;
 	}
 

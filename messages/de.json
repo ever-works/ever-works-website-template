@@ -2100,7 +2100,14 @@
 			"CANCEL": "Abbrechen",
 			"NO_ITEMS_FOUND_SEARCH": "Keine Elemente gefunden",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Keine Elemente entsprechen \"{term}\". Versuchen Sie, die Filter anzupassen.",
-			"CLEAR_SEARCH": "Filter löschen"
+			"CLEAR_SEARCH": "Filter löschen",
+			"REJECT_MODAL_TITLE": "Element ablehnen",
+			"REJECT_MODAL_DESCRIPTION": "Bitte geben Sie einen Grund für die Ablehnung dieses Elements an. Dieser wird dem Einreicher mitgeteilt.",
+			"ITEM_PREVIEW_LABEL": "Abzulehnendes Element",
+			"REJECTION_REASON_LABEL": "Ablehnungsgrund",
+			"REJECTION_REASON_PLACEHOLDER": "Erklären Sie, warum dieses Element abgelehnt wird...",
+			"REJECTION_REASON_MIN_LENGTH": "Der Ablehnungsgrund muss mindestens 10 Zeichen lang sein",
+			"CONFIRM_REJECT": "Element ablehnen"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Benutzerverwaltung",

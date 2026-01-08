@@ -3,7 +3,6 @@ import { auth } from '@/lib/auth';
 import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
 import { createSponsorAdSchema, querySponsorAdsSchema } from '@/lib/validations/sponsor-ad';
 import { PaymentProvider } from '@/lib/constants';
-import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
 
 // Determine which payment provider to use
 const ACTIVE_PAYMENT_PROVIDER = process.env.NEXT_PUBLIC_PAYMENT_PROVIDER || PaymentProvider.STRIPE;
@@ -51,15 +50,17 @@ export async function GET(request: NextRequest) {
 
 		const { searchParams } = new URL(request.url);
 
-		// Parse query parameters
+		// Build query params - let Zod handle all validation including enum values
 		const queryParams = {
 			page: parseInt(searchParams.get('page') || '1', 10),
 			limit: parseInt(searchParams.get('limit') || '10', 10),
-			status: searchParams.get('status') as SponsorAdStatus | undefined,
+			status: searchParams.get('status') || undefined,
+			interval: searchParams.get('interval') || undefined,
+			search: searchParams.get('search') || undefined,
 			userId: session.user.id
 		};
 
-		// Validate with Zod (partial validation for user-specific params)
+		// Validate with Zod - handles enum validation for status/interval
 		const validationResult = querySponsorAdsSchema.safeParse(queryParams);
 		if (!validationResult.success) {
 			return NextResponse.json(

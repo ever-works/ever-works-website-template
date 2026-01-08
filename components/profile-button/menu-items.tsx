@@ -17,6 +17,7 @@ import {
   Sliders,
   Flag,
   Layers,
+  DollarSign,
   type LucideIcon
 } from "lucide-react";
 import type { ExtendedUser } from "@/types/profile-button.types";
@@ -261,6 +262,17 @@ function MenuItems({ user, profilePath, onItemClick, onNavigationStart, isNaviga
         gradientFrom="from-purple-100"
         gradientTo="to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30"
         iconColor="text-purple-600 dark:text-purple-400"
+        endIcon={Activity}
+      />
+
+      <MenuItem
+        href="/client/sponsorships"
+        icon={DollarSign}
+        title={t("settings.SETTINGS_CARDS.SPONSORSHIPS.TITLE")}
+        description={t("settings.SETTINGS_CARDS.SPONSORSHIPS.DESCRIPTION")}
+        gradientFrom="from-emerald-100"
+        gradientTo="to-green-100 dark:from-emerald-900/30 dark:to-green-900/30"
+        iconColor="text-emerald-600 dark:text-emerald-400"
         endIcon={Activity}
       />
 

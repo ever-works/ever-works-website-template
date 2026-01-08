@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
 import { ItemData, CreateItemRequest, UpdateItemRequest } from '@/lib/types/item';
@@ -112,8 +112,6 @@ const reviewItem = async (id: string, data: ReviewItemRequest): Promise<ItemsLis
 
 // Hook
 export function useAdminItems(params: ItemsListParams = {}) {
-  const queryClient = useQueryClient();
-
   // Fetch items
   const {
     data: itemsData,
@@ -133,6 +131,7 @@ export function useAdminItems(params: ItemsListParams = {}) {
   const {
     data: stats,
     isLoading: isStatsLoading,
+    refetch: refetchStats,
   } = useQuery({
     queryKey: QUERY_KEYS.itemStats(),
     queryFn: fetchItemStats,
@@ -140,13 +139,16 @@ export function useAdminItems(params: ItemsListParams = {}) {
     gcTime: 10 * 60 * 1000,
   });
 
+  // Helper to refetch both items and stats
+  const refetchAll = useCallback(async () => {
+    // Clear server client cache to ensure fresh data
+    serverClient.clearCache();
+    await Promise.all([refetch(), refetchStats()]);
+  }, [refetch, refetchStats]);
+
   // Create item mutation
   const createItemMutation = useMutation({
     mutationFn: createItem,
-    onSuccess: (data) => {
-      toast.success(data.message || 'Item created successfully');
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items });
-    },
     onError: (error) => {
       toast.error(error.message || 'Failed to create item');
     },
@@ -155,10 +157,6 @@ export function useAdminItems(params: ItemsListParams = {}) {
   // Update item mutation
   const updateItemMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateItemRequest }) => updateItem(id, data),
-    onSuccess: (data) => {
-      toast.success(data.message || 'Item updated successfully');
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items });
-    },
     onError: (error) => {
       toast.error(error.message || 'Failed to update item');
     },
@@ -167,10 +165,6 @@ export function useAdminItems(params: ItemsListParams = {}) {
   // Delete item mutation
   const deleteItemMutation = useMutation({
     mutationFn: deleteItem,
-    onSuccess: () => {
-      toast.success('Item deleted successfully');
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items });
-    },
     onError: (error) => {
       toast.error(error.message || 'Failed to delete item');
     },
@@ -179,10 +173,6 @@ export function useAdminItems(params: ItemsListParams = {}) {
   // Review item mutation
   const reviewItemMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: ReviewItemRequest }) => reviewItem(id, data),
-    onSuccess: (data) => {
-      toast.success(`Item ${data.message || 'reviewed successfully'}`);
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items });
-    },
     onError: (error) => {
       toast.error(error.message || 'Failed to review item');
     },
@@ -191,43 +181,61 @@ export function useAdminItems(params: ItemsListParams = {}) {
   // Handlers
   const handleCreateItem = useCallback(async (data: CreateItemRequest): Promise<boolean> => {
     try {
-      await createItemMutation.mutateAsync(data);
+      const result = await createItemMutation.mutateAsync(data);
+      toast.success(result.message || 'Item created successfully');
+      await refetchAll();
       return true;
     } catch {
       return false;
     }
-  }, [createItemMutation]);
+  }, [createItemMutation, refetchAll]);
 
   const handleUpdateItem = useCallback(async (id: string, data: UpdateItemRequest): Promise<boolean> => {
     try {
-      await updateItemMutation.mutateAsync({ id, data });
+      const result = await updateItemMutation.mutateAsync({ id, data });
+      toast.success(result.message || 'Item updated successfully');
+      await refetchAll();
       return true;
     } catch {
       return false;
     }
-  }, [updateItemMutation]);
+  }, [updateItemMutation, refetchAll]);
 
   const handleDeleteItem = useCallback(async (id: string): Promise<boolean> => {
     try {
       await deleteItemMutation.mutateAsync(id);
+      toast.success('Item deleted successfully');
+      await refetchAll();
       return true;
     } catch {
       return false;
     }
-  }, [deleteItemMutation]);
+  }, [deleteItemMutation, refetchAll]);
 
   const handleReviewItem = useCallback(async (id: string, status: 'approved' | 'rejected', notes?: string): Promise<boolean> => {
     try {
-      await reviewItemMutation.mutateAsync({ id, data: { status, review_notes: notes } });
+      const result = await reviewItemMutation.mutateAsync({ id, data: { status, review_notes: notes } });
+      toast.success(result.message || `Item ${status} successfully`);
+      await refetchAll();
       return true;
     } catch {
       return false;
     }
-  }, [reviewItemMutation]);
+  }, [reviewItemMutation, refetchAll]);
 
   const refreshData = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.items });
-  }, [queryClient]);
+    return refetchAll();
+  }, [refetchAll]);
+
+  // Per-action loading states for granular UI feedback
+  const isApproving = reviewItemMutation.isPending && reviewItemMutation.variables?.data.status === 'approved';
+  const isRejecting = reviewItemMutation.isPending && reviewItemMutation.variables?.data.status === 'rejected';
+  const isDeleting = deleteItemMutation.isPending;
+  // Only return pendingItemId when a mutation is actually pending to avoid stale values
+  const pendingItemId =
+    (reviewItemMutation.isPending ? reviewItemMutation.variables?.id : null) ||
+    (deleteItemMutation.isPending ? deleteItemMutation.variables : null) ||
+    null;
 
   return {
     // Data
@@ -242,18 +250,24 @@ export function useAdminItems(params: ItemsListParams = {}) {
       approved: 0,
       rejected: 0,
     },
-    
+
     // Loading states
     isLoading,
     isStatsLoading,
     isSubmitting: createItemMutation.isPending || updateItemMutation.isPending || deleteItemMutation.isPending || reviewItemMutation.isPending,
-    
+
+    // Per-action loading states
+    isApproving,
+    isRejecting,
+    isDeleting,
+    pendingItemId,
+
     // Actions
     createItem: handleCreateItem,
     updateItem: handleUpdateItem,
     deleteItem: handleDeleteItem,
     reviewItem: handleReviewItem,
-    
+
     // Utility
     refetch,
     refreshData,
