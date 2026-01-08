@@ -695,7 +695,8 @@
 			"EXTRACT": "Extract",
 			"EXTRACTING": "Extracting...",
 			"REMOVE_CATEGORY": "Remove category: {name}",
-			"NO_CATEGORIES_FOUND": "No categories found."
+			"NO_CATEGORIES_FOUND": "No categories found.",
+			"SEARCH_CATEGORIES_PLACEHOLDER": "Search categories..."
 		},
 		"PAYMENT": {
 			"TITLE": "Complete Your Order",

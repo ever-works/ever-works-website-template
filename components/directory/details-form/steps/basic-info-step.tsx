@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useId, useState, useEffect, useRef } from 'react';
 import { Type, FileText, Star, MoreHorizontal, ChevronUp, ChevronDown, Check, Search } from 'lucide-react';
 import { cn, getVideoEmbedUrl } from '@/lib/utils';
 import { useUrlExtraction } from '@/hooks/use-url-extraction';
@@ -11,6 +11,7 @@ import type { Category, Tag as TagType } from '@/lib/content';
 import type { FormData } from '../validation/form-validators';
 import { useCategoriesEnabled } from '@/hooks/use-categories-enabled';
 import { useTagsEnabled } from '@/hooks/use-tags-enabled';
+import { useTheme } from '@/hooks/use-theme';
 import {
 	STEP_CARD_CLASSES,
 	FORM_FIELD_CLASSES,
@@ -67,11 +68,52 @@ export function BasicInfoStep({
 	const [selectedCategories, setSelectedCategories] = useState<string[]>(
 		Array.isArray(formData.categories) ? formData.categories : []
 	);
+
+	const categoryDropdownRef = useRef<HTMLDivElement | null>(null);
+
+	useEffect(() => {
+		setSelectedCategories(Array.isArray(formData.categories) ? formData.categories : []);
+	}, [formData.categories]);
 	const [categorySearch, setCategorySearch] = useState('');
 	const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
 	const [categoryDropdownDirection, setCategoryDropdownDirection] = useState<'down' | 'up'>('down');
 	const { toolbarRef } = useEditorToolbar(editor);
 	const categoryDropdownId = useId();
+	const { currentTheme } = useTheme();
+
+	// Close dropdown on outside click
+	useEffect(() => {
+		if (!categoryMenuOpen) return;
+
+		const handleClickOutside = (event: MouseEvent) => {
+			if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target as Node)) {
+				setCategoryMenuOpen(false);
+				setCategorySearch('');
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [categoryMenuOpen]);
+
+	// Close dropdown on Escape
+	useEffect(() => {
+		if (!categoryMenuOpen) return;
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				setCategoryMenuOpen(false);
+				setCategorySearch('');
+			}
+		};
+
+		document.addEventListener('keydown', handleKeyDown);
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, [categoryMenuOpen]);
 
 	const handleExtraction = async (url: string) => {
 		if (!setFormData) return;
@@ -179,7 +221,7 @@ export function BasicInfoStep({
 							<label htmlFor="categories" className={FORM_FIELD_CLASSES.label}>
 								{t('directory.DETAILS_FORM.CATEGORY')} *
 							</label>
-							<div className="relative">
+							<div className="relative" ref={categoryDropdownRef}>
 								<button
 									id="categories"
 									type="button"
@@ -206,6 +248,7 @@ export function BasicInfoStep({
 											setCategoryDropdownDirection('down');
 										}
 									}}
+									onBlur={() => setFocusedField(null)}
 									disabled={!categories || categories.length === 0}
 								>
 									<span className="truncate text-left flex flex-wrap gap-1 items-center min-h-[1.5rem] w-[94%]">
@@ -275,7 +318,7 @@ export function BasicInfoStep({
 													type="text"
 													value={categorySearch}
 													onChange={(e) => setCategorySearch(e.target.value)}
-													placeholder='Search categories...'
+													placeholder={t('directory.DETAILS_FORM.SEARCH_CATEGORIES_PLACEHOLDER')}
 													className="w-full pl-10 pr-3 py-2 border-b border-theme-primary-200 dark:border-gray-700 bg-theme-primary-50/50 dark:bg-gray-900/50 text-md focus:outline-none focus:ring-0 focus:border-theme-primary-200 dark:focus:border-gray-700 dark:text-gray-300 placeholder-theme-primary-600 dark:placeholder-gray-500"
 													autoFocus
 												/>
@@ -299,7 +342,7 @@ export function BasicInfoStep({
 														)}
 														role="option"
 														aria-selected={selectedCategories.includes(category.id)}
-														tabIndex={0}
+																tabIndex={0}
 														onClick={() => {
 															setSelectedCategories((prev) => {
 																const newSelected = prev.includes(category.id)
