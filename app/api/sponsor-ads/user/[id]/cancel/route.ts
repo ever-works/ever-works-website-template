@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
+import { cancelSponsorAdSchema } from '@/lib/validations/sponsor-ad';
 
 /**
  * @swagger
@@ -8,7 +9,7 @@ import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
  *   post:
  *     tags: ["Sponsor Ads - User"]
  *     summary: "Cancel user's sponsor ad"
- *     description: "Cancels a sponsor ad owned by the authenticated user. Can only cancel pending, approved, or active ads."
+ *     description: "Cancels a sponsor ad owned by the authenticated user. Can only cancel pending_payment, pending, or active ads."
  *     security:
  *       - sessionAuth: []
  *     parameters:
@@ -18,6 +19,15 @@ import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
  *         schema:
  *           type: string
  *         description: "Sponsor ad ID to cancel"
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               cancelReason:
+ *                 type: string
+ *                 description: "Optional reason for cancellation"
  *     responses:
  *       200:
  *         description: "Sponsor ad cancelled successfully"
@@ -42,6 +52,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
 		const { id } = await params;
 
+		// Parse and validate optional body for cancel reason using Zod schema
+		const body = await request.json().catch(() => ({}));
+		const parsed = cancelSponsorAdSchema.omit({ id: true }).safeParse(body);
+		const cancelReason = parsed.success && parsed.data.cancelReason?.trim()
+			? parsed.data.cancelReason.trim()
+			: 'Cancelled by user';
+
 		// Get the sponsor ad to verify ownership
 		const sponsorAd = await sponsorAdService.getSponsorAdById(id);
 
@@ -58,7 +75,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 		}
 
 		// Cancel the sponsor ad
-		const cancelledAd = await sponsorAdService.cancelSponsorAd(id, 'Cancelled by user');
+		const cancelledAd = await sponsorAdService.cancelSponsorAd(id, cancelReason);
 
 		if (!cancelledAd) {
 			return NextResponse.json({ success: false, error: 'Failed to cancel sponsor ad' }, { status: 500 });

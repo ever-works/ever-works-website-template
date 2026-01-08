@@ -30,6 +30,7 @@ import { useTagsEnabled } from '@/hooks/use-tags-enabled';
 import { useHeaderSettings } from '@/hooks/use-header-settings';
 import { useCategoriesExists } from '@/hooks/use-categories-exists';
 import { useCollectionsExists } from '@/hooks/use-collections-exists';
+import { useTagsExists } from '@/hooks/use-tags-exists';
 import { isDemoMode } from '@/lib/utils';
 import { isExternalUrl, resolveLabel } from '@/lib/utils/custom-navigation';
 import type { CustomNavigationItem } from '@/lib/content';
@@ -177,6 +178,7 @@ export default function Header() {
 	const { settings: headerSettings } = useHeaderSettings();
 	const { data: categoriesData, isLoading: categoriesLoading } = useCategoriesExists();
 	const { data: collectionsData, isLoading: collectionsLoading } = useCollectionsExists();
+	const { data: tagsData, isLoading: tagsLoading } = useTagsExists();
 	const isDemo = isDemoMode();
 
 	const t = useTranslations('common');
@@ -187,31 +189,34 @@ export default function Header() {
 	const pathname = usePathname();
 
 	// Check if we're still loading essential data for navigation
-	const isNavigationLoading = categoriesLoading || collectionsLoading;
+	const isNavigationLoading = categoriesLoading || collectionsLoading || tagsLoading;
 
-	// Extract hasCategories from React Query data
+	// Extract existence flags from React Query data
 	const hasCategories = categoriesData?.exists ?? false;
 	const hasCollections = collectionsData?.exists ?? false;
+	const hasTags = tagsData?.exists ?? false;
 
 	const navigationItems = useMemo((): NavigationItem[] => {
 		const defaultItems = NAVIGATION_CONFIG.filter((item) => {
-			if (item.key === 'collections' && !collectionsLoading && !hasCollections) {
+			// Hide collections link when no collections exist
+			// Note: During loading, skeleton is shown, so this filter only applies after data is loaded
+			if (item.key === 'collections' && !hasCollections) {
 				return false;
 			}
-			// Hide categories link when categories are disabled
+			// Hide categories link when categories are disabled or no categories exist
 			if (item.key === 'categories' && (!categoriesEnabled || !hasCategories)) {
 				return false;
 			}
-			// Hide tags link when tags are disabled
-			if (item.key === 'tags' && !tagsEnabled) {
+			// Hide tags link when tags are disabled or no tags exist
+			if (item.key === 'tags' && (!tagsEnabled || !hasTags)) {
 				return false;
 			}
 			// Hide favorites link when feature is disabled or user is not logged in
 			if (item.key === 'favorites' && (!features.favorites || !session?.user?.id)) {
 				return false;
 			}
-			// Hide surveys link when surveys are disabled or there are no global surveys (but keep it visible while loading to prevent flicker)
-			if (item.key === 'surveys' && (!surveysEnabled || (!surveysPending && !hasGlobalSurveys))) {
+			// Hide surveys link when surveys are disabled or there are no global surveys
+			if (item.key === 'surveys' && (!surveysEnabled || !hasGlobalSurveys)) {
 				return false;
 			}
 			// Hide pricing link when header pricing is disabled
@@ -267,7 +272,6 @@ export default function Header() {
 		session?.user?.id,
 		features.favorites,
 		hasGlobalSurveys,
-		surveysPending,
 		categoriesEnabled,
 		tagsEnabled,
 		surveysEnabled,
@@ -275,7 +279,7 @@ export default function Header() {
 		headerSettings.submitEnabled,
 		hasCategories,
 		hasCollections,
-		collectionsLoading
+		hasTags
 	]);
 
 	const isActiveLink = useCallback(

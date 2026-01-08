@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { Providers } from './providers';
 import './globals.scss';
-import { getCachedConfig } from '@/lib/content';
+import { getCachedConfig, getCachedItems } from '@/lib/content';
+import { SurveyService } from '@/lib/services/survey.service';
+import { SurveyTypeEnum, SurveyStatusEnum } from '@/lib/types/survey';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { getMessages, setRequestLocale } from 'next-intl/server';
@@ -19,6 +21,7 @@ import { Analytics } from './integration/analytics';
 import { SettingsProvider } from '@/components/providers/settings-provider';
 import { SettingsModalProvider } from '@/components/providers/settings-modal-provider';
 import { SettingsModal } from '@/components/settings-modal';
+import { NavigationLoadingBar } from '@/components/navigation-loading-bar';
 import {
 	getCategoriesEnabled,
 	getTagsEnabled,
@@ -33,22 +36,19 @@ import {
 	getHeaderSettingsEnabled,
 	getHeaderLayoutDefault,
 	getHeaderPaginationDefault,
-	getHeaderThemeDefault,
+	getHeaderThemeDefault
 } from '@/lib/utils/settings';
 import { cleanUrl } from '@/lib/utils/url-cleaner';
 
-const rawUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || 
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const rawUrl =
+	process.env.NEXT_PUBLIC_APP_URL?.trim() ||
+	(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://demo.ever.works');
 const appUrl = cleanUrl(rawUrl);
 
 /**
  * Generate metadata dynamically using siteConfig
  */
-export async function generateMetadata({
-	params
-}: {
-	params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
 	const { locale } = await params;
 	return {
 		metadataBase: new URL(appUrl),
@@ -87,11 +87,51 @@ export default async function RootLayout({
 	const config = await getCachedConfig();
 	const messages = await getMessages();
 
+	// Fetch items data server-side to determine existence flags
+	// This is cached and shared across requests
+	let categories: Awaited<ReturnType<typeof getCachedItems>>['categories'] = [];
+	let tags: Awaited<ReturnType<typeof getCachedItems>>['tags'] = [];
+	let collections: Awaited<ReturnType<typeof getCachedItems>>['collections'] = [];
+
+	try {
+		const itemsData = await getCachedItems({ lang: locale });
+		categories = itemsData.categories;
+		tags = itemsData.tags;
+		collections = itemsData.collections;
+	} catch (error) {
+		// If content fetch fails (malformed YAML, file system errors, etc.), use empty arrays
+		// This prevents the root layout from crashing
+		console.error('[Layout] Failed to fetch cached items:', error);
+	}
+
 	// Read settings server-side for instant availability
 	const categoriesEnabled = getCategoriesEnabled();
 	const tagsEnabled = getTagsEnabled();
 	const companiesEnabled = getCompaniesEnabled();
 	const surveysEnabled = getSurveysEnabled();
+
+	// Data existence flags (whether data exists in the database/content)
+	const hasCategories = Array.isArray(categories) && categories.length > 0;
+	const hasTags = Array.isArray(tags) && tags.length > 0;
+	const hasCollections = Array.isArray(collections) && collections.length > 0;
+
+	// Check if global surveys exist (only if surveys feature is enabled)
+	let hasGlobalSurveys = false;
+	if (surveysEnabled) {
+		try {
+			const surveyService = new SurveyService();
+			const result = await surveyService.getMany({
+				type: SurveyTypeEnum.GLOBAL,
+				status: SurveyStatusEnum.PUBLISHED,
+				limit: 1
+			});
+			hasGlobalSurveys = (result.surveys?.length || 0) > 0;
+		} catch {
+			// If database is not configured or query fails, assume no surveys
+			hasGlobalSurveys = false;
+		}
+	}
+
 	const headerSettings = {
 		submitEnabled: getHeaderSubmitEnabled(),
 		pricingEnabled: getHeaderPricingEnabled(),
@@ -102,7 +142,7 @@ export default async function RootLayout({
 		settingsEnabled: getHeaderSettingsEnabled(),
 		layoutDefault: getHeaderLayoutDefault(),
 		paginationDefault: getHeaderPaginationDefault(),
-		themeDefault: getHeaderThemeDefault(),
+		themeDefault: getHeaderThemeDefault()
 	};
 
 	// Determine if the current locale is RTL
@@ -120,13 +160,19 @@ export default async function RootLayout({
 						tagsEnabled={tagsEnabled}
 						companiesEnabled={companiesEnabled}
 						surveysEnabled={surveysEnabled}
+						hasCategories={hasCategories}
+						hasTags={hasTags}
+						hasCollections={hasCollections}
+						hasGlobalSurveys={hasGlobalSurveys}
 						headerSettings={headerSettings}
 					>
 						<SettingsModalProvider>
 							<Providers config={config}>
+								{/* Global navigation loading bar */}
+								<NavigationLoadingBar />
 								<ConditionalLayout>{children}</ConditionalLayout>
-							{/* Settings Modal - Shared by header button */}
-							<SettingsModal />
+								{/* Settings Modal - Shared by header button */}
+								<SettingsModal />
 							</Providers>
 						</SettingsModalProvider>
 					</SettingsProvider>

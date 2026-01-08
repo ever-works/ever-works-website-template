@@ -1,6 +1,18 @@
 // ######################### Sponsor Ad Types #########################
 
 import type { SponsorAd } from '@/lib/db/schema';
+import type { ItemData } from '@/lib/content';
+
+// ######################### Display Types #########################
+
+/**
+ * Sponsor ad with associated item data for display purposes.
+ * Used when displaying sponsor ads in UI components.
+ */
+export interface SponsorWithItem {
+	sponsor: SponsorAd;
+	item: ItemData | null;
+}
 
 // Status and Interval types
 export type SponsorAdStatus = 'pending_payment' | 'pending' | 'rejected' | 'active' | 'expired' | 'cancelled';

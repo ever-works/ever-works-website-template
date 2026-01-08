@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { SponsorBadge } from './sponsor-badge';
 import { shouldShowFallback, isProblematicUrl } from '@/lib/utils/image-domains';
 import { useTranslations } from 'next-intl';
-import type { SponsorWithItem } from './sponsor-ads-context';
+import type { SponsorWithItem } from '@/lib/types/sponsor-ad';
 
 interface SidebarSponsorProps {
 	sponsors: SponsorWithItem[];

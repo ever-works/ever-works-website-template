@@ -11,7 +11,9 @@ const CURRENCY_QUERY_KEY = ['user-currency'] as const;
 
 // Types
 interface CurrencyResponse {
-	currency: string;
+	currency: string | null;
+	country: string | null;
+	detected: boolean; // Whether currency/country was successfully detected or is a fallback
 }
 
 export interface UpdateCurrencyOptions {
@@ -34,18 +36,32 @@ function normalizeCurrency(currency: string): string {
 }
 
 /**
- * Fetch user currency from API
+ * Fetch user currency and country from API
+ * Works for both authenticated and anonymous users
  * @throws {Error} If the API request fails
  */
-async function fetchUserCurrency(): Promise<string> {
+async function fetchUserCurrency(): Promise<{ currency: string; country: string | null; detected: boolean }> {
 	const response = await serverClient.get<CurrencyResponse>('/api/user/currency');
 
 	if (!apiUtils.isSuccess(response)) {
 		throw new Error(apiUtils.getErrorMessage(response) || 'Failed to fetch currency');
 	}
 
-	const currency = response.data.currency;
-	return normalizeCurrency(currency || DEFAULT_CURRENCY);
+	// Handle case where currency might be null (fallback to USD)
+	// Always return a valid currency string
+	const currency = response.data.currency ? normalizeCurrency(response.data.currency) : DEFAULT_CURRENCY;
+	const detected = response.data.detected ?? false; // Default to false if not provided (backward compatibility)
+
+	// Log detection failures for monitoring (only in development)
+	if (!detected && process.env.NODE_ENV === 'development') {
+		console.info('[useCurrency] Currency detection failed, using fallback:', currency);
+	}
+
+	return {
+		currency,
+		country: response.data.country || null,
+		detected
+	};
 }
 
 /**
@@ -71,15 +87,16 @@ export function useCurrency() {
 	const isAuthenticated = !!session?.user?.id;
 
 	const {
-		data: currency = DEFAULT_CURRENCY,
+		data: currencyData,
 		isLoading,
 		isError,
 		error,
 		refetch
-	} = useQuery<string>({
+	} = useQuery<{ currency: string; country: string | null; detected: boolean }>({
 		queryKey: CURRENCY_QUERY_KEY,
 		queryFn: fetchUserCurrency,
-		enabled: isAuthenticated,
+		// Enable for all users (authenticated and anonymous) since API supports both
+		enabled: true,
 		staleTime: 1000 * 60 * 60, // 1 hour
 		gcTime: 1000 * 60 * 60 * 24, // 24 hours
 		retry: (failureCount, error) => {
@@ -93,11 +110,22 @@ export function useCurrency() {
 		},
 		retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
 		refetchOnWindowFocus: false,
-		refetchOnReconnect: true
+		refetchOnReconnect: true,
+		// Provide default value to avoid undefined
+		placeholderData: { currency: DEFAULT_CURRENCY, country: null, detected: false }
 	});
+
+	const currency = currencyData?.currency || DEFAULT_CURRENCY;
+	const country = currencyData?.country || null;
+	const detected = currencyData?.detected ?? false;
 
 	const updateCurrencyMutation = useMutation({
 		mutationFn: async (newCurrency: string): Promise<string> => {
+			// Check if user is authenticated before allowing update
+			if (!isAuthenticated) {
+				throw new Error('You must be signed in to update your currency preference');
+			}
+
 			const normalizedCurrency = normalizeCurrency(newCurrency);
 
 			// Validate currency format
@@ -105,9 +133,13 @@ export function useCurrency() {
 				throw new Error(`Invalid currency code: ${newCurrency}. Expected 3 uppercase letters (e.g., USD, EUR)`);
 			}
 
-			const response = await serverClient.put<CurrencyResponse>('/api/user/currency', {
+			// Don't use cached country when updating currency to avoid stale data
+			// Omit country property entirely when null - server schema accepts optional/nullable country
+			const payload: { currency: string; country?: string } = {
 				currency: normalizedCurrency
-			});
+			};
+
+			const response = await serverClient.put<CurrencyResponse>('/api/user/currency', payload);
 
 			if (!apiUtils.isSuccess(response)) {
 				throw new Error(apiUtils.getErrorMessage(response) || 'Failed to update currency');
@@ -120,29 +152,31 @@ export function useCurrency() {
 			await queryClient.cancelQueries({ queryKey: CURRENCY_QUERY_KEY });
 
 			// Snapshot the previous value for rollback
-			const previousCurrency = queryClient.getQueryData<string>(CURRENCY_QUERY_KEY);
+			const previousData = queryClient.getQueryData<{
+				currency: string;
+				country: string | null;
+				detected: boolean;
+			}>(CURRENCY_QUERY_KEY);
 
-			// Optimistically update to the new value
+			// Optimistically update to the new value (preserve existing country and detected state)
 			const normalizedCurrency = normalizeCurrency(newCurrency);
-			queryClient.setQueryData(CURRENCY_QUERY_KEY, normalizedCurrency);
+			queryClient.setQueryData(CURRENCY_QUERY_KEY, {
+				currency: normalizedCurrency,
+				country: previousData?.country || null,
+				detected: previousData?.detected ?? false
+			});
 
 			// Return context with the previous value
-			return { previousCurrency };
+			return { previousData };
 		},
 		onError: (error, _newCurrency, context) => {
 			// Rollback to previous value on error
-			if (context?.previousCurrency) {
-				queryClient.setQueryData(CURRENCY_QUERY_KEY, context.previousCurrency);
+			if (context?.previousData) {
+				queryClient.setQueryData(CURRENCY_QUERY_KEY, context.previousData);
 			}
 		},
-		onSuccess: (newCurrency) => {
-			// Ensure the cache is updated with the normalized value
-			queryClient.setQueryData(CURRENCY_QUERY_KEY, newCurrency);
-			// Optionally invalidate related queries if needed
-			queryClient.invalidateQueries({ queryKey: CURRENCY_QUERY_KEY });
-		},
 		onSettled: () => {
-			// Always refetch after mutation to ensure consistency
+			// Invalidate to refetch from server and ensure consistency
 			queryClient.invalidateQueries({ queryKey: CURRENCY_QUERY_KEY });
 		}
 	});
@@ -170,6 +204,8 @@ export function useCurrency() {
 	return {
 		currency,
 		isLoading,
+		country,
+		detected, // Whether currency was successfully detected or is a fallback
 		isError,
 		error: error instanceof Error ? error : isError ? new Error('Failed to fetch currency') : null,
 		updateCurrency,

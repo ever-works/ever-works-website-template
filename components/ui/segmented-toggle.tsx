@@ -30,25 +30,26 @@ export function SegmentedToggle({
 				'border border-gray-200/80 dark:border-gray-700/80',
 				'backdrop-blur-sm',
 				'p-1',
+				'overflow-hidden',
 				disabled && 'opacity-50 cursor-not-allowed',
+				'select-none', // Prevent text selection during animation
 				className
 			)}
 			role="group"
 		>
-			{/* Sliding indicator with gradient, glow, and spring animation */}
+			{/* Sliding indicator with enhanced animation */}
 			<div
 				className={cn(
 					'absolute inset-y-1 rounded-md',
 					'bg-gradient-to-r from-theme-primary-500 to-theme-primary-600',
 					'dark:from-theme-primary-600 dark:to-theme-primary-700',
 					'shadow-lg shadow-theme-primary-500/30',
-					// Spring easing for smooth glide
-					'transition-all duration-400 ease-[cubic-bezier(0.45,0,0.15,1)]',
-					'transform',
-					value ? 'translate-x-[calc(100%+0.25rem)]' : 'translate-x-0'
+					// Spring animation with bounce effect
+					'transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+					value ? 'left-[calc(50%+0.125rem)]' : 'left-[0.125rem]'
 				)}
 				style={{
-					width: 'calc(50% - 0.25rem)',
+					width: 'calc(50% - 0.25rem)', // Fixed width calculation
 				}}
 				aria-hidden="true"
 			/>
@@ -60,19 +61,24 @@ export function SegmentedToggle({
 				disabled={disabled}
 				className={cn(
 					'relative z-10',
-					'px-4 py-2', // Increased from px-3 py-1.5
-					'min-w-[90px]', // Prevent cramping
-					'text-sm font-medium tracking-wide', // Added tracking-wide
+					'px-4 py-2',
+					'min-w-[90px]',
+					'text-xs font-medium tracking-wide',
 					'rounded-md',
-					'transition-colors duration-300',
+					'transition-all duration-300 ease-out',
 					'focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-1',
+					'flex items-center justify-center', // Ensure centering
+					'cursor-pointer', // Added cursor pointer
+					// Text colors
 					!value
 						? 'text-white dark:text-white'
 						: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200',
 					disabled && 'cursor-not-allowed'
 				)}
 			>
-				{leftLabel}
+				<span className="relative z-20">
+					{leftLabel}
+				</span>
 			</button>
 
 			{/* Right Option Button */}
@@ -82,19 +88,24 @@ export function SegmentedToggle({
 				disabled={disabled}
 				className={cn(
 					'relative z-10',
-					'px-4 py-2', // Increased from px-3 py-1.5
-					'min-w-[90px]', // Prevent cramping
-					'text-sm font-medium tracking-wide', // Added tracking-wide
+					'px-4 py-2',
+					'min-w-[90px]',
+					'text-xs font-medium tracking-wide',
 					'rounded-md',
-					'transition-colors duration-300',
+					'transition-all duration-300 ease-out',
 					'focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-1',
+					'flex items-center justify-center', // Ensure centering
+					'cursor-pointer', // Added cursor pointer
+					// Text colors
 					value
 						? 'text-white dark:text-white'
 						: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200',
 					disabled && 'cursor-not-allowed'
 				)}
 			>
-				{rightLabel}
+				<span className="relative z-20 -mr-2">
+					{rightLabel}
+				</span>
 			</button>
 		</div>
 	);

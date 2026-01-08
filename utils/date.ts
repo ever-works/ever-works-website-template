@@ -15,3 +15,16 @@ export function formatDateTime(date: Date, locale: string = 'en-US') {
         minute: '2-digit'
     })
 }
+
+/**
+ * Formats a date with short month format (e.g., "Jan 7, 2026")
+ * Returns '-' for null/undefined dates
+ */
+export function formatDateShort(date: Date | string | null | undefined, locale: string = 'en-US'): string {
+    if (!date) return '-';
+    return new Date(date).toLocaleDateString(locale, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    });
+}

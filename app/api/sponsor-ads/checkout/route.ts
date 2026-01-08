@@ -220,6 +220,19 @@ export async function POST(request: NextRequest) {
 				);
 		}
 
+		// Validate that checkout URL was returned
+		if (!checkoutResult.url) {
+			console.error('Payment provider did not return checkout URL', {
+				provider: ACTIVE_PAYMENT_PROVIDER,
+				checkoutId: checkoutResult.id,
+				sponsorAdId
+			});
+			return NextResponse.json(
+				{ success: false, error: 'Failed to create checkout URL. Please try again.' },
+				{ status: 500 }
+			);
+		}
+
 		return NextResponse.json({
 			success: true,
 			data: {
@@ -252,10 +265,14 @@ function getPriceId(interval: string, provider: string): string | null {
 
 	if (provider === PaymentProvider.LEMONSQUEEZY) {
 		if (interval === SponsorAdInterval.WEEKLY) {
-			return LEMONSQUEEZY_SPONSOR_WEEKLY_VARIANT_ID || null;
+			const variantId = LEMONSQUEEZY_SPONSOR_WEEKLY_VARIANT_ID;
+			if (!variantId || isNaN(Number(variantId))) return null;
+			return variantId;
 		}
 		if (interval === SponsorAdInterval.MONTHLY) {
-			return LEMONSQUEEZY_SPONSOR_MONTHLY_VARIANT_ID || null;
+			const variantId = LEMONSQUEEZY_SPONSOR_MONTHLY_VARIANT_ID;
+			if (!variantId || isNaN(Number(variantId))) return null;
+			return variantId;
 		}
 	}
 
