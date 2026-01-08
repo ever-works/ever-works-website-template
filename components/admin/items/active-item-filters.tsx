@@ -2,7 +2,6 @@
 
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ITEM_STATUS_LABELS } from '@/lib/types/item';
 
 interface ActiveItemFiltersProps {
 	statusFilter: string;
@@ -18,9 +17,8 @@ interface ActiveItemFiltersProps {
 
 // Minimal chip style
 const CHIP = cn(
-	'inline-flex items-center gap-1 pl-2 pr-1 py-0.5 text-xs font-medium rounded-full',
-	'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300',
-	'border border-gray-200 dark:border-gray-700'
+	'inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 text-xs font-medium rounded-full',
+	'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
 );
 
 const CHIP_REMOVE = cn(
@@ -30,13 +28,11 @@ const CHIP_REMOVE = cn(
 
 /**
  * Active Item Filters Component
- * Displays currently active filters as minimal removable chips
+ * Shows chips for category and tags only (status shown as tabs)
  */
 export function ActiveItemFilters({
-	statusFilter,
 	categoryFilter,
 	tagsFilter,
-	onRemoveStatus,
 	onRemoveCategory,
 	onRemoveTag,
 	categories,
@@ -54,34 +50,15 @@ export function ActiveItemFilters({
 		return tag?.name || tagId;
 	};
 
-	// Get status label
-	const getStatusLabel = (status: string): string => {
-		return ITEM_STATUS_LABELS[status as keyof typeof ITEM_STATUS_LABELS] || status;
-	};
-
-	const hasActiveFilters = statusFilter || categoryFilter || tagsFilter.length > 0;
+	// Only show chips for category and tags (status is shown as tabs)
+	const hasActiveFilters = categoryFilter || tagsFilter.length > 0;
 
 	if (!hasActiveFilters) {
 		return null;
 	}
 
 	return (
-		<div className="flex items-center gap-1.5 mb-4 flex-wrap">
-			{/* Status Chip */}
-			{statusFilter && (
-				<span className={CHIP}>
-					<span>{getStatusLabel(statusFilter)}</span>
-					<button
-						type="button"
-						onClick={onRemoveStatus}
-						className={CHIP_REMOVE}
-						aria-label={`Remove ${getStatusLabel(statusFilter)} filter`}
-					>
-						<X className="h-3 w-3" />
-					</button>
-				</span>
-			)}
-
+		<div className="flex items-center gap-2 mb-4 flex-wrap">
 			{/* Category Chip */}
 			{categoryFilter && (
 				<span className={CHIP}>
