@@ -4,18 +4,16 @@ import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ActiveItemFiltersProps {
-	statusFilter: string;
-	categoryFilter: string;
+	categoriesFilter: string[];
 	tagsFilter: string[];
-	onRemoveStatus: () => void;
-	onRemoveCategory: () => void;
+	onRemoveCategory: (categoryId: string) => void;
 	onRemoveTag: (tagId: string) => void;
 	onClearAll: () => void;
 	categories: Array<{ id: string; name: string }>;
 	tags: Array<{ id: string; name: string }>;
 }
 
-// Minimal chip style - compact for table header
+// Chip styles
 const CHIP = cn(
 	'inline-flex items-center gap-1 pl-2 pr-1 py-0.5 text-xs font-medium rounded-full',
 	'bg-theme-primary/10 text-theme-primary dark:bg-theme-primary/20'
@@ -28,13 +26,14 @@ const CHIP_REMOVE = cn(
 
 /**
  * Active Item Filters Component
- * Shows chips for category and tags only (status shown as tabs)
+ * Shows chips for selected categories and tags
  */
 export function ActiveItemFilters({
-	categoryFilter,
+	categoriesFilter,
 	tagsFilter,
 	onRemoveCategory,
 	onRemoveTag,
+	onClearAll,
 	categories,
 	tags,
 }: ActiveItemFiltersProps) {
@@ -50,8 +49,7 @@ export function ActiveItemFilters({
 		return tag?.name || tagId;
 	};
 
-	// Only show chips for category and tags (status is shown as tabs)
-	const hasActiveFilters = categoryFilter || tagsFilter.length > 0;
+	const hasActiveFilters = categoriesFilter.length > 0 || tagsFilter.length > 0;
 
 	if (!hasActiveFilters) {
 		return null;
@@ -59,24 +57,24 @@ export function ActiveItemFilters({
 
 	return (
 		<div className="flex items-center gap-1.5 flex-wrap">
-			{/* Category Chip */}
-			{categoryFilter && (
-				<span className={CHIP}>
-					<span>{getCategoryName(categoryFilter)}</span>
+			{/* Category Chips */}
+			{categoriesFilter.map((categoryId) => (
+				<span key={`cat-${categoryId}`} className={CHIP}>
+					<span>{getCategoryName(categoryId)}</span>
 					<button
 						type="button"
-						onClick={onRemoveCategory}
+						onClick={() => onRemoveCategory(categoryId)}
 						className={CHIP_REMOVE}
-						aria-label={`Remove ${getCategoryName(categoryFilter)} filter`}
+						aria-label={`Remove ${getCategoryName(categoryId)} filter`}
 					>
 						<X className="h-3 w-3" />
 					</button>
 				</span>
-			)}
+			))}
 
 			{/* Tag Chips */}
 			{tagsFilter.map((tagId) => (
-				<span key={tagId} className={CHIP}>
+				<span key={`tag-${tagId}`} className={CHIP}>
 					<span>{getTagName(tagId)}</span>
 					<button
 						type="button"
@@ -88,6 +86,17 @@ export function ActiveItemFilters({
 					</button>
 				</span>
 			))}
+
+			{/* Clear All */}
+			{(categoriesFilter.length + tagsFilter.length) > 1 && (
+				<button
+					type="button"
+					onClick={onClearAll}
+					className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 ml-1"
+				>
+					Clear all
+				</button>
+			)}
 		</div>
 	);
 }

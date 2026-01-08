@@ -26,13 +26,13 @@ export default function AdminItemsPage() {
 
   // Filter state
   const [statusFilter, setStatusFilter] = useState<string>('');
-  const [categoryFilter, setCategoryFilter] = useState<string>('');
+  const [categoriesFilter, setCategoriesFilter] = useState<string[]>([]);
   const [tagsFilter, setTagsFilter] = useState<string[]>([]);
 
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [statusFilter, categoryFilter, tagsFilter]);
+  }, [statusFilter, categoriesFilter, tagsFilter]);
 
   // Fetch categories and tags for filter dropdowns
   const { data: allCategories = [] } = useAllCategories();
@@ -59,18 +59,18 @@ export default function AdminItemsPage() {
     page: currentPage,
     limit: PageSize,
     status: statusFilter || undefined,
-    category: categoryFilter || undefined,
+    categories: categoriesFilter.length > 0 ? categoriesFilter : undefined,
     tags: tagsFilter.length > 0 ? tagsFilter : undefined,
   });
 
   // Calculate active filter count
-  const activeFilterCount = (statusFilter ? 1 : 0) + (categoryFilter ? 1 : 0) + tagsFilter.length;
+  const activeFilterCount = (statusFilter ? 1 : 0) + categoriesFilter.length + tagsFilter.length;
   const hasActiveFilters = activeFilterCount > 0;
 
   // Clear all filters
   const handleClearAllFilters = () => {
     setStatusFilter('');
-    setCategoryFilter('');
+    setCategoriesFilter([]);
     setTagsFilter([]);
   };
 
@@ -408,10 +408,10 @@ export default function AdminItemsPage() {
               </h3>
               <ItemFilters
                 statusFilter={statusFilter}
-                categoryFilter={categoryFilter}
+                categoriesFilter={categoriesFilter}
                 tagsFilter={tagsFilter}
                 onStatusChange={setStatusFilter}
-                onCategoryChange={setCategoryFilter}
+                onCategoriesChange={setCategoriesFilter}
                 onTagsChange={setTagsFilter}
                 onClearAll={handleClearAllFilters}
                 categories={allCategories.map(c => ({ id: c.id, name: c.name }))}
@@ -426,14 +426,12 @@ export default function AdminItemsPage() {
               />
             </div>
             {/* Active Filter Chips */}
-            {(categoryFilter || tagsFilter.length > 0) && (
+            {(categoriesFilter.length > 0 || tagsFilter.length > 0) && (
               <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
                 <ActiveItemFilters
-                  statusFilter={statusFilter}
-                  categoryFilter={categoryFilter}
+                  categoriesFilter={categoriesFilter}
                   tagsFilter={tagsFilter}
-                  onRemoveStatus={() => setStatusFilter('')}
-                  onRemoveCategory={() => setCategoryFilter('')}
+                  onRemoveCategory={(catId) => setCategoriesFilter(prev => prev.filter(c => c !== catId))}
                   onRemoveTag={(tagId) => setTagsFilter(prev => prev.filter(t => t !== tagId))}
                   onClearAll={handleClearAllFilters}
                   categories={allCategories.map(c => ({ id: c.id, name: c.name }))}

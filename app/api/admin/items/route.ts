@@ -193,7 +193,10 @@ export async function GET(request: NextRequest) {
     const { page, limit } = paginationResult;
 
     const statusParam = searchParams.get('status');
-    const category = searchParams.get('category') || undefined;
+    const categoriesParam = searchParams.get('categories');
+    const categories = categoriesParam
+      ? categoriesParam.split(',').map(c => c.trim()).filter(Boolean)
+      : undefined;
     const tagsParam = searchParams.get('tags');
     const tags = tagsParam
       ? tagsParam.split(',').map(t => t.trim()).filter(Boolean)
@@ -208,7 +211,7 @@ export async function GET(request: NextRequest) {
     // Get paginated items
     const result = await itemRepository.findAllPaginated(page, limit, {
       status,
-      category,
+      categories,
       tags,
     });
 

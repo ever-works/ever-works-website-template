@@ -49,19 +49,18 @@ export class ItemRepository {
       filteredItems = filteredItems.filter(item => item.status === options.status);
     }
 
-    if (options.category) {
+    if (options.categories && options.categories.length > 0) {
       filteredItems = filteredItems.filter(item => {
-        if (Array.isArray(item.category)) {
-          return item.category.includes(options.category!);
-        }
-        return item.category === options.category;
+        // OR logic: item must have at least one of the selected categories
+        const itemCategories = Array.isArray(item.category) ? item.category : [item.category];
+        return options.categories!.some(cat => itemCategories.includes(cat));
       });
     }
 
     if (options.tags && options.tags.length > 0) {
       filteredItems = filteredItems.filter(item => {
-        // AND logic: item must have ALL selected tags
-        return options.tags!.every(tag => item.tags.includes(tag));
+        // OR logic: item must have at least one of the selected tags
+        return options.tags!.some(tag => item.tags.includes(tag));
       });
     }
 
@@ -90,7 +89,7 @@ export class ItemRepository {
     const gitService = await this.getGitService();
     return await gitService.getItemsPaginated(page, limit, {
       status: options.status,
-      category: options.category,
+      categories: options.categories,
       tags: options.tags,
       includeDeleted: options.includeDeleted,
       submittedBy: options.submittedBy,

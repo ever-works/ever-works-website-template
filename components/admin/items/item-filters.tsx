@@ -2,17 +2,17 @@
 
 import { useState } from 'react';
 import * as Popover from '@radix-ui/react-popover';
-import { Filter, Check, X, Search } from 'lucide-react';
+import { Filter, X, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import { ITEM_STATUS_LABELS } from '@/lib/types/item';
 
 interface ItemFiltersProps {
 	statusFilter: string;
-	categoryFilter: string;
+	categoriesFilter: string[];
 	tagsFilter: string[];
 	onStatusChange: (status: string) => void;
-	onCategoryChange: (category: string) => void;
+	onCategoriesChange: (categories: string[]) => void;
 	onTagsChange: (tags: string[]) => void;
 	onClearAll: () => void;
 	categories: Array<{ id: string; name: string }>;
@@ -39,10 +39,10 @@ const STATUS_TAB_ACTIVE = cn(
 
 export function ItemFilters({
 	statusFilter,
-	categoryFilter,
+	categoriesFilter,
 	tagsFilter,
 	onStatusChange,
-	onCategoryChange,
+	onCategoriesChange,
 	onTagsChange,
 	onClearAll,
 	categories,
@@ -55,8 +55,8 @@ export function ItemFilters({
 	const [tagSearch, setTagSearch] = useState('');
 
 	const totalCount = itemCounts.draft + itemCounts.pending + itemCounts.approved + itemCounts.rejected;
-	const hasAdvancedFilters = categoryFilter || tagsFilter.length > 0;
-	const advancedFilterCount = (categoryFilter ? 1 : 0) + tagsFilter.length;
+	const hasAdvancedFilters = categoriesFilter.length > 0 || tagsFilter.length > 0;
+	const advancedFilterCount = categoriesFilter.length + tagsFilter.length;
 
 	// Filter categories by search
 	const filteredCategories = categories.filter(cat =>
@@ -68,6 +68,15 @@ export function ItemFilters({
 		tag.name.toLowerCase().includes(tagSearch.toLowerCase())
 	);
 
+	// Toggle category selection
+	const toggleCategory = (categoryId: string) => {
+		if (categoriesFilter.includes(categoryId)) {
+			onCategoriesChange(categoriesFilter.filter(c => c !== categoryId));
+		} else {
+			onCategoriesChange([...categoriesFilter, categoryId]);
+		}
+	};
+
 	// Toggle tag selection
 	const toggleTag = (tagId: string) => {
 		if (tagsFilter.includes(tagId)) {
@@ -77,9 +86,9 @@ export function ItemFilters({
 		}
 	};
 
-	// Clear advanced filters only (category + tags)
+	// Clear advanced filters only (categories + tags)
 	const clearAdvancedFilters = () => {
-		onCategoryChange('');
+		onCategoriesChange([]);
 		onTagsChange([]);
 		setCategorySearch('');
 		setTagSearch('');
@@ -179,34 +188,27 @@ export function ItemFilters({
 							</div>
 							{/* Category List */}
 							<div className="mt-2 space-y-0.5 max-h-36 overflow-y-auto">
-								<label className="flex items-center gap-2 px-1 py-1 rounded cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
-									<input
-										type="radio"
-										name="category"
-										checked={!categoryFilter}
-										onChange={() => onCategoryChange('')}
-										className="w-3.5 h-3.5 text-theme-primary border-gray-300 focus:ring-theme-primary"
-									/>
-									<span className={cn('text-sm', !categoryFilter ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-600 dark:text-gray-400')}>
-										{t('ALL_CATEGORIES')}
-									</span>
-								</label>
-								{filteredCategories.map((category) => (
-									<label key={category.id} className="flex items-center gap-2 px-1 py-1 rounded cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
-										<input
-											type="radio"
-											name="category"
-											checked={categoryFilter === category.id}
-											onChange={() => onCategoryChange(category.id)}
-											className="w-3.5 h-3.5 text-theme-primary border-gray-300 focus:ring-theme-primary"
-										/>
-										<span className={cn('text-sm', categoryFilter === category.id ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-600 dark:text-gray-400')}>
-											{category.name}
-										</span>
-									</label>
-								))}
+								{filteredCategories.map((category) => {
+									const isSelected = categoriesFilter.includes(category.id);
+									return (
+										<label key={category.id} className="flex items-center gap-2 px-1 py-1 rounded cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+											<input
+												type="checkbox"
+												checked={isSelected}
+												onChange={() => toggleCategory(category.id)}
+												className="w-3.5 h-3.5 rounded text-theme-primary border-gray-300 focus:ring-theme-primary"
+											/>
+											<span className={cn('text-sm', isSelected ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-600 dark:text-gray-400')}>
+												{category.name}
+											</span>
+										</label>
+									);
+								})}
 								{filteredCategories.length === 0 && categorySearch && (
 									<p className="text-xs text-gray-400 px-1 py-2">No results</p>
+								)}
+								{filteredCategories.length === 0 && !categorySearch && (
+									<p className="text-xs text-gray-400 px-1 py-2">No categories available</p>
 								)}
 							</div>
 						</div>
@@ -235,10 +237,10 @@ export function ItemFilters({
 							</div>
 							{/* Tags List */}
 							<div className="mt-2 space-y-0.5 max-h-44 overflow-y-auto">
-								{tags.length === 0 ? (
-									<p className="text-xs text-gray-400 px-1 py-2">No tags available</p>
-								) : filteredTags.length === 0 && tagSearch ? (
+								{filteredTags.length === 0 && tagSearch ? (
 									<p className="text-xs text-gray-400 px-1 py-2">No results</p>
+								) : filteredTags.length === 0 ? (
+									<p className="text-xs text-gray-400 px-1 py-2">No tags available</p>
 								) : (
 									filteredTags.map((tag) => {
 										const isSelected = tagsFilter.includes(tag.id);
