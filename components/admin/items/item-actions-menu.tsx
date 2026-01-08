@@ -34,6 +34,7 @@ export function ItemActionsMenu({
   isDeleting = false,
 }: ItemActionsMenuProps) {
   const t = useTranslations("admin.ADMIN_ITEMS_PAGE");
+  const tSurvey = useTranslations("survey");
   const isPending = item.status === "pending";
 
   const menuItemClass = cn(
@@ -127,7 +128,7 @@ export function ItemActionsMenu({
             onSelect={onCreateSurvey}
           >
             <FileText className="w-4 h-4" />
-            {t("CREATE_SURVEY")}
+            {tSurvey("CREATE_SURVEY")}
           </DropdownMenu.Item>
 
           {/* Separator + Review Actions (only for pending items) */}
