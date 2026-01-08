@@ -16,7 +16,7 @@ interface CollectionsGridContentProps {
 }
 
 export function CollectionsGridContent({ collections }: CollectionsGridContentProps) {
-	const COLLECTIONS_PER_PAGE = 9;
+	let COLLECTIONS_PER_PAGE = 9;
 	const { paginationType, itemsPerPage: defaultItemsPerPage } = useLayoutTheme();
 	const itemsPerPage = defaultItemsPerPage || COLLECTIONS_PER_PAGE;
 
@@ -69,6 +69,16 @@ export function CollectionsGridContent({ collections }: CollectionsGridContentPr
 		threshold: 0.1,
 		rootMargin: '200px'
 	});
+
+	// Cleanup debounce timeout on unmount
+	useEffect(() => {
+		return () => {
+			if (debounceRef.current) {
+				clearTimeout(debounceRef.current);
+				debounceRef.current = null;
+			}
+		};
+	}, []);
 
 	const handlePageChange = (newPage: number) => {
 		const numPage = Number(newPage);

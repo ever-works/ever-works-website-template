@@ -6,10 +6,9 @@ import { CollectionsGridContent } from './components/collections-grid-content';
 
 interface CollectionsGridClientProps {
 	collections: Collection[];
-	locale: string;
 }
 
-export default function CollectionsGridClient({ collections, locale }: CollectionsGridClientProps) {
+export default function CollectionsGridClient({ collections }: CollectionsGridClientProps) {
 	const t = useTranslations('common');
 
 	return (
