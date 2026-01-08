@@ -26,7 +26,7 @@ interface ItemFiltersProps {
 	activeFilterCount: number;
 }
 
-// Status tab style - compact for table header
+// Status tab style
 const STATUS_TAB = cn(
 	'px-2.5 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer',
 	'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
@@ -37,11 +37,6 @@ const STATUS_TAB_ACTIVE = cn(
 	'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
 );
 
-/**
- * Substack-style Item Filters Component
- * - Horizontal status tabs with counts
- * - Filter button with searchable category/tags dropdowns
- */
 export function ItemFilters({
 	statusFilter,
 	categoryFilter,
@@ -90,11 +85,6 @@ export function ItemFilters({
 		setTagSearch('');
 	};
 
-	// Get selected category name
-	const selectedCategoryName = categoryFilter
-		? categories.find(c => c.id === categoryFilter)?.name || categoryFilter
-		: null;
-
 	return (
 		<div className="flex items-center gap-3">
 			{/* Status Tabs */}
@@ -136,7 +126,7 @@ export function ItemFilters({
 				</button>
 			</div>
 
-			{/* Filter Button (for category & tags) */}
+			{/* Filter Button */}
 			<Popover.Root>
 				<Popover.Trigger asChild>
 					<button className={cn(
@@ -158,150 +148,134 @@ export function ItemFilters({
 				<Popover.Portal>
 					<Popover.Content
 						className={cn(
-							'w-80 bg-white dark:bg-gray-900 rounded-lg shadow-lg',
-							'border border-gray-200 dark:border-gray-700 p-4 z-50',
+							'w-64 bg-white dark:bg-gray-900 rounded-lg shadow-xl',
+							'border border-gray-200 dark:border-gray-700 z-50',
 							'animate-in fade-in-0 zoom-in-95'
 						)}
 						sideOffset={8}
 						align="end"
 					>
 						{/* Category Section */}
-						<div className="mb-4">
-							<label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+						<div className="p-3 border-b border-gray-100 dark:border-gray-800">
+							<label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
 								{t('CATEGORY_LABEL')}
 							</label>
-							{/* Search Input */}
+							{/* Search */}
 							<div className="relative mt-2">
-								<Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+								<Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
 								<input
 									type="text"
-									placeholder="Search categories..."
+									placeholder="Search..."
 									value={categorySearch}
 									onChange={(e) => setCategorySearch(e.target.value)}
 									className={cn(
-										'w-full pl-8 pr-3 py-2 text-sm rounded-md',
+										'w-full pl-7 pr-2 py-1.5 text-sm rounded-md',
 										'border border-gray-200 dark:border-gray-700',
-										'bg-gray-50 dark:bg-gray-800',
+										'bg-white dark:bg-gray-800',
 										'text-gray-900 dark:text-white placeholder-gray-400',
-										'focus:outline-none focus:ring-2 focus:ring-theme-primary/50'
+										'focus:outline-none focus:border-gray-300 dark:focus:border-gray-600'
 									)}
 								/>
 							</div>
 							{/* Category List */}
-							<div className="mt-2 space-y-0.5 max-h-40 overflow-y-auto">
-								<button
-									onClick={() => {
-										onCategoryChange('');
-										setCategorySearch('');
-									}}
-									className={cn(
-										'flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md',
-										'hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors',
-										!categoryFilter ? 'text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800' : 'text-gray-600 dark:text-gray-400'
-									)}
-								>
-									{!categoryFilter && <Check className="w-4 h-4 text-theme-primary" />}
-									<span className={!categoryFilter ? '' : 'ml-6'}>{t('ALL_CATEGORIES')}</span>
-								</button>
+							<div className="mt-2 space-y-0.5 max-h-36 overflow-y-auto">
+								<label className="flex items-center gap-2 px-1 py-1 rounded cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+									<input
+										type="radio"
+										name="category"
+										checked={!categoryFilter}
+										onChange={() => onCategoryChange('')}
+										className="w-3.5 h-3.5 text-theme-primary border-gray-300 focus:ring-theme-primary"
+									/>
+									<span className={cn('text-sm', !categoryFilter ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-600 dark:text-gray-400')}>
+										{t('ALL_CATEGORIES')}
+									</span>
+								</label>
 								{filteredCategories.map((category) => (
-									<button
-										key={category.id}
-										onClick={() => {
-											onCategoryChange(category.id);
-											setCategorySearch('');
-										}}
-										className={cn(
-											'flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md',
-											'hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors',
-											categoryFilter === category.id ? 'text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800' : 'text-gray-600 dark:text-gray-400'
-										)}
-									>
-										{categoryFilter === category.id && <Check className="w-4 h-4 text-theme-primary" />}
-										<span className={categoryFilter === category.id ? '' : 'ml-6'}>{category.name}</span>
-									</button>
+									<label key={category.id} className="flex items-center gap-2 px-1 py-1 rounded cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+										<input
+											type="radio"
+											name="category"
+											checked={categoryFilter === category.id}
+											onChange={() => onCategoryChange(category.id)}
+											className="w-3.5 h-3.5 text-theme-primary border-gray-300 focus:ring-theme-primary"
+										/>
+										<span className={cn('text-sm', categoryFilter === category.id ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-600 dark:text-gray-400')}>
+											{category.name}
+										</span>
+									</label>
 								))}
 								{filteredCategories.length === 0 && categorySearch && (
-									<p className="text-sm text-gray-500 dark:text-gray-400 px-2 py-2 text-center">
-										No categories found
-									</p>
+									<p className="text-xs text-gray-400 px-1 py-2">No results</p>
 								)}
 							</div>
 						</div>
 
 						{/* Tags Section */}
-						<div className="mb-4">
-							<label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+						<div className="p-3">
+							<label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
 								{t('TAGS_LABEL')}
 							</label>
-							{/* Search Input */}
+							{/* Search */}
 							<div className="relative mt-2">
-								<Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+								<Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
 								<input
 									type="text"
-									placeholder="Search tags..."
+									placeholder="Search..."
 									value={tagSearch}
 									onChange={(e) => setTagSearch(e.target.value)}
 									className={cn(
-										'w-full pl-8 pr-3 py-2 text-sm rounded-md',
+										'w-full pl-7 pr-2 py-1.5 text-sm rounded-md',
 										'border border-gray-200 dark:border-gray-700',
-										'bg-gray-50 dark:bg-gray-800',
+										'bg-white dark:bg-gray-800',
 										'text-gray-900 dark:text-white placeholder-gray-400',
-										'focus:outline-none focus:ring-2 focus:ring-theme-primary/50'
+										'focus:outline-none focus:border-gray-300 dark:focus:border-gray-600'
 									)}
 								/>
 							</div>
 							{/* Tags List */}
-							<div className="mt-2 space-y-0.5 max-h-48 overflow-y-auto">
+							<div className="mt-2 space-y-0.5 max-h-44 overflow-y-auto">
 								{tags.length === 0 ? (
-									<p className="text-sm text-gray-500 dark:text-gray-400 px-2 py-2 text-center">
-										No tags available
-									</p>
+									<p className="text-xs text-gray-400 px-1 py-2">No tags available</p>
 								) : filteredTags.length === 0 && tagSearch ? (
-									<p className="text-sm text-gray-500 dark:text-gray-400 px-2 py-2 text-center">
-										No tags found
-									</p>
+									<p className="text-xs text-gray-400 px-1 py-2">No results</p>
 								) : (
 									filteredTags.map((tag) => {
 										const isSelected = tagsFilter.includes(tag.id);
 										return (
-											<button
-												key={tag.id}
-												onClick={() => toggleTag(tag.id)}
-												className={cn(
-													'flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded-md',
-													'hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors',
-													isSelected ? 'text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800' : 'text-gray-600 dark:text-gray-400'
-												)}
-											>
-												<div className={cn(
-													'w-4 h-4 rounded border flex items-center justify-center shrink-0',
-													isSelected
-														? 'bg-theme-primary border-theme-primary'
-														: 'border-gray-300 dark:border-gray-600'
-												)}>
-													{isSelected && <Check className="w-3 h-3 text-white" />}
-												</div>
-												<span>{tag.name}</span>
-											</button>
+											<label key={tag.id} className="flex items-center gap-2 px-1 py-1 rounded cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+												<input
+													type="checkbox"
+													checked={isSelected}
+													onChange={() => toggleTag(tag.id)}
+													className="w-3.5 h-3.5 rounded text-theme-primary border-gray-300 focus:ring-theme-primary"
+												/>
+												<span className={cn('text-sm', isSelected ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-600 dark:text-gray-400')}>
+													{tag.name}
+												</span>
+											</label>
 										);
 									})
 								)}
 							</div>
 						</div>
 
-						{/* Clear Filters */}
+						{/* Clear Button */}
 						{hasAdvancedFilters && (
-							<button
-								onClick={clearAdvancedFilters}
-								className={cn(
-									'flex items-center justify-center gap-1.5 w-full px-3 py-2 text-sm font-medium rounded-md',
-									'text-red-600 dark:text-red-400',
-									'hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors'
-								)}
-							>
-								<X className="w-4 h-4" />
-								<span>{t('CLEAR_ALL')}</span>
-							</button>
+							<div className="px-3 pb-3">
+								<button
+									onClick={clearAdvancedFilters}
+									className={cn(
+										'flex items-center justify-center gap-1.5 w-full px-3 py-1.5 text-xs font-medium rounded-md',
+										'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200',
+										'border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800',
+										'transition-colors'
+									)}
+								>
+									<X className="w-3.5 h-3.5" />
+									<span>{t('CLEAR_ALL')}</span>
+								</button>
+							</div>
 						)}
 					</Popover.Content>
 				</Popover.Portal>
