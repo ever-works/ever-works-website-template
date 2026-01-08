@@ -10,10 +10,8 @@ export function useLogout() {
   const logout = async () => {
     try {
       queryClient.removeQueries({ queryKey: CURRENT_USER_QUERY_KEY });
-      await signOut({ 
-        redirect: true,
-        callbackUrl: "/" 
-      });
+      await signOut({ redirect: false });
+      window.location.href = "/";
     } catch (error) {
       console.error("Logout failed:", error);
       queryClient.removeQueries({ queryKey: CURRENT_USER_QUERY_KEY });

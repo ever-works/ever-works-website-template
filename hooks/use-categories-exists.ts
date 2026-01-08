@@ -1,38 +1,25 @@
-import { useQuery } from '@tanstack/react-query';
-import { serverClient, apiUtils } from '@/lib/api/server-api-client';
+import { useSettings } from '@/components/providers/settings-provider';
 
-interface CategoriesExistsResponse {
-  exists: boolean;
-  count: number;
+interface CategoriesExistsResult {
+	exists: boolean;
 }
 
 /**
- * Fetch categories existence from API
+ * Client-side hook to check if categories exist
+ * Reads from SettingsProvider context for instant access (no loading delay)
+ * @returns Object with exists flag - true if categories exist in database
  */
-async function fetchCategoriesExists(): Promise<CategoriesExistsResponse> {
-  const response = await serverClient.get<CategoriesExistsResponse>('/api/categories/exists');
-  
-  if (!apiUtils.isSuccess(response)) {
-    throw new Error(apiUtils.getErrorMessage(response));
-  }
-  
-  return response.data;
-}
+export function useCategoriesExists(): {
+	data: CategoriesExistsResult | undefined;
+	isLoading: boolean;
+	error: Error | null;
+} {
+	const { hasCategories } = useSettings();
 
-/**
- * Custom hook to check if categories exist
- * Uses React Query for caching and state management
- */
-export function useCategoriesExists() {
-  return useQuery<CategoriesExistsResponse, Error>({
-    queryKey: ['categories', 'exists'],
-    queryFn: fetchCategoriesExists,
-    // Categories change rarely, so we can set a longer staleTime
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    gcTime: 30 * 60 * 1000, // Keep data in cache for 30 minutes
-    retry: 1, // Retry once (reduced from 2 to minimize timeout for first-time users)
-    retryOnMount: true,
-    refetchOnWindowFocus: false, // No need to refetch on window focus
-    refetchOnReconnect: true, // Refetch if connection comes back
-  });
+	// No loading state since value comes from server-rendered context
+	return {
+		data: { exists: hasCategories },
+		isLoading: false,
+		error: null
+	};
 }

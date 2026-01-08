@@ -62,16 +62,34 @@ export async function getUserCurrency(userId: string | null | undefined, request
 /**
  * Update user's currency preference
  */
-export async function updateUserCurrency(userId: string, currency: string): Promise<boolean> {
+export async function updateUserCurrency(
+	userId: string | null | undefined,
+	currency?: string,
+	country?: string
+): Promise<boolean> {
+	if (!userId) {
+		return false;
+	}
+
 	try {
 		const profile = await getClientProfileByUserId(userId);
 		if (!profile) {
 			return false;
 		}
 
-		await updateClientProfile(profile.id, {
-			currency: currency.toUpperCase()
-		});
+		const updates: { currency?: string; country?: string } = {};
+
+		if (currency) {
+			updates.currency = currency.toUpperCase();
+		}
+
+		if (country) {
+			updates.country = country.toUpperCase();
+		}
+
+		if (Object.keys(updates).length > 0) {
+			await updateClientProfile(profile.id, updates);
+		}
 
 		return true;
 	} catch (error) {

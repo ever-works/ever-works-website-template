@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useDebounceValue } from '@/hooks/use-debounced-value';
+import { useSkeletonVisibility } from '@/hooks/use-skeleton-visibility';
 import { useAdminSponsorAds } from '@/hooks/use-admin-sponsor-ads';
 import { UniversalPagination } from '@/components/universal-pagination';
 import { useTranslations } from 'next-intl';
@@ -59,6 +60,9 @@ export default function AdminSponsorshipsPage() {
 
 	// Calculate active filters
 	const activeFilterCount = [searchTerm, localStatusFilter].filter(Boolean).length;
+
+	// Check if skeleton should be shown (only on initial page load)
+	const shouldShowSkeleton = useSkeletonVisibility(isLoading, sponsorAds.length > 0);
 
 	// Sync debounced search term to hook (only when debounced value changes)
 	useEffect(() => {
@@ -160,8 +164,8 @@ export default function AdminSponsorshipsPage() {
 		[setCurrentPage]
 	);
 
-	// Loading state
-	if (isLoading && sponsorAds.length === 0) {
+	// Loading state - only show skeleton on initial page load
+	if (shouldShowSkeleton) {
 		return <LoadingSkeleton />;
 	}
 

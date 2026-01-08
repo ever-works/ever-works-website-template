@@ -126,7 +126,16 @@ export function SettingsModal() {
 				</div>
 
 				{/* Modal Content */}
-				<div className="px-6 py-8 space-y-5">
+				<div
+					className={cn(
+						'px-6 py-4 space-y-5',
+						'overflow-y-auto overscroll-contain',
+						'max-h-[calc(90vh-96px)]',
+						'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent scrollbar-track-transparent [&::-webkit-scrollbar]:w-1.5',
+						'dark:scrollbar-thumb-gray-700'
+					)}
+					style={{ scrollbarWidth: "thin" }}
+				>
 					{/* Layout Section - Always show */}
 					<SelectLayout />
 

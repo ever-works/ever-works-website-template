@@ -57,5 +57,18 @@ export async function initializeBackgroundJobs(): Promise<void> {
 		'0 9 * * *' // Daily at 9:00 AM
 	);
 
-	console.log('[BACKGROUND_JOBS] Repository sync job registered with BackgroundJobManager');
+	// Register subscription expiration cleanup job
+	// Runs daily at midnight to process and expire subscriptions past their end date
+	manager.scheduleCronJob(
+		'subscription-expired-cleanup',
+		'Subscription Expiration Cleanup',
+		async () => {
+			// Dynamic import to prevent bundling issues
+			const { subscriptionService } = await import('@/lib/services/subscription.service');
+			await subscriptionService.processExpiredSubscriptions();
+		},
+		'0 0 * * *' // Daily at midnight
+	);
+
+	console.log('[BACKGROUND_JOBS] All background jobs registered with BackgroundJobManager');
 }

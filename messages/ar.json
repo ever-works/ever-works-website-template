@@ -2068,7 +2068,15 @@
 			"NO_ITEMS_FOUND": "لم يتم العثور على عناصر",
 			"NO_ITEMS_DESCRIPTION": "أنشئ عنصرك الأول لبدء بناء مجموعتك.",
 			"CREATE_ITEM": "إنشاء عنصر",
-			"CONFIRM_DELETE_ITEM": "هل أنت متأكد من أنك تريد حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء."
+			"CONFIRM_DELETE_ITEM": "هل أنت متأكد من حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء.",
+			"CANCEL": "إلغاء",
+			"REJECT_MODAL_TITLE": "رفض العنصر",
+			"REJECT_MODAL_DESCRIPTION": "يرجى تقديم سبب لرفض هذا العنصر. سيتم إرسال هذا السبب إلى المُرسِل.",
+			"ITEM_PREVIEW_LABEL": "العنصر المراد رفضه",
+			"REJECTION_REASON_LABEL": "سبب الرفض",
+			"REJECTION_REASON_PLACEHOLDER": "اشرح سبب رفض هذا العنصر...",
+			"REJECTION_REASON_MIN_LENGTH": "يجب أن يكون سبب الرفض 10 أحرف على الأقل",
+			"CONFIRM_REJECT": "رفض العنصر"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "إدارة المستخدمين",

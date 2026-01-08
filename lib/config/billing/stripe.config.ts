@@ -72,7 +72,7 @@ export function getStripePriceConfig(
 	plan: PlanName,
 	currency: string,
 	interval: 'monthly' | 'yearly' = 'monthly'
-): { priceId: string | undefined; currency: string; symbol: string } | null {
+): { priceId: string | undefined; currency: string; symbol: string; setupFeeId: string | undefined } | null {
 	const config = STRIPE_CONFIG[plan];
 	if (!config) {
 		return null;
@@ -90,14 +90,16 @@ export function getStripePriceConfig(
 		return {
 			priceId: interval === 'monthly' ? usdConfig.amount.monthly : usdConfig.amount.yearly,
 			currency: usdConfig.currency || 'USD',
-			symbol: usdConfig.symbol || '$'
+			symbol: usdConfig.symbol || '$',
+			setupFeeId: usdConfig.amount.setupFee
 		};
 	}
 
 	return {
 		priceId: interval === 'monthly' ? currencyConfig.amount.monthly : currencyConfig.amount.yearly,
 		currency: currencyConfig.currency || currency,
-		symbol: currencyConfig.symbol || '$'
+		symbol: currencyConfig.symbol || '$',
+		setupFeeId: currencyConfig.amount.setupFee
 	};
 }
 
