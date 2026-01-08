@@ -1,0 +1,20 @@
+'use client';
+import UniversalPagination from '@/components/universal-pagination';
+
+interface CollectionsPaginationProps {
+	page: number;
+	totalPages: number;
+	onPageChange: (page: number) => void;
+}
+
+export function CollectionsPagination({ page, totalPages, onPageChange }: CollectionsPaginationProps) {
+	if (totalPages <= 1) {
+		return null;
+	}
+
+	return (
+		<footer className="flex items-center justify-center py-6 bottom-0 bg-linear-to-t">
+			<UniversalPagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
+		</footer>
+	);
+}
