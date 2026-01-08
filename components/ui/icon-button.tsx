@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -47,10 +48,24 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         ref
     ) => {
         const [showTooltip, setShowTooltip] = useState(false);
+        const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+        const buttonRef = useRef<HTMLDivElement>(null);
         const displayTooltip = isLoading && loadingTooltip ? loadingTooltip : tooltip;
+
+        useEffect(() => {
+            if (showTooltip && buttonRef.current) {
+                const rect = buttonRef.current.getBoundingClientRect();
+                const tooltipTop = tooltipPlacement === "top"
+                    ? rect.top - 8
+                    : rect.bottom + 8;
+                const tooltipLeft = rect.left + rect.width / 2;
+                setTooltipPosition({ top: tooltipTop, left: tooltipLeft });
+            }
+        }, [showTooltip, tooltipPlacement]);
 
         return (
             <div
+                ref={buttonRef}
                 className="relative inline-flex"
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
@@ -77,16 +92,19 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
                             : icon
                     )}
                 </Button>
-                {/* State-based Tooltip */}
-                {showTooltip && (
+                {/* Portal-based Tooltip */}
+                {showTooltip && typeof window !== "undefined" && createPortal(
                     <div
                         className={cn(
-                            "absolute z-[9999] pointer-events-none",
+                            "fixed z-[9999] pointer-events-none",
                             "whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-150",
-                            tooltipPlacement === "top"
-                                ? "bottom-full left-1/2 -translate-x-1/2 mb-2"
-                                : "top-full left-1/2 -translate-x-1/2 mt-2"
+                            "-translate-x-1/2",
+                            tooltipPlacement === "top" ? "-translate-y-full" : ""
                         )}
+                        style={{
+                            top: tooltipPosition.top,
+                            left: tooltipPosition.left,
+                        }}
                         role="tooltip"
                     >
                         <div className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2 py-1 rounded text-xs font-medium shadow-lg">
@@ -101,7 +119,8 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
                                     : "bottom-full border-l-transparent border-r-transparent border-t-transparent border-b-gray-900 dark:border-b-gray-100"
                             )}
                         />
-                    </div>
+                    </div>,
+                    document.body
                 )}
             </div>
         );
