@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@heroui/react";
 import { MultiStepItemForm } from "@/components/admin/items/multi-step-item-form";
 import { ItemRejectModal } from "@/components/admin/items/item-reject-modal";
+import { ItemListSorting, SortField, SortOrder } from "@/components/admin/items/item-list-sorting";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
 import { UniversalPagination } from "@/components/universal-pagination";
 import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink, Loader2 } from "lucide-react";
@@ -18,7 +19,9 @@ export default function AdminItemsPage() {
   const t = useTranslations('admin.ADMIN_ITEMS_PAGE');
   const PageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  
+  const [sortBy, setSortBy] = useState<SortField>("updated_at");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+
   // Use custom hook
   const {
     items,
@@ -35,7 +38,7 @@ export default function AdminItemsPage() {
     updateItem,
     deleteItem,
     reviewItem,
-  } = useAdminItems({ page: currentPage, limit: PageSize });
+  } = useAdminItems({ page: currentPage, limit: PageSize, sortBy, sortOrder });
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -125,6 +128,16 @@ export default function AdminItemsPage() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSortByChange = (newSortBy: SortField) => {
+    setSortBy(newSortBy);
+    setCurrentPage(1); // Reset to first page when sorting changes
+  };
+
+  const handleSortOrderChange = (newSortOrder: SortOrder) => {
+    setSortOrder(newSortOrder);
+    setCurrentPage(1); // Reset to first page when sorting changes
   };
 
   const handleFormSubmit = (data: CreateItemRequest | UpdateItemRequest) => {
@@ -365,9 +378,17 @@ export default function AdminItemsPage() {
         <CardContent className="p-0">
           {/* Table Header */}
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {t('ITEMS_TABLE_TITLE', { count: totalItems })}
-            </h3>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {t('ITEMS_TABLE_TITLE', { count: totalItems })}
+              </h3>
+              <ItemListSorting
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onSortByChange={handleSortByChange}
+                onSortOrderChange={handleSortOrderChange}
+              />
+            </div>
           </div>
 
           {/* Items List */}

@@ -21,6 +21,8 @@ export interface ItemsListParams {
   status?: string;
   category?: string;
   search?: string;
+  sortBy?: 'name' | 'updated_at' | 'status' | 'submitted_at';
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface ItemStatsResponse {
@@ -46,19 +48,21 @@ const QUERY_KEYS = {
 // API functions
 const fetchItems = async (params: ItemsListParams = {}): Promise<ItemsListResponse> => {
   const searchParams = new URLSearchParams();
-  
+
   if (params.page) searchParams.set('page', params.page.toString());
   if (params.limit) searchParams.set('limit', params.limit.toString());
   if (params.status) searchParams.set('status', params.status);
   if (params.category) searchParams.set('category', params.category);
   if (params.search) searchParams.set('search', params.search);
+  if (params.sortBy) searchParams.set('sortBy', params.sortBy);
+  if (params.sortOrder) searchParams.set('sortOrder', params.sortOrder);
 
   const response = await serverClient.get<ItemsListResponse>(`/api/admin/items?${searchParams.toString()}`);
-  
+
   if (!apiUtils.isSuccess(response)) {
     throw new Error(apiUtils.getErrorMessage(response));
   }
-  
+
   return response.data;
 };
 

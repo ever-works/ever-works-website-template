@@ -57,6 +57,24 @@ const itemRepository = new ItemRepository();
  *           type: string
  *         description: "Filter by tag"
  *         example: "saas"
+ *       - name: "sortBy"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["name", "updated_at", "status", "submitted_at"]
+ *           default: "updated_at"
+ *         description: "Field to sort by"
+ *         example: "updated_at"
+ *       - name: "sortOrder"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["asc", "desc"]
+ *           default: "desc"
+ *         description: "Sort order direction"
+ *         example: "desc"
  *     responses:
  *       200:
  *         description: "Items list retrieved successfully"
@@ -195,11 +213,25 @@ export async function GET(request: NextRequest) {
     const statusParam = searchParams.get('status');
     const category = searchParams.get('category') || undefined;
     const tag = searchParams.get('tag') || undefined;
+    const sortByParam = searchParams.get('sortBy');
+    const sortOrderParam = searchParams.get('sortOrder');
 
     // Validate status parameter
     const validStatuses = ['draft', 'pending', 'approved', 'rejected'] as const;
-    const status = statusParam && validStatuses.includes(statusParam as any) 
-      ? (statusParam as 'draft' | 'pending' | 'approved' | 'rejected') 
+    const status = statusParam && validStatuses.includes(statusParam as any)
+      ? (statusParam as 'draft' | 'pending' | 'approved' | 'rejected')
+      : undefined;
+
+    // Validate sortBy parameter
+    const validSortFields = ['name', 'updated_at', 'status', 'submitted_at'] as const;
+    const sortBy = sortByParam && validSortFields.includes(sortByParam as any)
+      ? (sortByParam as 'name' | 'updated_at' | 'status' | 'submitted_at')
+      : undefined;
+
+    // Validate sortOrder parameter
+    const validSortOrders = ['asc', 'desc'] as const;
+    const sortOrder = sortOrderParam && validSortOrders.includes(sortOrderParam as any)
+      ? (sortOrderParam as 'asc' | 'desc')
       : undefined;
 
     // Get paginated items
@@ -207,6 +239,8 @@ export async function GET(request: NextRequest) {
       status,
       category,
       tag,
+      sortBy,
+      sortOrder,
     });
 
     return NextResponse.json({
