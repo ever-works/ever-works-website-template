@@ -22,6 +22,7 @@ export default function AdminItemsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const isInitialLoad = useRef(true);
+  const hasLoadedOnce = useRef(false);
 
   // Debounced search (min 2 characters to trigger, 300ms delay)
   const { debouncedValue: debouncedSearchTerm, isSearching } = useDebounceSearch({
@@ -200,7 +201,13 @@ export default function AdminItemsPage() {
     return statusClasses[color as keyof typeof statusClasses] || statusClasses.gray;
   };
 
-  if (isLoading) {
+  // Track when data has loaded at least once
+  if (!isLoading && items.length > 0) {
+    hasLoadedOnce.current = true;
+  }
+
+  // Only show skeleton on initial load, not during search
+  if (isLoading && !hasLoadedOnce.current) {
     return (
       <div className="p-6 max-w-7xl mx-auto">
         {/* Header Skeleton */}
