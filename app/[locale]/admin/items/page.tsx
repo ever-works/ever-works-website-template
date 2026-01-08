@@ -12,6 +12,7 @@ import { ItemRejectModal } from "@/components/admin/items/item-reject-modal";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
 import { UniversalPagination } from "@/components/universal-pagination";
 import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useAdminItems } from "@/hooks/use-admin-items";
 import { useAllCategories } from "@/hooks/use-admin-categories";
 import { useAllTags } from "@/hooks/use-admin-tags";
@@ -402,14 +403,9 @@ export default function AdminItemsPage() {
           {/* Table Header with Integrated Filters */}
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
             <div className="flex items-center justify-between gap-4 flex-wrap">
-              <div className="flex items-center gap-2">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {t('ITEMS_TABLE_TITLE', { count: totalItems })}
-                </h3>
-                {isFetching && !isLoading && (
-                  <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-                )}
-              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {t('ITEMS_TABLE_TITLE', { count: totalItems })}
+              </h3>
               <ItemFilters
                 statusFilter={statusFilter}
                 categoryFilter={categoryFilter}
@@ -448,7 +444,19 @@ export default function AdminItemsPage() {
           </div>
 
           {/* Items List */}
-          <div className="p-6 space-y-4">
+          <div className={cn(
+            "p-6 space-y-4 relative transition-opacity duration-200",
+            isFetching && !isLoading && "opacity-60"
+          )}>
+            {/* Loading overlay for tab/filter changes */}
+            {isFetching && !isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                <div className="bg-white/90 dark:bg-gray-900/90 rounded-lg px-4 py-2 shadow-lg flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin text-theme-primary" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Loading...</span>
+                </div>
+              </div>
+            )}
             {items.map((item) => {
               const statusColors = getStatusColor(item.status);
               const categories = Array.isArray(item.category) ? item.category : [item.category];
