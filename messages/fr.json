@@ -2139,7 +2139,15 @@
 			"NO_ITEMS_FOUND": "Aucun élément trouvé",
 			"NO_ITEMS_DESCRIPTION": "Créez votre premier élément pour commencer à construire votre collection.",
 			"CREATE_ITEM": "Créer un Élément",
-			"CONFIRM_DELETE_ITEM": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action ne peut pas être annulée."
+			"CONFIRM_DELETE_ITEM": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action ne peut pas être annulée.",
+			"CANCEL": "Annuler",
+			"REJECT_MODAL_TITLE": "Rejeter l'élément",
+			"REJECT_MODAL_DESCRIPTION": "Veuillez fournir une raison pour rejeter cet élément. Celle-ci sera envoyée au soumissionnaire.",
+			"ITEM_PREVIEW_LABEL": "Élément à rejeter",
+			"REJECTION_REASON_LABEL": "Raison du rejet",
+			"REJECTION_REASON_PLACEHOLDER": "Expliquez pourquoi cet élément est rejeté...",
+			"REJECTION_REASON_MIN_LENGTH": "La raison du rejet doit comporter au moins 10 caractères",
+			"CONFIRM_REJECT": "Rejeter l'élément"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Gestion des Utilisateurs",

@@ -2,7 +2,7 @@ import { getCachedItem, fetchSimilarItems } from '@/lib/content';
 import { notFound } from 'next/navigation';
 import { getCategoriesName } from '@/lib/utils';
 import { getTranslations } from 'next-intl/server';
-import { ItemDetail } from '@/components/item-detail';
+import { ItemDetailWrapper } from '@/components/item-detail';
 import { ServerItemContent } from '@/components/item-detail/server-item-content';
 import { Container } from '@/components/ui/container';
 import { ItemViewTracker } from '@/components/tracking/item-view-tracker';
@@ -213,7 +213,7 @@ export default async function ItemDetails({ params }: { params: Promise<{ slug: 
 		return (
 			<Container maxWidth="7xl" padding="default" useGlobalWidth>
 				<ItemViewTracker slug={slug} />
-				<ItemDetail meta={metaWithVideo} renderedContent={renderedContent} categoryName={categoryName} />
+				<ItemDetailWrapper meta={metaWithVideo} renderedContent={renderedContent} categoryName={categoryName} />
 			</Container>
 		);
 	} catch (error) {

@@ -54,12 +54,8 @@ const SelectDatabaseMode: React.FC<SelectDatabaseModeProps> = ({ className, disa
 			'transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]',
 
 			// Hover effects - lift and enhanced border
-			'hover:scale-[1.02] hover:-translate-y-1',
 			'hover:shadow-2xl hover:shadow-emerald-500/10',
 			'hover:border-emerald-300/60 dark:hover:border-emerald-700/50',
-
-			// Press feedback
-			'active:scale-[0.98]',
 
 			// Animation entrance
 			'animate-fade-in-up',

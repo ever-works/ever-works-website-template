@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useDebounceSearch } from '@/hooks/use-debounced-search';
+import { useSkeletonVisibility } from '@/hooks/use-skeleton-visibility';
 import { useAdminCompanies } from '@/hooks/use-admin-companies';
 import { useCompaniesEnabled } from '@/hooks/use-companies-enabled';
 import { UniversalPagination } from '@/components/universal-pagination';
@@ -45,7 +46,7 @@ export default function CompaniesPage() {
 			if (currentPage !== 1) {
 				setCurrentPage(1);
 			}
-		},
+		}
 	});
 
 	// Data fetching hook
@@ -59,7 +60,7 @@ export default function CompaniesPage() {
 		isSubmitting,
 		createCompany,
 		updateCompany,
-		deleteCompany,
+		deleteCompany
 	} = useAdminCompanies({
 		params: {
 			page: currentPage,
@@ -67,13 +68,16 @@ export default function CompaniesPage() {
 			search: debouncedSearchTerm,
 			status: statusFilter || undefined,
 			sortBy: 'createdAt',
-			sortOrder: 'desc',
-		},
+			sortOrder: 'desc'
+		}
 	});
 
 	// Calculate active filters
 	const activeFilterCount = [searchTerm, statusFilter].filter(Boolean).length;
 	const hasActiveFilters = activeFilterCount > 0;
+
+	// Check if skeleton should be shown (only on initial page load)
+	const shouldShowSkeleton = useSkeletonVisibility(isLoading, companies.length > 0);
 
 	// Handlers
 	const handleAddCompany = useCallback(() => {
@@ -153,8 +157,8 @@ export default function CompaniesPage() {
 		setCurrentPage(page);
 	}, []);
 
-	// Loading state
-	if (isLoading && companies.length === 0) {
+	// Loading state - only show skeleton on initial page load
+	if (shouldShowSkeleton) {
 		return <LoadingSkeleton />;
 	}
 
@@ -186,9 +190,7 @@ export default function CompaniesPage() {
 								{t('WARNING_DISABLED_TITLE')}
 							</h3>
 							<div className="mt-2 text-sm text-yellow-700 dark:text-yellow-400">
-								<p>
-									{t('WARNING_DISABLED_MESSAGE')}
-								</p>
+								<p>{t('WARNING_DISABLED_MESSAGE')}</p>
 							</div>
 							<div className="mt-4">
 								<Link

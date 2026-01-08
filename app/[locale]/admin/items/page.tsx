@@ -5,7 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@heroui/react";
 import { MultiStepItemForm } from "@/components/admin/items/multi-step-item-form";
+import { ItemRejectModal } from "@/components/admin/items/item-reject-modal";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
 import { UniversalPagination } from "@/components/universal-pagination";
 import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink, Loader2 } from "lucide-react";
@@ -26,19 +28,25 @@ export default function AdminItemsPage() {
     stats,
     isLoading,
     isSubmitting,
+    isApproving,
+    isRejecting,
+    isDeleting,
+    pendingItemId,
     createItem,
     updateItem,
     deleteItem,
     reviewItem,
   } = useAdminItems({ page: currentPage, limit: PageSize });
 
-  // Local state for UI
-  const [reviewingItems, setReviewingItems] = useState<Set<string>>(new Set());
-  
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [selectedItem, setSelectedItem] = useState<ItemData | undefined>();
+
+  // Reject modal state
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [selectedItemForReject, setSelectedItemForReject] = useState<ItemData | null>(null);
+  const [rejectionReason, setRejectionReason] = useState('');
 
 
   const handleCreateItem = async (data: CreateItemRequest) => {
@@ -58,38 +66,43 @@ export default function AdminItemsPage() {
   };
 
   const handleDeleteItem = async (itemId: string) => {
-    // Prevent multiple clicks
-    if (reviewingItems.has(itemId)) return;
-    
+    // Prevent multiple clicks while deleting
+    if (isDeleting && pendingItemId === itemId) return;
+
     if (!confirm(t('CONFIRM_DELETE_ITEM'))) {
       return;
     }
 
-    try {
-      setReviewingItems(prev => new Set(prev).add(itemId));
-      await deleteItem(itemId);
-    } finally {
-      setReviewingItems(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(itemId);
-        return newSet;
-      });
-    }
+    await deleteItem(itemId);
   };
 
-  const handleReviewItem = async (itemId: string, status: 'approved' | 'rejected', notes?: string) => {
-    // Prevent multiple clicks
-    if (reviewingItems.has(itemId)) return;
-    
-    try {
-      setReviewingItems(prev => new Set(prev).add(itemId));
-      await reviewItem(itemId, status, notes);
-    } finally {
-      setReviewingItems(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(itemId);
-        return newSet;
-      });
+  const handleApproveItem = async (itemId: string) => {
+    // Prevent multiple clicks while approving
+    if (isApproving && pendingItemId === itemId) return;
+
+    await reviewItem(itemId, 'approved');
+  };
+
+  const openRejectModal = (item: ItemData) => {
+    setSelectedItemForReject(item);
+    setRejectionReason('');
+    setRejectModalOpen(true);
+  };
+
+  const closeRejectModal = () => {
+    setRejectModalOpen(false);
+    setSelectedItemForReject(null);
+    setRejectionReason('');
+  };
+
+  const handleRejectConfirm = async () => {
+    // Prevent multiple clicks while rejecting
+    if (isRejecting) return;
+    if (!selectedItemForReject || rejectionReason.length < 10) return;
+
+    const success = await reviewItem(selectedItemForReject.id, 'rejected', rejectionReason);
+    if (success) {
+      closeRejectModal();
     }
   };
 
@@ -363,12 +376,25 @@ export default function AdminItemsPage() {
             {items.map((item) => {
               const statusColors = getStatusColor(item.status);
               const categories = Array.isArray(item.category) ? item.category : [item.category];
-              
+              const isProcessingThisItem = pendingItemId === item.id && (isApproving || isRejecting || isDeleting);
+
               return (
                 <div
                   key={item.id}
-                  className="group bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-theme-primary/30 hover:shadow-lg transition-all duration-300 overflow-hidden"
+                  className="group relative bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-theme-primary/30 hover:shadow-lg transition-all duration-300 overflow-hidden"
                 >
+                  {/* Loading overlay */}
+                  {isProcessingThisItem && (
+                    <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-xl flex items-center justify-center z-20 transition-opacity duration-300">
+                      <div className="flex flex-col items-center gap-2">
+                        <Spinner size="lg" color="primary" />
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {isApproving ? t('APPROVING') : isRejecting ? t('REJECTING') : t('DELETING')}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="p-6">
                     <div className="flex items-start justify-between">
                       {/* Left Section: Item Info */}
@@ -445,30 +471,39 @@ export default function AdminItemsPage() {
                         />
 
                         {/* Review Actions */}
-                        {item.status === 'pending' && (
-                          <>
-                            <IconButton
-                              variant="success"
-                              tooltip={t('APPROVE')}
-                              loadingTooltip={t('APPROVING')}
-                              icon={<CheckCircle />}
-                              size="touch"
-                              isLoading={reviewingItems.has(item.id)}
-                              onClick={() => handleReviewItem(item.id, 'approved')}
-                              className="hover:bg-green-700"
-                            />
-                            <IconButton
-                              variant="destructive"
-                              tooltip={t('REJECT')}
-                              loadingTooltip={t('REJECTING')}
-                              icon={<XCircle />}
-                              size="touch"
-                              isLoading={reviewingItems.has(item.id)}
-                              onClick={() => handleReviewItem(item.id, 'rejected')}
-                              className="bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
-                            />
-                          </>
-                        )}
+                        {item.status === 'pending' && (() => {
+                          const isApprovingThis = isApproving && pendingItemId === item.id;
+                          const isRejectingThis = isRejecting && pendingItemId === item.id;
+                          const isDeletingThis = isDeleting && pendingItemId === item.id;
+                          const isProcessingThis = isApprovingThis || isRejectingThis || isDeletingThis;
+
+                          return (
+                            <>
+                              <IconButton
+                                variant="success"
+                                tooltip={t('APPROVE')}
+                                loadingTooltip={t('APPROVING')}
+                                icon={<CheckCircle />}
+                                size="touch"
+                                isLoading={isApprovingThis}
+                                disabled={isProcessingThis}
+                                onClick={() => handleApproveItem(item.id)}
+                                className="hover:bg-green-700"
+                              />
+                              <IconButton
+                                variant="ghost"
+                                tooltip={t('REJECT')}
+                                loadingTooltip={t('REJECTING')}
+                                icon={<XCircle />}
+                                size="touch"
+                                isLoading={isRejectingThis}
+                                disabled={isProcessingThis}
+                                onClick={() => openRejectModal(item)}
+                                className="bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
+                              />
+                            </>
+                          );
+                        })()}
 
                         {/* Survey Creation */}
                         <AdminSurveyCreationButton
@@ -484,17 +519,18 @@ export default function AdminItemsPage() {
                           tooltip={t('EDIT')}
                           icon={<Edit />}
                           size="touch"
-                          disabled={reviewingItems.has(item.id)}
+                          disabled={isProcessingThisItem}
                           onClick={() => openEditModal(item as any)}
                           className="hover:bg-theme-primary/10 hover:text-theme-primary"
                         />
                         <IconButton
-                          variant="destructive"
+                          variant="ghost"
                           tooltip={t('DELETE')}
                           loadingTooltip={t('DELETING')}
                           icon={<Trash2 />}
                           size="touch"
-                          isLoading={reviewingItems.has(item.id)}
+                          isLoading={isDeleting && pendingItemId === item.id}
+                          disabled={isProcessingThisItem}
                           onClick={() => handleDeleteItem(item.id)}
                           className="bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
                         />
@@ -544,7 +580,7 @@ export default function AdminItemsPage() {
         </div>
       )}
 
-      {/* Modal */}
+      {/* Item Form Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4">
@@ -560,6 +596,17 @@ export default function AdminItemsPage() {
           </div>
         </div>
       )}
+
+      {/* Reject Item Modal */}
+      <ItemRejectModal
+        isOpen={rejectModalOpen}
+        item={selectedItemForReject}
+        rejectionReason={rejectionReason}
+        isSubmitting={isRejecting}
+        onReasonChange={setRejectionReason}
+        onConfirm={handleRejectConfirm}
+        onClose={closeRejectModal}
+      />
     </div>
   );
 } 

@@ -6,8 +6,8 @@ import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
  * /api/sponsor-ads:
  *   get:
  *     tags: ["Sponsor Ads"]
- *     summary: "Get active sponsor ads"
- *     description: "Returns a list of currently active sponsor ads for public display. No authentication required."
+ *     summary: "Get active sponsor ads with item data"
+ *     description: "Returns a list of currently active sponsor ads with their associated item data for public display. No authentication required."
  *     parameters:
  *       - name: "limit"
  *         in: "query"
@@ -32,18 +32,31 @@ import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
  *                   items:
  *                     type: object
  *                     properties:
- *                       id:
- *                         type: string
- *                       itemSlug:
- *                         type: string
- *                       itemName:
- *                         type: string
- *                       itemIconUrl:
- *                         type: string
- *                       itemCategory:
- *                         type: string
- *                       itemDescription:
- *                         type: string
+ *                       sponsor:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                           itemSlug:
+ *                             type: string
+ *                           status:
+ *                             type: string
+ *                           interval:
+ *                             type: string
+ *                       item:
+ *                         type: object
+ *                         nullable: true
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           slug:
+ *                             type: string
+ *                           description:
+ *                             type: string
+ *                           icon_url:
+ *                             type: string
+ *                           category:
+ *                             type: string
  *       500:
  *         description: "Internal server error"
  */
@@ -55,8 +68,8 @@ export async function GET(request: NextRequest) {
 		const rawLimit = limitParam ? Number(limitParam) : 10;
 		const limit = Number.isFinite(rawLimit) ? Math.min(Math.max(1, Math.floor(rawLimit)), 50) : 10;
 
-		// Get active sponsor ads
-		const sponsorAds = await sponsorAdService.getActiveSponsorAds(limit);
+		// Get active sponsor ads with item data
+		const sponsorAds = await sponsorAdService.getActiveSponsorAdsWithItems(limit);
 
 		return NextResponse.json({
 			success: true,

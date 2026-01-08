@@ -179,7 +179,8 @@ export function useLogoutOverlay() {
     });
 
     try {
-      await signOut({ callbackUrl: '/' });
+      await signOut({ redirect: false });
+      window.location.href = "/";
     } catch (error) {
       console.error('Logout error:', error);
       const overlayElement = document.getElementById(LOGOUT_OVERLAY_CONFIG.ID);

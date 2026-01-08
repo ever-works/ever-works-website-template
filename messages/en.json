@@ -525,6 +525,10 @@
 				"TITLE": "Submissions",
 				"DESCRIPTION": "View and manage your submissions"
 			},
+			"SPONSORSHIPS": {
+				"TITLE": "Sponsorships",
+				"DESCRIPTION": "Track and manage your sponsorships"
+			},
 			"BILLING": {
 				"TITLE": "Billing",
 				"DESCRIPTION": "Manage your billing information and subscription details"
@@ -2134,7 +2138,15 @@
 			"NO_ITEMS_FOUND": "No items found",
 			"NO_ITEMS_DESCRIPTION": "Create your first item to start building your collection.",
 			"CREATE_ITEM": "Create Item",
-			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone."
+			"CONFIRM_DELETE_ITEM": "Are you sure you want to delete this item? This action cannot be undone.",
+			"CANCEL": "Cancel",
+			"REJECT_MODAL_TITLE": "Reject Item",
+			"REJECT_MODAL_DESCRIPTION": "Please provide a reason for rejecting this item. This will be sent to the submitter.",
+			"ITEM_PREVIEW_LABEL": "Item to reject",
+			"REJECTION_REASON_LABEL": "Rejection Reason",
+			"REJECTION_REASON_PLACEHOLDER": "Explain why this item is being rejected...",
+			"REJECTION_REASON_MIN_LENGTH": "Rejection reason must be at least 10 characters",
+			"CONFIRM_REJECT": "Reject Item"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",
@@ -2989,6 +3001,85 @@
 			"YOUR_SUBMISSIONS": "Your Submissions",
 			"NEW_SUBMISSION": "New Submission",
 			"TRASH": "Trash"
+		},
+		"sponsorships": {
+			"PAGE_TITLE": "My Sponsorships",
+			"PAGE_DESCRIPTION": "Track and manage your sponsor ad submissions.",
+			"YOUR_SPONSORSHIPS": "Your Sponsorships",
+			"NEW_SPONSORSHIP": "New Sponsorship",
+
+			"TOTAL_SPONSORSHIPS": "Total",
+			"ACTIVE": "Active",
+			"PENDING": "Pending",
+			"EXPIRED": "Expired",
+
+			"STATUS_ALL": "All",
+			"STATUS_ACTIVE": "Active",
+			"STATUS_PENDING": "Pending",
+			"STATUS_EXPIRED": "Expired",
+			"STATUS_CANCELLED": "Cancelled",
+			"STATUS_PENDING_PAYMENT": "Awaiting Payment",
+			"STATUS_PENDING_REVIEW": "Under Review",
+			"STATUS_REJECTED": "Rejected",
+
+			"INTERVAL_ALL": "All Types",
+			"INTERVAL_WEEKLY": "Weekly",
+			"INTERVAL_MONTHLY": "Monthly",
+
+			"SEARCH_PLACEHOLDER": "Search by item name...",
+			"EMPTY_STATE_TITLE": "No sponsorships yet",
+			"EMPTY_STATE_DESC": "Boost your project's visibility by creating a sponsorship. Featured items get prominent placement across the directory.",
+			"CREATE_FIRST_SPONSORSHIP": "Create Your First Sponsorship",
+
+			"SHOWING_PAGE": "Page {page} of {totalPages}",
+			"PREVIOUS": "Previous",
+			"NEXT": "Next",
+
+			"REJECTION_REASON": "Reason",
+			"CANCEL_REASON": "Cancellation reason",
+			"SPONSORSHIP": "sponsorship",
+
+			"VIEW_DETAILS": "View Details",
+			"MODAL_TITLE": "Sponsorship Details",
+			"ITEM_INFORMATION": "Item Information",
+			"SUBSCRIPTION_DETAILS": "Subscription Details",
+			"IMPORTANT_DATES": "Important Dates",
+			"CREATED_DATE": "Created",
+			"START_DATE": "Start Date",
+			"END_DATE": "End Date",
+			"REVIEWED_DATE": "Reviewed",
+			"AMOUNT": "Amount",
+			"INTERVAL": "Billing Interval",
+			"PAYMENT_PROVIDER": "Payment Provider",
+			"CLOSE": "Close",
+			"LOAD_ERROR": "Failed to load sponsorship details",
+			"RETRY": "Retry",
+
+			"PAY_NOW": "Pay Now",
+			"RENEW": "Renew",
+			"CANCEL": "Cancel",
+			"OPTIONAL": "optional",
+
+			"CANCEL_SPONSORSHIP": "Cancel Sponsorship",
+			"RENEW_SPONSORSHIP": "Renew Sponsorship",
+			"CONFIRM_CANCEL_MESSAGE": "Are you sure you want to cancel this sponsorship? This action cannot be undone.",
+			"CONFIRM_CANCEL": "Yes, Cancel",
+			"CANCEL_NO": "No, Keep It",
+			"CANCEL_SUCCESS": "Sponsorship cancelled successfully",
+
+			"CANCEL_DIALOG_TITLE": "Cancel Sponsorship",
+			"CANCEL_DIALOG_WARNING": "This action cannot be undone. Your sponsorship will be cancelled immediately and you will lose any remaining time.",
+			"CANCEL_REASON_LABEL": "Cancellation Reason",
+			"CANCEL_REASON_PLACEHOLDER": "Tell us why you're cancelling (optional)...",
+			"KEEP_SPONSORSHIP": "Keep Sponsorship",
+
+			"RENEW_DIALOG_TITLE": "Renew Sponsorship",
+			"RENEW_DIALOG_DESCRIPTION": "Extend your sponsorship to continue featuring your item prominently in the directory.",
+			"RENEWAL_PRICE": "Renewal Price",
+			"RENEWAL_DURATION": "Renews for 1 {interval}",
+			"RENEW_REDIRECT_INFO": "You will be redirected to our payment provider to complete the renewal.",
+			"CANCEL_BUTTON": "Cancel",
+			"PROCEED_TO_PAYMENT": "Proceed to Payment"
 		},
 		"dashboard": {
 			"TITLE": "Dashboard",
