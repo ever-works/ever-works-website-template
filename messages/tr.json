@@ -2071,7 +2071,8 @@
 			"REJECTION_REASON_LABEL": "Reddetme Nedeni",
 			"REJECTION_REASON_PLACEHOLDER": "Bu öğenin neden reddedildiğini açıklayın...",
 			"REJECTION_REASON_MIN_LENGTH": "Reddetme nedeni en az 10 karakter olmalıdır",
-			"CONFIRM_REJECT": "Öğeyi Reddet"
+			"CONFIRM_REJECT": "Öğeyi Reddet",
+			"LOADING": "Yükleniyor..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

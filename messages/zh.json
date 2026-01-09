@@ -2103,7 +2103,8 @@
 			"REJECTION_REASON_LABEL": "拒绝原因",
 			"REJECTION_REASON_PLACEHOLDER": "请说明拒绝此项目的原因...",
 			"REJECTION_REASON_MIN_LENGTH": "拒绝原因至少需要10个字符",
-			"CONFIRM_REJECT": "拒绝项目"
+			"CONFIRM_REJECT": "拒绝项目",
+			"LOADING": "加载中..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "用户管理",

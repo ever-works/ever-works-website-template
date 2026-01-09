@@ -2060,7 +2060,8 @@
 			"REJECTION_REASON_LABEL": "Lý do từ chối",
 			"REJECTION_REASON_PLACEHOLDER": "Giải thích lý do mục này bị từ chối...",
 			"REJECTION_REASON_MIN_LENGTH": "Lý do từ chối phải có ít nhất 10 ký tự",
-			"CONFIRM_REJECT": "Từ chối mục"
+			"CONFIRM_REJECT": "Từ chối mục",
+			"LOADING": "Đang tải..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

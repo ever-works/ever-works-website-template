@@ -2071,7 +2071,8 @@
 			"REJECTION_REASON_LABEL": "Причина відхилення",
 			"REJECTION_REASON_PLACEHOLDER": "Поясніть, чому цей елемент відхиляється...",
 			"REJECTION_REASON_MIN_LENGTH": "Причина відхилення повинна містити щонайменше 10 символів",
-			"CONFIRM_REJECT": "Відхилити елемент"
+			"CONFIRM_REJECT": "Відхилити елемент",
+			"LOADING": "Завантаження..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

@@ -2071,7 +2071,8 @@
 			"REJECTION_REASON_LABEL": "Powód odrzucenia",
 			"REJECTION_REASON_PLACEHOLDER": "Wyjaśnij, dlaczego ten element jest odrzucany...",
 			"REJECTION_REASON_MIN_LENGTH": "Powód odrzucenia musi mieć co najmniej 10 znaków",
-			"CONFIRM_REJECT": "Odrzuć element"
+			"CONFIRM_REJECT": "Odrzuć element",
+			"LOADING": "Ładowanie..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

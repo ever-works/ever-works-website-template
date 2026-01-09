@@ -2071,7 +2071,8 @@
 			"REJECTION_REASON_LABEL": "Motivo del Rifiuto",
 			"REJECTION_REASON_PLACEHOLDER": "Spiega perché questo elemento viene rifiutato...",
 			"REJECTION_REASON_MIN_LENGTH": "Il motivo del rifiuto deve essere di almeno 10 caratteri",
-			"CONFIRM_REJECT": "Rifiuta Elemento"
+			"CONFIRM_REJECT": "Rifiuta Elemento",
+			"LOADING": "Caricamento..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

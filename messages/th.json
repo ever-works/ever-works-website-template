@@ -2071,7 +2071,8 @@
 			"REJECTION_REASON_LABEL": "เหตุผลในการปฏิเสธ",
 			"REJECTION_REASON_PLACEHOLDER": "อธิบายว่าทำไมรายการนี้ถูกปฏิเสธ...",
 			"REJECTION_REASON_MIN_LENGTH": "เหตุผลในการปฏิเสธต้องมีอย่างน้อย 10 ตัวอักษร",
-			"CONFIRM_REJECT": "ปฏิเสธรายการ"
+			"CONFIRM_REJECT": "ปฏิเสธรายการ",
+			"LOADING": "กำลังโหลด..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

@@ -2093,7 +2093,8 @@
 			"REJECTION_REASON_LABEL": "Razón del rechazo",
 			"REJECTION_REASON_PLACEHOLDER": "Explique por qué se rechaza este elemento...",
 			"REJECTION_REASON_MIN_LENGTH": "La razón del rechazo debe tener al menos 10 caracteres",
-			"CONFIRM_REJECT": "Rechazar elemento"
+			"CONFIRM_REJECT": "Rechazar elemento",
+			"LOADING": "Cargando..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Gestión de Usuarios",

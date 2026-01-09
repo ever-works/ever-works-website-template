@@ -2162,7 +2162,8 @@
 			"REJECTION_REASON_LABEL": "Raison du rejet",
 			"REJECTION_REASON_PLACEHOLDER": "Expliquez pourquoi cet élément est rejeté...",
 			"REJECTION_REASON_MIN_LENGTH": "La raison du rejet doit comporter au moins 10 caractères",
-			"CONFIRM_REJECT": "Rejeter l'élément"
+			"CONFIRM_REJECT": "Rejeter l'élément",
+			"LOADING": "Chargement..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Gestion des Utilisateurs",

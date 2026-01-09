@@ -2065,7 +2065,8 @@
 			"REJECTION_REASON_LABEL": "סיבת הדחייה",
 			"REJECTION_REASON_PLACEHOLDER": "הסבר מדוע פריט זה נדחה...",
 			"REJECTION_REASON_MIN_LENGTH": "סיבת הדחייה חייבת להכיל לפחות 10 תווים",
-			"CONFIRM_REJECT": "דחה פריט"
+			"CONFIRM_REJECT": "דחה פריט",
+			"LOADING": "טוען..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

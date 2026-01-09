@@ -2071,7 +2071,8 @@
 			"REJECTION_REASON_LABEL": "Причина отклонения",
 			"REJECTION_REASON_PLACEHOLDER": "Объясните, почему этот элемент отклоняется...",
 			"REJECTION_REASON_MIN_LENGTH": "Причина отклонения должна содержать не менее 10 символов",
-			"CONFIRM_REJECT": "Отклонить элемент"
+			"CONFIRM_REJECT": "Отклонить элемент",
+			"LOADING": "Загрузка..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

@@ -2071,7 +2071,8 @@
 			"REJECTION_REASON_LABEL": "अस्वीकृति का कारण",
 			"REJECTION_REASON_PLACEHOLDER": "बताएं कि यह आइटम क्यों अस्वीकार किया जा रहा है...",
 			"REJECTION_REASON_MIN_LENGTH": "अस्वीकृति का कारण कम से कम 10 वर्ण का होना चाहिए",
-			"CONFIRM_REJECT": "आइटम अस्वीकार करें"
+			"CONFIRM_REJECT": "आइटम अस्वीकार करें",
+			"LOADING": "लोड हो रहा है..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

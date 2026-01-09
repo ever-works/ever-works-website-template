@@ -2060,7 +2060,8 @@
 			"REJECTION_REASON_LABEL": "Причина за отхвърляне",
 			"REJECTION_REASON_PLACEHOLDER": "Обяснете защо този елемент се отхвърля...",
 			"REJECTION_REASON_MIN_LENGTH": "Причината за отхвърляне трябва да е поне 10 символа",
-			"CONFIRM_REJECT": "Отхвърли елемент"
+			"CONFIRM_REJECT": "Отхвърли елемент",
+			"LOADING": "Зареждане..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

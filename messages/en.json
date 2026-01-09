@@ -2166,7 +2166,8 @@
 			"STATUS_PENDING": "Pending",
 			"STATUS_APPROVED": "Approved",
 			"STATUS_REJECTED": "Rejected",
-			"ACTIONS": "Actions"
+			"ACTIONS": "Actions",
+			"LOADING": "Loading..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

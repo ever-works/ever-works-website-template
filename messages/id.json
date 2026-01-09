@@ -2071,7 +2071,8 @@
 			"REJECTION_REASON_LABEL": "Alasan Penolakan",
 			"REJECTION_REASON_PLACEHOLDER": "Jelaskan mengapa item ini ditolak...",
 			"REJECTION_REASON_MIN_LENGTH": "Alasan penolakan harus minimal 10 karakter",
-			"CONFIRM_REJECT": "Tolak Item"
+			"CONFIRM_REJECT": "Tolak Item",
+			"LOADING": "Memuat..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

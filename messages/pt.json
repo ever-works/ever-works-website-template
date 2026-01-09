@@ -2071,7 +2071,8 @@
 			"REJECTION_REASON_LABEL": "Motivo da Rejeição",
 			"REJECTION_REASON_PLACEHOLDER": "Explique por que este item está sendo rejeitado...",
 			"REJECTION_REASON_MIN_LENGTH": "O motivo da rejeição deve ter pelo menos 10 caracteres",
-			"CONFIRM_REJECT": "Rejeitar Item"
+			"CONFIRM_REJECT": "Rejeitar Item",
+			"LOADING": "Carregando..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

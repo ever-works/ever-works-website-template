@@ -2091,7 +2091,8 @@
 			"REJECTION_REASON_LABEL": "سبب الرفض",
 			"REJECTION_REASON_PLACEHOLDER": "اشرح سبب رفض هذا العنصر...",
 			"REJECTION_REASON_MIN_LENGTH": "يجب أن يكون سبب الرفض 10 أحرف على الأقل",
-			"CONFIRM_REJECT": "رفض العنصر"
+			"CONFIRM_REJECT": "رفض العنصر",
+			"LOADING": "جاري التحميل..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "إدارة المستخدمين",

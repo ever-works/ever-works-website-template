@@ -2071,7 +2071,8 @@
 			"REJECTION_REASON_LABEL": "却下理由",
 			"REJECTION_REASON_PLACEHOLDER": "このアイテムが却下される理由を説明してください...",
 			"REJECTION_REASON_MIN_LENGTH": "却下理由は10文字以上で入力してください",
-			"CONFIRM_REJECT": "アイテムを却下"
+			"CONFIRM_REJECT": "アイテムを却下",
+			"LOADING": "読み込み中..."
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",
