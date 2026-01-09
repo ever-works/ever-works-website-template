@@ -18,7 +18,7 @@
 		"ALREADY_HAVE_AN_ACCOUNT": "لديك حساب بالفعل؟ سجل دخول"
 	},
 	"header": {
-		"OPEN_USER_MENU": "Open user menu"
+		"OPEN_USER_MENU": "فتح قائمة المستخدم"
 	},
 	"common": {
 		"DISCOVER": "اكتشف",
@@ -36,53 +36,53 @@
 		"MODERN_GRID": "شبكة حديثة",
 		"VIEW_DEMO": "عرض تجريبي",
 		"CURRENT": "الحالي",
-		"CLASSIC_LAYOUT_DESC": "Classic layout with traditional design",
-		"GRID_LAYOUT_DESC": "Grid layout with organized cards",
+		"CLASSIC_LAYOUT_DESC": "تصميم كلاسيكي مع تصميم تقليدي",
+		"GRID_LAYOUT_DESC": "تخطيط الشبكة مع البطاقات المنظمة",
 		"NO_CONTENT_PROVIDED": "لا يوجد محتوى",
 		"OR_CONTINUE_WITH": "أو تابع باستخدام",
-		"SECURE_CONNECTION": "Secure SSL Connection",
-		"SIGN_IN_WITH": "Sign in with",
-		"WELCOME_BACK": "Welcome back",
-		"AMONG_US": "to our platform",
-		"JOIN_OUR": "Join our",
-		"COMMUNITY": "community",
-		"ACCESS_THOUSANDS": "Access thousands of items and find exactly what you're looking for in our professional ecosystem.",
-		"CREATE_ACCOUNT_DESC": "Create your account to list your items in our directory and explore our extensive directory of items.",
-		"ADVANCED_SEARCH": "Advanced Search",
-		"EXPLORE_THOUSANDS": "Explore thousands of listings",
-		"LIST_YOUR_BUSINESS": "List your items in our directory",
-		"INCREASE_VISIBILITY": "Increase your visibility",
-		"PROFESSIONAL_NETWORK": "Professional Network",
-		"CONNECT_WITH_EXPERTS": "Connect with experts",
-		"SECURED_BY_SSL": "Secured by SSL",
-		"WELCOME": "Welcome!",
-		"BACK_TO_HOME": "Back to Home",
-		"PASSWORD_RECOVERY": "Password Recovery",
-		"RESET_PASSWORD": "Reset Password",
-		"SECURE_RESET_LINK": "Secure Reset Link",
-		"ENCRYPTED_TIME_LIMITED": "Encrypted and time-limited for your safety",
-		"EMAIL_VERIFICATION": "Email Verification",
-		"CHECK_INBOX_INSTRUCTIONS": "Check your inbox for reset instructions",
-		"RECOVERY_EMAIL_SENT": "Recovery Email Sent!",
-		"DIDNT_RECEIVE_EMAIL": "Didn't receive the email?",
-		"SEND_RECOVERY_EMAIL": "Send Recovery Email",
-		"BACK_TO_LOGIN": "Back to Login",
-		"EMAIL_ADDRESS": "Email Address",
-		"ENTER_EMAIL_ADDRESS": "Enter your email address",
-		"ENTER_EMAIL_ASSOCIATED": "Enter the email address associated with your account",
+		"SECURE_CONNECTION": "اتصال SSL آمن",
+		"SIGN_IN_WITH": "تسجيل الدخول مع",
+		"WELCOME_BACK": "مرحبًا بعودتك",
+		"AMONG_US": "إلى منصتنا",
+		"JOIN_OUR": "انضم إلينا",
+		"COMMUNITY": "مجتمع",
+		"ACCESS_THOUSANDS": "يمكنك الوصول إلى آلاف العناصر والعثور على ما تبحث عنه بالضبط في نظامنا البيئي الاحترافي.",
+		"CREATE_ACCOUNT_DESC": "قم بإنشاء حسابك لإدراج العناصر الخاصة بك في دليلنا واستكشاف دليلنا الشامل للعناصر.",
+		"ADVANCED_SEARCH": "بحث متقدم",
+		"EXPLORE_THOUSANDS": "استكشاف الآلاف من القوائم",
+		"LIST_YOUR_BUSINESS": "قم بإدراج العناصر الخاصة بك في دليلنا",
+		"INCREASE_VISIBILITY": "زيادة ظهورك",
+		"PROFESSIONAL_NETWORK": "الشبكة المهنية",
+		"CONNECT_WITH_EXPERTS": "تواصل مع الخبراء",
+		"SECURED_BY_SSL": "مؤمن بواسطة SSL",
+		"WELCOME": "مرحباً!",
+		"BACK_TO_HOME": "العودة إلى المنزل",
+		"PASSWORD_RECOVERY": "استعادة كلمة المرور",
+		"RESET_PASSWORD": "إعادة تعيين كلمة المرور",
+		"SECURE_RESET_LINK": "رابط إعادة الضبط الآمن",
+		"ENCRYPTED_TIME_LIMITED": "مشفرة ومحدودة زمنيا من أجل سلامتك",
+		"EMAIL_VERIFICATION": "التحقق من البريد الإلكتروني",
+		"CHECK_INBOX_INSTRUCTIONS": "تحقق من صندوق الوارد الخاص بك للحصول على تعليمات إعادة التعيين",
+		"RECOVERY_EMAIL_SENT": "تم إرسال البريد الإلكتروني للاسترداد!",
+		"DIDNT_RECEIVE_EMAIL": "لم تتلق البريد الإلكتروني؟",
+		"SEND_RECOVERY_EMAIL": "إرسال البريد الإلكتروني للاسترداد",
+		"BACK_TO_LOGIN": "العودة إلى تسجيل الدخول",
+		"EMAIL_ADDRESS": "عنوان البريد الإلكتروني",
+		"ENTER_EMAIL_ADDRESS": "أدخل عنوان بريدك الإلكتروني",
+		"ENTER_EMAIL_ASSOCIATED": "أدخل عنوان البريد الإلكتروني المرتبط بحسابك",
 		"SAVE": "حفظ",
 		"SHARE": "مشاركة",
 		"VISIT_WEBSITE": "زيارة الموقع",
 		"FEATURED": "مميز",
 		"SHOW_ALL": "عرض الكل",
 		"SHOW_LESS": "عرض أقل",
-		"SHOW_MORE": "Show {count} more",
+		"SHOW_MORE": "عرض {count} المزيد",
 		"MORE": "المزيد",
 		"CATEGORY": "التصنيفات",
 		"ITEM": "عنصر",
 		"ITEMS": "عناصر",
 		"SUBMIT": "إرسال",
-		"GITHUB": "GitHub",
+		"GITHUB": "جيثب",
 		"TAG": "الوسوم",
 		"BROWSE_CATEGORIES": "تصفح التصنيفات",
 		"BROWSE_TAGS": "تصفح الوسوم",
@@ -105,12 +105,12 @@
 		"LOADING": "جاري التحميل...",
 		"END_OF_CONTENT": "لقد وصلت إلى النهاية",
 		"RETRY": "إعادة المحاولة",
-		"USER_MANAGEMENT": "User Management",
-		"USER_MANAGEMENT_DESC": "Manage platform users and permissions",
-		"CONTENT_MODERATION": "Content Moderation",
-		"CONTENT_MODERATION_DESC": "Review and approve new submissions",
-		"ANALYTICS_DASHBOARD": "Analytics Dashboard",
-		"ANALYTICS_DASHBOARD_DESC": "Access platform statistics and reports",
+		"USER_MANAGEMENT": "إدارة المستخدم",
+		"USER_MANAGEMENT_DESC": "إدارة مستخدمي النظام الأساسي والأذونات",
+		"CONTENT_MODERATION": "الإشراف على المحتوى",
+		"CONTENT_MODERATION_DESC": "مراجعة والموافقة على التقديمات الجديدة",
+		"ANALYTICS_DASHBOARD": "لوحة تحكم التحليلات",
+		"ANALYTICS_DASHBOARD_DESC": "الوصول إلى إحصائيات وتقارير المنصة",
 		"DASHBOARD": "لوحة التحكم",
 		"USE_CODE": "استخدم الكود",
 		"EXPIRED": "منتهي الصلاحية",
@@ -126,12 +126,12 @@
 		"MANAGE_CLIENTS_DESC": "عرض وإدارة ملفات العملاء",
 		"MANAGE_COMPANIES": "إدارة الشركات",
 		"MANAGE_COMPANIES_DESC": "عرض وإدارة معلومات الشركات",
-		"YOUR_PROFILE": "Your Profile",
-		"YOUR_PROFILE_DESC": "View and edit your profile",
-		"MANAGE_CATEGORIES_DESC": "Manage categories",
-		"MANAGE_TAGS_DESC": "Manage tags",
-		"MANAGE_ITEMS_DESC": "Manage items",
-		"MANAGE_COMMENTS_DESC": "Manage comments",
+		"YOUR_PROFILE": "ملفك الشخصي",
+		"YOUR_PROFILE_DESC": "عرض وتحرير ملف التعريف الخاص بك",
+		"MANAGE_CATEGORIES_DESC": "إدارة الفئات",
+		"MANAGE_TAGS_DESC": "إدارة العلامات",
+		"MANAGE_ITEMS_DESC": "إدارة العناصر",
+		"MANAGE_COMMENTS_DESC": "إدارة التعليقات",
 		"REPORTS": "البلاغات",
 		"MANAGE_REPORTS_DESC": "مراجعة المحتوى المبلغ عنه وحله",
 		"COMPLETED": "مكتمل",
@@ -170,19 +170,47 @@
 		"TO": "إلى",
 		"CLEAR_DATES": "مسح التواريخ",
 		"IMPORTING": "جارٍ الاستيراد...",
-		"MANAGE_USER_ROLES_DESC": "Manage user roles",
-		"FAVORITES": "Favorites",
-		"FAVORITES_DESCRIPTION": "Your saved items and tools. Access them quickly from here.",
-		"SIGN_IN_TO_VIEW_FAVORITES": "Sign in to view your favorites",
-		"FAVORITES_SIGN_IN_DESCRIPTION": "Create an account or sign in to save and view your favorite items.",
-		"ERROR_LOADING_FAVORITES": "Error loading favorites",
-		"FAVORITES_ERROR_DESCRIPTION": "There was an error loading your favorites. Please try again.",
-		"NO_FAVORITES_YET": "No favorites yet",
-		"FAVORITES_EMPTY_DESCRIPTION": "Start exploring and add items to your favorites to see them here.",
-		"FAVORITE_ITEMS": "favorite items",
-		"EXPLORE_ITEMS": "Explore Items",
-		"VIEW_DETAILS": "View Details",
-		"ADDED_ON": "Added"
+		"MANAGE_USER_ROLES_DESC": "إدارة أدوار المستخدم",
+		"FAVORITES": "المفضلة",
+		"FAVORITES_DESCRIPTION": "العناصر والأدوات المحفوظة الخاصة بك. ",
+		"SIGN_IN_TO_VIEW_FAVORITES": "تسجيل الدخول لعرض المفضلة لديك",
+		"FAVORITES_SIGN_IN_DESCRIPTION": "قم بإنشاء حساب أو قم بتسجيل الدخول لحفظ وعرض العناصر المفضلة لديك.",
+		"ERROR_LOADING_FAVORITES": "حدث خطأ أثناء تحميل المفضلة",
+		"FAVORITES_ERROR_DESCRIPTION": "حدث خطأ أثناء تحميل المفضلة. ",
+		"NO_FAVORITES_YET": "لا يوجد مفضلة بعد",
+		"FAVORITES_EMPTY_DESCRIPTION": "ابدأ في استكشاف العناصر وإضافتها إلى مفضلاتك لمشاهدتها هنا.",
+		"FAVORITE_ITEMS": "العناصر المفضلة",
+		"EXPLORE_ITEMS": "استكشاف العناصر",
+		"VIEW_DETAILS": "عرض التفاصيل",
+		"ADDED_ON": "تمت الإضافة",
+		"CONTAINER_WIDTH_DESC": "اختر بين تخطيط العرض الثابت أو العرض الكامل",
+		"COLLECTION": "المجموعات",
+		"BROWSE_COLLECTIONS": "تصفح المجموعات",
+		"VIEW_COLLECTION": "عرض المجموعة",
+		"COLLECTIONS_DESCRIPTION": "استكشف مجموعاتنا المنسقة لاكتشاف العناصر المنظمة حسب الموضوع.",
+		"EXPLORE_BY_COLLECTIONS": "استكشاف حسب المجموعات",
+		"COLLECTION_ITEMS": "{count, plural, one {# عنصر} other {# عناصر}}",
+		"MANAGE_COLLECTIONS": "إدارة المجموعات",
+		"MANAGE_COLLECTIONS_DESC": "تنظيم وتنظيم عناصر الدليل",
+		"ADD_COLLECTION": "إضافة مجموعة",
+		"CREATE_COLLECTION": "إنشاء مجموعة",
+		"EDIT_COLLECTION": "تحرير المجموعة",
+		"LOADING_COLLECTIONS": "جارٍ تحميل المجموعات…",
+		"NO_COLLECTIONS_YET": "لا توجد مجموعات بعد.",
+		"ITEMS_ASSIGNED": "العناصر المخصصة",
+		"ASSIGN_ITEMS": "تعيين العناصر",
+		"SELECT_ITEMS_DESCRIPTION": "حدد العناصر التي تنتمي إلى هذه المجموعة.",
+		"THIS_COLLECTION": "هذه المجموعة",
+		"SELECTED_COUNT": "{count} محدد",
+		"SAVE_CHANGES": "حفظ التغييرات",
+		"TOTAL": "المجموع",
+		"ACTIVE": "نشيط",
+		"INACTIVE": "غير نشط",
+		"SLUG_LABEL": "سبيكة:",
+		"DELETE_COLLECTION_CONFIRM": "هل تريد حذف المجموعة \"{name}\"؟ ",
+		"EDIT": "يحرر",
+		"OUR_MOST_POPULAR_ITEMS": "العناصر الأكثر شعبية لدينا",
+		"SORT_POPULAR_ITEMS": "فرز العناصر الشعبية"
 	},
 	"survey": {
 		"SURVEYS": "الاستطلاعات",
@@ -207,9 +235,9 @@
 		"BACK_TO_SURVEYS": "العودة إلى الاستطلاعات",
 		"SURVEYS_MANAGEMENT": "إدارة الاستطلاعات",
 		"SURVEYS_MANAGEMENT_DESC": "إدارة ومراقبة جميع الاستطلاعات",
-		"SURVEYS_DISABLED_WARNING": "Surveys feature is currently disabled in settings",
-		"SURVEYS_DISABLED_MESSAGE": "Surveys are hidden from the public site. You can still manage surveys here, but they won't be visible to non-admin users until re-enabled.",
-		"GO_TO_SETTINGS": "Go to Settings",
+		"SURVEYS_DISABLED_WARNING": "ميزة الاستطلاعات معطلة حاليًا في الإعدادات",
+		"SURVEYS_DISABLED_MESSAGE": "الاستطلاعات مخفية من الموقع العام. ",
+		"GO_TO_SETTINGS": "انتقل إلى الإعدادات",
 		"ALL_SURVEYS": "جميع الاستطلاعات",
 		"GLOBAL_SURVEY": "استطلاع عام",
 		"ITEM_SURVEY": "استطلاع العنصر",
@@ -296,9 +324,9 @@
 		"PREVIEW": "معاينة",
 		"COPY_PUBLIC_LINK": "نسخ الرابط العام",
 		"BACK_TO_ITEM": "العودة إلى العنصر",
-		"WARNING_DISABLED_TITLE": "Surveys are currently disabled site-wide",
-		"WARNING_DISABLED_MESSAGE": "Surveys are hidden from the public site. You can still view surveys here as an admin, but they won't be accessible to users until re-enabled.",
-		"WARNING_DISABLED_ACTION": "Go to Settings to Enable"
+		"WARNING_DISABLED_TITLE": "الاستطلاعات معطلة حاليًا على مستوى الموقع",
+		"WARNING_DISABLED_MESSAGE": "الاستطلاعات مخفية من الموقع العام. ",
+		"WARNING_DISABLED_ACTION": "انتقل إلى الإعدادات للتمكين"
 	},
 	"listing": {
 		"ALL": "الكل",
@@ -342,28 +370,28 @@
 		"NEWEST": "الأحدث",
 		"OLDEST": "الأقدم",
 		"POPULARITY": "الشعبية",
-		"FULL_NAME": "Full Name",
-		"EMAIL_ADDRESS": "Email Address",
-		"SIGN_IN": "Sign In",
-		"SIGN_UP": "Sign Up",
-		"PASSWORD": "Password",
-		"FORGOT_PASSWORD": "Forgot Password?",
-		"REMEMBER_ME": "Remember me",
-		"DONT_HAVE_ACCOUNT": "Don't have an account?",
-		"ALREADY_HAVE_ACCOUNT": "Already have an account?",
-		"FIRST_NAME": "First Name",
-		"LAST_NAME": "Last Name",
-		"CONFIRM_PASSWORD": "Confirm Password",
-		"AGREE_TERMS": "I agree to the",
-		"TERMS_CONDITIONS": "Terms & Conditions",
-		"PRIVACY_POLICY": "Privacy Policy",
-		"AND": "and",
-		"LOADING": "Loading...",
-		"END_OF_CONTENT": "You've reached the end",
-		"RETRY": "Retry",
-		"FILTER_STATUS_MATCH_ALL": "Showing {filtered} of {total} items that match all selected tags",
-		"FILTER_STATUS": "Showing {filtered} of {total} items",
-		"SHOWING_TOTAL_ITEMS": "Showing {total} items"
+		"FULL_NAME": "الاسم الكامل",
+		"EMAIL_ADDRESS": "عنوان البريد الإلكتروني",
+		"SIGN_IN": "تسجيل الدخول",
+		"SIGN_UP": "اشتراك",
+		"PASSWORD": "كلمة المرور",
+		"FORGOT_PASSWORD": "هل نسيت كلمة السر؟",
+		"REMEMBER_ME": "تذكرنى",
+		"DONT_HAVE_ACCOUNT": "ليس لديك حساب؟",
+		"ALREADY_HAVE_ACCOUNT": "هل لديك حساب بالفعل؟",
+		"FIRST_NAME": "الاسم الأول",
+		"LAST_NAME": "اسم العائلة",
+		"CONFIRM_PASSWORD": "تأكيد كلمة المرور",
+		"AGREE_TERMS": "أنا أوافق على",
+		"TERMS_CONDITIONS": "الشروط والأحكام",
+		"PRIVACY_POLICY": "سياسة الخصوصية",
+		"AND": "و",
+		"LOADING": "تحميل...",
+		"END_OF_CONTENT": "لقد وصلت إلى النهاية",
+		"RETRY": "أعد المحاولة",
+		"FILTER_STATUS_MATCH_ALL": "عرض {filtered} من {total} عنصر يطابق جميع الوسوم المحددة",
+		"FILTER_STATUS": "عرض {filtered} من {total} العناصر",
+		"SHOWING_TOTAL_ITEMS": "عرض {total} العناصر"
 	},
 	"tagsModal": {
 		"SELECTED_TAGS": "الوسوم المحددة",
@@ -383,8 +411,8 @@
 		"WEBSITE": "الموقع الإلكتروني",
 		"PUBLISHED": "تم النشر",
 		"NO_TAGS_AVAILABLE": "لا توجد وسوم متاحة",
-		"RATING": "Rating",
-		"PROMO_CODE": "Promo Code"
+		"RATING": "تصنيف",
+		"PROMO_CODE": "الرمز الترويجي"
 	},
 	"footer": {
 		"ALL_RIGHTS_RESERVED": "جميع الحقوق محفوظة",
@@ -400,8 +428,8 @@
 		"TAG": "وسم",
 		"BLOG": "المدونة",
 		"SUBMIT": "إرسال",
-		"HELP": "Help",
-		"PRICING": "Pricing",
+		"HELP": "يساعد",
+		"PRICING": "التسعير",
 		"STUDIO": "الاستوديو",
 		"HOME_2": "الرئيسية 2",
 		"HOME_3": "الرئيسية 3",
@@ -449,7 +477,7 @@
 		"LOGOUT_DESC": "تسجيل الخروج من حسابك",
 		"PROFILE_DESC": "عرض وتعديل ملفك الشخصي",
 		"ACCOUNT_SETTINGS_DESC": "إعدادات الحساب والتفضيلات",
-		"ADMIN_SETTINGS_DESC": "Manage site configuration and preferences",
+		"ADMIN_SETTINGS_DESC": "إدارة تكوين الموقع والتفضيلات",
 		"PROFILE_SETTINGS": "إعدادات الملف الشخصي",
 		"PAGINATION_STYLE": "نمط الترقيم",
 		"PAGINATION_STYLE_DESC": "اختر كيفية عرض المحتوى عند تصفح القوائم",
@@ -499,53 +527,105 @@
 			"BILLING": {
 				"TITLE": "الفواتير",
 				"DESCRIPTION": "أدر معلومات الفواتير الخاصة بك وتفاصيل الاشتراك"
+			},
+			"SPONSORSHIPS": {
+				"TITLE": "الرعاية",
+				"DESCRIPTION": "تتبع وإدارة الرعاية الخاصة بك"
 			}
 		},
 		"SECURITY_PAGE": {
-			"TITLE": "Security Settings",
-			"BACK_TO_SETTINGS": "Back to Settings",
+			"TITLE": "إعدادات الأمان",
+			"BACK_TO_SETTINGS": "العودة إلى الإعدادات",
 			"CHANGE_PASSWORD": {
-				"TITLE": "Change Password",
-				"DESCRIPTION": "Choose a strong password that you don't use elsewhere. We'll send you a confirmation email after your password is changed."
+				"TITLE": "تغيير كلمة المرور",
+				"DESCRIPTION": "اختر كلمة مرور قوية لا تستخدمها في أي مكان آخر. "
 			},
 			"SECURITY_TIPS": {
-				"TITLE": "Security Tips",
-				"TIP_1": "Use a unique password that you haven't used for other accounts",
-				"TIP_2": "Include a combination of uppercase, lowercase, numbers, and special characters",
-				"TIP_3": "Consider enabling two-factor authentication for enhanced security",
-				"TIP_4": "Regularly review your login activity and active sessions"
+				"TITLE": "نصائح أمنية",
+				"TIP_1": "استخدم كلمة مرور فريدة لم تستخدمها لحسابات أخرى",
+				"TIP_2": "قم بتضمين مجموعة من الأحرف الكبيرة والصغيرة والأرقام والأحرف الخاصة",
+				"TIP_3": "فكر في تمكين المصادقة الثنائية لتحسين الأمان",
+				"TIP_4": "قم بمراجعة نشاط تسجيل الدخول والجلسات النشطة بانتظام"
 			},
 			"CHANGE_PASSWORD_FORM": {
-				"CURRENT_PASSWORD": "Current Password",
-				"CURRENT_PASSWORD_PLACEHOLDER": "Enter your current password",
-				"NEW_PASSWORD": "New Password",
-				"NEW_PASSWORD_PLACEHOLDER": "Enter your new password",
-				"CONFIRM_PASSWORD": "Confirm New Password",
-				"CONFIRM_PASSWORD_PLACEHOLDER": "Confirm your new password",
-				"UPDATE_PASSWORD": "Update Password",
-				"UPDATING_PASSWORD": "Updating password...",
-				"CANCEL": "Cancel",
-				"SHOW_PASSWORD": "Show password",
-				"HIDE_PASSWORD": "Hide password",
-				"SUCCESS_MESSAGE": "Password changed successfully!",
-				"SUCCESS_DESCRIPTION": "A confirmation email has been sent to your email address.",
+				"CURRENT_PASSWORD": "كلمة المرور الحالية",
+				"CURRENT_PASSWORD_PLACEHOLDER": "أدخل كلمة المرور الحالية الخاصة بك",
+				"NEW_PASSWORD": "كلمة المرور الجديدة",
+				"NEW_PASSWORD_PLACEHOLDER": "أدخل كلمة المرور الجديدة",
+				"CONFIRM_PASSWORD": "تأكيد كلمة المرور الجديدة",
+				"CONFIRM_PASSWORD_PLACEHOLDER": "قم بتأكيد كلمة المرور الجديدة",
+				"UPDATE_PASSWORD": "تحديث كلمة المرور",
+				"UPDATING_PASSWORD": "جارٍ تحديث كلمة المرور...",
+				"CANCEL": "يلغي",
+				"SHOW_PASSWORD": "إظهار كلمة المرور",
+				"HIDE_PASSWORD": "إخفاء كلمة المرور",
+				"SUCCESS_MESSAGE": "تم تغيير كلمة المرور بنجاح!",
+				"SUCCESS_DESCRIPTION": "تم إرسال رسالة تأكيد بالبريد الإلكتروني إلى عنوان بريدك الإلكتروني.",
 				"VALIDATION": {
-					"CURRENT_REQUIRED": "Current password is required",
-					"NEW_REQUIRED": "New password is required",
-					"MIN_LENGTH": "Password must be at least 8 characters",
-					"UPPERCASE": "Password must contain at least one uppercase letter",
-					"LOWERCASE": "Password must contain at least one lowercase letter",
-					"NUMBER": "Password must contain at least one number",
-					"SPECIAL": "Password must contain at least one special character",
-					"CONFIRM_REQUIRED": "Please confirm your password",
-					"PASSWORDS_MATCH": "Passwords don't match"
+					"CURRENT_REQUIRED": "كلمة المرور الحالية مطلوبة",
+					"NEW_REQUIRED": "كلمة المرور الجديدة مطلوبة",
+					"MIN_LENGTH": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
+					"UPPERCASE": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل",
+					"LOWERCASE": "يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل",
+					"NUMBER": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
+					"SPECIAL": "يجب أن تحتوي كلمة المرور على حرف خاص واحد على الأقل",
+					"CONFIRM_REQUIRED": "يرجى تأكيد كلمة المرور الخاصة بك",
+					"PASSWORDS_MATCH": "كلمات المرور غير متطابقة"
 				},
 				"ERRORS": {
-					"CURRENT_INCORRECT": "Current password is incorrect",
-					"SAME_PASSWORD": "New password must be different from current password",
-					"GENERIC_ERROR": "An error occurred while updating your password. Please try again."
+					"CURRENT_INCORRECT": "كلمة المرور الحالية غير صحيحة",
+					"SAME_PASSWORD": "كلمة المرور الجديدة يجب أن تكون مختلفة عن كلمة المرور الحالية",
+					"GENERIC_ERROR": "حدث خطأ أثناء تحديث كلمة المرور الخاصة بك. "
 				}
 			}
+		},
+		"THEME_COLORS_PAGE": {
+			"TITLE": "الموضوع والمظهر",
+			"BACK_TO_SETTINGS": "العودة إلى الإعدادات",
+			"DESCRIPTION": "اختر موضوعًا مرئيًا لملفك الشخصي. ",
+			"CHOOSE_THEME": "اختر الموضوع المرئي",
+			"CHOOSE_THEME_DESC": "حدد موضوعًا يمثل أسلوبك وعلامتك التجارية على أفضل وجه",
+			"UNABLE_TO_LOAD_THEMES": "غير قادر على تحميل المواضيع"
+		},
+		"PORTFOLIO_PAGE": {
+			"TITLE": "إدارة المحافظ",
+			"BACK_TO_SETTINGS": "العودة إلى الإعدادات",
+			"DESCRIPTION": "إضافة وتحرير وتنظيم مشاريع محفظتك. ",
+			"ADD_NEW_PROJECT": "إضافة مشروع جديد",
+			"YOUR_PROJECTS": "مشاريعك",
+			"FORM": {
+				"PROJECT_TITLE": "عنوان المشروع",
+				"PROJECT_TITLE_PLACEHOLDER": "أدخل عنوان المشروع",
+				"IMAGE_URL": "عنوان URL للصورة",
+				"IMAGE_URL_PLACEHOLDER": "https://example.com/image.jpg",
+				"DESCRIPTION": "وصف",
+				"DESCRIPTION_PLACEHOLDER": "اوصف مشروعك...",
+				"PROJECT_URL": "عنوان URL للمشروع",
+				"PROJECT_URL_PLACEHOLDER": "https://yourproject.com",
+				"TAGS": "العلامات (مفصولة بفواصل)",
+				"TAGS_PLACEHOLDER": "رد فعل، تايب سكريبت، Next.js",
+				"FEATURED_PROJECT": "مشروع مميز",
+				"ADD_PROJECT": "أضف المشروع"
+			},
+			"VALIDATION": {
+				"TITLE_REQUIRED": "عنوان المشروع مطلوب.",
+				"IMAGE_URL_REQUIRED": "عنوان URL للصورة مطلوب.",
+				"IMAGE_URL_INVALID": "الرجاء إدخال عنوان URL صالح للصورة.",
+				"DESCRIPTION_REQUIRED": "الوصف مطلوب.",
+				"PROJECT_URL_REQUIRED": "عنوان URL للمشروع مطلوب.",
+				"PROJECT_URL_INVALID": "الرجاء إدخال عنوان URL صالح للمشروع."
+			},
+			"SUCCESS": {
+				"PROJECT_ADDED": "تمت إضافة المشروع"
+			},
+			"PROJECT_ITEM": {
+				"FEATURED": "مميز",
+				"VIEW_PROJECT": "عرض المشروع",
+				"EDIT_PROJECT": "تحرير المشروع",
+				"EDIT_PROJECT_ALERT": "تعديل المشروع: {العنوان}",
+				"DELETE_PROJECT": "حذف المشروع"
+			},
+			"DELETE_CONFIRM": "هل أنت متأكد أنك تريد حذف \"{title}\"؟"
 		}
 	},
 	"newsletter": {
@@ -712,10 +792,10 @@
 		"PREMIUM_SUPPORT": "دعم متميز",
 		"MOST_POPULAR": "الأكثر شعبية",
 		"GET_STARTED_FREE": "ابدأ مجاناً",
-		"UPGRADE_TO_STANDARD": "Submit Now",
-		"GO_PREMIUM": "Subscribe",
+		"UPGRADE_TO_STANDARD": "أرسل الآن",
+		"GO_PREMIUM": "يشترك",
 		"SUBMIT_FOR_FREE": "أرسل مجاناً",
-		"SUBSCRIBE_NOW": "Subscribe Now",
+		"SUBSCRIBE_NOW": "اشترك الآن",
 		"SELECT_FREE": "اختر المجاني",
 		"SELECT_STANDARD": "اختر القياسي",
 		"SELECT_PREMIUM": "اختر المميز",
@@ -729,19 +809,19 @@
 		"EXPERT_ASSISTANCE": "مساعدة خبراء 24/7",
 		"PLANS": {
 			"FREE": {
-				"NAME": "Free",
-				"PERIOD": "/submission",
-				"DESCRIPTION": "Submit a product or service for free"
+				"NAME": "حر",
+				"PERIOD": "/استسلام",
+				"DESCRIPTION": "أرسل منتجًا أو خدمة مجانًا"
 			},
 			"STANDARD": {
-				"NAME": "Standard",
-				"PERIOD": "/submission",
-				"DESCRIPTION": "Everything in Free plan with enhanced features"
+				"NAME": "معيار",
+				"PERIOD": "/استسلام",
+				"DESCRIPTION": "كل شيء في خطة مجانية مع ميزات محسنة"
 			},
 			"PREMIUM": {
-				"NAME": "Premium",
-				"PERIOD": "/month",
-				"DESCRIPTION": "Maximum visibility with all premium features"
+				"NAME": "غالي",
+				"PERIOD": "/شهر",
+				"DESCRIPTION": "أقصى قدر من الرؤية مع جميع الميزات المتميزة"
 			}
 		},
 		"FREE_PLAN_FEATURES": {
@@ -794,65 +874,65 @@
 		"GO_ENTERPRISE": "اختر المؤسسات"
 	},
 	"payment": {
-		"title": "Complete Your Order",
+		"title": "أكمل طلبك",
 		"form": {
-			"processing": "Processing payment...",
-			"pay_button": "Pay Now",
-			"loading": "Loading payment form...",
+			"processing": "جارٍ معالجة الدفع...",
+			"pay_button": "ادفع الآن",
+			"loading": "جارٍ تحميل نموذج الدفع...",
 			"error": {
-				"default": "An error occurred during payment",
-				"setup": "An error occurred during setup",
-				"unexpected": "An unexpected error occurred",
-				"payment_method_required": "Please provide a payment method"
+				"default": "حدث خطأ أثناء الدفع",
+				"setup": "حدث خطأ أثناء الإعداد",
+				"unexpected": "حدث خطأ غير متوقع",
+				"payment_method_required": "يرجى تقديم طريقة الدفع"
 			}
 		},
 		"status": {
-			"success": "Payment successful",
-			"failed": "Payment failed",
-			"pending": "Payment pending"
+			"success": "تم الدفع بنجاح",
+			"failed": "فشل الدفع",
+			"pending": "الدفع معلق"
 		}
 	},
 	"help": {
-		"HERO_BADGE_TEXT": "The Professional Directory Platform Builder",
-		"HERO_MAIN_TITLE": "Easily Launch Your AI-powered",
-		"HERO_MAIN_TITLE_HIGHLIGHT": "Directory",
-		"HERO_SUBTITLE": "The most complete directory boilerplate, enhanced with AI and packed with all the essential features: listings, payments, submissions, CMS, blog, authentication, newsletter, SEO, themes, and more.",
-		"HERO_FEATURE_1_TITLE": "Smart Content Management",
-		"HERO_FEATURE_1_DESC": "Streamlined content organization and automated workflows",
-		"HERO_FEATURE_2_TITLE": "Professional Design",
-		"HERO_FEATURE_2_DESC": "Modern, responsive layouts that convert visitors",
-		"HERO_FEATURE_3_TITLE": "Revenue Optimization",
+		"HERO_BADGE_TEXT": "منشئ منصة الدليل الاحترافي",
+		"HERO_MAIN_TITLE": "قم بتشغيل جهازك الذي يعمل بالذكاء الاصطناعي بسهولة",
+		"HERO_MAIN_TITLE_HIGHLIGHT": "دليل",
+		"HERO_SUBTITLE": "الدليل النموذجي الأكثر اكتمالا، معزز بالذكاء الاصطناعي ومليء بجميع الميزات الأساسية: القوائم، والمدفوعات، والإرسالات، ونظام إدارة المحتوى، والمدونة، والمصادقة، والنشرة الإخبارية، وتحسين محركات البحث، والموضوعات، والمزيد.",
+		"HERO_FEATURE_1_TITLE": "إدارة المحتوى الذكي",
+		"HERO_FEATURE_1_DESC": "تنظيم مبسط للمحتوى وسير العمل الآلي",
+		"HERO_FEATURE_2_TITLE": "تصميم احترافي",
+		"HERO_FEATURE_2_DESC": "تخطيطات حديثة وسريعة الاستجابة تعمل على تحويل الزوار",
+		"HERO_FEATURE_3_TITLE": "تحسين الإيرادات",
 		"HERO_FEATURE_3_DESC": "أدوات تحقيق الدخل المدمجة للنمو المستدام",
-		"HERO_CTA_PRIMARY": "Launch Your Directory",
-		"HERO_CTA_SECONDARY": "Explore Features",
-		"HERO_STATS_USERS": "Active Directories",
-		"HERO_STATS_COUNTRIES": "Countries",
-		"HERO_STATS_UPTIME": "Uptime",
-		"HERO_SCROLL_TEXT": "Scroll to explore",
-		"HERO_DEMO_BADGE": "Live Demo",
-		"HERO_DEMO_TITLE": "Professional Directory Platform",
-		"HERO_DEMO_DESCRIPTION": "Experience the power of modern directory solutions",
-		"HERO_DEMO_FEATURE_1": "Strategic Listings",
-		"HERO_DEMO_FEATURE_2": "Intelligent Search",
-		"HERO_DEMO_FEATURE_3": "Mobile Optimized",
-		"HERO_DEMO_CTA": "Try It Now",
-		"HERO_IN_MINUTES": "in Minutes",
-		"HERO_SPECIAL_OFFER": "🔥 Limited Time: Free Premium Templates",
-		"HERO_CREATE_YOUR": "Create Your",
-		"HERO_DIRECTORY": "Directory",
-		"HERO_AI": "AI-powered",
-		"HERO_LISTINGS": "smart listings",
-		"HERO_PAYMENT": "payment processing",
-		"HERO_SUBTITLE_FEATURES": "and everything you need to build a successful directory platform.",
-		"HERO_CTA_START": "Start Building Now",
-		"HERO_CTA_PREVIEW": "See Live Demo",
-		"HERO_SOCIAL_PROOF": "developers already building with Ever Works",
-		"HOW_IT_WORKS_STEP1_TITLE": "Setup Your Directory",
-		"HOW_IT_WORKS_STEP1_DESC": "Clone the repository and install dependencies to get your directory builder ready",
-		"HOW_IT_WORKS_STEP2_TITLE": "Configure Your Platform",
-		"HOW_IT_WORKS_STEP2_DESC": "Set up your database, authentication, and customize your directory settings",
-		"HOW_IT_WORKS_STEP3_TITLE": "Launch Your Directory",
-		"HOW_IT_WORKS_STEP3_DESC": "Deploy your directory platform and start accepting submissions from users",
+		"HERO_CTA_PRIMARY": "قم بتشغيل الدليل الخاص بك",
+		"HERO_CTA_SECONDARY": "اكتشف الميزات",
+		"HERO_STATS_USERS": "الدلائل النشطة",
+		"HERO_STATS_COUNTRIES": "بلدان",
+		"HERO_STATS_UPTIME": "الجهوزية",
+		"HERO_SCROLL_TEXT": "قم بالتمرير للاستكشاف",
+		"HERO_DEMO_BADGE": "العرض المباشر",
+		"HERO_DEMO_TITLE": "منصة الدليل المهني",
+		"HERO_DEMO_DESCRIPTION": "تجربة قوة حلول الدليل الحديثة",
+		"HERO_DEMO_FEATURE_1": "القوائم الاستراتيجية",
+		"HERO_DEMO_FEATURE_2": "البحث الذكي",
+		"HERO_DEMO_FEATURE_3": "الأمثل للجوال",
+		"HERO_DEMO_CTA": "جربه الآن",
+		"HERO_IN_MINUTES": "في دقائق",
+		"HERO_SPECIAL_OFFER": "🔥 وقت محدود: قوالب مميزة مجانية",
+		"HERO_CREATE_YOUR": "إنشاء الخاص بك",
+		"HERO_DIRECTORY": "دليل",
+		"HERO_AI": "مدعوم بالذكاء الاصطناعي",
+		"HERO_LISTINGS": "القوائم الذكية",
+		"HERO_PAYMENT": "معالجة الدفع",
+		"HERO_SUBTITLE_FEATURES": "وكل ما تحتاجه لبناء منصة دليل ناجحة.",
+		"HERO_CTA_START": "ابدأ البناء الآن",
+		"HERO_CTA_PREVIEW": "انظر العرض التجريبي المباشر",
+		"HERO_SOCIAL_PROOF": "يقوم المطورون بالفعل بالبناء باستخدام Ever Works",
+		"HOW_IT_WORKS_STEP1_TITLE": "قم بإعداد الدليل الخاص بك",
+		"HOW_IT_WORKS_STEP1_DESC": "قم باستنساخ المستودع وتثبيت التبعيات لتجهيز منشئ الدليل الخاص بك",
+		"HOW_IT_WORKS_STEP2_TITLE": "تكوين النظام الأساسي الخاص بك",
+		"HOW_IT_WORKS_STEP2_DESC": "قم بإعداد قاعدة البيانات الخاصة بك والمصادقة وتخصيص إعدادات الدليل الخاص بك",
+		"HOW_IT_WORKS_STEP3_TITLE": "قم بتشغيل الدليل الخاص بك",
+		"HOW_IT_WORKS_STEP3_DESC": "انشر منصة الدليل الخاصة بك وابدأ في قبول الطلبات المقدمة من المستخدمين",
 		"MONETIZATION_AFFILIATION_TITLE": "التسويق بالعمولة",
 		"MONETIZATION_AFFILIATION_DESC": "اكسب عمولات من خلال الترويج للمنتجات والخدمات ذات الصلة لزوار دليلك",
 		"MONETIZATION_PAID_SUBMISSION_TITLE": "القوائم المدفوعة",
@@ -874,35 +954,35 @@
 		"INSTALLATION_STEP5_DESC": "قم بتشغيل خادم التطوير وابدأ في بناء دليلك.",
 		"INSTALLATION_GUIDE_TITLE": "دليل التثبيت",
 		"INSTALLATION_GUIDE_SUBTITLE": "دليل خطوة بخطوة لتثبيت المشروع",
-		"INSTALLATION_GUIDE_DESC": "Follow these steps to get your directory platform up and running in minutes",
-		"INSTALLATION_PROGRESS": "Installation Progress",
-		"USAGE_CREATING_ITEMS_TITLE": "Creating Directory Items",
-		"USAGE_CREATING_ITEMS_DESC": "Learn how to add and manage items in your directory platform",
-		"USAGE_MANAGING_CATEGORIES_TITLE": "Managing Categories",
-		"USAGE_MANAGING_CATEGORIES_DESC": "Organize your directory with custom categories and tags",
-		"USAGE_CUSTOMIZING_THEMES_TITLE": "Customizing Themes",
-		"USAGE_CUSTOMIZING_THEMES_DESC": "Personalize your directory's appearance with custom themes and layouts",
-		"USAGE_SETTING_UP_PAYMENTS_TITLE": "Setting Up Payments",
+		"INSTALLATION_GUIDE_DESC": "اتبع هذه الخطوات لإعداد منصة الدليل الخاصة بك وتشغيلها خلال دقائق",
+		"INSTALLATION_PROGRESS": "تقدم التثبيت",
+		"USAGE_CREATING_ITEMS_TITLE": "إنشاء عناصر الدليل",
+		"USAGE_CREATING_ITEMS_DESC": "تعرف على كيفية إضافة العناصر وإدارتها في منصة الدليل الخاصة بك",
+		"USAGE_MANAGING_CATEGORIES_TITLE": "إدارة الفئات",
+		"USAGE_MANAGING_CATEGORIES_DESC": "قم بتنظيم الدليل الخاص بك باستخدام الفئات والعلامات المخصصة",
+		"USAGE_CUSTOMIZING_THEMES_TITLE": "تخصيص المواضيع",
+		"USAGE_CUSTOMIZING_THEMES_DESC": "قم بتخصيص مظهر الدليل الخاص بك باستخدام السمات والتخطيطات المخصصة",
+		"USAGE_SETTING_UP_PAYMENTS_TITLE": "إعداد المدفوعات",
 		"USAGE_SETTING_UP_PAYMENTS_DESC": "قم بتكوين معالجة الدفع للقوائم المميزة وتحقيق الدخل",
-		"USAGE_BEST_PRACTICES_TITLE": "Directory Best Practices",
-		"USAGE_BEST_PRACTICE_1_TITLE": "Optimize for Search",
-		"USAGE_BEST_PRACTICE_1_DESC": "Implement SEO best practices to make your directory discoverable",
-		"USAGE_BEST_PRACTICE_2_TITLE": "Secure Your Platform",
-		"USAGE_BEST_PRACTICE_2_DESC": "Follow security guidelines to protect user data and maintain trust",
-		"USAGE_BEST_PRACTICE_3_TITLE": "Optimize Performance",
-		"USAGE_BEST_PRACTICE_3_DESC": "Implement caching, lazy loading, and other performance optimizations for better user experience",
-		"USAGE_BEST_PRACTICE_4_TITLE": "Monitor & Analytics",
-		"USAGE_BEST_PRACTICE_4_DESC": "Set up monitoring tools and analytics to track your directory's performance and user engagement",
-		"USAGE_CUSTOMIZING_DESIGN_TITLE": "Customizing Design",
-		"USAGE_CUSTOMIZING_DESIGN_DESC": "Learn how to customize themes, layouts, and visual elements of your directory",
-		"USAGE_MANAGING_USERS_TITLE": "Managing Users",
-		"USAGE_MANAGING_USERS_DESC": "Handle user authentication, roles, and permissions in your directory platform",
-		"USAGE_PAYMENTS_SETUP_TITLE": "Payment Setup",
-		"USAGE_PAYMENTS_SETUP_DESC": "Configure Stripe integration and payment processing for premium listings",
-		"USAGE_DEPLOYMENT_TITLE": "Deployment Guide",
-		"USAGE_DEPLOYMENT_DESC": "Deploy your directory to production with Vercel, Netlify, or other platforms",
-		"USAGE_GUIDE_TITLE": "Complete Usage Guide",
-		"USAGE_GUIDE_SUBTITLE": "Master your directory platform with comprehensive tutorials and best practices",
+		"USAGE_BEST_PRACTICES_TITLE": "أفضل ممارسات الدليل",
+		"USAGE_BEST_PRACTICE_1_TITLE": "الأمثل للبحث",
+		"USAGE_BEST_PRACTICE_1_DESC": "قم بتنفيذ أفضل ممارسات تحسين محركات البحث (SEO) لجعل دليلك قابلاً للاكتشاف",
+		"USAGE_BEST_PRACTICE_2_TITLE": "قم بتأمين النظام الأساسي الخاص بك",
+		"USAGE_BEST_PRACTICE_2_DESC": "اتبع إرشادات الأمان لحماية بيانات المستخدم والحفاظ على الثقة",
+		"USAGE_BEST_PRACTICE_3_TITLE": "تحسين الأداء",
+		"USAGE_BEST_PRACTICE_3_DESC": "قم بتنفيذ التخزين المؤقت والتحميل البطيء وتحسينات الأداء الأخرى للحصول على تجربة مستخدم أفضل",
+		"USAGE_BEST_PRACTICE_4_TITLE": "المراقبة والتحليلات",
+		"USAGE_BEST_PRACTICE_4_DESC": "قم بإعداد أدوات المراقبة والتحليلات لتتبع أداء الدليل الخاص بك ومشاركة المستخدم",
+		"USAGE_CUSTOMIZING_DESIGN_TITLE": "تخصيص التصميم",
+		"USAGE_CUSTOMIZING_DESIGN_DESC": "تعرف على كيفية تخصيص السمات والتخطيطات والعناصر المرئية للدليل الخاص بك",
+		"USAGE_MANAGING_USERS_TITLE": "إدارة المستخدمين",
+		"USAGE_MANAGING_USERS_DESC": "التعامل مع مصادقة المستخدم والأدوار والأذونات في النظام الأساسي للدليل الخاص بك",
+		"USAGE_PAYMENTS_SETUP_TITLE": "إعداد الدفع",
+		"USAGE_PAYMENTS_SETUP_DESC": "قم بتكوين تكامل Stripe ومعالجة الدفع للقوائم المميزة",
+		"USAGE_DEPLOYMENT_TITLE": "دليل النشر",
+		"USAGE_DEPLOYMENT_DESC": "انشر الدليل الخاص بك إلى الإنتاج باستخدام Vercel أو Netlify أو الأنظمة الأساسية الأخرى",
+		"USAGE_GUIDE_TITLE": "دليل الاستخدام الكامل",
+		"USAGE_GUIDE_SUBTITLE": "أتقن منصة الدليل الخاصة بك من خلال برامج تعليمية شاملة وأفضل الممارسات",
 		"DOCUMENTATION": "التوثيق",
 		"DOCUMENTATION_DESC": "وثائق شاملة ومرجع API",
 		"DOCS_PAGE_TITLE": "توثيق API",
@@ -910,32 +990,32 @@
 		"COMMUNITY": "المجتمع",
 		"COMMUNITY_DESC": "انضم إلى مجتمع Discord للحصول على الدعم",
 		"EMAIL_SUPPORT": "الدعم عبر البريد الإلكتروني ←",
-		"EMAIL_SUPPORT_DESC": "Get personalized help from our directory experts",
+		"EMAIL_SUPPORT_DESC": "احصل على مساعدة مخصصة من خبراء الدليل لدينا",
 		"CONTACT_SUPPORT_DESC": "دعم مباشر للمستخدمين المميزين",
 		"NEED_HELP_DESC": "لا تجد ما تبحث عنه؟ نحن هنا للمساعدة!",
-		"HOW_IT_WORKS_PROCESS_STEP1": "Initialize Your Directory",
-		"HOW_IT_WORKS_PROCESS_STEP1_DESC": "Set up the foundation of your directory platform with our starter template",
-		"HOW_IT_WORKS_PROCESS_STEP2": "Customize & Configure",
-		"HOW_IT_WORKS_PROCESS_STEP2_DESC": "Personalize your directory with themes, categories, and custom settings",
-		"HOW_IT_WORKS_PROCESS_STEP3": "Add Content & Launch",
-		"HOW_IT_WORKS_PROCESS_STEP3_DESC": "Populate your directory with items and deploy to production",
-		"HOW_IT_WORKS_PROCESS_STEP4": "Deploy & Optimize",
-		"HOW_IT_WORKS_PROCESS_STEP4_DESC": "Deploy your directory to production and optimize for performance and security",
-		"PROCESS_OVERVIEW_BADGE": "Process Overview",
-		"HOW_IT_WORKS_PROCESS_TITLE": "Directory Building Process",
-		"HOW_IT_WORKS_PROCESS_DESC": "Follow our proven methodology to create a successful directory platform",
-		"TECH_NEXTJS_DESC": "React framework for building directory platforms with server-side rendering",
-		"TECH_NEXTJS_CATEGORY": "Frontend Framework",
-		"TECH_TYPESCRIPT_DESC": "Type-safe JavaScript for building robust directory applications",
-		"TECH_TYPESCRIPT_CATEGORY": "Programming Language",
-		"TECH_TAILWIND_DESC": "Utility-first CSS framework for styling your directory interface",
-		"TECH_TAILWIND_CATEGORY": "CSS Framework",
-		"TECH_SUPABASE_DESC": "Open-source backend for directory data storage and authentication - perfectly integrated with our GitHub-native approach",
-		"TECH_SUPABASE_CATEGORY": "Backend Service",
-		"TECH_CARD_POPULAR": "Popular",
-		"TECH_CARD_STABLE": "Stable",
-		"TECH_CARD_NICHE": "Niche",
-		"TECH_CARD_USAGE_IN_PROJECT": "Usage in Project",
+		"HOW_IT_WORKS_PROCESS_STEP1": "تهيئة الدليل الخاص بك",
+		"HOW_IT_WORKS_PROCESS_STEP1_DESC": "قم بإعداد أساس منصة الدليل الخاصة بك باستخدام قالب البداية الخاص بنا",
+		"HOW_IT_WORKS_PROCESS_STEP2": "تخصيص وتكوين",
+		"HOW_IT_WORKS_PROCESS_STEP2_DESC": "قم بتخصيص الدليل الخاص بك باستخدام السمات والفئات والإعدادات المخصصة",
+		"HOW_IT_WORKS_PROCESS_STEP3": "إضافة محتوى وإطلاق",
+		"HOW_IT_WORKS_PROCESS_STEP3_DESC": "قم بملء الدليل الخاص بك بالعناصر ونشره في الإنتاج",
+		"HOW_IT_WORKS_PROCESS_STEP4": "النشر والتحسين",
+		"HOW_IT_WORKS_PROCESS_STEP4_DESC": "انشر الدليل الخاص بك إلى الإنتاج وقم بتحسين الأداء والأمان",
+		"PROCESS_OVERVIEW_BADGE": "نظرة عامة على العملية",
+		"HOW_IT_WORKS_PROCESS_TITLE": "عملية بناء الدليل",
+		"HOW_IT_WORKS_PROCESS_DESC": "اتبع منهجيتنا التي أثبتت جدواها لإنشاء منصة دليل ناجحة",
+		"TECH_NEXTJS_DESC": "إطار عمل React لبناء منصات الدليل مع العرض من جانب الخادم",
+		"TECH_NEXTJS_CATEGORY": "إطار الواجهة الأمامية",
+		"TECH_TYPESCRIPT_DESC": "جافا سكريبت الآمن للنوع لإنشاء تطبيقات دليل قوية",
+		"TECH_TYPESCRIPT_CATEGORY": "لغة البرمجة",
+		"TECH_TAILWIND_DESC": "إطار عمل Utility-first CSS لتصميم واجهة الدليل الخاصة بك",
+		"TECH_TAILWIND_CATEGORY": "إطار CSS",
+		"TECH_SUPABASE_DESC": "واجهة خلفية مفتوحة المصدر لتخزين بيانات الدليل والمصادقة عليها - متكاملة تمامًا مع نهج GitHub الأصلي الخاص بنا",
+		"TECH_SUPABASE_CATEGORY": "خدمة الواجهة الخلفية",
+		"TECH_CARD_POPULAR": "شائع",
+		"TECH_CARD_STABLE": "مستقر",
+		"TECH_CARD_NICHE": "المكانة",
+		"TECH_CARD_USAGE_IN_PROJECT": "الاستخدام في المشروع",
 		"BENEFITS_FAST_TITLE": "سريع كالبرق",
 		"BENEFITS_FAST_DESC": "شغّل منصة الدليل الخاصة بك في أقل من 10 دقائق",
 		"BENEFITS_SECURE_TITLE": "آمن افتراضياً",
@@ -944,35 +1024,35 @@
 		"BENEFITS_MOBILE_DESC": "تصميم متجاوب بالكامل يعمل بشكل مثالي على جميع الأجهزة",
 		"BENEFITS_CUSTOMIZABLE_TITLE": "قابل للتخصيص بدرجة عالية",
 		"BENEFITS_CUSTOMIZABLE_DESC": "سهل التخصيص مع السمات والتخطيطات والميزات الخاصة بالأدلة",
-		"HOW_IT_WORKS_TITLE": "How It Works",
-		"HOW_IT_WORKS_SUBTITLE": "Build Your Directory in 3 Simple Steps",
-		"HOW_IT_WORKS_DESCRIPTION": "Follow our streamlined process to create a professional directory platform that's ready to accept submissions and generate revenue.",
-		"TECH_STACK_BADGE": "Technology Stack",
-		"TECH_STACK_TITLE": "Built with Modern Directory Technologies",
-		"TECH_STACK_SUBTITLE": "Industry-standard technologies optimized for building scalable directory platforms",
-		"TECH_STACK_TOTAL_TECH": "Total Technologies",
-		"TECH_STACK_HIGH_POPULARITY": "High Popularity",
-		"TECH_STACK_AVG_PERFORMANCE": "Avg Performance",
-		"ENV_CONFIG_BADGE": "Environment Configuration",
-		"ENV_CONFIG_TITLE": "Configure Your Directory Platform",
-		"ENV_CONFIG_DESC": "Set up the essential environment variables needed to run your directory platform securely and efficiently",
-		"ENV_CONFIG_GENERATE": "Generate .env File",
-		"ENV_CONFIG_REQUIRED": "Required",
-		"ENV_CONFIG_OPTIONAL": "Optional",
-		"ENV_CONFIG_CRITICAL": "Critical",
-		"ENV_CONFIG_IMPORTANT": "Important",
-		"ENV_CONFIG_EXAMPLE": "Example",
-		"ENV_CONFIG_COPIED": "Copied!",
-		"ENV_CONFIG_COPY": "Copy",
-		"ENV_CONFIG_DEFAULT_VALUE": "Default Value",
-		"ENV_CONFIG_LOCAL_DEV": "Local Development",
-		"ENV_CONFIG_LOCAL_DEV_DESC": "Set up your local development environment",
-		"ENV_CONFIG_PRODUCTION": "Production Deployment",
-		"ENV_CONFIG_PRODUCTION_DESC": "Configure your production environment",
-		"ENV_CONFIG_NEED_HELP": "Need Help with Configuration?",
-		"ENV_CONFIG_NEED_HELP_DESC": "Our support team is here to help you configure your directory platform correctly",
-		"ENV_CONFIG_GET_SUPPORT": "Get Support",
-		"ENV_CONFIG_VIEW_DOCS": "View Documentation",
+		"HOW_IT_WORKS_TITLE": "كيف يعمل",
+		"HOW_IT_WORKS_SUBTITLE": "قم ببناء الدليل الخاص بك في 3 خطوات بسيطة",
+		"HOW_IT_WORKS_DESCRIPTION": "اتبع عمليتنا المبسطة لإنشاء منصة دليل احترافية جاهزة لقبول الطلبات وتحقيق الإيرادات.",
+		"TECH_STACK_BADGE": "كومة التكنولوجيا",
+		"TECH_STACK_TITLE": "بنيت مع تقنيات الدليل الحديثة",
+		"TECH_STACK_SUBTITLE": "تقنيات متوافقة مع معايير الصناعة تم تحسينها لبناء منصات دليل قابلة للتطوير",
+		"TECH_STACK_TOTAL_TECH": "مجموع التقنيات",
+		"TECH_STACK_HIGH_POPULARITY": "شعبية عالية",
+		"TECH_STACK_AVG_PERFORMANCE": "متوسط ​​الأداء",
+		"ENV_CONFIG_BADGE": "تكوين البيئة",
+		"ENV_CONFIG_TITLE": "تكوين منصة الدليل الخاص بك",
+		"ENV_CONFIG_DESC": "قم بإعداد متغيرات البيئة الأساسية اللازمة لتشغيل منصة الدليل الخاصة بك بشكل آمن وفعال",
+		"ENV_CONFIG_GENERATE": "قم بإنشاء ملف .env",
+		"ENV_CONFIG_REQUIRED": "مطلوب",
+		"ENV_CONFIG_OPTIONAL": "خياري",
+		"ENV_CONFIG_CRITICAL": "شديد الأهمية",
+		"ENV_CONFIG_IMPORTANT": "مهم",
+		"ENV_CONFIG_EXAMPLE": "مثال",
+		"ENV_CONFIG_COPIED": "منسوخ!",
+		"ENV_CONFIG_COPY": "ينسخ",
+		"ENV_CONFIG_DEFAULT_VALUE": "القيمة الافتراضية",
+		"ENV_CONFIG_LOCAL_DEV": "التنمية المحلية",
+		"ENV_CONFIG_LOCAL_DEV_DESC": "قم بإعداد بيئة التطوير المحلية الخاصة بك",
+		"ENV_CONFIG_PRODUCTION": "نشر الإنتاج",
+		"ENV_CONFIG_PRODUCTION_DESC": "تكوين بيئة الإنتاج الخاصة بك",
+		"ENV_CONFIG_NEED_HELP": "هل تحتاج إلى مساعدة في التكوين؟",
+		"ENV_CONFIG_NEED_HELP_DESC": "فريق الدعم لدينا موجود هنا لمساعدتك في تكوين منصة الدليل الخاصة بك بشكل صحيح",
+		"ENV_CONFIG_GET_SUPPORT": "احصل على الدعم",
+		"ENV_CONFIG_VIEW_DOCS": "عرض الوثائق",
 		"FAQ_SETUP_TIME": "كم من الوقت يستغرق الإعداد؟",
 		"FAQ_SETUP_TIME_ANSWER": "باستخدام دليل البداية السريعة، يمكنك تشغيل Ever Works في أقل من 10 دقائق.",
 		"FAQ_CODING_EXPERIENCE": "هل أحتاج إلى خبرة في البرمجة؟",
@@ -981,14 +1061,14 @@
 		"FAQ_CUSTOMIZE_DESIGN_ANSWER": "نعم! تم إنشاء Ever Works باستخدام Tailwind CSS ويقدم خيارات تخصيص واسعة.",
 		"FAQ_HOSTING": "ما هي الاستضافة التي توصون بها؟",
 		"FAQ_HOSTING_ANSWER": "نوصي بـ Vercel للحصول على أفضل أداء، لكن Ever Works يعمل مع أي مزود استضافة Node.js.",
-		"FAQ_PAYMENT_INTEGRATION": "How do I integrate payment processing?",
-		"FAQ_PAYMENT_INTEGRATION_ANSWER": "Our directory platform comes with pre-configured Stripe integration. Simply add your API keys in the environment variables and the payment system will be ready for premium listings.",
-		"FAQ_CUSTOM_DOMAIN": "Can I use my own domain?",
-		"FAQ_CUSTOM_DOMAIN_ANSWER": "Yes! You can easily connect your custom domain to your directory. We provide step-by-step instructions for domain configuration with popular providers.",
+		"FAQ_PAYMENT_INTEGRATION": "كيف يمكنني دمج معالجة الدفع؟",
+		"FAQ_PAYMENT_INTEGRATION_ANSWER": "تأتي منصة الدليل الخاصة بنا مزودة بتكامل Stripe الذي تم تكوينه مسبقًا. ",
+		"FAQ_CUSTOM_DOMAIN": "هل يمكنني استخدام النطاق الخاص بي؟",
+		"FAQ_CUSTOM_DOMAIN_ANSWER": "نعم! ",
 		"QUICK_START": "البداية السريعة",
 		"QUICK_START_DESC": "ابدأ في 3 خطوات بسيطة",
-		"ENV_SETUP": "Environment Setup",
-		"ENV_SETUP_DESC": "Configure your environment variables and API keys",
+		"ENV_SETUP": "إعداد البيئة",
+		"ENV_SETUP_DESC": "قم بتكوين متغيرات البيئة ومفاتيح API",
 		"INSTALLATION": "التثبيت",
 		"INSTALLATION_DESC": "دليل الإعداد التفصيلي",
 		"USAGE_GUIDE": "دليل الاستخدام",
@@ -999,73 +1079,73 @@
 		"MONETIZATION_DESC": "تعلم كيفية تحقيق الإيرادات من دليلك",
 		"SUPPORT": "الدعم",
 		"SUPPORT_DESC": "احصل على المساعدة عندما تحتاجها",
-		"WHY_CHOOSE_PLATFORM": "Why Choose Our Directory Builder?",
-		"READY_TO_GET_STARTED": "Ready to Build Your Directory?",
-		"JOIN_DEVELOPERS_DESC": "Join thousands of developers who are already building amazing directory platforms with our open-source, AI-powered builder. Free template. GitHub-native. SaaS optional.",
-		"START_BUILDING_NOW": "Start Building Now",
+		"WHY_CHOOSE_PLATFORM": "لماذا تختار منشئ الدليل الخاص بنا؟",
+		"READY_TO_GET_STARTED": "هل أنت مستعد لبناء الدليل الخاص بك؟",
+		"JOIN_DEVELOPERS_DESC": "انضم إلى الآلاف من المطورين الذين يقومون بالفعل ببناء منصات دليل مذهلة من خلال أداة الإنشاء مفتوحة المصدر والمدعومة بالذكاء الاصطناعي. ",
+		"START_BUILDING_NOW": "ابدأ البناء الآن",
 		"VIEW_DOCUMENTATION": "عرض التوثيق ←",
-		"CATEGORY_ALL_TECH": "All Technologies",
-		"CATEGORY_FRONTEND": "Frontend",
-		"CATEGORY_BACKEND": "Backend",
-		"CATEGORY_DATABASE": "Database",
-		"CATEGORY_AUTH": "Authentication",
-		"CATEGORY_PAYMENT": "Payment",
-		"CATEGORY_MONITORING": "Monitoring",
-		"CATEGORY_DEPLOYMENT": "Deployment",
-		"SORT_BY_POPULARITY": "Sort by Popularity",
-		"SORT_BY_PERFORMANCE": "Sort by Performance",
-		"SORT_BY_NAME": "Sort by Name",
-		"SHOWING_TECHNOLOGIES": "Showing {filtered} of {total} technologies",
-		"NO_TECH_FOUND": "No technologies found",
-		"TRY_ADJUSTING_FILTERS": "Try adjusting your filters to see more results",
-		"READY_TO_BUILD_WITH_TECH": "Ready to Build Your Directory with These Technologies?",
-		"ALL_TECH_PRECONFIGURED": "All these technologies are pre-configured and ready to use in your directory platform",
-		"GET_STARTED_NOW": "Get Started Now",
-		"STAT_AVERAGE_REVENUE": "Average Revenue",
-		"STAT_ACTIVE_USERS": "Active Users",
-		"STAT_CONVERSION_RATE": "Conversion Rate",
-		"STAT_PLATFORM_GROWTH": "Platform Growth",
-		"STAT_MONTHLY": "monthly",
-		"STAT_YEARLY": "yearly",
-		"REVENUE_POTENTIAL": "Revenue Potential",
-		"SETUP_TIME": "Setup Time",
-		"DIFFICULTY": "Difficulty",
-		"KEY_FEATURES": "Key Features",
-		"PROS": "Pros",
-		"CONS": "Cons",
-		"HIDE_DETAILS": "Hide Details",
-		"SHOW_DETAILS": "Show Details",
-		"START_MONETIZING_TODAY": "Start Monetizing Your Directory Today",
+		"CATEGORY_ALL_TECH": "جميع التقنيات",
+		"CATEGORY_FRONTEND": "الواجهة الأمامية",
+		"CATEGORY_BACKEND": "الخلفية",
+		"CATEGORY_DATABASE": "قاعدة البيانات",
+		"CATEGORY_AUTH": "المصادقة",
+		"CATEGORY_PAYMENT": "قسط",
+		"CATEGORY_MONITORING": "يراقب",
+		"CATEGORY_DEPLOYMENT": "النشر",
+		"SORT_BY_POPULARITY": "فرز حسب الشعبية",
+		"SORT_BY_PERFORMANCE": "فرز حسب الأداء",
+		"SORT_BY_NAME": "الترتيب حسب الاسم",
+		"SHOWING_TECHNOLOGIES": "عرض {filtered} من التقنيات {total}.",
+		"NO_TECH_FOUND": "لم يتم العثور على تقنيات",
+		"TRY_ADJUSTING_FILTERS": "حاول تعديل عوامل التصفية لرؤية المزيد من النتائج",
+		"READY_TO_BUILD_WITH_TECH": "هل أنت مستعد لبناء الدليل الخاص بك باستخدام هذه التقنيات؟",
+		"ALL_TECH_PRECONFIGURED": "تم تكوين جميع هذه التقنيات مسبقًا وجاهزة للاستخدام في نظام الدليل الأساسي الخاص بك",
+		"GET_STARTED_NOW": "ابدأ الآن",
+		"STAT_AVERAGE_REVENUE": "متوسط ​​الإيرادات",
+		"STAT_ACTIVE_USERS": "المستخدمون النشطون",
+		"STAT_CONVERSION_RATE": "معدل التحويل",
+		"STAT_PLATFORM_GROWTH": "نمو المنصة",
+		"STAT_MONTHLY": "شهريا",
+		"STAT_YEARLY": "سنوي",
+		"REVENUE_POTENTIAL": "الإيرادات المحتملة",
+		"SETUP_TIME": "وقت الإعداد",
+		"DIFFICULTY": "صعوبة",
+		"KEY_FEATURES": "الميزات الرئيسية",
+		"PROS": "الايجابيات",
+		"CONS": "سلبيات",
+		"HIDE_DETAILS": "إخفاء التفاصيل",
+		"SHOW_DETAILS": "إظهار التفاصيل",
+		"START_MONETIZING_TODAY": "ابدأ في تحقيق الدخل من الدليل الخاص بك اليوم",
 		"START_MONETIZING_DESC": "اختر استراتيجية تحقيق الدخل التي تناسب منصة دليلك بشكل أفضل وابدأ في تحقيق الإيرادات فوراً.",
-		"VIEW_CASE_STUDIES": "View Case Studies",
-		"INTERACTIVE_GUIDE": "Interactive Directory Guide",
-		"INTERACTIVE_GUIDE_DESC": "Follow the steps to build your directory platform",
-		"SEARCH_GUIDES_PLACEHOLDER": "Search directory guides...",
-		"PROGRESS": "Progress",
-		"COMPLETE": "Complete",
-		"CURRENT": "Current",
-		"QUICK_NAVIGATION": "Quick Navigation",
-		"PREVIOUS": "Previous",
-		"NEXT": "Next",
-		"STEP_OF": "Step {current} of {total}",
-		"STEP1_FEATURE_1": "Repository cloning",
-		"STEP1_FEATURE_2": "Dependency installation",
-		"STEP1_FEATURE_3": "Environment setup",
-		"STEP1_FEATURE_4": "Project initialization",
-		"STEP2_FEATURE_1": "Environment variables",
-		"STEP2_FEATURE_2": "Database configuration",
-		"STEP2_FEATURE_3": "Authentication setup",
-		"STEP2_FEATURE_4": "External services",
-		"STEP3_FEATURE_1": "Development server",
-		"STEP3_FEATURE_2": "Production build",
-		"STEP3_FEATURE_3": "Vercel deployment",
-		"STEP3_FEATURE_4": "Live directory platform",
-		"PAGE_NOT_FOUND": "Page Not Found",
-		"PAGE_NOT_FOUND_DESCRIPTION": "Sorry, the page you're looking for doesn't exist or has been moved.",
-		"GO_BACK": "Go Back",
-		"BACK_TO_HOME": "Back to Home",
-		"TRY_SEARCHING": "Try searching instead",
-		"SEARCH_SUGGESTION": "Use the search bar above to find what you're looking for.",
+		"VIEW_CASE_STUDIES": "عرض دراسات الحالة",
+		"INTERACTIVE_GUIDE": "دليل الدليل التفاعلي",
+		"INTERACTIVE_GUIDE_DESC": "اتبع الخطوات لإنشاء منصة الدليل الخاصة بك",
+		"SEARCH_GUIDES_PLACEHOLDER": "دليل البحث في الدليل...",
+		"PROGRESS": "تقدم",
+		"COMPLETE": "مكتمل",
+		"CURRENT": "حاضِر",
+		"QUICK_NAVIGATION": "التنقل السريع",
+		"PREVIOUS": "سابق",
+		"NEXT": "التالي",
+		"STEP_OF": "الخطوة {الحالية} من {total}",
+		"STEP1_FEATURE_1": "استنساخ المستودع",
+		"STEP1_FEATURE_2": "تثبيت التبعية",
+		"STEP1_FEATURE_3": "إعداد البيئة",
+		"STEP1_FEATURE_4": "تهيئة المشروع",
+		"STEP2_FEATURE_1": "متغيرات البيئة",
+		"STEP2_FEATURE_2": "تكوين قاعدة البيانات",
+		"STEP2_FEATURE_3": "إعداد المصادقة",
+		"STEP2_FEATURE_4": "الخدمات الخارجية",
+		"STEP3_FEATURE_1": "خادم التطوير",
+		"STEP3_FEATURE_2": "بناء الإنتاج",
+		"STEP3_FEATURE_3": "نشر فيرسل",
+		"STEP3_FEATURE_4": "منصة الدليل المباشر",
+		"PAGE_NOT_FOUND": "لم يتم العثور على الصفحة",
+		"PAGE_NOT_FOUND_DESCRIPTION": "عذرًا، الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+		"GO_BACK": "عُد",
+		"BACK_TO_HOME": "العودة إلى المنزل",
+		"TRY_SEARCHING": "حاول البحث بدلاً من ذلك",
+		"SEARCH_SUGGESTION": "استخدم شريط البحث أعلاه للعثور على ما تبحث عنه.",
 		"NEED_HELP": "هل تحتاج إلى مساعدة؟",
 		"CONTACT_SUPPORT": "اتصل بالدعم",
 		"PAGE_TITLE": "مركز المساعدة",
@@ -1132,59 +1212,59 @@
 		"ERROR_TRY_AGAIN": "خطأ - حاول مرة أخرى",
 		"SIGN_IN_TO_CONTINUE": "سجل الدخول للمتابعة",
 		"PROCESSING": "جاري المعالجة...",
-		"BILLING_AMOUNT": "Billing Amount",
-		"NEXT_BILLING": "Next Billing",
-		"STARTED_ON": "Started On",
-		"SUBSCRIPTION_CANCELLING_WARNING": "Subscription Cancelling",
-		"SUBSCRIPTION_CANCELLING_DESCRIPTION": "Your subscription will be cancelled at the end of the current billing period. You can reactivate it anytime before then.",
-		"UPGRADE_TO_PREMIUM": "Upgrade to Premium",
-		"DOWNGRADE_TO_STANDARD": "Downgrade to Standard",
-		"CANCEL_SUBSCRIPTION": "Cancel Subscription",
-		"CANCEL_SUBSCRIPTION_TITLE": "Cancel Subscription",
-		"CANCEL_SUBSCRIPTION_DESCRIPTION": "Are you sure you want to cancel your subscription? You'll continue to have access until the end of your current billing period.",
-		"KEEP_SUBSCRIPTION": "Keep Subscription",
-		"CONFIRM_CANCEL": "Yes, Cancel",
-		"CANCELLING": "Cancelling...",
-		"REACTIVATE_SUBSCRIPTION": "Reactivate Subscription",
-		"REACTIVATING": "Reactivating...",
-		"UPGRADE_TO_PREMIUM_TITLE": "Upgrade to Premium",
-		"UPGRADE_TO_PREMIUM_DESCRIPTION": "Upgrade your plan to unlock premium features and get more value from our platform.",
-		"PREMIUM_FEATURES": "Premium Features",
-		"PREMIUM_FEATURE_1": "Unlimited submissions",
-		"PREMIUM_FEATURE_2": "Priority support",
-		"PREMIUM_FEATURE_3": "Advanced analytics",
-		"PREMIUM_FEATURE_4": "Featured listings",
-		"SUBSCRIPTION_CANCELLED_SUCCESS": "Subscription cancelled successfully",
-		"SUBSCRIPTION_CANCELLED_ERROR": "Failed to cancel subscription",
-		"SUBSCRIPTION_REACTIVATED_SUCCESS": "Subscription reactivated successfully",
-		"SUBSCRIPTION_REACTIVATED_ERROR": "Failed to reactivate subscription",
-		"SUBSCRIPTION_UPDATED_SUCCESS": "Subscription updated successfully",
-		"SUBSCRIPTION_UPDATED_ERROR": "Failed to update subscription",
-		"MANAGE_SUBSCRIPTION": "Manage Subscription",
-		"SUBSCRIPTION_DETAILS": "Subscription Details",
-		"BILLING_HISTORY": "Billing History",
-		"PAYMENT_METHOD": "Payment Method",
-		"UPDATE_PAYMENT_METHOD": "Update Payment Method",
-		"DOWNLOAD_INVOICE": "Download Invoice",
-		"INVOICE_DATE": "Invoice Date",
-		"INVOICE_AMOUNT": "Amount",
-		"INVOICE_STATUS": "Status",
-		"PAID": "Paid",
-		"PENDING": "Pending",
-		"FAILED": "Failed",
-		"REFUNDED": "Refunded",
-		"CANCELLED": "Cancelled",
-		"TRIAL": "Trial",
-		"ACTIVE": "Active",
-		"PAST_DUE": "Past Due",
-		"INCOMPLETE": "Incomplete",
-		"INCOMPLETE_EXPIRED": "Incomplete Expired",
-		"TRIALING": "Trialing",
-		"UNPAID": "Unpaid",
-		"NO_PAYMENT_HISTORY": "No payment history",
-		"NO_PAYMENT_HISTORY_DESCRIPTION": "Your payment transactions will appear here once you make a purchase.",
-		"BILLING_HISTORY_DESCRIPTION": "View all your past payments and invoices",
-		"VIEW_INVOICE": "View Invoice",
+		"BILLING_AMOUNT": "مبلغ الفاتورة",
+		"NEXT_BILLING": "الفواتير القادمة",
+		"STARTED_ON": "بدأت في",
+		"SUBSCRIPTION_CANCELLING_WARNING": "إلغاء الاشتراك",
+		"SUBSCRIPTION_CANCELLING_DESCRIPTION": "سيتم إلغاء اشتراكك في نهاية فترة الفاتورة الحالية. ",
+		"UPGRADE_TO_PREMIUM": "الترقية إلى بريميوم",
+		"DOWNGRADE_TO_STANDARD": "الرجوع إلى المستوى القياسي",
+		"CANCEL_SUBSCRIPTION": "إلغاء الاشتراك",
+		"CANCEL_SUBSCRIPTION_TITLE": "إلغاء الاشتراك",
+		"CANCEL_SUBSCRIPTION_DESCRIPTION": "هل أنت متأكد أنك تريد إلغاء اشتراكك؟ ",
+		"KEEP_SUBSCRIPTION": "الحفاظ على الاشتراك",
+		"CONFIRM_CANCEL": "نعم، إلغاء",
+		"CANCELLING": "جارٍ الإلغاء...",
+		"REACTIVATE_SUBSCRIPTION": "إعادة تنشيط الاشتراك",
+		"REACTIVATING": "جارٍ إعادة التنشيط...",
+		"UPGRADE_TO_PREMIUM_TITLE": "الترقية إلى بريميوم",
+		"UPGRADE_TO_PREMIUM_DESCRIPTION": "قم بترقية خطتك لفتح الميزات المميزة والحصول على قيمة أكبر من منصتنا.",
+		"PREMIUM_FEATURES": "ميزات متميزة",
+		"PREMIUM_FEATURE_1": "تقديمات غير محدودة",
+		"PREMIUM_FEATURE_2": "دعم الأولوية",
+		"PREMIUM_FEATURE_3": "تحليلات متقدمة",
+		"PREMIUM_FEATURE_4": "قوائم مميزة",
+		"SUBSCRIPTION_CANCELLED_SUCCESS": "تم إلغاء الاشتراك بنجاح",
+		"SUBSCRIPTION_CANCELLED_ERROR": "فشل في إلغاء الاشتراك",
+		"SUBSCRIPTION_REACTIVATED_SUCCESS": "تمت إعادة تنشيط الاشتراك بنجاح",
+		"SUBSCRIPTION_REACTIVATED_ERROR": "فشلت إعادة تنشيط الاشتراك",
+		"SUBSCRIPTION_UPDATED_SUCCESS": "تم تحديث الاشتراك بنجاح",
+		"SUBSCRIPTION_UPDATED_ERROR": "فشل تحديث الاشتراك",
+		"MANAGE_SUBSCRIPTION": "إدارة الاشتراك",
+		"SUBSCRIPTION_DETAILS": "تفاصيل الاشتراك",
+		"BILLING_HISTORY": "تاريخ الفواتير",
+		"PAYMENT_METHOD": "طريقة الدفع",
+		"UPDATE_PAYMENT_METHOD": "تحديث طريقة الدفع",
+		"DOWNLOAD_INVOICE": "تحميل الفاتورة",
+		"INVOICE_DATE": "تاريخ الفاتورة",
+		"INVOICE_AMOUNT": "كمية",
+		"INVOICE_STATUS": "حالة",
+		"PAID": "مدفوع",
+		"PENDING": "قيد الانتظار",
+		"FAILED": "فشل",
+		"REFUNDED": "ردها",
+		"CANCELLED": "تم الإلغاء",
+		"TRIAL": "محاكمة",
+		"ACTIVE": "نشيط",
+		"PAST_DUE": "تاريخ الاستحقاق الماضي",
+		"INCOMPLETE": "غير مكتمل",
+		"INCOMPLETE_EXPIRED": "غير مكتملة منتهية الصلاحية",
+		"TRIALING": "محاكمة",
+		"UNPAID": "غير مدفوعة الأجر",
+		"NO_PAYMENT_HISTORY": "لا يوجد سجل الدفع",
+		"NO_PAYMENT_HISTORY_DESCRIPTION": "ستظهر معاملات الدفع الخاصة بك هنا بمجرد إجراء عملية شراء.",
+		"BILLING_HISTORY_DESCRIPTION": "عرض جميع المدفوعات والفواتير السابقة الخاصة بك",
+		"VIEW_INVOICE": "عرض الفاتورة",
 		"TITLE": "الفواتير",
 		"SUBTITLE": "إدارة طرق الدفع ومعلومات الفواتير",
 		"ADD_CARD": "إضافة بطاقة",
@@ -1210,10 +1290,10 @@
 		"CARD_NUMBER": "رقم البطاقة",
 		"EXPIRY_MONTH": "الشهر",
 		"EXPIRY_YEAR": "السنة",
-		"CVC": "CVC",
+		"CVC": "رمز التحقق من البطاقة",
 		"CARD_HOLDER_NAME_PLACEHOLDER": "أحمد محمد",
 		"CARD_NUMBER_PLACEHOLDER": "1234 5678 9012 3456",
-		"EXPIRY_MONTH_PLACEHOLDER": "MM",
+		"EXPIRY_MONTH_PLACEHOLDER": "مم",
 		"EXPIRY_YEAR_PLACEHOLDER": "YYYY",
 		"CVC_PLACEHOLDER": "123",
 		"SET_AS_DEFAULT_PAYMENT": "تعيين كطريقة دفع افتراضية",
@@ -1287,7 +1367,18 @@
 		"SUBSCRIPTIONS_EMPTY_STATE": "لا يوجد سجل اشتراكات",
 		"SUBSCRIPTIONS_EMPTY_DESCRIPTION": "سيظهر سجل اشتراكاتك هنا بمجرد أن يكون لديك اشتراكات نشطة.",
 		"OVERVIEW_EMPTY_STATE": "لا توجد نشاطات حديثة",
-		"OVERVIEW_EMPTY_DESCRIPTION": "ستظهر نشاطات الفوترة الحديثة الخاصة بك هنا بمجرد أن يكون لديك معاملات."
+		"OVERVIEW_EMPTY_DESCRIPTION": "ستظهر نشاطات الفوترة الحديثة الخاصة بك هنا بمجرد أن يكون لديك معاملات.",
+		"EXPIRED_MESSAGE": "لقد انتهت صلاحية {planName}. ",
+		"EXPIRES_TODAY": "تنتهي صلاحية {planName} الخاصة بك اليوم.",
+		"EXPIRES_TOMORROW": "تنتهي صلاحية {planName} الخاصة بك غدًا.",
+		"EXPIRES_IN_DAYS": "تنتهي صلاحية {planName} الخاصة بك خلال {days} من الأيام.",
+		"RENEW": "تجديد",
+		"RENEW_SUBSCRIPTION": "تجديد الاشتراك",
+		"SUBSCRIPTION_EXPIRED": "انتهت صلاحية الاشتراك",
+		"SUBSCRIPTION_EXPIRING_SOON": "انتهاء الاشتراك قريبا",
+		"EXPIRED_ON": "انتهت صلاحيته في",
+		"EXPIRED_LABEL": "منتهي الصلاحية",
+		"EXPIRES_IN_DAYS_LABEL": "تنتهي صلاحيته خلال {days}د"
 	},
 	"profile": {
 		"BASIC_INFO_TITLE": "المعلومات الأساسية",
@@ -1349,8 +1440,8 @@
 	"page": {
 		"documentation": {
 			"DOCS_PAGE_DESCRIPTION": "استكشف واختبر واجهات برمجة التطبيقات لقالب موقع Ever Works. تتيح لك هذه الوثائق التفاعلية فهم وتجربة جميع النقاط النهائية المتاحة.",
-			"DOCS_PAGE_FOOTER_LINE_1": "This documentation is automatically generated from our OpenAPI specification.",
-			"DOCS_PAGE_FOOTER_LINE_2": "For questions or support, please contact the Ever Works team."
+			"DOCS_PAGE_FOOTER_LINE_1": "يتم إنشاء هذه الوثائق تلقائيًا من مواصفات OpenAPI الخاصة بنا.",
+			"DOCS_PAGE_FOOTER_LINE_2": "للأسئلة أو الدعم، يرجى الاتصال بفريق Ever Works."
 		}
 	},
 	"admin": {
@@ -1988,7 +2079,7 @@
 				"ENTERPRISE": "مؤسسة"
 			},
 			"TIMEZONE_OPTIONS": {
-				"UTC": "UTC",
+				"UTC": "التوقيت العالمي",
 				"AMERICA_NEW_YORK": "أمريكا/نيويورك",
 				"EUROPE_LONDON": "أوروبا/لندن",
 				"ASIA_TOKYO": "آسيا/طوكيو"
@@ -2135,9 +2226,9 @@
 			"TAG_UPDATE_ERROR": "فشل في تحديث الوسم",
 			"TAG_DELETE_ERROR": "فشل في حذف الوسم",
 			"DELETE_CONFIRMATION": "هل أنت متأكد من أنك تريد حذف هذا الوسم؟",
-			"WARNING_DISABLED_TITLE": "Tags are currently disabled site-wide",
-			"WARNING_DISABLED_MESSAGE": "Tags are hidden from the public site including navigation, filters, and item pages. You can still manage tags here, but they won't be visible to users until re-enabled.",
-			"WARNING_DISABLED_ACTION": "Go to Settings to Enable"
+			"WARNING_DISABLED_TITLE": "العلامات معطلة حاليًا على مستوى الموقع",
+			"WARNING_DISABLED_MESSAGE": "يتم إخفاء العلامات من الموقع العام بما في ذلك التنقل والمرشحات وصفحات العناصر. ",
+			"WARNING_DISABLED_ACTION": "انتقل إلى الإعدادات للتمكين"
 		},
 		"ADMIN_ROLES_PAGE": {
 			"TITLE": "إدارة الأدوار",
@@ -2238,7 +2329,13 @@
 			"REJECTION_REASON_PLACEHOLDER": "اشرح سبب رفض هذه الرعاية...",
 			"REJECTION_REASON_MIN_LENGTH": "يجب أن يكون السبب 10 أحرف على الأقل",
 			"CANCEL_BUTTON": "إلغاء",
-			"REJECT_BUTTON": "رفض الطلب"
+			"REJECT_BUTTON": "رفض الطلب",
+			"STATUS_PENDING_PAYMENT": "في انتظار الدفع",
+			"FORCE_APPROVE_TITLE": "لم يتم استلام الدفع",
+			"FORCE_APPROVE_MESSAGE": "هذا الإعلان الراعي لم يتلق الدفع بعد. ",
+			"FORCE_APPROVE": "الموافقة على أية حال",
+			"ACTIVATE": "فعل",
+			"PENDING_PAYMENT_STAT": "في انتظار الدفع"
 		},
 		"ADMIN_COMMENTS_PAGE": {
 			"TITLE": "إدارة التعليقات",
@@ -2459,7 +2556,7 @@
 			"COMPANY_DOMAIN_PLACEHOLDER": "example.com",
 			"COMPANY_DOMAIN_HINT": "اختياري: يُستخدم لمطابقة نطاق البريد الإلكتروني (سيتم تحويله إلى أحرف صغيرة)",
 			"COMPANY_SLUG": "المعرّف",
-			"COMPANY_SLUG_PLACEHOLDER": "company-name",
+			"COMPANY_SLUG_PLACEHOLDER": "اسم الشركة",
 			"COMPANY_SLUG_HINT": "اختياري: معرّف صديق لعناوين URL (أحرف صغيرة وأرقام وشرطات فقط)",
 			"COMPANY_STATUS": "الحالة",
 			"SELECT_STATUS": "اختر الحالة",
@@ -2472,9 +2569,9 @@
 			"UPDATE_COMPANY": "تحديث الشركة",
 			"DELETE_COMPANY": "حذف الشركة",
 			"DELETE_CONFIRMATION": "هل أنت متأكد من أنك تريد حذف هذه الشركة؟ لا يمكن التراجع عن هذا الإجراء.",
-			"WARNING_DISABLED_TITLE": "Companies are currently disabled site-wide",
-			"WARNING_DISABLED_MESSAGE": "Companies are hidden from the public site including item company assignments. You can still manage companies here, but they won't be visible to users until re-enabled.",
-			"WARNING_DISABLED_ACTION": "Go to Settings to Enable"
+			"WARNING_DISABLED_TITLE": "الشركات معطلة حاليًا في جميع أنحاء الموقع",
+			"WARNING_DISABLED_MESSAGE": "الشركات مخفية من الموقع العام بما في ذلك تعيينات شركات العناصر. لا يزال بإمكانك إدارة الشركات هنا، لكنها لن تكون مرئية للمستخدمين حتى إعادة التفعيل.",
+			"WARNING_DISABLED_ACTION": "انتقل إلى الإعدادات للتفعيل"
 		},
 		"ITEM_COMPANY": {
 			"TITLE": "تعيين الشركة",
@@ -2512,9 +2609,9 @@
 			"DELETE_CONFIRMATION": "هل أنت متأكد من أنك تريد {action} هذه الفئة؟",
 			"PERMANENTLY_DELETE": "حذف نهائياً",
 			"DEACTIVATE": "إلغاء تفعيل",
-			"WARNING_DISABLED_TITLE": "Categories are currently disabled site-wide",
-			"WARNING_DISABLED_MESSAGE": "Categories are hidden from the public site including navigation, filters, and item pages. You can still manage categories here, but they won't be visible to users until re-enabled.",
-			"WARNING_DISABLED_ACTION": "Go to Settings to Enable"
+			"WARNING_DISABLED_TITLE": "الفئات معطلة حاليًا على مستوى الموقع",
+			"WARNING_DISABLED_MESSAGE": "يتم إخفاء الفئات من الموقع العام بما في ذلك التنقل والمرشحات وصفحات العناصر. ",
+			"WARNING_DISABLED_ACTION": "انتقل إلى الإعدادات للتمكين"
 		},
 		"ADMIN_SETTINGS_PAGE": {
 			"CATEGORIES_ENABLED_LABEL": "تفعيل الفئات",
@@ -2733,6 +2830,25 @@
 			"RETRY": "إعادة المحاولة",
 			"LOADING": "جاري التحميل...",
 			"REACHED_THE_END": "لقد وصلت إلى النهاية"
+		},
+		"REPORT_REVIEW_DIALOG": {
+			"TITLE": "تقرير المراجعة",
+			"SUBTITLE": "اتخاذ إجراء بشأن هذا التقرير",
+			"CONTENT_TYPE": "نوع المحتوى",
+			"CONTENT_ID": "معرف المحتوى",
+			"REPORTED_BY": "تم الإبلاغ عنها بواسطة",
+			"DATE": "تاريخ",
+			"UNKNOWN": "مجهول",
+			"REASON": "سبب",
+			"DETAILS": "تفاصيل",
+			"STATUS": "حالة",
+			"RESOLUTION": "دقة",
+			"SELECT_RESOLUTION": "حدد الإجراء...",
+			"REVIEW_NOTE": "ملاحظة المراجعة",
+			"REVIEW_NOTE_PLACEHOLDER": "إضافة ملاحظات حول هذا التقرير...",
+			"CANCEL": "يلغي",
+			"UPDATE_REPORT": "تحديث التقرير",
+			"UPDATING": "جارٍ التحديث..."
 		}
 	},
 	"pages": {
@@ -2778,7 +2894,12 @@
 		"SUBMIT_ERROR": "فشل تقديم الرعاية. يرجى المحاولة مرة أخرى.",
 		"AD_LABEL": "إعلان",
 		"SPONSORED": "برعاية",
-		"LEARN_MORE": "اعرف المزيد"
+		"LEARN_MORE": "اعرف المزيد",
+		"BADGE_TEXT": "التنسيب برعاية",
+		"PAGE_TITLE_PART1": "الترويج لمنتجك",
+		"PAGE_TITLE_PART2": "احصل على التميز في كل مكان",
+		"TRUST_SECURE": "الدفع الآمن",
+		"TRUST_INSTANT": "تمت مراجعة المشرف"
 	},
 	"client": {
 		"submissions": {
@@ -2875,14 +2996,31 @@
 			"REJECTION_REASON": "سبب الرفض",
 			"DESCRIPTION": "الوصف",
 			"EDIT_SUBMISSION_TITLE": "تعديل التقديم",
-			"EDIT_SUBMISSION_DESC": "تحديث تفاصيل تقديمك"
+			"EDIT_SUBMISSION_DESC": "تحديث تفاصيل تقديمك",
+			"PAGE_INFO": "صفحة {صفحة} من {page}",
+			"UPDATE_DETAILS": "قم بتحديث تفاصيل التقديم الخاصة بك",
+			"RE_REVIEW_REQUIRED": "إعادة المراجعة مطلوبة",
+			"RE_REVIEW_WARNING": "تمت الموافقة على هذا التقديم حاليا. ",
+			"TITLE_LABEL": "عنوان",
+			"TITLE_PLACEHOLDER": "أدخل عنوان التقديم",
+			"DESCRIPTION_LABEL": "وصف",
+			"DESCRIPTION_PLACEHOLDER": "اوصف طلبك...",
+			"URL_LABEL": "موقع الويب / عنوان URL المصدر",
+			"URL_PLACEHOLDER": "https://example.com",
+			"TAGS_CANNOT_EDIT": "لا يمكن تحرير العلامات في هذا الوقت.",
+			"DELETE_UNDONE_LATER": "يمكن التراجع عن هذا الإجراء لاحقًا",
+			"SOFT_DELETE": "حذف ناعم",
+			"SOFT_DELETE_DESC": "سيتم إخفاء إرسالك عن العرض العام ولكن لن يتم حذفه نهائيًا. ",
+			"SUBMISSIONS_MANAGEMENT": "إدارة التقديمات",
+			"SUBMISSIONS_MANAGEMENT_DESC": "تتبع وإدارة عمليات إرسال الدليل الخاص بك.",
+			"START_YOUR_JOURNEY": "ابدأ رحلتك",
+			"CREATE_FIRST": "قم بإنشاء التقديم الأول الخاص بك"
 		},
 		"dashboard": {
 			"TITLE": "لوحة التحكم",
 			"WELCOME_BACK": "مرحباً بعودتك، {name}! إليك نظرة عامة على نشاطك.",
 			"REFRESH": "تحديث",
 			"FAILED_TO_LOAD": "فشل في تحميل إحصائيات لوحة التحكم",
-
 			"STATS": {
 				"TOTAL_SUBMISSIONS": "إجمالي التقديمات",
 				"CONTENT_CREATED": "المحتوى الذي أنشأته",
@@ -2893,7 +3031,6 @@
 				"COMMENTS_RECEIVED": "التعليقات المستلمة",
 				"COMMENTS_ON_CONTENT": "تعليقات على محتواك"
 			},
-
 			"PERIOD_COMPARISON": {
 				"TITLE": "الأداء الأسبوعي",
 				"THIS_WEEK": "هذا الأسبوع",
@@ -2906,7 +3043,6 @@
 				"NO_DATA": "لا توجد بيانات",
 				"NO_DATA_DESC": "ابدأ بإنشاء محتوى لرؤية مقارنة أدائك الأسبوعي."
 			},
-
 			"CATEGORY_PERFORMANCE": {
 				"TITLE": "أداء الفئات",
 				"SUBTITLE": "أفضل الفئات حسب متوسط التفاعل",
@@ -2917,7 +3053,6 @@
 				"NO_DATA": "لا توجد بيانات للفئات",
 				"NO_DATA_DESC": "قدم عناصر لرؤية مقاييس أداء الفئات."
 			},
-
 			"APPROVAL_TREND": {
 				"TITLE": "اتجاه الموافقة",
 				"SUBTITLE": "معدل نجاح الموافقة الشهري",
@@ -2927,7 +3062,6 @@
 				"NO_DATA": "لا توجد بيانات موافقة",
 				"NO_DATA_DESC": "قدم عناصر لتتبع معدل الموافقة عبر الزمن."
 			},
-
 			"ENGAGEMENT_RATE": {
 				"TITLE": "معدل التفاعل",
 				"SUBTITLE": "التفاعل لكل تقديم عبر الزمن",
@@ -2935,7 +3069,6 @@
 				"NO_DATA": "لا توجد بيانات تفاعل",
 				"NO_DATA_DESC": "أنشئ محتوى لرؤية اتجاهات تفاعلك."
 			},
-
 			"SUBMISSION_CALENDAR": {
 				"TITLE": "نشاط التقديم",
 				"SUBTITLE": "انتظامك في التقديم خلال الـ 3 أشهر الماضية",
@@ -2947,7 +3080,6 @@
 				"LESS": "أقل",
 				"MORE": "أكثر"
 			},
-
 			"ENGAGEMENT_DISTRIBUTION": {
 				"TITLE": "توزيع التفاعل",
 				"SUBTITLE": "كيف يتوزع التفاعل على أفضل عناصرك",
@@ -2956,17 +3088,86 @@
 				"NO_DATA": "لا توجد بيانات تفاعل",
 				"NO_DATA_DESC": "احصل على أصوات وتعليقات لرؤية توزيع التفاعل."
 			},
-
 			"COMMON": {
 				"VS": "مقابل",
 				"AVG": "المعدل"
 			},
-
 			"CHARTS": {
 				"LOADING": "جاري تحميل بيانات الرسم البياني...",
 				"ERROR": "فشل في تحميل الرسم البياني",
 				"RETRY": "إعادة المحاولة"
+			},
+			"STATUS_BREAKDOWN": {
+				"TITLE": "حالة التقديم"
 			}
+		},
+		"sponsorships": {
+			"PAGE_TITLE": "رعاياتي",
+			"PAGE_DESCRIPTION": "تتبع وإدارة إعلانات الرعاية الخاصة بك.",
+			"YOUR_SPONSORSHIPS": "رعاياتك",
+			"NEW_SPONSORSHIP": "رعاية جديدة",
+			"TOTAL_SPONSORSHIPS": "الإجمالي",
+			"ACTIVE": "نشط",
+			"PENDING": "قيد الانتظار",
+			"EXPIRED": "منتهي الصلاحية",
+			"STATUS_ALL": "الكل",
+			"STATUS_ACTIVE": "نشط",
+			"STATUS_PENDING": "قيد الانتظار",
+			"STATUS_EXPIRED": "منتهي الصلاحية",
+			"STATUS_CANCELLED": "ملغي",
+			"STATUS_PENDING_PAYMENT": "في انتظار الدفع",
+			"STATUS_PENDING_REVIEW": "قيد المراجعة",
+			"STATUS_REJECTED": "مرفوض",
+			"INTERVAL_ALL": "جميع الأنواع",
+			"INTERVAL_WEEKLY": "أسبوعي",
+			"INTERVAL_MONTHLY": "شهري",
+			"SEARCH_PLACEHOLDER": "البحث باسم العنصر...",
+			"EMPTY_STATE_TITLE": "لا توجد رعايات بعد",
+			"EMPTY_STATE_DESC": "عزز ظهور مشروعك من خلال إنشاء رعاية. العناصر المميزة تحصل على مكانة بارزة في جميع أنحاء الدليل.",
+			"CREATE_FIRST_SPONSORSHIP": "أنشئ أول رعاية لك",
+			"SHOWING_PAGE": "الصفحة {page} من {totalPages}",
+			"PREVIOUS": "السابق",
+			"NEXT": "التالي",
+			"REJECTION_REASON": "السبب",
+			"CANCEL_REASON": "سبب الإلغاء",
+			"SPONSORSHIP": "رعاية",
+			"VIEW_DETAILS": "عرض التفاصيل",
+			"MODAL_TITLE": "تفاصيل الرعاية",
+			"ITEM_INFORMATION": "معلومات العنصر",
+			"SUBSCRIPTION_DETAILS": "تفاصيل الاشتراك",
+			"IMPORTANT_DATES": "التواريخ المهمة",
+			"CREATED_DATE": "تاريخ الإنشاء",
+			"START_DATE": "تاريخ البدء",
+			"END_DATE": "تاريخ الانتهاء",
+			"REVIEWED_DATE": "تاريخ المراجعة",
+			"AMOUNT": "المبلغ",
+			"INTERVAL": "فترة الفوترة",
+			"PAYMENT_PROVIDER": "مزود الدفع",
+			"CLOSE": "إغلاق",
+			"LOAD_ERROR": "فشل تحميل تفاصيل الرعاية",
+			"RETRY": "إعادة المحاولة",
+			"PAY_NOW": "ادفع الآن",
+			"RENEW": "تجديد",
+			"CANCEL": "إلغاء",
+			"OPTIONAL": "اختياري",
+			"CANCEL_SPONSORSHIP": "إلغاء الرعاية",
+			"RENEW_SPONSORSHIP": "تجديد الرعاية",
+			"CONFIRM_CANCEL_MESSAGE": "هل أنت متأكد أنك تريد إلغاء هذه الرعاية؟ لا يمكن التراجع عن هذا الإجراء.",
+			"CONFIRM_CANCEL": "نعم، إلغاء",
+			"CANCEL_NO": "لا، الاحتفاظ بها",
+			"CANCEL_SUCCESS": "تم إلغاء الرعاية بنجاح",
+			"CANCEL_DIALOG_TITLE": "إلغاء الرعاية",
+			"CANCEL_DIALOG_WARNING": "لا يمكن التراجع عن هذا الإجراء. سيتم إلغاء رعايتك فوراً وستفقد أي وقت متبقي.",
+			"CANCEL_REASON_LABEL": "سبب الإلغاء",
+			"CANCEL_REASON_PLACEHOLDER": "أخبرنا لماذا تقوم بالإلغاء (اختياري)...",
+			"KEEP_SPONSORSHIP": "الاحتفاظ بالرعاية",
+			"RENEW_DIALOG_TITLE": "تجديد الرعاية",
+			"RENEW_DIALOG_DESCRIPTION": "مدد رعايتك للاستمرار في عرض عنصرك بشكل بارز في الدليل.",
+			"RENEWAL_PRICE": "سعر التجديد",
+			"RENEWAL_DURATION": "تجديد لمدة 1 {interval}",
+			"RENEW_REDIRECT_INFO": "سيتم إعادة توجيهك إلى مزود الدفع الخاص بنا لإكمال التجديد.",
+			"CANCEL_BUTTON": "إلغاء",
+			"PROCEED_TO_PAYMENT": "المتابعة إلى الدفع"
 		}
 	}
 }
