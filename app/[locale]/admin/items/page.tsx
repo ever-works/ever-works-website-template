@@ -13,6 +13,7 @@ import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, Externa
 import { useAdminItems } from "@/hooks/use-admin-items";
 import { useTranslations } from 'next-intl';
 import { AdminSurveyCreationButton } from "@/components/surveys/admin-survey-creation-button";
+import { useNavigation } from "@/components/providers";
 
 export default function AdminItemsPage() {
   const t = useTranslations('admin.ADMIN_ITEMS_PAGE');
@@ -179,7 +180,10 @@ export default function AdminItemsPage() {
     return statusClasses[color as keyof typeof statusClasses] || statusClasses.gray;
   };
 
-  if (isLoading) {
+  const { isInitialLoad } = useNavigation();
+  const shouldShowSkeleton = isInitialLoad && isLoading;
+
+  if (shouldShowSkeleton) {
     return (
       <div className="p-6 max-w-7xl mx-auto">
         {/* Header Skeleton */}

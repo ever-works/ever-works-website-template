@@ -13,6 +13,7 @@ import { useTags, useTagManagement } from "@/hooks/use-admin-tags";
 import { useTranslations } from "next-intl";
 import { useTagsEnabled } from "@/hooks/use-tags-enabled";
 import Link from "next/link";
+import { useNavigation } from "@/components/providers";
 
 
 export default function AdminTagsPage() {
@@ -120,7 +121,10 @@ export default function AdminTagsPage() {
     );
   }
 
-  if (isLoading) {
+  const { isInitialLoad } = useNavigation();
+  const shouldShowSkeleton = isInitialLoad && isLoading;
+
+  if (shouldShowSkeleton) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
