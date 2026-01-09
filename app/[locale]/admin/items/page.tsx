@@ -256,10 +256,12 @@ export default function AdminItemsPage() {
     return statusClasses[color as keyof typeof statusClasses] || statusClasses.gray;
   };
 
-  // Track when data has loaded at least once
-  if (!isLoading && items.length > 0) {
-    hasLoadedOnce.current = true;
-  }
+  // Track when data has loaded at least once (in useEffect to avoid mutating ref during render)
+  useEffect(() => {
+    if (!isLoading && items.length > 0) {
+      hasLoadedOnce.current = true;
+    }
+  }, [isLoading, items.length]);
 
   // Only show skeleton on initial load, not during search
   if (isLoading && !hasLoadedOnce.current) {
