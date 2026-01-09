@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,6 +21,7 @@ export default function AdminItemsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<SortField>("updated_at");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+  const hasLoadedOnce = useRef(false);
 
   // Use custom hook
   const {
@@ -39,6 +40,16 @@ export default function AdminItemsPage() {
     deleteItem,
     reviewItem,
   } = useAdminItems({ page: currentPage, limit: PageSize, sortBy, sortOrder });
+
+  // Track if we've loaded data at least once
+  useEffect(() => {
+    if (!isLoading && items.length > 0) {
+      hasLoadedOnce.current = true;
+    }
+  }, [isLoading, items]);
+
+  // Only show skeleton on initial load, not on sort/page changes
+  const showSkeleton = isLoading && !hasLoadedOnce.current;
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -192,7 +203,7 @@ export default function AdminItemsPage() {
     return statusClasses[color as keyof typeof statusClasses] || statusClasses.gray;
   };
 
-  if (isLoading) {
+  if (showSkeleton) {
     return (
       <div className="p-6 max-w-7xl mx-auto">
         {/* Header Skeleton */}
@@ -387,6 +398,7 @@ export default function AdminItemsPage() {
                 sortOrder={sortOrder}
                 onSortByChange={handleSortByChange}
                 onSortOrderChange={handleSortOrderChange}
+                isLoading={isLoading}
               />
             </div>
           </div>

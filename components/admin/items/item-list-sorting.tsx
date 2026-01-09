@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { ArrowUp, ArrowDown, Check } from "lucide-react";
+import { ArrowUp, ArrowDown, Check, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +14,7 @@ interface ItemListSortingProps {
     onSortByChange: (sortBy: SortField) => void;
     onSortOrderChange: (sortOrder: SortOrder) => void;
     disabled?: boolean;
+    isLoading?: boolean;
 }
 
 const SORT_FIELDS: { value: SortField; labelKey: string }[] = [
@@ -29,6 +30,7 @@ export function ItemListSorting({
     onSortByChange,
     onSortOrderChange,
     disabled = false,
+    isLoading = false,
 }: ItemListSortingProps) {
     const t = useTranslations("admin.ADMIN_ITEMS_PAGE");
     const [isOpen, setIsOpen] = useState(false);
@@ -68,28 +70,40 @@ export function ItemListSorting({
 
     const toggleOrder = (e: React.MouseEvent) => {
         e.stopPropagation();
-        onSortOrderChange(sortOrder === "asc" ? "desc" : "asc");
+        if (!isLoading) {
+            onSortOrderChange(sortOrder === "asc" ? "desc" : "asc");
+        }
     };
 
     return (
         <div className="relative">
             <button
                 ref={buttonRef}
-                onClick={() => !disabled && setIsOpen(!isOpen)}
-                disabled={disabled}
+                onClick={() => !disabled && !isLoading && setIsOpen(!isOpen)}
+                disabled={disabled || isLoading}
                 className={cn(
-                    "inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-sm",
-                    "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200",
-                    "hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors",
+                    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm",
+                    "border border-gray-200 dark:border-gray-700",
+                    "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white",
+                    "hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors",
                     "disabled:opacity-50 disabled:cursor-not-allowed"
                 )}
             >
                 <span
                     onClick={toggleOrder}
-                    className="hover:text-theme-primary transition-colors cursor-pointer"
+                    className={cn(
+                        "transition-colors cursor-pointer",
+                        !isLoading && "hover:text-theme-primary"
+                    )}
                     title={sortOrder === "asc" ? t("SORT_ASC") : t("SORT_DESC")}
                 >
-                    {sortOrder === "asc" ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
+                    {isLoading ? (
+                        <Loader2 size={14} className="animate-spin" />
+                    ) : sortOrder === "asc" ? (
+                        <ArrowUp size={14} />
+                    ) : (
+                        <ArrowDown size={14} />
+                    )}
                 </span>
                 <span>{t(currentFieldLabel)}</span>
             </button>
