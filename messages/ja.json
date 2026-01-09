@@ -2072,10 +2072,10 @@
 			"REJECTION_REASON_PLACEHOLDER": "このアイテムが却下される理由を説明してください...",
 			"REJECTION_REASON_MIN_LENGTH": "却下理由は10文字以上で入力してください",
 			"CONFIRM_REJECT": "アイテムを却下",
-			"SEARCH_PLACEHOLDER": "Search items...",
-			"NO_ITEMS_FOUND_SEARCH": "No items found",
-			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
-			"CLEAR_SEARCH": "Clear Search"
+			"SEARCH_PLACEHOLDER": "アイテムを検索...",
+			"NO_ITEMS_FOUND_SEARCH": "アイテムが見つかりません",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "\"{term}\"に一致するアイテムがありません。別の検索をお試しください。",
+			"CLEAR_SEARCH": "検索をクリア"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

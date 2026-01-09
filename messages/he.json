@@ -2066,10 +2066,10 @@
 			"REJECTION_REASON_PLACEHOLDER": "הסבר מדוע פריט זה נדחה...",
 			"REJECTION_REASON_MIN_LENGTH": "סיבת הדחייה חייבת להכיל לפחות 10 תווים",
 			"CONFIRM_REJECT": "דחה פריט",
-			"SEARCH_PLACEHOLDER": "Search items...",
-			"NO_ITEMS_FOUND_SEARCH": "No items found",
-			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
-			"CLEAR_SEARCH": "Clear Search"
+			"SEARCH_PLACEHOLDER": "חפש פריטים...",
+			"NO_ITEMS_FOUND_SEARCH": "לא נמצאו פריטים",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "אין פריטים התואמים ל\"{term}\". נסה חיפוש אחר.",
+			"CLEAR_SEARCH": "נקה חיפוש"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",
