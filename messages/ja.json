@@ -2045,7 +2045,7 @@
 			"CANCEL": "キャンセル",
 			"CREATE_CLIENT": "クライアントの作成",
 			"UPDATE_CLIENT": "クライアントを更新する",
-			"CHARACTERS_COUNT": "{現在}/{最大} 文字",
+			"CHARACTERS_COUNT": "{current}/{max} 文字",
 			"STEPS": {
 				"BASIC_INFO": "基本情報",
 				"PROFILE": "プロフィール",
@@ -2171,7 +2171,7 @@
 			"CLEAR_ALL": "すべてクリア",
 			"SHOWING_USERS": "{total} ユーザー中 {count} を表示しています",
 			"FILTERED": "• フィルタリング済み",
-			"PAGE_OF": "ページ {現在}/{合計}",
+			"PAGE_OF": "ページ {current}/{total}",
 			"NO_USERS_FOUND": "ユーザーが見つかりませんでした",
 			"NO_USERS_DESCRIPTION": "フィルターを調整するか、新しいユーザーを作成してみてください。",
 			"NO_ROLE": "役割なし",
@@ -2337,7 +2337,7 @@
 			"DELETE": "消去",
 			"LOADING_COMMENTS": "コメントを読み込んでいます...",
 			"SHOWING_RANGE": "{total} 件のコメントのうち {start} から {end} までを表示しています",
-			"PAGE_OF": "ページ {現在}/{合計}",
+			"PAGE_OF": "ページ {current}/{total}",
 			"PER_PAGE": "ページあたり"
 		},
 		"ADMIN_REPORTS_PAGE": {
@@ -2580,7 +2580,7 @@
 			"NO_CATEGORIES_DESCRIPTION": "最初のカテゴリを作成して、コンテンツの整理を始めます。",
 			"CREATE_FIRST_CATEGORY": "最初のカテゴリを作成する",
 			"SHOWING_RANGE": "カテゴリ {total} 件中 {start} から {end} までを表示しています",
-			"PAGE_OF": "ページ {現在}/{合計}",
+			"PAGE_OF": "ページ {current}/{total}",
 			"PER_PAGE": "ページあたり",
 			"CREATE_CATEGORY": "カテゴリの作成",
 			"EDIT_CATEGORY": "カテゴリの編集",

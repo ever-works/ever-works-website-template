@@ -665,7 +665,7 @@
 	},
 	"directory": {
 		"STEPS": {
-			"STEP_OF": "第 {current} 步，共 {total} 步",
+			"STEP_OF": "\u7b2c {current} \u6b65\uff08\u5171 {total} \u6b65\uff09",
 			"PRODUCT_DETAILS": "产品详情",
 			"PAYMENT_DETAILS": "支付详情",
 			"REVIEW_PUBLISH": "审核和发布"

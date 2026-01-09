@@ -390,7 +390,7 @@
 		"END_OF_CONTENT": "Você chegou ao fim",
 		"RETRY": "Tentar novamente",
 		"FILTER_STATUS_MATCH_ALL": "Showing {filtered} of {total} items that match all selected tags",
-		"FILTER_STATUS": "Mostrando {filtrado} de {total} itens",
+		"FILTER_STATUS": "Mostrando {filtered} de {total} itens",
 		"SHOWING_TOTAL_ITEMS": "Mostrando {total} itens"
 	},
 	"tagsModal": {
@@ -1090,7 +1090,7 @@
 		"SORT_BY_POPULARITY": "Classificar por popularidade",
 		"SORT_BY_PERFORMANCE": "Classificar por desempenho",
 		"SORT_BY_NAME": "Classificar por nome",
-		"SHOWING_TECHNOLOGIES": "Exibindo {filtrado} de {total} tecnologias",
+		"SHOWING_TECHNOLOGIES": "Exibindo {filtered} de {total} tecnologias",
 		"NO_TECH_FOUND": "Nenhuma tecnologia encontrada",
 		"TRY_ADJUSTING_FILTERS": "Tente ajustar seus filtros para ver mais resultados",
 		"READY_TO_BUILD_WITH_TECH": "Pronto para construir seu diretório com essas tecnologias?",
@@ -1456,7 +1456,7 @@
 			"QUERIES_EXECUTED": "Consultas executadas na sessão atual",
 			"AVERAGE_RESPONSE_TIME": "Tempo médio de resposta",
 			"BASED_ON_RESPONSE_TIMES": "Com base nos tempos de resposta",
-			"LAST_UPDATED": "Última atualização: {hora}"
+			"LAST_UPDATED": "Última atualização: {time}"
 		},
 		"NOTIFICATIONS": {
 			"TITLE": "Notificações",
@@ -2107,7 +2107,7 @@
 			},
 			"SUCCESS": {
 				"FILTER_SAVED": "Filtro salvo com sucesso",
-				"FILTER_APPLIED": "Filtro aplicado: {nome}",
+				"FILTER_APPLIED": "Filtro aplicado: {name}",
 				"FILTER_DELETED": "Filtro excluído com sucesso"
 			},
 			"CONFIRM_DELETE": "Tem certeza de que deseja excluir o filtro \"{name}\"?"
@@ -2976,7 +2976,7 @@
 			"DESCRIPTION": "Descrição",
 			"EDIT_SUBMISSION_TITLE": "Editar Submissão",
 			"EDIT_SUBMISSION_DESC": "Atualize os detalhes da sua submissão",
-			"PAGE_INFO": "Página {página} de {page}",
+			"PAGE_INFO": "Página {page} de {totalPages}",
 			"UPDATE_DETAILS": "Atualize os detalhes do seu envio",
 			"RE_REVIEW_REQUIRED": "Reavaliação necessária",
 			"RE_REVIEW_WARNING": "Esta submissão está atualmente aprovada. ",
@@ -3104,7 +3104,7 @@
 			"EMPTY_STATE_TITLE": "Ainda não há patrocínios",
 			"EMPTY_STATE_DESC": "Aumente a visibilidade do seu projeto criando um patrocínio. ",
 			"CREATE_FIRST_SPONSORSHIP": "Crie seu primeiro patrocínio",
-			"SHOWING_PAGE": "Página {página} de {page}",
+			"SHOWING_PAGE": "Página {page} de {totalPages}",
 			"PREVIOUS": "Anterior",
 			"NEXT": "Próximo",
 			"REJECTION_REASON": "Razão",

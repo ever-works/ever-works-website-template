@@ -653,7 +653,7 @@
 	},
 	"directory": {
 		"STEPS": {
-			"STEP_OF": "Шаг {текущий} из {всего}",
+			"STEP_OF": "Шаг {current} из {total}",
 			"PRODUCT_DETAILS": "Подробная информация о продукте",
 			"PAYMENT_DETAILS": "Детали оплаты",
 			"REVIEW_PUBLISH": "Обзор и публикация"
@@ -663,7 +663,7 @@
 			"DESCRIPTION": "Поделитесь подробностями, которые помогут пользователям обнаружить и понять ваш замечательный продукт.",
 			"STEP_INDICATOR": "Шаг {step} из 3 · Подробная информация о продукте",
 			"FORM_COMPLETION": "Заполнение формы",
-			"REQUIRED_FIELDS": "{заполнено}/{всего} обязательных полей",
+			"REQUIRED_FIELDS": "{completed}/{total} обязательных полей",
 			"BASIC_INFORMATION": "Основная информация",
 			"PRODUCT_NAME": "Название продукта",
 			"PRODUCT_NAME_PLACEHOLDER": "Введите свое удивительное название продукта",
@@ -1122,7 +1122,7 @@
 		"QUICK_NAVIGATION": "Быстрая навигация",
 		"PREVIOUS": "Предыдущий",
 		"NEXT": "Следующий",
-		"STEP_OF": "Шаг {текущий} из {всего}",
+		"STEP_OF": "Шаг {current} из {total}",
 		"STEP1_FEATURE_1": "Клонирование репозитория",
 		"STEP1_FEATURE_2": "Установка зависимостей",
 		"STEP1_FEATURE_3": "Настройка среды",
@@ -1914,7 +1914,7 @@
 				"CREATE": "Создать элемент",
 				"UPDATE": "Обновить элемент",
 				"CANCEL": "Отмена",
-				"STEP_COUNTER": "Шаг {текущий} из {всего}"
+				"STEP_COUNTER": "Шаг {current} из {total}"
 			}
 		},
 		"DELETE_COMMENT_DIALOG": {
@@ -2045,7 +2045,7 @@
 			"CANCEL": "Отмена",
 			"CREATE_CLIENT": "Создать клиента",
 			"UPDATE_CLIENT": "Обновить клиент",
-			"CHARACTERS_COUNT": "{текущий}/{макс} символов",
+			"CHARACTERS_COUNT": "{current}/{max} символов",
 			"STEPS": {
 				"BASIC_INFO": "Основная информация",
 				"PROFILE": "Профиль",
