@@ -98,10 +98,12 @@ export function BasicInfoStep({
 
 	// Close dropdown on outside click
 	useEffect(() => {
-		if (!categoryMenuOpen) return;
-
 		const handleClickOutside = (event: MouseEvent) => {
-			if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target as Node)) {
+			if (
+				categoryMenuOpen &&
+				categoryDropdownRef.current &&
+				!categoryDropdownRef.current.contains(event.target as Node)
+			) {
 				setCategoryMenuOpen(false);
 				setCategorySearch('');
 			}
@@ -111,14 +113,12 @@ export function BasicInfoStep({
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [categoryMenuOpen]);
+	}, []);
 
 	// Close dropdown on Escape
 	useEffect(() => {
-		if (!categoryMenuOpen) return;
-
 		const handleKeyDown = (event: KeyboardEvent) => {
-			if (event.key === 'Escape') {
+			if (categoryMenuOpen && event.key === 'Escape') {
 				setCategoryMenuOpen(false);
 				setCategorySearch('');
 			}
@@ -128,7 +128,7 @@ export function BasicInfoStep({
 		return () => {
 			document.removeEventListener('keydown', handleKeyDown);
 		};
-	}, [categoryMenuOpen]);
+	}, []);
 
 	const handleExtraction = async (url: string) => {
 		if (!setFormData) return;
@@ -285,16 +285,7 @@ export function BasicInfoStep({
 																className="ml-1 cursor-pointer rounded-full hover:bg-theme-primary-700/30 focus:outline-none focus:ring-2 focus:ring-theme-primary-400"
 																onClick={e => {
 																	e.stopPropagation();
-																	setSelectedCategories(prev => prev.filter(id => id !== catId));
-																	if (setFormData) {
-																		setFormData(prev => {
-																			const prevCategories = Array.isArray(prev.categories) ? prev.categories : [];
-																			return {
-																				...prev,
-																				categories: prevCategories.filter(id => id !== catId)
-																			};
-																		});
-																	}
+																	toggleCategory(catId);
 																}}
 															>
 																<X className="w-3 h-3 text-white" />
@@ -340,11 +331,13 @@ export function BasicInfoStep({
 										</div>
 										<div className="overflow-y-auto scrollbar-thin scrollbar-thumb-theme-primary-300 scrollbar-track-transparent [&::-webkit-scrollbar]:w-1.5 overscroll-contain mx-auto"
 											style={{ maxHeight: '20rem', width: '100%', scrollbarWidth: 'thin' }}>
-											{categories
-												?.filter((cat) =>
+											{(() => {
+												const filteredCategories = categories?.filter((cat) =>
 													cat.name.toLowerCase().includes(categorySearch.toLowerCase())
-												)
-												.map((category) => (
+												) ?? [];
+
+												return filteredCategories.length > 0 ? (
+													filteredCategories.map((category) => (
 													<div
 														key={category.id}
 														className={cn(
@@ -353,7 +346,7 @@ export function BasicInfoStep({
 														)}
 														role="option"
 														aria-selected={selectedCategories.includes(category.id)}
-																tabIndex={0}
+														tabIndex={-1}
 														onClick={() => toggleCategory(category.id)}
 														onKeyDown={(event) => {
 															if (event.key === 'Enter' || event.key === ' ') {
@@ -373,8 +366,7 @@ export function BasicInfoStep({
 															<Check className="h-4 w-4 text-theme-primary-500 dark:text-theme-primary-400" />
 														)}
 													</div>
-												))}
-											{categories?.filter((cat) => cat.name.toLowerCase().includes(categorySearch.toLowerCase())).length === 0 && (
+												))) : (
 												<div
 													className="px-3 py-2 text-theme-primary-500 dark:text-gray-400"
 													role="status"
@@ -383,7 +375,8 @@ export function BasicInfoStep({
 												>
 													{t('directory.DETAILS_FORM.NO_CATEGORIES_FOUND')}
 												</div>
-											)}
+												);
+											})()}
 										</div>
 									</div>
 								)}
