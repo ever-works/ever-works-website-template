@@ -70,7 +70,7 @@ export function ItemListSorting({
 
     const toggleOrder = (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!isLoading) {
+        if (!isLoading && !disabled) {
             onSortOrderChange(sortOrder === "asc" ? "desc" : "asc");
         }
     };
