@@ -211,16 +211,6 @@ export default function AdminItemsPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSortByChange = (newSortBy: SortField) => {
-    setSortBy(newSortBy);
-    setCurrentPage(1); // Reset to first page when sorting changes
-  };
-
-  const handleSortOrderChange = (newSortOrder: SortOrder) => {
-    setSortOrder(newSortOrder);
-    setCurrentPage(1); // Reset to first page when sorting changes
-  };
-
   const handleFormSubmit = (data: CreateItemRequest | UpdateItemRequest) => {
     if (formMode === 'create') {
       handleCreateItem(data as CreateItemRequest);
