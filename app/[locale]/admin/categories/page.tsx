@@ -497,7 +497,6 @@ export default function AdminCategoriesPage() {
 						className="fixed inset-0 bg-black bg-opacity-60"
 						onClick={() => {
 							if (!isSubmitting) {
-								console.log('🔷 Closing modal via backdrop click');
 								onClose();
 							}
 						}}

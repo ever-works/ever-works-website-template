@@ -1,29 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useActionState } from 'react';
 import { subscribeToNewsletter } from '@/app/[locale]/newsletter/actions';
 import { ActionState } from '@/lib/auth/middleware';
 import { toast } from 'sonner';
 
 export function Newsletter({ t }: { t: any }) {
-	const [isSuccess, setIsSuccess] = useState(false);
 	const [state, formAction, pending] = useActionState<ActionState, FormData>(subscribeToNewsletter, {});
 
+	// Show toast on success - side effects must be in useEffect
 	useEffect(() => {
 		if (state.success) {
-			setIsSuccess(true);
+			toast.success(t('footer.SUBSCRIPTION_SUCCESS'));
 		}
-	}, [state]);
+	}, [state.success, t]);
 
 	const handleFormAction = async (formData: FormData) => {
 		return formAction(formData);
 	};
-
-	if (isSuccess) {
-		toast.success(t('footer.SUBSCRIPTION_SUCCESS'));
-		setIsSuccess(false);
-	}
 
 	return (
 		<div className="space-y-3 sm:space-y-4 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
@@ -47,7 +42,7 @@ export function Newsletter({ t }: { t: any }) {
 						className="mt-2 sm:mt-0 w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-gradient-to-r from-theme-primary-500 via-purple-500 to-purple-600 bg-[length:200%_200%] bg-left hover:bg-right
              transition-[background-position] duration-500 ease-in-out text-white font-medium hover:shadow-lg hover:shadow-blue-500/25 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
 					>
-						{pending ? t('footer.SUBMITTING') || 'Submitting...' : t('footer.SUBSCRIBE')}
+						{pending ? t('footer.SUBMITTING') : t('footer.SUBSCRIBE')}
 					</button>
 				</div>
 				{state?.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}

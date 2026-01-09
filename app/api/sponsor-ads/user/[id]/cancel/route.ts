@@ -53,7 +53,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 		const { id } = await params;
 
 		// Parse and validate optional body for cancel reason using Zod schema
-		const body = await request.json().catch(() => ({}));
+		// Guard against JSON null: if client sends null, we coalesce to {}
+		const body = (await request.json().catch(() => ({}))) ?? {};
 		const parsed = cancelSponsorAdSchema.omit({ id: true }).safeParse(body);
 
 		// If validation fails and cancelReason was provided, return 400 error

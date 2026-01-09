@@ -97,7 +97,7 @@ export function CancelDialog({
 								{formatSlugToTitle(sponsorAd.itemSlug)}
 							</p>
 							<p className="text-sm text-gray-500 dark:text-gray-400">
-								{t(`INTERVAL_${(sponsorAd.interval ?? 'month').toUpperCase()}`)} {t('SPONSORSHIP')}
+								{t(`INTERVAL_${(sponsorAd.interval ?? 'monthly').toUpperCase()}`)} {t('SPONSORSHIP')}
 							</p>
 						</div>
 					)}

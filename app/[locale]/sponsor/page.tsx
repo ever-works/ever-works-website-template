@@ -164,7 +164,7 @@ export default async function SponsorPage({ params }: { params: Promise<{ locale
 							<p className="mb-6 text-gray-600 dark:text-gray-400">{t('NO_ITEMS_DESCRIPTION')}</p>
 							<Link
 								href={`/${locale}/submit`}
-								className="inline-flex items-center justify-center rounded-xl bg-linear-to-r from-theme-primary-600 to-theme-primary-600 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-300"
+								className="inline-flex items-center justify-center rounded-xl bg-linear-to-r from-theme-primary to-theme-accent px-6 py-3 text-sm font-medium text-white shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/30 transition-all duration-300"
 							>
 								{t('SUBMIT_ITEM_CTA')}
 							</Link>
