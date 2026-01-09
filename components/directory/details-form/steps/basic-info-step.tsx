@@ -233,7 +233,7 @@ export function BasicInfoStep({
 					{/* Category - Only show if categories enabled */}
 					{categoriesEnabled && (
 						<div className="space-y-3">
-							<label className={FORM_FIELD_CLASSES.label}>
+							<label htmlFor="categories" className={FORM_FIELD_CLASSES.label}>
 								{t('directory.DETAILS_FORM.CATEGORY')} *
 							</label>
 							<div className="relative" ref={categoryDropdownRef}>
