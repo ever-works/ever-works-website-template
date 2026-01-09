@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,9 +10,10 @@ import { MultiStepItemForm } from "@/components/admin/items/multi-step-item-form
 import { ItemFilters } from "@/components/admin/items/item-filters";
 import { ActiveItemFilters } from "@/components/admin/items/active-item-filters";
 import { ItemRejectModal } from "@/components/admin/items/item-reject-modal";
+import { ItemActionsMenu } from "@/components/admin/items/item-actions-menu";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
 import { UniversalPagination } from "@/components/universal-pagination";
-import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink, Loader2 } from "lucide-react";
+import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink, Loader2, Folder, Tag, Hash, Link2, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdminItems } from "@/hooks/use-admin-items";
 import { useAllCategories } from "@/hooks/use-admin-categories";
@@ -21,6 +23,7 @@ import { AdminSurveyCreationButton } from "@/components/surveys/admin-survey-cre
 
 export default function AdminItemsPage() {
   const t = useTranslations('admin.ADMIN_ITEMS_PAGE');
+  const router = useRouter();
   const PageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -172,18 +175,35 @@ export default function AdminItemsPage() {
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  // Compact status labels for cleaner UI
+  const getStatusLabel = (status: string) => {
     switch (status) {
       case 'draft':
-        return <Package className="w-4 h-4" />;
+        return t('STATUS_DRAFT');
       case 'pending':
-        return <Clock className="w-4 h-4" />;
+        return t('STATUS_PENDING');
       case 'approved':
-        return <CheckCircle className="w-4 h-4" />;
+        return t('STATUS_APPROVED');
       case 'rejected':
-        return <XCircle className="w-4 h-4" />;
+        return t('STATUS_REJECTED');
       default:
-        return <Package className="w-4 h-4" />;
+        return status;
+    }
+  };
+
+  // Status dot color classes
+  const getStatusDotColor = (status: string) => {
+    switch (status) {
+      case 'draft':
+        return 'bg-gray-400';
+      case 'pending':
+        return 'bg-yellow-400';
+      case 'approved':
+        return 'bg-green-400';
+      case 'rejected':
+        return 'bg-red-400';
+      default:
+        return 'bg-gray-400';
     }
   };
 
@@ -491,13 +511,13 @@ export default function AdminItemsPage() {
                           
                           {/* Item Details */}
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center space-x-2 mb-2">
+                            <div className="flex items-center gap-2 mb-2">
                               <h4 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
                                 {item.name || t('UNTITLED')}
                               </h4>
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors.bg} ${statusColors.text}`}>
-                                {getStatusIcon(item.status)}
-                                <span className="ml-1">{ITEM_STATUS_LABELS[item.status as keyof typeof ITEM_STATUS_LABELS]}</span>
+                              <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${statusColors.bg} ${statusColors.text}`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${getStatusDotColor(item.status)}`} />
+                                {getStatusLabel(item.status)}
                               </span>
                             </div>
                             
@@ -510,150 +530,63 @@ export default function AdminItemsPage() {
                               {categories.map((cat, index) => (
                                 <span
                                   key={index}
-                                  className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400"
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400"
                                 >
+                                  <Folder className="w-3 h-3" />
                                   {cat}
                                 </span>
                               ))}
                               {item.tags.slice(0, 3).map((tag, index) => (
                                 <span
                                   key={index}
-                                  className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
                                 >
+                                  <Tag className="w-3 h-3" />
                                   {tag}
                                 </span>
                               ))}
                               {item.tags.length > 3 && (
-                                <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                  <Tag className="w-3 h-3" />
                                   {t('MORE_TAGS', { count: item.tags.length - 3 })}
                                 </span>
                               )}
                             </div>
                             
                             {/* Meta Info */}
-                            <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
-                              <span>{t('ID_LABEL')} {item.id}</span>
-                              <span>{t('SLUG_LABEL')} {item.slug}</span>
-                              <span>{t('UPDATED_LABEL')} {new Date(item.updated_at || Date.now()).toLocaleDateString()}</span>
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
+                              <span className="inline-flex items-center gap-1">
+                                <Hash className="w-3 h-3" />
+                                {item.id}
+                              </span>
+                              <span className="inline-flex items-center gap-1">
+                                <Link2 className="w-3 h-3" />
+                                {item.slug}
+                              </span>
+                              <span className="inline-flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
+                                {new Date(item.updated_at || Date.now()).toLocaleDateString()}
+                              </span>
                             </div>
                           </div>
                         </div>
                       </div>
 
-                      {/* Right Section: Actions */}
-                      <div className="flex items-center space-x-2 ml-4">
-                        {/* External Link */}
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => window.open(item.source_url || '#', '_blank')}
-                          className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20"
-                          title={t('VIEW_SOURCE')}
-                        >
-                          <ExternalLink size={14} />
-                        </Button>
-
-                        {/* Review Actions */}
-                        {item.status === 'pending' && (() => {
-                          const isApprovingThis = isApproving && pendingItemId === item.id;
-                          const isRejectingThis = isRejecting && pendingItemId === item.id;
-                          const isDeletingThis = isDeleting && pendingItemId === item.id;
-                          const isProcessingThis = isApprovingThis || isRejectingThis || isDeletingThis;
-
-                          return (
-                            <>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => handleApproveItem(item.id)}
-                                disabled={isProcessingThis}
-                                className={`h-8 w-8 p-0 transition-all duration-200 ${
-                                  isProcessingThis
-                                    ? 'opacity-50 cursor-not-allowed'
-                                    : 'hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20'
-                                }`}
-                                title={isApprovingThis ? t('APPROVING') : t('APPROVE')}
-                              >
-                                {isApprovingThis ? (
-                                  <Loader2 size={14} className="animate-spin" />
-                                ) : (
-                                  <CheckCircle size={14} />
-                                )}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => openRejectModal(item)}
-                                disabled={isProcessingThis}
-                                className={`h-8 w-8 p-0 transition-all duration-200 ${
-                                  isProcessingThis
-                                    ? 'opacity-50 cursor-not-allowed'
-                                    : 'hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20'
-                                }`}
-                                title={isRejectingThis ? t('REJECTING') : t('REJECT')}
-                              >
-                                {isRejectingThis ? (
-                                  <Loader2 size={14} className="animate-spin" />
-                                ) : (
-                                  <XCircle size={14} />
-                                )}
-                              </Button>
-                            </>
-                          );
-                        })()}
-
-                        {/* Survey Creation */}
-                        <AdminSurveyCreationButton
-                          itemId={item.id}
-                          variant="ghost"
-                          size="sm"
-                          className="w-8 p-0 hover:bg-yellow-500/10 hover:text-yellow-600"
+                      {/* Right Section: Actions Menu */}
+                      <div className="flex items-center ml-4">
+                        <ItemActionsMenu
+                          item={item}
+                          onViewSource={() => window.open(item.source_url || '#', '_blank')}
+                          onEdit={() => openEditModal(item as any)}
+                          onCreateSurvey={() => router.push(`/admin/surveys/create?itemId=${encodeURIComponent(item.id)}`)}
+                          onApprove={() => handleApproveItem(item.id)}
+                          onReject={() => openRejectModal(item)}
+                          onDelete={() => handleDeleteItem(item.id)}
+                          isProcessing={isProcessingThisItem}
+                          isApproving={isApproving && pendingItemId === item.id}
+                          isRejecting={isRejecting && pendingItemId === item.id}
+                          isDeleting={isDeleting && pendingItemId === item.id}
                         />
-
-                        {/* Edit and Delete */}
-                        {(() => {
-                          const isApprovingThis = isApproving && pendingItemId === item.id;
-                          const isRejectingThis = isRejecting && pendingItemId === item.id;
-                          const isDeletingThis = isDeleting && pendingItemId === item.id;
-                          const isProcessingThis = isApprovingThis || isRejectingThis || isDeletingThis;
-
-                          return (
-                            <>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => openEditModal(item as any)}
-                                disabled={isProcessingThis}
-                                className={`h-8 w-8 p-0 transition-all duration-200 ${
-                                  isProcessingThis
-                                    ? 'opacity-50 cursor-not-allowed'
-                                    : 'hover:bg-theme-primary/10 hover:text-theme-primary'
-                                }`}
-                                title={t('EDIT')}
-                              >
-                                <Edit size={14} />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => handleDeleteItem(item.id)}
-                                disabled={isProcessingThis}
-                                className={`h-8 w-8 p-0 transition-all duration-200 ${
-                                  isProcessingThis
-                                    ? 'opacity-50 cursor-not-allowed'
-                                    : 'hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20'
-                                }`}
-                                title={isDeletingThis ? t('DELETING') : t('DELETE')}
-                              >
-                                {isDeletingThis ? (
-                                  <Loader2 size={14} className="animate-spin" />
-                                ) : (
-                                  <Trash2 size={14} />
-                                )}
-                              </Button>
-                            </>
-                          );
-                        })()}
                       </div>
                     </div>
                   </div>
