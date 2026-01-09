@@ -124,8 +124,9 @@ export function ItemActionsMenu({
 
           {/* Create Survey */}
           <DropdownMenu.Item
-            className={menuItemClass}
+            className={isProcessing ? disabledItemClass : menuItemClass}
             onSelect={onCreateSurvey}
+            disabled={isProcessing}
           >
             <FileText className="w-4 h-4" />
             {tSurvey("CREATE_SURVEY")}
