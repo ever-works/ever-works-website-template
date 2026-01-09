@@ -234,7 +234,7 @@ export function BasicInfoStep({
 					{categoriesEnabled && (
 						<div className="space-y-3">
 							<label htmlFor="categories" className={FORM_FIELD_CLASSES.label}>
-								{t('directory.DETAILS_FORM.CATEGORY')} *
+								{t('directory.DETAILS_FORM.CATEGORIES')} *
 							</label>
 							<div className="relative" ref={categoryDropdownRef}>
 								<button
@@ -246,7 +246,7 @@ export function BasicInfoStep({
 										categoryMenuOpen && 'ring-2 ring-theme-primary-500 dark:ring-theme-primary-400',
 										focusedField === 'categories' && 'border-theme-primary-500 dark:border-theme-primary-400'
 									)}
-									aria-label={t('directory.DETAILS_FORM.CATEGORY')}
+									aria-label={t('directory.DETAILS_FORM.CATEGORIES')}
 									aria-expanded={categoryMenuOpen}
 									aria-controls={categoryDropdownId}
 									aria-haspopup="listbox"
