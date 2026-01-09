@@ -128,7 +128,7 @@ export function BasicInfoStep({
 		return () => {
 			document.removeEventListener('keydown', handleKeyDown);
 		};
-	}, []);
+	}, [categoryMenuOpen]);
 
 	const handleExtraction = async (url: string) => {
 		if (!setFormData) return;
@@ -350,9 +350,7 @@ export function BasicInfoStep({
 														onClick={() => toggleCategory(category.id)}
 														onKeyDown={(event) => {
 															if (event.key === 'Enter' || event.key === ' ') {
-																if (event.key === ' ') {
-																	event.preventDefault();
-																}
+																event.preventDefault();
 																toggleCategory(category.id);
 															}
 														}}
