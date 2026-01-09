@@ -6,10 +6,14 @@ import { TopLoadingBar } from './ui/top-loading-bar';
 /**
  * Global navigation loading bar
  * Shows a thin loading bar at the top during client-side navigation
- * Replaces skeleton screens for better UX
+ * Note: Currently disabled as NavigationProvider doesn't track navigation state
+ * TODO: Implement proper navigation state tracking in NavigationProvider
  */
 export function NavigationLoadingBar() {
-	const { isNavigating } = useNavigation();
+	// NavigationProvider currently only tracks isInitialLoad/showSkeleton
+	// isNavigating is not implemented - return false to disable loading bar
+	const { showSkeleton } = useNavigation();
 
-	return <TopLoadingBar isLoading={isNavigating} />;
+	// For now, don't show loading bar as we don't have proper navigation state
+	return <TopLoadingBar isLoading={showSkeleton} />;
 }

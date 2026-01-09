@@ -5,6 +5,7 @@ import { Button, Textarea } from '@heroui/react';
 import { XCircle, AlertTriangle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { SponsorAd } from '@/lib/db/schema';
+import { formatSlugToTitle } from './constants';
 
 interface CancelDialogProps {
 	isOpen: boolean;
@@ -24,13 +25,6 @@ const MODAL_BODY = 'p-6';
 const ITEM_PREVIEW = 'p-3 bg-gray-100 dark:bg-gray-800 rounded-lg';
 const WARNING_BOX =
 	'flex items-start gap-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800/50';
-
-function formatSlugToTitle(slug: string): string {
-	return slug
-		.split('-')
-		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-		.join(' ');
-}
 
 /**
  * Cancel Dialog Component
