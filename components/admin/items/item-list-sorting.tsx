@@ -82,8 +82,8 @@ export function ItemListSorting({
                 onClick={() => !disabled && !isLoading && setIsOpen(!isOpen)}
                 disabled={disabled || isLoading}
                 className={cn(
-                    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm",
-                    "w-[150px]",
+                    "inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md",
+                    "w-[130px]",
                     "border border-gray-200 dark:border-gray-700",
                     "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white",
                     "hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors",
@@ -99,11 +99,11 @@ export function ItemListSorting({
                     title={sortOrder === "asc" ? t("SORT_ASC") : t("SORT_DESC")}
                 >
                     {isLoading ? (
-                        <Loader2 size={14} className="animate-spin" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     ) : sortOrder === "asc" ? (
-                        <ArrowUp size={14} />
+                        <ArrowUp className="w-3.5 h-3.5" />
                     ) : (
-                        <ArrowDown size={14} />
+                        <ArrowDown className="w-3.5 h-3.5" />
                     )}
                 </span>
                 <span>{t(currentFieldLabel)}</span>
@@ -132,7 +132,7 @@ export function ItemListSorting({
                         >
                             <span>{t(field.labelKey)}</span>
                             {sortBy === field.value && (
-                                <Check size={14} className="text-theme-primary" />
+                                <Check className="w-3.5 h-3.5 text-theme-primary" />
                             )}
                         </button>
                     ))}
