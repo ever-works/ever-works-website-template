@@ -83,6 +83,7 @@ export function ItemListSorting({
                 disabled={disabled || isLoading}
                 className={cn(
                     "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm",
+                    "w-[150px]",
                     "border border-gray-200 dark:border-gray-700",
                     "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white",
                     "hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors",
