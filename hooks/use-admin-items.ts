@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
 import { ItemData, CreateItemRequest, UpdateItemRequest } from '@/lib/types/item';
@@ -19,7 +19,8 @@ export interface ItemsListParams {
   page?: number;
   limit?: number;
   status?: string;
-  category?: string;
+  categories?: string[];
+  tags?: string[];
   search?: string;
   sortBy?: 'name' | 'updated_at' | 'status' | 'submitted_at';
   sortOrder?: 'asc' | 'desc';
@@ -52,7 +53,8 @@ const fetchItems = async (params: ItemsListParams = {}): Promise<ItemsListRespon
   if (params.page) searchParams.set('page', params.page.toString());
   if (params.limit) searchParams.set('limit', params.limit.toString());
   if (params.status) searchParams.set('status', params.status);
-  if (params.category) searchParams.set('category', params.category);
+  if (params.categories && params.categories.length > 0) searchParams.set('categories', params.categories.join(','));
+  if (params.tags && params.tags.length > 0) searchParams.set('tags', params.tags.join(','));
   if (params.search) searchParams.set('search', params.search);
   if (params.sortBy) searchParams.set('sortBy', params.sortBy);
   if (params.sortOrder) searchParams.set('sortOrder', params.sortOrder);
@@ -120,6 +122,7 @@ export function useAdminItems(params: ItemsListParams = {}) {
   const {
     data: itemsData,
     isLoading,
+    isFetching,
     error,
     refetch,
   } = useQuery({
@@ -129,6 +132,7 @@ export function useAdminItems(params: ItemsListParams = {}) {
     gcTime: 10 * 60 * 1000, // 10 minutes
     refetchInterval: 5 * 60 * 1000, // 5 minutes - reduced from 30 seconds
     retry: 3,
+    placeholderData: keepPreviousData, // Keep previous data while fetching new data
   });
 
   // Fetch stats
@@ -256,7 +260,8 @@ export function useAdminItems(params: ItemsListParams = {}) {
     },
 
     // Loading states
-    isLoading,
+    isLoading, // True only on initial load (no cached data)
+    isFetching, // True when fetching (including background refetch)
     isStatsLoading,
     isSubmitting: createItemMutation.isPending || updateItemMutation.isPending || deleteItemMutation.isPending || reviewItemMutation.isPending,
 

@@ -211,8 +211,15 @@ export async function GET(request: NextRequest) {
     const { page, limit } = paginationResult;
 
     const statusParam = searchParams.get('status');
-    const category = searchParams.get('category') || undefined;
-    const tag = searchParams.get('tag') || undefined;
+    const search = searchParams.get('search') || undefined;
+    const categoriesParam = searchParams.get('categories');
+    const categories = categoriesParam
+      ? categoriesParam.split(',').map(c => c.trim()).filter(Boolean)
+      : undefined;
+    const tagsParam = searchParams.get('tags');
+    const tags = tagsParam
+      ? tagsParam.split(',').map(t => t.trim()).filter(Boolean)
+      : undefined;
     const sortByParam = searchParams.get('sortBy');
     const sortOrderParam = searchParams.get('sortOrder');
 
@@ -237,8 +244,9 @@ export async function GET(request: NextRequest) {
     // Get paginated items
     const result = await itemRepository.findAllPaginated(page, limit, {
       status,
-      category,
-      tag,
+      search,
+      categories,
+      tags,
       sortBy,
       sortOrder,
     });

@@ -2049,6 +2049,21 @@
 			"NO_ITEMS_DESCRIPTION": "コレクションを作成するには、最初のアイテムを作成してください。",
 			"CREATE_ITEM": "アイテムを作成",
 			"CONFIRM_DELETE_ITEM": "このアイテムを削除してもよろしいですか？この操作は元に戻せません。",
+			"FILTERS": "フィルター",
+			"FILTER_BY_STATUS": "ステータスでフィルター",
+			"FILTER_BY_CATEGORY": "カテゴリでフィルター",
+			"FILTER_BY_TAGS": "タグでフィルター",
+			"ALL_STATUSES": "すべてのステータス",
+			"ALL_CATEGORIES": "すべてのカテゴリ",
+			"ALL_TAGS": "すべてのタグ",
+			"CLEAR_ALL": "すべてクリア",
+			"NO_FILTER_RESULTS": "選択したフィルターに一致するアイテムがありません",
+			"NO_FILTER_RESULTS_DESCRIPTION": "フィルターを調整して、お探しのものを見つけてください。",
+			"ACTIVE_FILTERS": "アクティブなフィルター",
+			"STATUS_LABEL": "ステータス",
+			"CATEGORY_LABEL": "カテゴリ",
+			"TAGS_LABEL": "タグ",
+			"SELECT_TAGS": "タグを選択...",
 			"CANCEL": "キャンセル",
 			"REJECT_MODAL_TITLE": "アイテムを却下",
 			"REJECT_MODAL_DESCRIPTION": "このアイテムを却下する理由を入力してください。この理由は提出者に送信されます。",
@@ -2056,7 +2071,11 @@
 			"REJECTION_REASON_LABEL": "却下理由",
 			"REJECTION_REASON_PLACEHOLDER": "このアイテムが却下される理由を説明してください...",
 			"REJECTION_REASON_MIN_LENGTH": "却下理由は10文字以上で入力してください",
-			"CONFIRM_REJECT": "アイテムを却下"
+			"CONFIRM_REJECT": "アイテムを却下",
+			"SEARCH_PLACEHOLDER": "Search items...",
+			"NO_ITEMS_FOUND_SEARCH": "No items found",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
+			"CLEAR_SEARCH": "Clear Search"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",
@@ -2867,7 +2886,6 @@
 			"WELCOME_BACK": "おかえりなさい、{name}さん！活動の概要はこちらです。",
 			"REFRESH": "更新",
 			"FAILED_TO_LOAD": "ダッシュボード統計の読み込みに失敗しました",
-
 			"STATS": {
 				"TOTAL_SUBMISSIONS": "総提出数",
 				"CONTENT_CREATED": "作成したコンテンツ",
@@ -2878,7 +2896,6 @@
 				"COMMENTS_RECEIVED": "獲得したコメント",
 				"COMMENTS_ON_CONTENT": "コンテンツへのコメント"
 			},
-
 			"PERIOD_COMPARISON": {
 				"TITLE": "週間パフォーマンス",
 				"THIS_WEEK": "今週",
@@ -2891,7 +2908,6 @@
 				"NO_DATA": "データがありません",
 				"NO_DATA_DESC": "週間パフォーマンス比較を見るにはコンテンツの作成を始めてください。"
 			},
-
 			"CATEGORY_PERFORMANCE": {
 				"TITLE": "カテゴリパフォーマンス",
 				"SUBTITLE": "平均エンゲージメント順のトップカテゴリ",
@@ -2902,7 +2918,6 @@
 				"NO_DATA": "カテゴリデータがありません",
 				"NO_DATA_DESC": "カテゴリパフォーマンス指標を見るにはアイテムを提出してください。"
 			},
-
 			"APPROVAL_TREND": {
 				"TITLE": "承認トレンド",
 				"SUBTITLE": "月間承認成功率",
@@ -2912,7 +2927,6 @@
 				"NO_DATA": "承認データがありません",
 				"NO_DATA_DESC": "承認率を追跡するにはアイテムを提出してください。"
 			},
-
 			"ENGAGEMENT_RATE": {
 				"TITLE": "エンゲージメント率",
 				"SUBTITLE": "時系列での提出あたりのエンゲージメント",
@@ -2920,7 +2934,6 @@
 				"NO_DATA": "エンゲージメントデータがありません",
 				"NO_DATA_DESC": "エンゲージメントトレンドを見るにはコンテンツを作成してください。"
 			},
-
 			"SUBMISSION_CALENDAR": {
 				"TITLE": "提出アクティビティ",
 				"SUBTITLE": "過去3ヶ月の提出の一貫性",
@@ -2932,7 +2945,6 @@
 				"LESS": "少ない",
 				"MORE": "多い"
 			},
-
 			"ENGAGEMENT_DISTRIBUTION": {
 				"TITLE": "エンゲージメント分布",
 				"SUBTITLE": "トップアイテム間でのエンゲージメントの分布",
@@ -2941,12 +2953,10 @@
 				"NO_DATA": "エンゲージメントデータがありません",
 				"NO_DATA_DESC": "エンゲージメント分布を見るには投票やコメントを獲得してください。"
 			},
-
 			"COMMON": {
 				"VS": "vs",
 				"AVG": "平均"
 			},
-
 			"CHARTS": {
 				"LOADING": "チャートデータを読み込み中...",
 				"ERROR": "チャートの読み込みに失敗しました",

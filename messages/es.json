@@ -2071,6 +2071,21 @@
 			"NO_ITEMS_DESCRIPTION": "Cree su primer elemento para comenzar a construir su colección.",
 			"CREATE_ITEM": "Crear Elemento",
 			"CONFIRM_DELETE_ITEM": "¿Está seguro de que desea eliminar este elemento? Esta acción no se puede deshacer.",
+			"FILTERS": "Filtros",
+			"FILTER_BY_STATUS": "Filtrar por estado",
+			"FILTER_BY_CATEGORY": "Filtrar por categoría",
+			"FILTER_BY_TAGS": "Filtrar por etiquetas",
+			"ALL_STATUSES": "Todos los Estados",
+			"ALL_CATEGORIES": "Todas las Categorías",
+			"ALL_TAGS": "Todas las Etiquetas",
+			"CLEAR_ALL": "Limpiar Todo",
+			"NO_FILTER_RESULTS": "No hay elementos que coincidan con los filtros seleccionados",
+			"NO_FILTER_RESULTS_DESCRIPTION": "Intente ajustar sus filtros para encontrar lo que busca.",
+			"ACTIVE_FILTERS": "Filtros Activos",
+			"STATUS_LABEL": "Estado",
+			"CATEGORY_LABEL": "Categoría",
+			"TAGS_LABEL": "Etiquetas",
+			"SELECT_TAGS": "Seleccionar etiquetas...",
 			"CANCEL": "Cancelar",
 			"REJECT_MODAL_TITLE": "Rechazar elemento",
 			"REJECT_MODAL_DESCRIPTION": "Por favor proporcione una razón para rechazar este elemento. Esto será enviado al remitente.",
@@ -2078,7 +2093,11 @@
 			"REJECTION_REASON_LABEL": "Razón del rechazo",
 			"REJECTION_REASON_PLACEHOLDER": "Explique por qué se rechaza este elemento...",
 			"REJECTION_REASON_MIN_LENGTH": "La razón del rechazo debe tener al menos 10 caracteres",
-			"CONFIRM_REJECT": "Rechazar elemento"
+			"CONFIRM_REJECT": "Rechazar elemento",
+			"SEARCH_PLACEHOLDER": "Buscar elementos...",
+			"NO_ITEMS_FOUND_SEARCH": "No se encontraron elementos",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "No hay elementos que coincidan con \"{term}\". Intenta una búsqueda diferente.",
+			"CLEAR_SEARCH": "Limpiar búsqueda"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Gestión de Usuarios",
@@ -2888,7 +2907,6 @@
 			"WELCOME_BACK": "¡Bienvenido de nuevo, {name}! Aquí está tu resumen de actividad.",
 			"REFRESH": "Actualizar",
 			"FAILED_TO_LOAD": "Error al cargar las estadísticas del panel",
-
 			"STATS": {
 				"TOTAL_SUBMISSIONS": "Total de Envíos",
 				"CONTENT_CREATED": "Contenido que has creado",
@@ -2899,7 +2917,6 @@
 				"COMMENTS_RECEIVED": "Comentarios Recibidos",
 				"COMMENTS_ON_CONTENT": "Comentarios en tu contenido"
 			},
-
 			"PERIOD_COMPARISON": {
 				"TITLE": "Rendimiento Semanal",
 				"THIS_WEEK": "Esta Semana",
@@ -2912,7 +2929,6 @@
 				"NO_DATA": "Sin datos disponibles",
 				"NO_DATA_DESC": "Comienza a crear contenido para ver tu comparación de rendimiento semanal."
 			},
-
 			"CATEGORY_PERFORMANCE": {
 				"TITLE": "Rendimiento por Categoría",
 				"SUBTITLE": "Principales categorías por participación promedio",
@@ -2923,7 +2939,6 @@
 				"NO_DATA": "Sin datos de categoría",
 				"NO_DATA_DESC": "Envía elementos para ver métricas de rendimiento por categoría."
 			},
-
 			"APPROVAL_TREND": {
 				"TITLE": "Tendencia de Aprobación",
 				"SUBTITLE": "Tasa de éxito de aprobación mensual",
@@ -2933,7 +2948,6 @@
 				"NO_DATA": "Sin datos de aprobación",
 				"NO_DATA_DESC": "Envía elementos para seguir tu tasa de aprobación a lo largo del tiempo."
 			},
-
 			"ENGAGEMENT_RATE": {
 				"TITLE": "Tasa de Participación",
 				"SUBTITLE": "Participación por envío a lo largo del tiempo",
@@ -2941,7 +2955,6 @@
 				"NO_DATA": "Sin datos de participación",
 				"NO_DATA_DESC": "Crea contenido para ver tus tendencias de participación."
 			},
-
 			"SUBMISSION_CALENDAR": {
 				"TITLE": "Actividad de Envíos",
 				"SUBTITLE": "Tu consistencia de envíos en los últimos 3 meses",
@@ -2953,7 +2966,6 @@
 				"LESS": "Menos",
 				"MORE": "Más"
 			},
-
 			"ENGAGEMENT_DISTRIBUTION": {
 				"TITLE": "Distribución de Participación",
 				"SUBTITLE": "Cómo se distribuye la participación entre tus principales elementos",
@@ -2962,12 +2974,10 @@
 				"NO_DATA": "Sin datos de participación",
 				"NO_DATA_DESC": "Obtén votos y comentarios para ver cómo se distribuye la participación."
 			},
-
 			"COMMON": {
 				"VS": "vs",
 				"AVG": "Prom."
 			},
-
 			"CHARTS": {
 				"LOADING": "Cargando datos del gráfico...",
 				"ERROR": "Error al cargar el gráfico",
