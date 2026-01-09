@@ -139,16 +139,16 @@ export function ItemFilters({
 			<Popover.Root>
 				<Popover.Trigger asChild>
 					<button className={cn(
-						'inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg',
+						'inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md',
 						'border border-gray-200 dark:border-gray-700',
 						'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800',
 						'transition-colors cursor-pointer',
 						hasAdvancedFilters && 'bg-gray-50 dark:bg-gray-800'
 					)}>
-						<Filter className="w-4 h-4" />
+						<Filter className="w-3.5 h-3.5" />
 						<span>{t('FILTERS')}</span>
 						{advancedFilterCount > 0 && (
-							<span className="flex items-center justify-center w-5 h-5 text-xs font-semibold rounded-full bg-theme-primary text-white">
+							<span className="flex items-center justify-center w-4 h-4 text-[10px] font-semibold rounded-full bg-theme-primary text-white">
 								{advancedFilterCount}
 							</span>
 						)}
