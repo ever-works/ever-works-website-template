@@ -113,10 +113,10 @@ export default function AdminItemsPage() {
 
   // Track if we've loaded data at least once
   useEffect(() => {
-    if (!isLoading && items.length > 0) {
+    if (!isLoading) {
       hasLoadedOnce.current = true;
     }
-  }, [isLoading, items]);
+  }, [isLoading]);
 
   // Only show skeleton on initial load, not on sort/page changes
   const showSkeleton = isLoading && !hasLoadedOnce.current;
