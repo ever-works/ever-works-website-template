@@ -433,7 +433,6 @@ export default function AdminItemsPage() {
                 onStatusChange={setStatusFilter}
                 onCategoriesChange={setCategoriesFilter}
                 onTagsChange={setTagsFilter}
-                onClearAll={handleClearAllFilters}
                 categories={allCategories.map(c => ({ id: c.id, name: c.name }))}
                 tags={allTags.map(t => ({ id: t.id, name: t.name }))}
                 itemCounts={{

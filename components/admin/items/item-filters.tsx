@@ -14,7 +14,6 @@ interface ItemFiltersProps {
 	onStatusChange: (status: string) => void;
 	onCategoriesChange: (categories: string[]) => void;
 	onTagsChange: (tags: string[]) => void;
-	onClearAll: () => void;
 	categories: Array<{ id: string; name: string }>;
 	tags: Array<{ id: string; name: string }>;
 	itemCounts: {
@@ -44,7 +43,6 @@ export function ItemFilters({
 	onStatusChange,
 	onCategoriesChange,
 	onTagsChange,
-	onClearAll,
 	categories,
 	tags,
 	itemCounts,
