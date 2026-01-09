@@ -113,7 +113,7 @@ export function BasicInfoStep({
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, []);
+	}, [categoryMenuOpen]);
 
 	// Close dropdown on Escape
 	useEffect(() => {
@@ -244,7 +244,7 @@ export function BasicInfoStep({
 									className={cn(
 										'group relative inline-flex w-full items-center justify-between rounded-xl border bg-theme-primary-50 px-3 py-3 text-md font-medium text-theme-primary-900 transition-all duration-300 focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 dark:border-gray-600/50 dark:bg-gray-900/50 dark:text-white dark:focus:ring-theme-primary-400',
 										categoryMenuOpen && 'ring-2 ring-theme-primary-500 dark:ring-theme-primary-400',
-										focusedField === 'category' && 'border-theme-primary-500 dark:border-theme-primary-400'
+										focusedField === 'categories' && 'border-theme-primary-500 dark:border-theme-primary-400'
 									)}
 									aria-label={t('directory.DETAILS_FORM.CATEGORY')}
 									aria-expanded={categoryMenuOpen}
@@ -252,7 +252,7 @@ export function BasicInfoStep({
 									aria-haspopup="listbox"
 									onClick={e => {
 										setCategoryMenuOpen((open) => !open);
-										setFocusedField('category');
+										setFocusedField('categories');
 										// Determine if dropdown should open up or down
 										const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
 										const spaceBelow = window.innerHeight - rect.bottom;
