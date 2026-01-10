@@ -57,6 +57,24 @@ const itemRepository = new ItemRepository();
  *           type: string
  *         description: "Filter by tag"
  *         example: "saas"
+ *       - name: "sortBy"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["name", "updated_at", "status", "submitted_at"]
+ *           default: "updated_at"
+ *         description: "Field to sort by"
+ *         example: "updated_at"
+ *       - name: "sortOrder"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["asc", "desc"]
+ *           default: "desc"
+ *         description: "Sort order direction"
+ *         example: "desc"
  *     responses:
  *       200:
  *         description: "Items list retrieved successfully"
@@ -193,26 +211,50 @@ export async function GET(request: NextRequest) {
     const { page, limit } = paginationResult;
 
     const statusParam = searchParams.get('status');
-    const categoriesParam = searchParams.get('categories');
-    const categories = categoriesParam
-      ? categoriesParam.split(',').map(c => c.trim()).filter(Boolean)
-      : undefined;
-    const tagsParam = searchParams.get('tags');
-    const tags = tagsParam
-      ? tagsParam.split(',').map(t => t.trim()).filter(Boolean)
+    const sortByParam = searchParams.get('sortBy');
+    const sortOrderParam = searchParams.get('sortOrder');
+
+    // Trim whitespace-only search strings to undefined
+    const searchRaw = searchParams.get('search');
+    const search = searchRaw?.trim() ? searchRaw.trim() : undefined;
+
+    // Helper to parse CSV params and normalize empty arrays to undefined
+    const parseCsv = (value: string | null): string[] | undefined => {
+      if (!value) return undefined;
+      const arr = value.split(',').map(v => v.trim()).filter(Boolean);
+      return arr.length ? arr : undefined;
+    };
+
+    const categories = parseCsv(searchParams.get('categories'));
+    const tags = parseCsv(searchParams.get('tags'));
+
+    // Validate status parameter with type-safe guard
+    const validStatuses = ['draft', 'pending', 'approved', 'rejected'] as const;
+    type ItemStatus = (typeof validStatuses)[number];
+    const isItemStatus = (s: string): s is ItemStatus =>
+      (validStatuses as readonly string[]).includes(s);
+    const status = statusParam && isItemStatus(statusParam) ? statusParam : undefined;
+
+    // Validate sortBy parameter
+    const validSortFields = ['name', 'updated_at', 'status', 'submitted_at'] as const;
+    const sortBy = sortByParam && validSortFields.includes(sortByParam as any)
+      ? (sortByParam as 'name' | 'updated_at' | 'status' | 'submitted_at')
       : undefined;
 
-    // Validate status parameter
-    const validStatuses = ['draft', 'pending', 'approved', 'rejected'] as const;
-    const status = statusParam && validStatuses.includes(statusParam as any)
-      ? (statusParam as 'draft' | 'pending' | 'approved' | 'rejected')
+    // Validate sortOrder parameter
+    const validSortOrders = ['asc', 'desc'] as const;
+    const sortOrder = sortOrderParam && validSortOrders.includes(sortOrderParam as any)
+      ? (sortOrderParam as 'asc' | 'desc')
       : undefined;
 
     // Get paginated items
     const result = await itemRepository.findAllPaginated(page, limit, {
       status,
+      search,
       categories,
       tags,
+      sortBy,
+      sortOrder,
     });
 
     return NextResponse.json({

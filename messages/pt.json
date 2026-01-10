@@ -2072,7 +2072,23 @@
 			"REJECTION_REASON_PLACEHOLDER": "Explique por que este item está sendo rejeitado...",
 			"REJECTION_REASON_MIN_LENGTH": "O motivo da rejeição deve ter pelo menos 10 caracteres",
 			"CONFIRM_REJECT": "Rejeitar Item",
-			"LOADING": "Carregando..."
+			"STATUS_DRAFT": "Rascunho",
+			"STATUS_PENDING": "Pendente",
+			"STATUS_APPROVED": "Aprovado",
+			"STATUS_REJECTED": "Rejeitado",
+			"ACTIONS": "Ações",
+			"SEARCH_PLACEHOLDER": "Pesquisar itens...",
+			"NO_ITEMS_FOUND_SEARCH": "Nenhum item encontrado",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "Nenhum item corresponde a \"{term}\". Tente uma pesquisa diferente.",
+			"CLEAR_SEARCH": "Limpar pesquisa",
+			"FILTER_SEARCH_PLACEHOLDER": "Pesquisar...",
+			"LOADING": "Carregando...",
+			"STATUS_ALL": "Todos",
+			"NO_RESULTS": "Sem resultados",
+			"NO_CATEGORIES_AVAILABLE": "Nenhuma categoria disponível",
+			"NO_TAGS_AVAILABLE": "Nenhuma tag disponível",
+			"REMOVE_FILTER": "Remover filtro {name}",
+			"CLEAR_ALL_FILTERS": "Limpar tudo"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",
@@ -2878,7 +2894,6 @@
 			"WELCOME_BACK": "Bem-vindo de volta, {name}! Aqui está sua visão geral de atividades.",
 			"REFRESH": "Atualizar",
 			"FAILED_TO_LOAD": "Falha ao carregar estatísticas do painel",
-
 			"STATS": {
 				"TOTAL_SUBMISSIONS": "Total de Submissões",
 				"CONTENT_CREATED": "Conteúdo que você criou",
@@ -2889,7 +2904,6 @@
 				"COMMENTS_RECEIVED": "Comentários Recebidos",
 				"COMMENTS_ON_CONTENT": "Comentários no seu conteúdo"
 			},
-
 			"PERIOD_COMPARISON": {
 				"TITLE": "Desempenho Semanal",
 				"THIS_WEEK": "Esta Semana",
@@ -2902,7 +2916,6 @@
 				"NO_DATA": "Sem dados disponíveis",
 				"NO_DATA_DESC": "Comece a criar conteúdo para ver sua comparação de desempenho semanal."
 			},
-
 			"CATEGORY_PERFORMANCE": {
 				"TITLE": "Desempenho por Categoria",
 				"SUBTITLE": "Principais categorias por engajamento médio",
@@ -2913,7 +2926,6 @@
 				"NO_DATA": "Sem dados de categoria",
 				"NO_DATA_DESC": "Submeta itens para ver métricas de desempenho por categoria."
 			},
-
 			"APPROVAL_TREND": {
 				"TITLE": "Tendência de Aprovação",
 				"SUBTITLE": "Taxa de sucesso de aprovação mensal",
@@ -2923,7 +2935,6 @@
 				"NO_DATA": "Sem dados de aprovação",
 				"NO_DATA_DESC": "Submeta itens para acompanhar sua taxa de aprovação ao longo do tempo."
 			},
-
 			"ENGAGEMENT_RATE": {
 				"TITLE": "Taxa de Engajamento",
 				"SUBTITLE": "Engajamento por submissão ao longo do tempo",
@@ -2931,7 +2942,6 @@
 				"NO_DATA": "Sem dados de engajamento",
 				"NO_DATA_DESC": "Crie conteúdo para ver suas tendências de engajamento."
 			},
-
 			"SUBMISSION_CALENDAR": {
 				"TITLE": "Atividade de Submissões",
 				"SUBTITLE": "Sua consistência de submissões nos últimos 3 meses",
@@ -2943,7 +2953,6 @@
 				"LESS": "Menos",
 				"MORE": "Mais"
 			},
-
 			"ENGAGEMENT_DISTRIBUTION": {
 				"TITLE": "Distribuição de Engajamento",
 				"SUBTITLE": "Como o engajamento é distribuído entre seus principais itens",
@@ -2952,12 +2961,10 @@
 				"NO_DATA": "Sem dados de engajamento",
 				"NO_DATA_DESC": "Receba votos e comentários para ver como o engajamento é distribuído."
 			},
-
 			"COMMON": {
 				"VS": "vs",
 				"AVG": "Méd."
 			},
-
 			"CHARTS": {
 				"LOADING": "Carregando dados do gráfico...",
 				"ERROR": "Falha ao carregar gráfico",

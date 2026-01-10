@@ -2072,7 +2072,23 @@
 			"REJECTION_REASON_PLACEHOLDER": "Spiega perché questo elemento viene rifiutato...",
 			"REJECTION_REASON_MIN_LENGTH": "Il motivo del rifiuto deve essere di almeno 10 caratteri",
 			"CONFIRM_REJECT": "Rifiuta Elemento",
-			"LOADING": "Caricamento..."
+			"STATUS_DRAFT": "Bozza",
+			"STATUS_PENDING": "In attesa",
+			"STATUS_APPROVED": "Approvato",
+			"STATUS_REJECTED": "Rifiutato",
+			"ACTIONS": "Azioni",
+			"SEARCH_PLACEHOLDER": "Cerca elementi...",
+			"NO_ITEMS_FOUND_SEARCH": "Nessun elemento trovato",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "Nessun elemento corrisponde a \"{term}\". Prova una ricerca diversa.",
+			"CLEAR_SEARCH": "Cancella ricerca",
+			"FILTER_SEARCH_PLACEHOLDER": "Cerca...",
+			"LOADING": "Caricamento...",
+			"STATUS_ALL": "Tutti",
+			"NO_RESULTS": "Nessun risultato",
+			"NO_CATEGORIES_AVAILABLE": "Nessuna categoria disponibile",
+			"NO_TAGS_AVAILABLE": "Nessun tag disponibile",
+			"REMOVE_FILTER": "Rimuovi filtro {name}",
+			"CLEAR_ALL_FILTERS": "Cancella tutto"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",
@@ -2882,7 +2898,6 @@
 			"WELCOME_BACK": "Bentornato, {name}! Ecco la panoramica delle tue attività.",
 			"REFRESH": "Aggiorna",
 			"FAILED_TO_LOAD": "Impossibile caricare le statistiche della dashboard",
-
 			"STATS": {
 				"TOTAL_SUBMISSIONS": "Invii Totali",
 				"CONTENT_CREATED": "Contenuti che hai creato",
@@ -2893,7 +2908,6 @@
 				"COMMENTS_RECEIVED": "Commenti Ricevuti",
 				"COMMENTS_ON_CONTENT": "Commenti sui tuoi contenuti"
 			},
-
 			"PERIOD_COMPARISON": {
 				"TITLE": "Performance Settimanale",
 				"THIS_WEEK": "Questa Settimana",
@@ -2906,7 +2920,6 @@
 				"NO_DATA": "Nessun dato disponibile",
 				"NO_DATA_DESC": "Inizia a creare contenuti per vedere il confronto delle performance settimanali."
 			},
-
 			"CATEGORY_PERFORMANCE": {
 				"TITLE": "Performance per Categoria",
 				"SUBTITLE": "Migliori categorie per coinvolgimento medio",
@@ -2917,7 +2930,6 @@
 				"NO_DATA": "Nessun dato categoria",
 				"NO_DATA_DESC": "Invia elementi per vedere le metriche di performance per categoria."
 			},
-
 			"APPROVAL_TREND": {
 				"TITLE": "Trend di Approvazione",
 				"SUBTITLE": "Tasso di successo approvazione mensile",
@@ -2927,7 +2939,6 @@
 				"NO_DATA": "Nessun dato approvazione",
 				"NO_DATA_DESC": "Invia elementi per monitorare il tuo tasso di approvazione nel tempo."
 			},
-
 			"ENGAGEMENT_RATE": {
 				"TITLE": "Tasso di Coinvolgimento",
 				"SUBTITLE": "Coinvolgimento per invio nel tempo",
@@ -2935,7 +2946,6 @@
 				"NO_DATA": "Nessun dato coinvolgimento",
 				"NO_DATA_DESC": "Crea contenuti per vedere i trend di coinvolgimento."
 			},
-
 			"SUBMISSION_CALENDAR": {
 				"TITLE": "Attività Invii",
 				"SUBTITLE": "La tua costanza negli invii negli ultimi 3 mesi",
@@ -2947,7 +2957,6 @@
 				"LESS": "Meno",
 				"MORE": "Più"
 			},
-
 			"ENGAGEMENT_DISTRIBUTION": {
 				"TITLE": "Distribuzione Coinvolgimento",
 				"SUBTITLE": "Come il coinvolgimento è distribuito tra i tuoi migliori elementi",
@@ -2956,12 +2965,10 @@
 				"NO_DATA": "Nessun dato coinvolgimento",
 				"NO_DATA_DESC": "Ricevi voti e commenti per vedere come è distribuito il coinvolgimento."
 			},
-
 			"COMMON": {
 				"VS": "vs",
 				"AVG": "Media"
 			},
-
 			"CHARTS": {
 				"LOADING": "Caricamento dati grafico...",
 				"ERROR": "Impossibile caricare il grafico",

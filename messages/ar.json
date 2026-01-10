@@ -2092,7 +2092,23 @@
 			"REJECTION_REASON_PLACEHOLDER": "اشرح سبب رفض هذا العنصر...",
 			"REJECTION_REASON_MIN_LENGTH": "يجب أن يكون سبب الرفض 10 أحرف على الأقل",
 			"CONFIRM_REJECT": "رفض العنصر",
-			"LOADING": "جاري التحميل..."
+			"STATUS_DRAFT": "مسودة",
+			"STATUS_PENDING": "قيد الانتظار",
+			"STATUS_APPROVED": "موافق عليه",
+			"STATUS_REJECTED": "مرفوض",
+			"ACTIONS": "الإجراءات",
+			"SEARCH_PLACEHOLDER": "البحث في العناصر...",
+			"NO_ITEMS_FOUND_SEARCH": "لم يتم العثور على عناصر",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "لا توجد عناصر تطابق \"{term}\". جرب بحثًا مختلفًا.",
+			"CLEAR_SEARCH": "مسح البحث",
+			"FILTER_SEARCH_PLACEHOLDER": "بحث...",
+			"LOADING": "جاري التحميل...",
+			"STATUS_ALL": "الكل",
+			"NO_RESULTS": "لا توجد نتائج",
+			"NO_CATEGORIES_AVAILABLE": "لا توجد فئات متاحة",
+			"NO_TAGS_AVAILABLE": "لا توجد وسوم متاحة",
+			"REMOVE_FILTER": "إزالة فلتر {name}",
+			"CLEAR_ALL_FILTERS": "مسح الكل"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "إدارة المستخدمين",
@@ -2898,7 +2914,6 @@
 			"WELCOME_BACK": "مرحباً بعودتك، {name}! إليك نظرة عامة على نشاطك.",
 			"REFRESH": "تحديث",
 			"FAILED_TO_LOAD": "فشل في تحميل إحصائيات لوحة التحكم",
-
 			"STATS": {
 				"TOTAL_SUBMISSIONS": "إجمالي التقديمات",
 				"CONTENT_CREATED": "المحتوى الذي أنشأته",
@@ -2909,7 +2924,6 @@
 				"COMMENTS_RECEIVED": "التعليقات المستلمة",
 				"COMMENTS_ON_CONTENT": "تعليقات على محتواك"
 			},
-
 			"PERIOD_COMPARISON": {
 				"TITLE": "الأداء الأسبوعي",
 				"THIS_WEEK": "هذا الأسبوع",
@@ -2922,7 +2936,6 @@
 				"NO_DATA": "لا توجد بيانات",
 				"NO_DATA_DESC": "ابدأ بإنشاء محتوى لرؤية مقارنة أدائك الأسبوعي."
 			},
-
 			"CATEGORY_PERFORMANCE": {
 				"TITLE": "أداء الفئات",
 				"SUBTITLE": "أفضل الفئات حسب متوسط التفاعل",
@@ -2933,7 +2946,6 @@
 				"NO_DATA": "لا توجد بيانات للفئات",
 				"NO_DATA_DESC": "قدم عناصر لرؤية مقاييس أداء الفئات."
 			},
-
 			"APPROVAL_TREND": {
 				"TITLE": "اتجاه الموافقة",
 				"SUBTITLE": "معدل نجاح الموافقة الشهري",
@@ -2943,7 +2955,6 @@
 				"NO_DATA": "لا توجد بيانات موافقة",
 				"NO_DATA_DESC": "قدم عناصر لتتبع معدل الموافقة عبر الزمن."
 			},
-
 			"ENGAGEMENT_RATE": {
 				"TITLE": "معدل التفاعل",
 				"SUBTITLE": "التفاعل لكل تقديم عبر الزمن",
@@ -2951,7 +2962,6 @@
 				"NO_DATA": "لا توجد بيانات تفاعل",
 				"NO_DATA_DESC": "أنشئ محتوى لرؤية اتجاهات تفاعلك."
 			},
-
 			"SUBMISSION_CALENDAR": {
 				"TITLE": "نشاط التقديم",
 				"SUBTITLE": "انتظامك في التقديم خلال الـ 3 أشهر الماضية",
@@ -2963,7 +2973,6 @@
 				"LESS": "أقل",
 				"MORE": "أكثر"
 			},
-
 			"ENGAGEMENT_DISTRIBUTION": {
 				"TITLE": "توزيع التفاعل",
 				"SUBTITLE": "كيف يتوزع التفاعل على أفضل عناصرك",
@@ -2972,12 +2981,10 @@
 				"NO_DATA": "لا توجد بيانات تفاعل",
 				"NO_DATA_DESC": "احصل على أصوات وتعليقات لرؤية توزيع التفاعل."
 			},
-
 			"COMMON": {
 				"VS": "مقابل",
 				"AVG": "المعدل"
 			},
-
 			"CHARTS": {
 				"LOADING": "جاري تحميل بيانات الرسم البياني...",
 				"ERROR": "فشل في تحميل الرسم البياني",

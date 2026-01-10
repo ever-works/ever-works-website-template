@@ -2163,7 +2163,23 @@
 			"REJECTION_REASON_PLACEHOLDER": "Expliquez pourquoi cet élément est rejeté...",
 			"REJECTION_REASON_MIN_LENGTH": "La raison du rejet doit comporter au moins 10 caractères",
 			"CONFIRM_REJECT": "Rejeter l'élément",
-			"LOADING": "Chargement..."
+			"STATUS_DRAFT": "Brouillon",
+			"STATUS_PENDING": "En attente",
+			"STATUS_APPROVED": "Approuvé",
+			"STATUS_REJECTED": "Rejeté",
+			"ACTIONS": "Actions",
+			"SEARCH_PLACEHOLDER": "Rechercher des éléments...",
+			"NO_ITEMS_FOUND_SEARCH": "Aucun élément trouvé",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "Aucun élément ne correspond à \"{term}\". Essayez une autre recherche.",
+			"CLEAR_SEARCH": "Effacer la recherche",
+			"FILTER_SEARCH_PLACEHOLDER": "Rechercher...",
+			"LOADING": "Chargement...",
+			"STATUS_ALL": "Tous",
+			"NO_RESULTS": "Aucun résultat",
+			"NO_CATEGORIES_AVAILABLE": "Aucune catégorie disponible",
+			"NO_TAGS_AVAILABLE": "Aucune étiquette disponible",
+			"REMOVE_FILTER": "Supprimer le filtre {name}",
+			"CLEAR_ALL_FILTERS": "Tout effacer"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Gestion des Utilisateurs",
@@ -2910,7 +2926,6 @@
 			"EDIT_STATUS_WARNING": "La modification des éléments approuvés nécessite une nouvelle approbation",
 			"SUCCESS_UPDATED": "Soumission mise à jour avec succès",
 			"SUCCESS_DELETED": "Soumission supprimée et déplacée vers la corbeille",
-
 			"TRASH_TITLE": "Corbeille",
 			"TRASH_DESCRIPTION": "Éléments supprimés. Vous pouvez les restaurer à tout moment.",
 			"TRASH_EMPTY": "La corbeille est vide",
@@ -2923,12 +2938,10 @@
 			"BACK_TO_SUBMISSIONS": "Retour aux Soumissions",
 			"UNKNOWN_DATE": "Date inconnue",
 			"INVALID_DATE": "Date invalide",
-
 			"STATUS_APPROVED": "Approuvé",
 			"STATUS_PENDING": "En Révision",
 			"STATUS_REJECTED": "Rejeté",
 			"STATUS_DRAFT": "Brouillon",
-
 			"NA": "N/D",
 			"VIEWS": "Vues",
 			"LIKES": "J'aime",
@@ -2941,7 +2954,6 @@
 			"MORE_TAGS": "+{count} de plus",
 			"VIEWS_COUNT": "{count} vues",
 			"LIKES_COUNT": "{count} j'aime",
-
 			"CANCEL": "Annuler",
 			"CLOSE": "Fermer",
 			"EDIT": "Modifier",
@@ -2952,28 +2964,23 @@
 			"VIEW_SUBMISSION": "Voir la soumission",
 			"EDIT_SUBMISSION": "Modifier la soumission",
 			"DELETE_SUBMISSION": "Supprimer la soumission",
-
 			"TOTAL_SUBMISSIONS": "Total des Soumissions",
 			"APPROVED": "Approuvées",
 			"PENDING": "En Attente",
 			"REJECTED": "Rejetées",
 			"DRAFTS": "Brouillons",
-
 			"SEARCH_PLACEHOLDER_SHORT": "Rechercher...",
 			"NO_SUBMISSIONS_TITLE": "Pas encore de soumissions",
 			"NO_SUBMISSIONS_DESC": "Commencez à construire votre portfolio en soumettant votre premier projet.",
 			"SHOWING_RESULTS": "Affichage de {start}-{end} sur {total} soumissions",
-
 			"TRASH": "Corbeille",
 			"DELETE_SUBMISSION_TITLE": "Supprimer la Soumission",
 			"DELETE_CONFIRM_ITEM": "Cela déplacera \"{title}\" vers la corbeille. Vous pourrez le restaurer plus tard.",
 			"RESTORE_INFO": "Vous pouvez restaurer cet élément depuis la corbeille à tout moment.",
-
 			"SUBMISSION_DETAILS": "Détails de la Soumission",
 			"VIEW_SUBMISSION_INFO": "Voir les informations de la soumission",
 			"REJECTION_REASON": "Raison du Rejet",
 			"DESCRIPTION": "Description",
-
 			"EDIT_SUBMISSION_TITLE": "Modifier la Soumission",
 			"EDIT_SUBMISSION_DESC": "Mettre à jour les détails de votre soumission"
 		},
@@ -2982,7 +2989,6 @@
 			"WELCOME_BACK": "Bon retour, {name} ! Voici votre aperçu d'activité.",
 			"REFRESH": "Actualiser",
 			"FAILED_TO_LOAD": "Échec du chargement des statistiques",
-
 			"STATS": {
 				"TOTAL_SUBMISSIONS": "Total des Soumissions",
 				"CONTENT_CREATED": "Contenu que vous avez créé",
@@ -2993,7 +2999,6 @@
 				"COMMENTS_RECEIVED": "Commentaires Reçus",
 				"COMMENTS_ON_CONTENT": "Commentaires sur votre contenu"
 			},
-
 			"PERIOD_COMPARISON": {
 				"TITLE": "Performance Hebdomadaire",
 				"THIS_WEEK": "Cette Semaine",
@@ -3006,7 +3011,6 @@
 				"NO_DATA": "Aucune donnée disponible",
 				"NO_DATA_DESC": "Commencez à créer du contenu pour voir votre comparaison de performance hebdomadaire."
 			},
-
 			"CATEGORY_PERFORMANCE": {
 				"TITLE": "Performance par Catégorie",
 				"SUBTITLE": "Meilleures catégories par engagement moyen",
@@ -3017,7 +3021,6 @@
 				"NO_DATA": "Aucune donnée de catégorie",
 				"NO_DATA_DESC": "Soumettez des éléments pour voir les métriques de performance par catégorie."
 			},
-
 			"APPROVAL_TREND": {
 				"TITLE": "Tendance d'Approbation",
 				"SUBTITLE": "Taux de réussite d'approbation mensuel",
@@ -3027,7 +3030,6 @@
 				"NO_DATA": "Aucune donnée d'approbation",
 				"NO_DATA_DESC": "Soumettez des éléments pour suivre votre taux d'approbation au fil du temps."
 			},
-
 			"ENGAGEMENT_RATE": {
 				"TITLE": "Taux d'Engagement",
 				"SUBTITLE": "Engagement par soumission au fil du temps",
@@ -3035,7 +3037,6 @@
 				"NO_DATA": "Aucune donnée d'engagement",
 				"NO_DATA_DESC": "Créez du contenu pour voir vos tendances d'engagement."
 			},
-
 			"SUBMISSION_CALENDAR": {
 				"TITLE": "Activité de Soumission",
 				"SUBTITLE": "Votre régularité de soumission sur les 3 derniers mois",
@@ -3047,7 +3048,6 @@
 				"LESS": "Moins",
 				"MORE": "Plus"
 			},
-
 			"ENGAGEMENT_DISTRIBUTION": {
 				"TITLE": "Distribution de l'Engagement",
 				"SUBTITLE": "Comment l'engagement est réparti sur vos meilleurs éléments",
@@ -3056,12 +3056,10 @@
 				"NO_DATA": "Aucune donnée d'engagement",
 				"NO_DATA_DESC": "Obtenez des votes et commentaires pour voir comment l'engagement est distribué."
 			},
-
 			"COMMON": {
 				"VS": "vs",
 				"AVG": "Moy."
 			},
-
 			"CHARTS": {
 				"LOADING": "Chargement des données du graphique...",
 				"ERROR": "Échec du chargement du graphique",
