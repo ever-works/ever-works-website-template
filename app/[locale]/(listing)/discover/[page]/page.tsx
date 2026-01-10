@@ -10,8 +10,8 @@ export const revalidate = 3600;
 export async function generateStaticParams() {
   // Pre-build pages 1-5 for main locales (en, fr, es, de) to speed up initial load
   // This covers ~80% of user traffic based on typical usage patterns
-  const mainLocales = ['en', 'fr', 'es', 'de'];
-  const pagesToPreBuild = 5; // First 5 pages cover most user navigation
+  const mainLocales = ['en', 'es'];
+  const pagesToPreBuild = 10; // First 10 pages cover most user navigation
 
   const params = [];
   for (const locale of mainLocales) {
