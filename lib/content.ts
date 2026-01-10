@@ -569,9 +569,7 @@ interface FetchItemsResult {
 	collections: Collection[];
 }
 
-// ============================================================================
 // IN-MEMORY CACHE INFRASTRUCTURE
-// ============================================================================
 // These caches avoid repeated filesystem reads and are invalidated on Git sync
 
 // In-memory cache for fetchItems to avoid repeated filesystem reads
@@ -648,11 +646,9 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 		};
 	}
 
-	// ============================================================================
-	// PERFORMANCE OPTIMIZATION: Smart directory caching
+	/// Smart directory caching
 	// Instead of reading directory on every call, cache the file list and metadata
 	// Only re-read if directory modification time changed
-	// ============================================================================
 
 	const dirCacheKey = `${dest}:${options.lang || 'en'}`;
 	let files: string[];
@@ -1022,9 +1018,7 @@ function calculateSimilarityScore(
 	return Math.min(scaledScore, 1);
 }
 
-// ============================================================================
 // CACHED METADATA HELPERS
-// ============================================================================
 // These helpers provide cached access to categories and tags for individual
 // item fetching, avoiding repeated filesystem reads
 
