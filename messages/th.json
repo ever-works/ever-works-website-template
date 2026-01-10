@@ -2080,7 +2080,15 @@
 			"SEARCH_PLACEHOLDER": "ค้นหารายการ...",
 			"NO_ITEMS_FOUND_SEARCH": "ไม่พบรายการ",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "ไม่มีรายการที่ตรงกับ \"{term}\" ลองค้นหาอื่น",
-			"CLEAR_SEARCH": "ล้างการค้นหา"
+			"CLEAR_SEARCH": "ล้างการค้นหา",
+			"FILTER_SEARCH_PLACEHOLDER": "ค้นหา...",
+			"LOADING": "กำลังโหลด...",
+			"STATUS_ALL": "ทั้งหมด",
+			"NO_RESULTS": "ไม่พบผลลัพธ์",
+			"NO_CATEGORIES_AVAILABLE": "ไม่มีหมวดหมู่ที่พร้อมใช้งาน",
+			"NO_TAGS_AVAILABLE": "ไม่มีแท็กที่พร้อมใช้งาน",
+			"REMOVE_FILTER": "ลบตัวกรอง {name}",
+			"CLEAR_ALL_FILTERS": "ล้างทั้งหมด"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

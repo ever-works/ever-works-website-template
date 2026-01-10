@@ -2080,7 +2080,15 @@
 			"SEARCH_PLACEHOLDER": "Поиск элементов...",
 			"NO_ITEMS_FOUND_SEARCH": "Элементы не найдены",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Нет элементов, соответствующих \"{term}\". Попробуйте другой поиск.",
-			"CLEAR_SEARCH": "Очистить поиск"
+			"CLEAR_SEARCH": "Очистить поиск",
+			"FILTER_SEARCH_PLACEHOLDER": "Поиск...",
+			"LOADING": "Загрузка...",
+			"STATUS_ALL": "Все",
+			"NO_RESULTS": "Нет результатов",
+			"NO_CATEGORIES_AVAILABLE": "Нет доступных категорий",
+			"NO_TAGS_AVAILABLE": "Нет доступных тегов",
+			"REMOVE_FILTER": "Удалить фильтр {name}",
+			"CLEAR_ALL_FILTERS": "Очистить все"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

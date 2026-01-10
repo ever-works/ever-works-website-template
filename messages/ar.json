@@ -2100,7 +2100,15 @@
 			"SEARCH_PLACEHOLDER": "البحث في العناصر...",
 			"NO_ITEMS_FOUND_SEARCH": "لم يتم العثور على عناصر",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "لا توجد عناصر تطابق \"{term}\". جرب بحثًا مختلفًا.",
-			"CLEAR_SEARCH": "مسح البحث"
+			"CLEAR_SEARCH": "مسح البحث",
+			"FILTER_SEARCH_PLACEHOLDER": "بحث...",
+			"LOADING": "جاري التحميل...",
+			"STATUS_ALL": "الكل",
+			"NO_RESULTS": "لا توجد نتائج",
+			"NO_CATEGORIES_AVAILABLE": "لا توجد فئات متاحة",
+			"NO_TAGS_AVAILABLE": "لا توجد وسوم متاحة",
+			"REMOVE_FILTER": "إزالة فلتر {name}",
+			"CLEAR_ALL_FILTERS": "مسح الكل"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "إدارة المستخدمين",

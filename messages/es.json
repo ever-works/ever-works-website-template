@@ -2102,7 +2102,15 @@
 			"SEARCH_PLACEHOLDER": "Buscar elementos...",
 			"NO_ITEMS_FOUND_SEARCH": "No se encontraron elementos",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "No hay elementos que coincidan con \"{term}\". Intenta una búsqueda diferente.",
-			"CLEAR_SEARCH": "Limpiar búsqueda"
+			"CLEAR_SEARCH": "Limpiar búsqueda",
+			"FILTER_SEARCH_PLACEHOLDER": "Buscar...",
+			"LOADING": "Cargando...",
+			"STATUS_ALL": "Todos",
+			"NO_RESULTS": "Sin resultados",
+			"NO_CATEGORIES_AVAILABLE": "No hay categorías disponibles",
+			"NO_TAGS_AVAILABLE": "No hay etiquetas disponibles",
+			"REMOVE_FILTER": "Eliminar filtro {name}",
+			"CLEAR_ALL_FILTERS": "Borrar todo"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Gestión de Usuarios",

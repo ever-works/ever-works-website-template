@@ -14,7 +14,6 @@ interface ItemFiltersProps {
 	onStatusChange: (status: string) => void;
 	onCategoriesChange: (categories: string[]) => void;
 	onTagsChange: (tags: string[]) => void;
-	onClearAll: () => void;
 	categories: Array<{ id: string; name: string }>;
 	tags: Array<{ id: string; name: string }>;
 	itemCounts: {
@@ -44,7 +43,6 @@ export function ItemFilters({
 	onStatusChange,
 	onCategoriesChange,
 	onTagsChange,
-	onClearAll,
 	categories,
 	tags,
 	itemCounts,
@@ -102,7 +100,7 @@ export function ItemFilters({
 					onClick={() => onStatusChange('')}
 					className={!statusFilter ? STATUS_TAB_ACTIVE : STATUS_TAB}
 				>
-					All
+					{t('STATUS_ALL')}
 					<span className="ml-1.5 text-xs text-gray-400">{totalCount}</span>
 				</button>
 				<button
@@ -174,7 +172,7 @@ export function ItemFilters({
 								<Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
 								<input
 									type="text"
-									placeholder="Search..."
+									placeholder={t('FILTER_SEARCH_PLACEHOLDER')}
 									value={categorySearch}
 									onChange={(e) => setCategorySearch(e.target.value)}
 									className={cn(
@@ -205,10 +203,10 @@ export function ItemFilters({
 									);
 								})}
 								{filteredCategories.length === 0 && categorySearch && (
-									<p className="text-xs text-gray-400 px-1 py-2">No results</p>
+									<p className="text-xs text-gray-400 px-1 py-2">{t('NO_RESULTS')}</p>
 								)}
 								{filteredCategories.length === 0 && !categorySearch && (
-									<p className="text-xs text-gray-400 px-1 py-2">No categories available</p>
+									<p className="text-xs text-gray-400 px-1 py-2">{t('NO_CATEGORIES_AVAILABLE')}</p>
 								)}
 							</div>
 						</div>
@@ -223,7 +221,7 @@ export function ItemFilters({
 								<Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
 								<input
 									type="text"
-									placeholder="Search..."
+									placeholder={t('FILTER_SEARCH_PLACEHOLDER')}
 									value={tagSearch}
 									onChange={(e) => setTagSearch(e.target.value)}
 									className={cn(
@@ -238,9 +236,9 @@ export function ItemFilters({
 							{/* Tags List */}
 							<div className="mt-2 space-y-0.5 max-h-44 overflow-y-auto">
 								{filteredTags.length === 0 && tagSearch ? (
-									<p className="text-xs text-gray-400 px-1 py-2">No results</p>
+									<p className="text-xs text-gray-400 px-1 py-2">{t('NO_RESULTS')}</p>
 								) : filteredTags.length === 0 ? (
-									<p className="text-xs text-gray-400 px-1 py-2">No tags available</p>
+									<p className="text-xs text-gray-400 px-1 py-2">{t('NO_TAGS_AVAILABLE')}</p>
 								) : (
 									filteredTags.map((tag) => {
 										const isSelected = tagsFilter.includes(tag.id);

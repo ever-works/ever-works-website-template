@@ -2080,7 +2080,15 @@
 			"SEARCH_PLACEHOLDER": "Pesquisar itens...",
 			"NO_ITEMS_FOUND_SEARCH": "Nenhum item encontrado",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Nenhum item corresponde a \"{term}\". Tente uma pesquisa diferente.",
-			"CLEAR_SEARCH": "Limpar pesquisa"
+			"CLEAR_SEARCH": "Limpar pesquisa",
+			"FILTER_SEARCH_PLACEHOLDER": "Pesquisar...",
+			"LOADING": "Carregando...",
+			"STATUS_ALL": "Todos",
+			"NO_RESULTS": "Sem resultados",
+			"NO_CATEGORIES_AVAILABLE": "Nenhuma categoria disponível",
+			"NO_TAGS_AVAILABLE": "Nenhuma tag disponível",
+			"REMOVE_FILTER": "Remover filtro {name}",
+			"CLEAR_ALL_FILTERS": "Limpar tudo"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

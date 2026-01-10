@@ -2080,7 +2080,15 @@
 			"SEARCH_PLACEHOLDER": "Пошук елементів...",
 			"NO_ITEMS_FOUND_SEARCH": "Елементи не знайдено",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Немає елементів, що відповідають \"{term}\". Спробуйте інший пошук.",
-			"CLEAR_SEARCH": "Очистити пошук"
+			"CLEAR_SEARCH": "Очистити пошук",
+			"FILTER_SEARCH_PLACEHOLDER": "Пошук...",
+			"LOADING": "Завантаження...",
+			"STATUS_ALL": "Всі",
+			"NO_RESULTS": "Немає результатів",
+			"NO_CATEGORIES_AVAILABLE": "Немає доступних категорій",
+			"NO_TAGS_AVAILABLE": "Немає доступних тегів",
+			"REMOVE_FILTER": "Видалити фільтр {name}",
+			"CLEAR_ALL_FILTERS": "Очистити все"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

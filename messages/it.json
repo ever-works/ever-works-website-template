@@ -2080,7 +2080,15 @@
 			"SEARCH_PLACEHOLDER": "Cerca elementi...",
 			"NO_ITEMS_FOUND_SEARCH": "Nessun elemento trovato",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Nessun elemento corrisponde a \"{term}\". Prova una ricerca diversa.",
-			"CLEAR_SEARCH": "Cancella ricerca"
+			"CLEAR_SEARCH": "Cancella ricerca",
+			"FILTER_SEARCH_PLACEHOLDER": "Cerca...",
+			"LOADING": "Caricamento...",
+			"STATUS_ALL": "Tutti",
+			"NO_RESULTS": "Nessun risultato",
+			"NO_CATEGORIES_AVAILABLE": "Nessuna categoria disponibile",
+			"NO_TAGS_AVAILABLE": "Nessun tag disponibile",
+			"REMOVE_FILTER": "Rimuovi filtro {name}",
+			"CLEAR_ALL_FILTERS": "Cancella tutto"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

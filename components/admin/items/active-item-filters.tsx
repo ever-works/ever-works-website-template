@@ -2,6 +2,7 @@
 
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface ActiveItemFiltersProps {
 	categoriesFilter: string[];
@@ -37,6 +38,8 @@ export function ActiveItemFilters({
 	categories,
 	tags,
 }: ActiveItemFiltersProps) {
+	const t = useTranslations('admin.ADMIN_ITEMS_PAGE');
+
 	// Get category name by id
 	const getCategoryName = (categoryId: string): string => {
 		const category = categories.find(c => c.id === categoryId);
@@ -65,7 +68,7 @@ export function ActiveItemFilters({
 						type="button"
 						onClick={() => onRemoveCategory(categoryId)}
 						className={CHIP_REMOVE}
-						aria-label={`Remove ${getCategoryName(categoryId)} filter`}
+						aria-label={t('REMOVE_FILTER', { name: getCategoryName(categoryId) })}
 					>
 						<X className="h-3 w-3" />
 					</button>
@@ -80,7 +83,7 @@ export function ActiveItemFilters({
 						type="button"
 						onClick={() => onRemoveTag(tagId)}
 						className={CHIP_REMOVE}
-						aria-label={`Remove ${getTagName(tagId)} filter`}
+						aria-label={t('REMOVE_FILTER', { name: getTagName(tagId) })}
 					>
 						<X className="h-3 w-3" />
 					</button>
@@ -94,7 +97,7 @@ export function ActiveItemFilters({
 					onClick={onClearAll}
 					className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 ml-1"
 				>
-					Clear all
+					{t('CLEAR_ALL_FILTERS')}
 				</button>
 			)}
 		</div>

@@ -2069,7 +2069,15 @@
 			"SEARCH_PLACEHOLDER": "Tìm kiếm mục...",
 			"NO_ITEMS_FOUND_SEARCH": "Không tìm thấy mục",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Không có mục nào khớp với \"{term}\". Thử tìm kiếm khác.",
-			"CLEAR_SEARCH": "Xóa tìm kiếm"
+			"CLEAR_SEARCH": "Xóa tìm kiếm",
+			"FILTER_SEARCH_PLACEHOLDER": "Tìm kiếm...",
+			"LOADING": "Đang tải...",
+			"STATUS_ALL": "Tất cả",
+			"NO_RESULTS": "Không có kết quả",
+			"NO_CATEGORIES_AVAILABLE": "Không có danh mục nào",
+			"NO_TAGS_AVAILABLE": "Không có thẻ nào",
+			"REMOVE_FILTER": "Xóa bộ lọc {name}",
+			"CLEAR_ALL_FILTERS": "Xóa tất cả"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",
