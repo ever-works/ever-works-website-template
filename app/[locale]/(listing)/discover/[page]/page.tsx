@@ -2,8 +2,8 @@ import { getCachedItems } from "@/lib/content";
 import { paginateMeta } from "@/lib/paginate";
 import Listing from "../../listing";
 
-// Enable ISR with 1 hour revalidation
-export const revalidate = 3600;
+// Enable ISR with 10 minutes revalidation
+export const revalidate = 600;
 
 // Pre-generate first 10 pages for main locales at build time
 // Other pages and locales will be generated on-demand (ISR)
