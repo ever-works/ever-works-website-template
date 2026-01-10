@@ -2072,10 +2072,15 @@
 			"REJECTION_REASON_PLACEHOLDER": "อธิบายว่าทำไมรายการนี้ถูกปฏิเสธ...",
 			"REJECTION_REASON_MIN_LENGTH": "เหตุผลในการปฏิเสธต้องมีอย่างน้อย 10 ตัวอักษร",
 			"CONFIRM_REJECT": "ปฏิเสธรายการ",
-			"SEARCH_PLACEHOLDER": "Search items...",
-			"NO_ITEMS_FOUND_SEARCH": "No items found",
-			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
-			"CLEAR_SEARCH": "Clear Search"
+			"STATUS_DRAFT": "ฉบับร่าง",
+			"STATUS_PENDING": "รอดำเนินการ",
+			"STATUS_APPROVED": "อนุมัติแล้ว",
+			"STATUS_REJECTED": "ถูกปฏิเสธ",
+			"ACTIONS": "การดำเนินการ",
+			"SEARCH_PLACEHOLDER": "ค้นหารายการ...",
+			"NO_ITEMS_FOUND_SEARCH": "ไม่พบรายการ",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "ไม่มีรายการที่ตรงกับ \"{term}\" ลองค้นหาอื่น",
+			"CLEAR_SEARCH": "ล้างการค้นหา"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

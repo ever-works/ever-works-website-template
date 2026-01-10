@@ -2072,10 +2072,15 @@
 			"REJECTION_REASON_PLACEHOLDER": "Leg uit waarom dit item wordt afgewezen...",
 			"REJECTION_REASON_MIN_LENGTH": "De reden voor afwijzing moet minimaal 10 tekens bevatten",
 			"CONFIRM_REJECT": "Item afwijzen",
-			"SEARCH_PLACEHOLDER": "Search items...",
-			"NO_ITEMS_FOUND_SEARCH": "No items found",
-			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
-			"CLEAR_SEARCH": "Clear Search"
+			"STATUS_DRAFT": "Concept",
+			"STATUS_PENDING": "In behandeling",
+			"STATUS_APPROVED": "Goedgekeurd",
+			"STATUS_REJECTED": "Afgewezen",
+			"ACTIONS": "Acties",
+			"SEARCH_PLACEHOLDER": "Zoek items...",
+			"NO_ITEMS_FOUND_SEARCH": "Geen items gevonden",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "Geen items komen overeen met \"{term}\". Probeer een andere zoekopdracht.",
+			"CLEAR_SEARCH": "Zoekopdracht wissen"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",
