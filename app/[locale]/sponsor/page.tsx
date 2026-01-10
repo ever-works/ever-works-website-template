@@ -60,7 +60,7 @@ export default async function SponsorPage({ params }: { params: Promise<{ locale
 						</div>
 					</div>
 
-					<div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-linear-to-br from-theme-primary-500 to-theme-primary-600 shadow-lg shadow-blue-500/25">
+					<div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-linear-to-br from-theme-primary-500 to-theme-primary-600 shadow-lg shadow-theme-primary/25">
 						<Megaphone className="h-10 w-10 text-white" />
 					</div>
 

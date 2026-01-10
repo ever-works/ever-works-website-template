@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 
 interface NavigationContextType {
 	isInitialLoad: boolean;
-	showSkeleton: boolean;
 }
 
 const NavigationContext = createContext<NavigationContextType | null>(null);
@@ -45,8 +44,7 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
 	return (
 		<NavigationContext.Provider
 			value={{
-				isInitialLoad,
-				showSkeleton: isInitialLoad
+				isInitialLoad
 			}}
 		>
 			{children}

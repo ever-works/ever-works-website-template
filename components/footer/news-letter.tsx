@@ -3,25 +3,23 @@
 import { useEffect, useRef } from 'react';
 import { useActionState } from 'react';
 import { subscribeToNewsletter } from '@/app/[locale]/newsletter/actions';
-import { ActionState } from '@/lib/auth/middleware';
 import { toast } from 'sonner';
+import { ActionState } from '@/lib/auth/middleware';
+
+// Extended type that includes newsletter-specific properties
+type NewsletterActionState = ActionState & { success?: boolean };
 
 export function Newsletter({ t }: { t: any }) {
-	const [state, formAction, pending] = useActionState<ActionState, FormData>(subscribeToNewsletter, {});
-	const prevSuccessRef = useRef<string | undefined>(undefined);
+	const [state, formAction, pending] = useActionState<NewsletterActionState, FormData>(subscribeToNewsletter, {});
+	const prevStateRef = useRef<NewsletterActionState | null>(null);
 
-	// Show toast on success - fire when state.success becomes a new truthy value
-	// Use state (object ref) as dependency to trigger on each new action result
+	// Show toast on success - fire when state object changes and has success
 	useEffect(() => {
-		if (state.success && state.success !== prevSuccessRef.current) {
+		if (state.success && state !== prevStateRef.current) {
 			toast.success(t('footer.SUBSCRIPTION_SUCCESS'));
 		}
-		prevSuccessRef.current = state.success;
+		prevStateRef.current = state;
 	}, [state, t]);
-
-	const handleFormAction = async (formData: FormData) => {
-		return formAction(formData);
-	};
 
 	return (
 		<div className="space-y-3 sm:space-y-4 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
@@ -29,7 +27,7 @@ export function Newsletter({ t }: { t: any }) {
 				{t('footer.STAY_UPDATED')}
 			</h4>
 			<p className="text-sm text-gray-600 dark:text-gray-400">{t('footer.NEWSLETTER_DESCRIPTION')}</p>
-			<form action={handleFormAction} className="space-y-3">
+			<form action={formAction} className="space-y-3">
 				<div className="flex flex-col sm:flex-row gap-2">
 					<input
 						type="email"
