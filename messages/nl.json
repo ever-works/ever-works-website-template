@@ -2072,7 +2072,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "Leg uit waarom dit item wordt afgewezen...",
 			"REJECTION_REASON_MIN_LENGTH": "De reden voor afwijzing moet minimaal 10 tekens bevatten",
 			"CONFIRM_REJECT": "Item afwijzen",
-"STATUS_DRAFT": "Concept",
+			"STATUS_DRAFT": "Concept",
 			"STATUS_PENDING": "In behandeling",
 			"STATUS_APPROVED": "Goedgekeurd",
 			"STATUS_REJECTED": "Afgewezen",

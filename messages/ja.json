@@ -2072,7 +2072,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "このアイテムが却下される理由を説明してください...",
 			"REJECTION_REASON_MIN_LENGTH": "却下理由は10文字以上で入力してください",
 			"CONFIRM_REJECT": "アイテムを却下",
-"STATUS_DRAFT": "下書き",
+			"STATUS_DRAFT": "下書き",
 			"STATUS_PENDING": "保留中",
 			"STATUS_APPROVED": "承認済み",
 			"STATUS_REJECTED": "却下済み",

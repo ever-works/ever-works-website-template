@@ -2072,7 +2072,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "อธิบายว่าทำไมรายการนี้ถูกปฏิเสธ...",
 			"REJECTION_REASON_MIN_LENGTH": "เหตุผลในการปฏิเสธต้องมีอย่างน้อย 10 ตัวอักษร",
 			"CONFIRM_REJECT": "ปฏิเสธรายการ",
-"STATUS_DRAFT": "ฉบับร่าง",
+			"STATUS_DRAFT": "ฉบับร่าง",
 			"STATUS_PENDING": "รอดำเนินการ",
 			"STATUS_APPROVED": "อนุมัติแล้ว",
 			"STATUS_REJECTED": "ถูกปฏิเสธ",

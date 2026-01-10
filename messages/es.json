@@ -2094,7 +2094,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "Explique por qué se rechaza este elemento...",
 			"REJECTION_REASON_MIN_LENGTH": "La razón del rechazo debe tener al menos 10 caracteres",
 			"CONFIRM_REJECT": "Rechazar elemento",
-"STATUS_DRAFT": "Borrador",
+			"STATUS_DRAFT": "Borrador",
 			"STATUS_PENDING": "Pendiente",
 			"STATUS_APPROVED": "Aprobado",
 			"STATUS_REJECTED": "Rechazado",

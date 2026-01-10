@@ -2104,7 +2104,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "请说明拒绝此项目的原因...",
 			"REJECTION_REASON_MIN_LENGTH": "拒绝原因至少需要10个字符",
 			"CONFIRM_REJECT": "拒绝项目",
-"STATUS_DRAFT": "草稿",
+			"STATUS_DRAFT": "草稿",
 			"STATUS_PENDING": "待审核",
 			"STATUS_APPROVED": "已批准",
 			"STATUS_REJECTED": "已拒绝",

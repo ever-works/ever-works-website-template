@@ -2072,7 +2072,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "Spiega perché questo elemento viene rifiutato...",
 			"REJECTION_REASON_MIN_LENGTH": "Il motivo del rifiuto deve essere di almeno 10 caratteri",
 			"CONFIRM_REJECT": "Rifiuta Elemento",
-"STATUS_DRAFT": "Bozza",
+			"STATUS_DRAFT": "Bozza",
 			"STATUS_PENDING": "In attesa",
 			"STATUS_APPROVED": "Approvato",
 			"STATUS_REJECTED": "Rifiutato",

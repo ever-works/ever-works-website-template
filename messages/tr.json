@@ -2072,7 +2072,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "Bu öğenin neden reddedildiğini açıklayın...",
 			"REJECTION_REASON_MIN_LENGTH": "Reddetme nedeni en az 10 karakter olmalıdır",
 			"CONFIRM_REJECT": "Öğeyi Reddet",
-"STATUS_DRAFT": "Taslak",
+			"STATUS_DRAFT": "Taslak",
 			"STATUS_PENDING": "Beklemede",
 			"STATUS_APPROVED": "Onaylandı",
 			"STATUS_REJECTED": "Reddedildi",

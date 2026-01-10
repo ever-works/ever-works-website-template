@@ -2092,7 +2092,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "اشرح سبب رفض هذا العنصر...",
 			"REJECTION_REASON_MIN_LENGTH": "يجب أن يكون سبب الرفض 10 أحرف على الأقل",
 			"CONFIRM_REJECT": "رفض العنصر",
-"STATUS_DRAFT": "مسودة",
+			"STATUS_DRAFT": "مسودة",
 			"STATUS_PENDING": "قيد الانتظار",
 			"STATUS_APPROVED": "موافق عليه",
 			"STATUS_REJECTED": "مرفوض",

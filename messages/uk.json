@@ -2072,7 +2072,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "Поясніть, чому цей елемент відхиляється...",
 			"REJECTION_REASON_MIN_LENGTH": "Причина відхилення повинна містити щонайменше 10 символів",
 			"CONFIRM_REJECT": "Відхилити елемент",
-"STATUS_DRAFT": "Чернетка",
+			"STATUS_DRAFT": "Чернетка",
 			"STATUS_PENDING": "Очікує",
 			"STATUS_APPROVED": "Схвалено",
 			"STATUS_REJECTED": "Відхилено",

@@ -2105,7 +2105,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "Erklären Sie, warum dieses Element abgelehnt wird...",
 			"REJECTION_REASON_MIN_LENGTH": "Der Ablehnungsgrund muss mindestens 10 Zeichen lang sein",
 			"CONFIRM_REJECT": "Element ablehnen",
-"STATUS_DRAFT": "Entwurf",
+			"STATUS_DRAFT": "Entwurf",
 			"STATUS_PENDING": "Ausstehend",
 			"STATUS_APPROVED": "Genehmigt",
 			"STATUS_REJECTED": "Abgelehnt",

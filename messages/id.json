@@ -2072,7 +2072,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "Jelaskan mengapa item ini ditolak...",
 			"REJECTION_REASON_MIN_LENGTH": "Alasan penolakan harus minimal 10 karakter",
 			"CONFIRM_REJECT": "Tolak Item",
-"STATUS_DRAFT": "Draf",
+			"STATUS_DRAFT": "Draf",
 			"STATUS_PENDING": "Menunggu",
 			"STATUS_APPROVED": "Disetujui",
 			"STATUS_REJECTED": "Ditolak",

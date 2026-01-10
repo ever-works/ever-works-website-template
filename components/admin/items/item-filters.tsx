@@ -172,7 +172,7 @@ export function ItemFilters({
 								<Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
 								<input
 									type="text"
-									placeholder={t('SEARCH_PLACEHOLDER')}
+									placeholder={t('FILTER_SEARCH_PLACEHOLDER')}
 									value={categorySearch}
 									onChange={(e) => setCategorySearch(e.target.value)}
 									className={cn(
@@ -221,7 +221,7 @@ export function ItemFilters({
 								<Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
 								<input
 									type="text"
-									placeholder={t('SEARCH_PLACEHOLDER')}
+									placeholder={t('FILTER_SEARCH_PLACEHOLDER')}
 									value={tagSearch}
 									onChange={(e) => setTagSearch(e.target.value)}
 									className={cn(
