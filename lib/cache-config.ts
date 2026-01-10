@@ -5,16 +5,17 @@
 
 /**
  * Cache TTL (Time To Live) in seconds
+ * Optimized for performance: longer cache duration reduces filesystem reads
  */
 export const CACHE_TTL = {
-  /** Content cache duration - 60 seconds */
-  CONTENT: 60,
-  /** Individual item cache duration - 60 seconds */
-  ITEM: 60,
-  /** Site config cache duration - 60 seconds */
-  CONFIG: 60,
-  /** Static pages cache duration - 60 seconds */
-  PAGES: 60,
+  /** Content cache duration - 1 hour (3600 seconds) */
+  CONTENT: 3600,
+  /** Individual item cache duration - 1 hour (3600 seconds) */
+  ITEM: 3600,
+  /** Site config cache duration - 1 hour (3600 seconds) */
+  CONFIG: 3600,
+  /** Static pages cache duration - 1 hour (3600 seconds) */
+  PAGES: 3600,
 } as const;
 
 /**
