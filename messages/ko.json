@@ -2072,7 +2072,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "이 항목이 거부되는 이유를 설명해 주세요...",
 			"REJECTION_REASON_MIN_LENGTH": "거부 사유는 최소 10자 이상이어야 합니다",
 			"CONFIRM_REJECT": "항목 거부",
-			"STATUS_DRAFT": "초안",
+"STATUS_DRAFT": "초안",
 			"STATUS_PENDING": "대기 중",
 			"STATUS_APPROVED": "승인됨",
 			"STATUS_REJECTED": "거부됨",
@@ -2080,7 +2080,15 @@
 			"SEARCH_PLACEHOLDER": "항목 검색...",
 			"NO_ITEMS_FOUND_SEARCH": "항목을 찾을 수 없습니다",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "\"{term}\"과 일치하는 항목이 없습니다. 다른 검색어를 시도해 보세요.",
-			"CLEAR_SEARCH": "검색 지우기"
+			"CLEAR_SEARCH": "검색 지우기",
+			"FILTER_SEARCH_PLACEHOLDER": "검색...",
+			"LOADING": "로딩 중...",
+			"STATUS_ALL": "전체",
+			"NO_RESULTS": "결과 없음",
+			"NO_CATEGORIES_AVAILABLE": "사용 가능한 카테고리 없음",
+			"NO_TAGS_AVAILABLE": "사용 가능한 태그 없음",
+			"REMOVE_FILTER": "{name} 필터 제거",
+			"CLEAR_ALL_FILTERS": "모두 지우기"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

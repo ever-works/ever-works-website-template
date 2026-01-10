@@ -2105,7 +2105,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "Erklären Sie, warum dieses Element abgelehnt wird...",
 			"REJECTION_REASON_MIN_LENGTH": "Der Ablehnungsgrund muss mindestens 10 Zeichen lang sein",
 			"CONFIRM_REJECT": "Element ablehnen",
-			"STATUS_DRAFT": "Entwurf",
+"STATUS_DRAFT": "Entwurf",
 			"STATUS_PENDING": "Ausstehend",
 			"STATUS_APPROVED": "Genehmigt",
 			"STATUS_REJECTED": "Abgelehnt",
@@ -2113,7 +2113,15 @@
 			"SEARCH_PLACEHOLDER": "Elemente suchen...",
 			"NO_ITEMS_FOUND_SEARCH": "Keine Elemente gefunden",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Keine Elemente entsprechen \"{term}\". Versuchen Sie eine andere Suche.",
-			"CLEAR_SEARCH": "Suche löschen"
+			"CLEAR_SEARCH": "Suche löschen",
+			"FILTER_SEARCH_PLACEHOLDER": "Suchen...",
+			"LOADING": "Wird geladen...",
+			"STATUS_ALL": "Alle",
+			"NO_RESULTS": "Keine Ergebnisse",
+			"NO_CATEGORIES_AVAILABLE": "Keine Kategorien verfügbar",
+			"NO_TAGS_AVAILABLE": "Keine Tags verfügbar",
+			"REMOVE_FILTER": "Filter {name} entfernen",
+			"CLEAR_ALL_FILTERS": "Alle löschen"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Benutzerverwaltung",

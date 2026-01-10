@@ -2072,7 +2072,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "Wyjaśnij, dlaczego ten element jest odrzucany...",
 			"REJECTION_REASON_MIN_LENGTH": "Powód odrzucenia musi mieć co najmniej 10 znaków",
 			"CONFIRM_REJECT": "Odrzuć element",
-			"STATUS_DRAFT": "Szkic",
+"STATUS_DRAFT": "Szkic",
 			"STATUS_PENDING": "Oczekujący",
 			"STATUS_APPROVED": "Zatwierdzony",
 			"STATUS_REJECTED": "Odrzucony",
@@ -2080,7 +2080,15 @@
 			"SEARCH_PLACEHOLDER": "Szukaj elementów...",
 			"NO_ITEMS_FOUND_SEARCH": "Nie znaleziono elementów",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Brak elementów pasujących do \"{term}\". Spróbuj innego wyszukiwania.",
-			"CLEAR_SEARCH": "Wyczyść wyszukiwanie"
+			"CLEAR_SEARCH": "Wyczyść wyszukiwanie",
+			"FILTER_SEARCH_PLACEHOLDER": "Szukaj...",
+			"LOADING": "Ładowanie...",
+			"STATUS_ALL": "Wszystkie",
+			"NO_RESULTS": "Brak wyników",
+			"NO_CATEGORIES_AVAILABLE": "Brak dostępnych kategorii",
+			"NO_TAGS_AVAILABLE": "Brak dostępnych tagów",
+			"REMOVE_FILTER": "Usuń filtr {name}",
+			"CLEAR_ALL_FILTERS": "Wyczyść wszystko"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

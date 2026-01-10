@@ -468,7 +468,6 @@ export default function AdminItemsPage() {
                 onStatusChange={setStatusFilter}
                 onCategoriesChange={setCategoriesFilter}
                 onTagsChange={setTagsFilter}
-                onClearAll={handleClearAllFilters}
                 categories={allCategories.map(c => ({ id: c.id, name: c.name }))}
                 tags={allTags.map(t => ({ id: t.id, name: t.name }))}
                 itemCounts={{
@@ -506,7 +505,7 @@ export default function AdminItemsPage() {
               <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                 <div className="bg-white/90 dark:bg-gray-900/90 rounded-lg px-4 py-2 shadow-lg flex items-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin text-theme-primary" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Loading...</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">{t('LOADING')}</span>
                 </div>
               </div>
             )}

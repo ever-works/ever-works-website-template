@@ -2072,7 +2072,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "Jelaskan mengapa item ini ditolak...",
 			"REJECTION_REASON_MIN_LENGTH": "Alasan penolakan harus minimal 10 karakter",
 			"CONFIRM_REJECT": "Tolak Item",
-			"STATUS_DRAFT": "Draf",
+"STATUS_DRAFT": "Draf",
 			"STATUS_PENDING": "Menunggu",
 			"STATUS_APPROVED": "Disetujui",
 			"STATUS_REJECTED": "Ditolak",
@@ -2080,7 +2080,15 @@
 			"SEARCH_PLACEHOLDER": "Cari item...",
 			"NO_ITEMS_FOUND_SEARCH": "Item tidak ditemukan",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Tidak ada item yang cocok dengan \"{term}\". Coba pencarian lain.",
-			"CLEAR_SEARCH": "Hapus pencarian"
+			"CLEAR_SEARCH": "Hapus pencarian",
+			"FILTER_SEARCH_PLACEHOLDER": "Cari...",
+			"LOADING": "Memuat...",
+			"STATUS_ALL": "Semua",
+			"NO_RESULTS": "Tidak ada hasil",
+			"NO_CATEGORIES_AVAILABLE": "Tidak ada kategori tersedia",
+			"NO_TAGS_AVAILABLE": "Tidak ada tag tersedia",
+			"REMOVE_FILTER": "Hapus filter {name}",
+			"CLEAR_ALL_FILTERS": "Hapus semua"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

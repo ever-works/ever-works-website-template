@@ -2163,7 +2163,7 @@
 			"REJECTION_REASON_PLACEHOLDER": "Expliquez pourquoi cet élément est rejeté...",
 			"REJECTION_REASON_MIN_LENGTH": "La raison du rejet doit comporter au moins 10 caractères",
 			"CONFIRM_REJECT": "Rejeter l'élément",
-			"STATUS_DRAFT": "Brouillon",
+"STATUS_DRAFT": "Brouillon",
 			"STATUS_PENDING": "En attente",
 			"STATUS_APPROVED": "Approuvé",
 			"STATUS_REJECTED": "Rejeté",
@@ -2171,7 +2171,15 @@
 			"SEARCH_PLACEHOLDER": "Rechercher des éléments...",
 			"NO_ITEMS_FOUND_SEARCH": "Aucun élément trouvé",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Aucun élément ne correspond à \"{term}\". Essayez une autre recherche.",
-			"CLEAR_SEARCH": "Effacer la recherche"
+			"CLEAR_SEARCH": "Effacer la recherche",
+			"FILTER_SEARCH_PLACEHOLDER": "Rechercher...",
+			"LOADING": "Chargement...",
+			"STATUS_ALL": "Tous",
+			"NO_RESULTS": "Aucun résultat",
+			"NO_CATEGORIES_AVAILABLE": "Aucune catégorie disponible",
+			"NO_TAGS_AVAILABLE": "Aucune étiquette disponible",
+			"REMOVE_FILTER": "Supprimer le filtre {name}",
+			"CLEAR_ALL_FILTERS": "Tout effacer"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Gestion des Utilisateurs",
