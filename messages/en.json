@@ -675,7 +675,7 @@
 			"MAIN_WEBSITE_PLACEHOLDER": "https://yourproduct.com",
 			"ADDITIONAL_LINK_PLACEHOLDER": "https://github.com/yourproject",
 			"ADD_MORE_LINKS": "Add more links",
-			"CATEGORY": "Category",
+			"CATEGORIES": "Categories",
 			"CATEGORY_PLACEHOLDER": "Select a category for your product",
 			"TAGS_LABELS": "Tags & Labels",
 			"TAGS_DESCRIPTION": "Select relevant tags to help users find your product",
@@ -693,7 +693,10 @@
 			"REMOVE_LINK": "Remove link",
 			"REVIEW_AND_SUBMIT": "Review & Submit",
 			"EXTRACT": "Extract",
-			"EXTRACTING": "Extracting..."
+			"EXTRACTING": "Extracting...",
+			"REMOVE_CATEGORY": "Remove category: {name}",
+			"NO_CATEGORIES_FOUND": "No categories found.",
+			"SEARCH_CATEGORIES_PLACEHOLDER": "Search categories..."
 		},
 		"PAYMENT": {
 			"TITLE": "Complete Your Order",
