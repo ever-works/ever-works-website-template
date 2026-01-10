@@ -7,6 +7,8 @@ import { requireAuth } from '@/lib/auth/guards';
 import { getFeatureFlags } from '@/lib/config/feature-flags';
 import { notFound } from 'next/navigation';
 
+// Enable ISR with 10 minutes revalidation
+export const revalidate = 600;
 
 export default async function FavoritesPage({
     params,
