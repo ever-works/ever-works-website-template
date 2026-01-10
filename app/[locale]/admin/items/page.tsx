@@ -10,6 +10,7 @@ import { MultiStepItemForm } from "@/components/admin/items/multi-step-item-form
 import { ItemFilters } from "@/components/admin/items/item-filters";
 import { ActiveItemFilters } from "@/components/admin/items/active-item-filters";
 import { ItemRejectModal } from "@/components/admin/items/item-reject-modal";
+import { ItemListSorting, SortField, SortOrder } from "@/components/admin/items/item-list-sorting";
 import { ItemActionsMenu } from "@/components/admin/items/item-actions-menu";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
 import { UniversalPagination } from "@/components/universal-pagination";
@@ -28,6 +29,8 @@ export default function AdminItemsPage() {
   const router = useRouter();
   const PageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState<SortField>("updated_at");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [searchTerm, setSearchTerm] = useState('');
   const isInitialLoad = useRef(true);
   const hasLoadedOnce = useRef(false);
@@ -50,16 +53,16 @@ export default function AdminItemsPage() {
     },
   });
 
-  // Reset page when filters change
+  // Reset page when filters or sorting change
   useEffect(() => {
     setCurrentPage(1);
-  }, [statusFilter, categoriesFilter, tagsFilter]);
+  }, [statusFilter, categoriesFilter, tagsFilter, sortBy, sortOrder]);
 
   // Fetch categories and tags for filter dropdowns
   const { data: allCategories = [] } = useAllCategories();
   const { data: allTags = [] } = useAllTags();
 
-  // Use custom hook with filter params
+  // Use custom hook with filter and sort params
   const {
     items,
     total: totalItems,
@@ -83,6 +86,8 @@ export default function AdminItemsPage() {
     status: statusFilter || undefined,
     categories: categoriesFilter.length > 0 ? categoriesFilter : undefined,
     tags: tagsFilter.length > 0 ? tagsFilter : undefined,
+    sortBy,
+    sortOrder,
   });
 
   // Calculate active filter count (including search)
@@ -96,6 +101,25 @@ export default function AdminItemsPage() {
     setCategoriesFilter([]);
     setTagsFilter([]);
   };
+
+  // Sort handlers
+  const handleSortByChange = (newSortBy: SortField) => {
+    setSortBy(newSortBy);
+  };
+
+  const handleSortOrderChange = (newSortOrder: SortOrder) => {
+    setSortOrder(newSortOrder);
+  };
+
+  // Track if we've loaded data at least once
+  useEffect(() => {
+    if (!isLoading) {
+      hasLoadedOnce.current = true;
+    }
+  }, [isLoading]);
+
+  // Only show skeleton on initial load, not on sort/page changes
+  const showSkeleton = isLoading && !hasLoadedOnce.current;
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -256,15 +280,7 @@ export default function AdminItemsPage() {
     return statusClasses[color as keyof typeof statusClasses] || statusClasses.gray;
   };
 
-  // Track when data has loaded at least once (in useEffect to avoid mutating ref during render)
-  useEffect(() => {
-    if (!isLoading && items.length > 0) {
-      hasLoadedOnce.current = true;
-    }
-  }, [isLoading, items.length]);
-
-  // Only show skeleton on initial load, not during search
-  if (isLoading && !hasLoadedOnce.current) {
+  if (showSkeleton) {
     return (
       <div className="p-6 max-w-7xl mx-auto">
         {/* Header Skeleton */}
@@ -455,29 +471,39 @@ export default function AdminItemsPage() {
       {/* Items Table */}
       <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-xs">
         <CardContent className="p-0">
-          {/* Table Header with Integrated Filters */}
+          {/* Table Header with Integrated Filters and Sorting */}
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {t('ITEMS_TABLE_TITLE', { count: totalItems })}
               </h3>
-              <ItemFilters
-                statusFilter={statusFilter}
-                categoriesFilter={categoriesFilter}
-                tagsFilter={tagsFilter}
-                onStatusChange={setStatusFilter}
-                onCategoriesChange={setCategoriesFilter}
-                onTagsChange={setTagsFilter}
-                categories={allCategories.map(c => ({ id: c.id, name: c.name }))}
-                tags={allTags.map(t => ({ id: t.id, name: t.name }))}
-                itemCounts={{
-                  draft: stats.draft,
-                  pending: stats.pending,
-                  approved: stats.approved,
-                  rejected: stats.rejected,
-                }}
-                activeFilterCount={activeFilterCount}
-              />
+              <div className="flex items-center gap-3">
+                <ItemFilters
+                  statusFilter={statusFilter}
+                  categoriesFilter={categoriesFilter}
+                  tagsFilter={tagsFilter}
+                  onStatusChange={setStatusFilter}
+                  onCategoriesChange={setCategoriesFilter}
+                  onTagsChange={setTagsFilter}
+                  onClearAll={handleClearAllFilters}
+                  categories={allCategories.map(c => ({ id: c.id, name: c.name }))}
+                  tags={allTags.map(t => ({ id: t.id, name: t.name }))}
+                  itemCounts={{
+                    draft: stats.draft,
+                    pending: stats.pending,
+                    approved: stats.approved,
+                    rejected: stats.rejected,
+                  }}
+                  activeFilterCount={activeFilterCount}
+                />
+                <ItemListSorting
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                  onSortByChange={handleSortByChange}
+                  onSortOrderChange={handleSortOrderChange}
+                  isLoading={isFetching}
+                />
+              </div>
             </div>
             {/* Active Filter Chips */}
             {(categoriesFilter.length > 0 || tagsFilter.length > 0) && (
