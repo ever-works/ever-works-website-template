@@ -670,9 +670,10 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 	if (cachedDir && cachedDir.mtime === currentMtime && Date.now() - cachedDir.timestamp < DIRECTORY_CACHE_TTL) {
 		console.log('[CACHE] Using cached directory metadata for:', dirCacheKey);
 		files = cachedDir.files;
-		categories = cachedDir.categories;
-		tags = cachedDir.tags;
-		collections = cachedDir.collections;
+		// Deep clone Maps to prevent mutation of cached data by populate() functions
+		categories = new Map(Array.from(cachedDir.categories.entries()).map(([k, v]) => [k, { ...v }]));
+		tags = new Map(Array.from(cachedDir.tags.entries()).map(([k, v]) => [k, { ...v }]));
+		collections = new Map(Array.from(cachedDir.collections.entries()).map(([k, v]) => [k, { ...v }]));
 	} else {
 		// Directory changed or cache expired - read from filesystem
 		console.log('[CACHE] Reading directory metadata from filesystem:', dirCacheKey);
@@ -745,7 +746,7 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 		items: items.sort((a, b) => {
 			if (a.featured && !b.featured) return -1;
 			if (!a.featured && b.featured) return 1;
-			return b.updatedAt.getDate() - a.updatedAt.getDate();
+			return b.updatedAt.getTime() - a.updatedAt.getTime();
 		}),
 		categories: Array.from(categories.values()),
 		tags: sortedTags,

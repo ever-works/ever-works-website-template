@@ -1,7 +1,6 @@
 import { getCachedItems } from "@/lib/content";
 import { paginateMeta } from "@/lib/paginate";
 import Listing from "../../listing";
-import { LOCALES } from "@/lib/constants";
 
 // Enable ISR with 1 hour revalidation
 export const revalidate = 3600;
@@ -11,7 +10,7 @@ export const revalidate = 3600;
 export async function generateStaticParams() {
   // Pre-build pages 1-5 for main locales (en, fr, es, de) to speed up initial load
   // This covers ~80% of user traffic based on typical usage patterns
-  const mainLocales = LOCALES;
+  const mainLocales = ['en', 'fr', 'es', 'de'];
   const pagesToPreBuild = 5; // First 5 pages cover most user navigation
 
   const params = [];
