@@ -114,6 +114,7 @@ interface PrUpdate {
 	title: string;
 	body: string;
 }
+
 interface Identifiable {
 	id: string;
 	name: string;
@@ -124,6 +125,7 @@ interface TypePagination {
 	type: 'standard' | 'infinite';
 	itemsPerPage: number;
 }
+
 export interface PricingConfig {
 	id: string;
 	name: string;
@@ -225,12 +227,13 @@ export type NovuMail = {
 	template_id?: string;
 	default_from: string;
 	backend_url?: string;
-};
+}
 
 export type ResendMail = {
 	provider: 'resend';
 	default_from: string;
-};
+}
+
 export type AuthProviderType = 'supabase' | 'next-auth' | 'both';
 
 export interface AuthConfig {
@@ -254,6 +257,7 @@ export interface AuthConfig {
 		providers?: any[];
 	};
 }
+
 export interface HeaderSettings {
 	submitEnabled: boolean;
 	pricingEnabled: boolean;
@@ -478,7 +482,7 @@ async function readCollection<T extends Identifiable>(
 		return collection;
 	} catch (err) {
 		if (err instanceof Error && 'code' in err && err.code === 'ENOENT') {
-			// Bootstrap missing collection files so first read creates the YAML on disk
+			// Bootstrap missing collection files, so first read creates the YAML on disk
 			try {
 				const contentPath = getContentPath();
 				const collectionDir = path.join(contentPath, type);
@@ -575,7 +579,8 @@ interface FetchItemsResult {
 // In-memory cache for fetchItems to avoid repeated filesystem reads
 // Cache is invalidated intelligently based on directory modification time
 const fetchItemsCache = new Map<string, { data: FetchItemsResult; timestamp: number }>();
-const FETCH_ITEMS_CACHE_TTL = 3600000; // 1 hour in milliseconds
+
+const FETCH_ITEMS_CACHE_TTL = 600000; // 10 minutes in milliseconds
 
 // Directory metadata cache to avoid repeated readdir() calls
 // Stores: { files: string[], mtime: number, categories, tags, collections }
@@ -587,13 +592,14 @@ type DirectoryCache = {
 	collections: Map<string, Collection>;
 	timestamp: number;
 };
+
 const directoryCache = new Map<string, DirectoryCache>();
-const DIRECTORY_CACHE_TTL = 3600000; // 1 hour in milliseconds
+const DIRECTORY_CACHE_TTL = 600000; // 10 minutes in milliseconds
 
 // Separate caches for categories and tags (used by fetchItem)
 const categoriesCache = new Map<string, { data: Map<string, Category>; timestamp: number }>();
 const tagsCache = new Map<string, { data: Map<string, Tag>; timestamp: number }>();
-const METADATA_CACHE_TTL = 3600000; // 1 hour in milliseconds
+const METADATA_CACHE_TTL = 600000; // 10 minutes in milliseconds
 
 /**
  * Clear the in-memory fetchItems cache
@@ -621,6 +627,7 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 
 	// Check in-memory cache first
 	const cached = fetchItemsCache.get(cacheKey);
+	
 	if (cached && Date.now() - cached.timestamp < FETCH_ITEMS_CACHE_TTL) {
 		console.log('[CACHE] Returning cached fetchItems result for:', cacheKey);
 		return cached.data;
@@ -633,7 +640,7 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 	// Repository sync now handled by background sync manager (lib/services/sync-service.ts)
 	const dest = path.join(getContentPath(), 'data');
 
-	// Check if data directory exists before trying to read it
+	// Check if the data directory exists before trying to read it
 	// This prevents ENOENT errors when DATA_REPOSITORY is not configured
 	if (!(await dirExists(dest))) {
 		console.warn('[CONTENT] Data directory does not exist:', dest);
@@ -647,7 +654,7 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 	}
 
 	/// Smart directory caching
-	// Instead of reading directory on every call, cache the file list and metadata
+	// Instead of reading the directory on every call, cache the file list and metadata
 	// Only re-read if directory modification time changed
 
 	const dirCacheKey = `${dest}:${options.lang || 'en'}`;
@@ -675,7 +682,7 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 		tags = new Map(Array.from(cachedDir.tags.entries()).map(([k, v]) => [k, { ...v }]));
 		collections = new Map(Array.from(cachedDir.collections.entries()).map(([k, v]) => [k, { ...v }]));
 	} else {
-		// Directory changed or cache expired - read from filesystem
+		// Directory changed, or cache expired - read from filesystem
 		console.log('[CACHE] Reading directory metadata from filesystem:', dirCacheKey);
 		files = await fsp.readdir(dest);
 		categories = await readCategories(options);
@@ -696,7 +703,7 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 
 	const itemsPromises = files.map(async (slug) => {
 		try {
-			// Sanitize slug even though it comes from filesystem
+			// Sanitize slug even though it comes from the filesystem
 			const sanitizedSlug = sanitizeFilename(slug);
 
 			const base = path.join(dest, sanitizedSlug);
@@ -704,6 +711,7 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 			validatePath(base, dest);
 
 			const item = await parseItem(base, `${sanitizedSlug}.yml`);
+
 			if (options.lang && options.lang !== 'en') {
 				// Validate language code to prevent path traversal
 				if (!validateLanguageCode(options.lang)) {
@@ -930,7 +938,7 @@ export async function fetchSimilarItems(
 }
 
 /**
- * Normalizes tags to array of strings for consistent comparison
+ * Normalizes tags to an array of strings for consistent comparison
  * @param tags - Tags in various formats
  * @returns string[] - Normalized array of tag names
  */
@@ -951,7 +959,7 @@ function normalizeTags(tags: any): string[] {
 }
 
 /**
- * Normalizes categories to array of strings for consistent comparison
+ * Normalizes categories to an array of strings for consistent comparison
  * @param category - Category in various formats
  * @returns string[] - Normalized array of category names
  */
