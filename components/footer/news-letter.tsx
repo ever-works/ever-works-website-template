@@ -10,10 +10,10 @@ export function Newsletter({ t }: { t: any }) {
 	const [state, formAction, pending] = useActionState<ActionState, FormData>(subscribeToNewsletter, {});
 	const prevSuccessRef = useRef<string | undefined>(undefined);
 
-	// Show toast on success - only on transition from falsy to truthy
+	// Show toast on success - fire when state.success becomes a new truthy value
 	// Use state (object ref) as dependency to trigger on each new action result
 	useEffect(() => {
-		if (state.success && !prevSuccessRef.current) {
+		if (state.success && state.success !== prevSuccessRef.current) {
 			toast.success(t('footer.SUBSCRIPTION_SUCCESS'));
 		}
 		prevSuccessRef.current = state.success;
