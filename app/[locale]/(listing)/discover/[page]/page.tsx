@@ -5,11 +5,11 @@ import Listing from "../../listing";
 // Enable ISR with 1 hour revalidation
 export const revalidate = 3600;
 
-// Pre-generate first 5 pages for main locales at build time
+// Pre-generate first 10 pages for main locales at build time
 // Other pages and locales will be generated on-demand (ISR)
 export async function generateStaticParams() {
-  // Pre-build pages 1-5 for main locales (en, fr, es, de) to speed up initial load
-  // This covers ~80% of user traffic based on typical usage patterns
+  // Pre-build pages 1-10 for main locales (en, es) to speed up initial load
+  // This covers ~80% of user traffic based on typical usage patterns, and also makes sure it works for at least 2 locales
   const mainLocales = ['en', 'es'];
   const pagesToPreBuild = 10; // First 10 pages cover most user navigation
 
