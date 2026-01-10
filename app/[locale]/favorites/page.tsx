@@ -6,9 +6,8 @@ import { getCachedItems } from '@/lib/content';
 import { requireAuth } from '@/lib/auth/guards';
 import { getFeatureFlags } from '@/lib/config/feature-flags';
 import { notFound } from 'next/navigation';
-
-// Enable ISR with 10 minutes revalidation
-export const revalidate = 600;
+// Force dynamic rendering for authenticated pages to prevent auth bypasses
+export const dynamic = 'force-dynamic';
 
 export default async function FavoritesPage({
     params,
