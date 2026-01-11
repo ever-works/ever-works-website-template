@@ -90,8 +90,10 @@ export default function AdminItemsPage() {
     sortOrder,
   });
 
+  // Check if search is active (>= 2 chars after trimming, matching query behavior)
+  const hasActiveSearch = searchTerm.trim().length >= 2;
   // Calculate active filter count (only count search when >= 2 chars, matching query behavior)
-  const activeFilterCount = (searchTerm.length >= 2 ? 1 : 0) + (statusFilter ? 1 : 0) + categoriesFilter.length + tagsFilter.length;
+  const activeFilterCount = (hasActiveSearch ? 1 : 0) + (statusFilter ? 1 : 0) + categoriesFilter.length + tagsFilter.length;
   const hasActiveFilters = activeFilterCount > 0;
 
   // Clear all filters (including search)
@@ -717,7 +719,7 @@ export default function AdminItemsPage() {
                   {hasActiveFilters ? t('NO_FILTER_RESULTS') : t('NO_ITEMS_FOUND')}
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-                  {searchTerm
+                  {hasActiveSearch
                     ? t('NO_ITEMS_FOUND_SEARCH_DESC', { term: searchTerm })
                     : hasActiveFilters
                       ? t('NO_FILTER_RESULTS_DESCRIPTION')
