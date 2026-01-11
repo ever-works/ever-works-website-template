@@ -2139,6 +2139,21 @@
 			"NO_ITEMS_DESCRIPTION": "Buat item pertama Anda untuk mulai membangun koleksi.",
 			"CREATE_ITEM": "Buat Item",
 			"CONFIRM_DELETE_ITEM": "Apakah Anda yakin ingin menghapus item ini? Tindakan ini tidak dapat dibatalkan.",
+			"FILTERS": "Filter",
+			"FILTER_BY_STATUS": "Filter berdasarkan status",
+			"FILTER_BY_CATEGORY": "Filter berdasarkan kategori",
+			"FILTER_BY_TAGS": "Filter berdasarkan tag",
+			"ALL_STATUSES": "Semua Status",
+			"ALL_CATEGORIES": "Semua Kategori",
+			"ALL_TAGS": "Semua Tag",
+			"CLEAR_ALL": "Hapus Semua",
+			"NO_FILTER_RESULTS": "Tidak ada item yang cocok dengan filter yang dipilih",
+			"NO_FILTER_RESULTS_DESCRIPTION": "Coba sesuaikan filter Anda untuk menemukan apa yang Anda cari.",
+			"ACTIVE_FILTERS": "Filter Aktif",
+			"STATUS_LABEL": "Status",
+			"CATEGORY_LABEL": "Kategori",
+			"TAGS_LABEL": "Tag",
+			"SELECT_TAGS": "Pilih tag...",
 			"CANCEL": "Batal",
 			"REJECT_MODAL_TITLE": "Tolak Item",
 			"REJECT_MODAL_DESCRIPTION": "Harap berikan alasan untuk menolak item ini. Ini akan dikirim ke pengirim.",
@@ -2146,7 +2161,24 @@
 			"REJECTION_REASON_LABEL": "Alasan Penolakan",
 			"REJECTION_REASON_PLACEHOLDER": "Jelaskan mengapa item ini ditolak...",
 			"REJECTION_REASON_MIN_LENGTH": "Alasan penolakan harus minimal 10 karakter",
-			"CONFIRM_REJECT": "Tolak Item"
+			"CONFIRM_REJECT": "Tolak Item",
+			"STATUS_DRAFT": "Draf",
+			"STATUS_PENDING": "Menunggu",
+			"STATUS_APPROVED": "Disetujui",
+			"STATUS_REJECTED": "Ditolak",
+			"ACTIONS": "Tindakan",
+			"SEARCH_PLACEHOLDER": "Cari item...",
+			"NO_ITEMS_FOUND_SEARCH": "Item tidak ditemukan",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "Tidak ada item yang cocok dengan \"{term}\". Coba pencarian lain.",
+			"CLEAR_SEARCH": "Hapus pencarian",
+			"FILTER_SEARCH_PLACEHOLDER": "Cari...",
+			"LOADING": "Memuat...",
+			"STATUS_ALL": "Semua",
+			"NO_RESULTS": "Tidak ada hasil",
+			"NO_CATEGORIES_AVAILABLE": "Tidak ada kategori tersedia",
+			"NO_TAGS_AVAILABLE": "Tidak ada tag tersedia",
+			"REMOVE_FILTER": "Hapus filter {name}",
+			"CLEAR_ALL_FILTERS": "Hapus semua"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Manajemen Pengguna",
@@ -3086,7 +3118,6 @@
 			"WELCOME_BACK": "Selamat datang kembali, {name}! Ini ikhtisar aktivitas Anda.",
 			"REFRESH": "Segarkan",
 			"FAILED_TO_LOAD": "Gagal memuat statistik dasbor",
-
 			"STATS": {
 				"TOTAL_SUBMISSIONS": "Total Kiriman",
 				"CONTENT_CREATED": "Konten yang telah Anda buat",
@@ -3097,7 +3128,6 @@
 				"COMMENTS_RECEIVED": "Komentar Diterima",
 				"COMMENTS_ON_CONTENT": "Komentar pada konten Anda"
 			},
-
 			"PERIOD_COMPARISON": {
 				"TITLE": "Kinerja Mingguan",
 				"THIS_WEEK": "Minggu Ini",
@@ -3110,7 +3140,6 @@
 				"NO_DATA": "Tidak ada data tersedia",
 				"NO_DATA_DESC": "Mulai buat konten untuk melihat perbandingan kinerja mingguan Anda."
 			},
-
 			"CATEGORY_PERFORMANCE": {
 				"TITLE": "Kinerja Kategori",
 				"SUBTITLE": "Kategori teratas berdasarkan keterlibatan rata-rata",
@@ -3121,7 +3150,6 @@
 				"NO_DATA": "Tidak ada data kategori",
 				"NO_DATA_DESC": "Kirim item untuk melihat metrik kinerja kategori."
 			},
-
 			"APPROVAL_TREND": {
 				"TITLE": "Tren Tingkat Persetujuan",
 				"SUBTITLE": "Tingkat keberhasilan persetujuan bulanan",
@@ -3131,7 +3159,6 @@
 				"NO_DATA": "Tidak ada data persetujuan",
 				"NO_DATA_DESC": "Kirim item untuk melacak tingkat persetujuan Anda dari waktu ke waktu."
 			},
-
 			"ENGAGEMENT_RATE": {
 				"TITLE": "Tingkat Keterlibatan",
 				"SUBTITLE": "Keterlibatan per kiriman dari waktu ke waktu",
@@ -3139,7 +3166,6 @@
 				"NO_DATA": "Tidak ada data keterlibatan",
 				"NO_DATA_DESC": "Buat konten untuk melihat tren tingkat keterlibatan Anda."
 			},
-
 			"SUBMISSION_CALENDAR": {
 				"TITLE": "Aktivitas Kiriman",
 				"SUBTITLE": "Konsistensi kiriman Anda selama 3 bulan terakhir",
@@ -3155,7 +3181,6 @@
 			"STATUS_BREAKDOWN": {
 				"TITLE": "Status Kiriman"
 			},
-
 			"ENGAGEMENT_DISTRIBUTION": {
 				"TITLE": "Distribusi Keterlibatan",
 				"SUBTITLE": "Bagaimana keterlibatan tersebar di antara item teratas Anda",
@@ -3164,7 +3189,6 @@
 				"NO_DATA": "Tidak ada data keterlibatan",
 				"NO_DATA_DESC": "Dapatkan suara dan komentar untuk melihat bagaimana keterlibatan didistribusikan."
 			},
-
 			"COMMON": {
 				"VS": "vs",
 				"AVG": "Rata-rata"
