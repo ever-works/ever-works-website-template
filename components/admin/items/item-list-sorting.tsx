@@ -62,7 +62,7 @@ export function ItemListSorting({
                     aria-label={sortOrder === "asc" ? t("SORT_ASC") : t("SORT_DESC")}
                     className={cn(
                         "inline-flex items-center justify-center",
-                        "w-8 h-8 rounded-l-md",
+                        "px-2 py-1 rounded-l-md",
                         "border border-r-0 border-gray-200 dark:border-gray-700",
                         "bg-gray-50 dark:bg-gray-800",
                         "text-gray-600 dark:text-gray-300",
@@ -74,11 +74,11 @@ export function ItemListSorting({
                     )}
                 >
                     {isLoading ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     ) : sortOrder === "asc" ? (
-                        <ArrowUp className="w-4 h-4" />
+                        <ArrowUp className="w-3.5 h-3.5" />
                     ) : (
-                        <ArrowDown className="w-4 h-4" />
+                        <ArrowDown className="w-3.5 h-3.5" />
                     )}
                 </button>
 
@@ -88,11 +88,10 @@ export function ItemListSorting({
                         type="button"
                         disabled={disabled || isLoading}
                         className={cn(
-                            "inline-flex items-center gap-2 px-3 h-8 text-xs font-medium rounded-r-md",
+                            "inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-r-md",
                             "border border-gray-200 dark:border-gray-700",
-                            "bg-white dark:bg-gray-800",
-                            "text-gray-700 dark:text-gray-200",
-                            "hover:bg-gray-50 dark:hover:bg-gray-700",
+                            "text-gray-600 dark:text-gray-300",
+                            "hover:bg-gray-50 dark:hover:bg-gray-800",
                             "focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary/50",
                             "transition-colors",
                             "disabled:opacity-50 disabled:cursor-not-allowed"
