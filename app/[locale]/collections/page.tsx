@@ -1,9 +1,9 @@
 import { getCachedItems } from '@/lib/content';
 import CollectionsGridClient from './collections-grid-client';
 
-// Always fetch fresh collections so public page updates immediately after admin changes
-export const revalidate = 0;
-export const dynamic = 'force-dynamic';
+// Enable ISR with 10 minutes revalidation
+// Admin changes will be visible within 10 minutes (acceptable tradeoff for performance)
+export const revalidate = 600;
 
 // Allow non-English locales to be generated on-demand (ISR)
 export const dynamicParams = true;

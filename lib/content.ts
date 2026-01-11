@@ -1043,7 +1043,8 @@ async function getCachedCategoriesInternal(options: FetchOptions = {}): Promise<
 	const cached = categoriesCache.get(cacheKey);
 	if (cached && Date.now() - cached.timestamp < METADATA_CACHE_TTL) {
 		console.log('[CACHE] Using cached categories for:', locale);
-		return cached.data;
+		// Deep clone to prevent mutation of cached data by populate() functions
+		return new Map(Array.from(cached.data.entries()).map(([k, v]) => [k, { ...v }]));
 	}
 
 	// Cache miss - read from filesystem
@@ -1071,7 +1072,8 @@ async function getCachedTagsInternal(options: FetchOptions = {}): Promise<Map<st
 	const cached = tagsCache.get(cacheKey);
 	if (cached && Date.now() - cached.timestamp < METADATA_CACHE_TTL) {
 		console.log('[CACHE] Using cached tags for:', locale);
-		return cached.data;
+		// Deep clone to prevent mutation of cached data by populate() functions
+		return new Map(Array.from(cached.data.entries()).map(([k, v]) => [k, { ...v }]));
 	}
 
 	// Cache miss - read from filesystem
