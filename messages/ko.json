@@ -2139,6 +2139,21 @@
 			"NO_ITEMS_DESCRIPTION": "컬렉션 구축을 시작하려면 첫 번째 항목을 생성하세요.",
 			"CREATE_ITEM": "항목 생성",
 			"CONFIRM_DELETE_ITEM": "이 항목을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
+			"FILTERS": "필터",
+			"FILTER_BY_STATUS": "상태별 필터",
+			"FILTER_BY_CATEGORY": "카테고리별 필터",
+			"FILTER_BY_TAGS": "태그별 필터",
+			"ALL_STATUSES": "모든 상태",
+			"ALL_CATEGORIES": "모든 카테고리",
+			"ALL_TAGS": "모든 태그",
+			"CLEAR_ALL": "모두 지우기",
+			"NO_FILTER_RESULTS": "선택한 필터와 일치하는 항목이 없습니다",
+			"NO_FILTER_RESULTS_DESCRIPTION": "찾고 있는 것을 찾으려면 필터를 조정해 보세요.",
+			"ACTIVE_FILTERS": "활성 필터",
+			"STATUS_LABEL": "상태",
+			"CATEGORY_LABEL": "카테고리",
+			"TAGS_LABEL": "태그",
+			"SELECT_TAGS": "태그 선택...",
 			"CANCEL": "취소",
 			"REJECT_MODAL_TITLE": "항목 거부",
 			"REJECT_MODAL_DESCRIPTION": "이 항목을 거부하는 이유를 제공해 주세요. 이는 제출자에게 전송됩니다.",
@@ -2146,7 +2161,24 @@
 			"REJECTION_REASON_LABEL": "거부 사유",
 			"REJECTION_REASON_PLACEHOLDER": "이 항목이 거부되는 이유 설명...",
 			"REJECTION_REASON_MIN_LENGTH": "거부 사유는 최소 10자 이상이어야 합니다",
-			"CONFIRM_REJECT": "항목 거부"
+			"CONFIRM_REJECT": "항목 거부",
+			"STATUS_DRAFT": "초안",
+			"STATUS_PENDING": "대기 중",
+			"STATUS_APPROVED": "승인됨",
+			"STATUS_REJECTED": "거부됨",
+			"ACTIONS": "작업",
+			"SEARCH_PLACEHOLDER": "항목 검색...",
+			"NO_ITEMS_FOUND_SEARCH": "항목을 찾을 수 없습니다",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "\"{term}\"과 일치하는 항목이 없습니다. 다른 검색어를 시도해 보세요.",
+			"CLEAR_SEARCH": "검색 지우기",
+			"FILTER_SEARCH_PLACEHOLDER": "검색...",
+			"LOADING": "로딩 중...",
+			"STATUS_ALL": "전체",
+			"NO_RESULTS": "결과 없음",
+			"NO_CATEGORIES_AVAILABLE": "사용 가능한 카테고리 없음",
+			"NO_TAGS_AVAILABLE": "사용 가능한 태그 없음",
+			"REMOVE_FILTER": "{name} 필터 제거",
+			"CLEAR_ALL_FILTERS": "모두 지우기"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "사용자 관리",
@@ -3085,8 +3117,7 @@
 			"TITLE": "대시보드",
 			"WELCOME_BACK": "{name}님, 다시 오신 것을 환영합니다! 활동 개요입니다.",
 			"REFRESH": "새로고침",
-			"FAILED_TO_LOAD": "대시보드 통계 불러오기 실패",
-
+			"FAILED_TO_LOAD": "대시보드 통계를 불러오는데 실패했습니다",
 			"STATS": {
 				"TOTAL_SUBMISSIONS": "총 제출물",
 				"CONTENT_CREATED": "생성한 콘텐츠",
@@ -3097,7 +3128,6 @@
 				"COMMENTS_RECEIVED": "받은 댓글",
 				"COMMENTS_ON_CONTENT": "콘텐츠 댓글"
 			},
-
 			"PERIOD_COMPARISON": {
 				"TITLE": "주간 성과",
 				"THIS_WEEK": "이번 주",
@@ -3110,7 +3140,6 @@
 				"NO_DATA": "데이터 없음",
 				"NO_DATA_DESC": "주간 성과 비교를 보려면 콘텐츠 생성 시작"
 			},
-
 			"CATEGORY_PERFORMANCE": {
 				"TITLE": "카테고리 성과",
 				"SUBTITLE": "평균 참여도 기준 상위 카테고리",
@@ -3121,7 +3150,6 @@
 				"NO_DATA": "카테고리 데이터 없음",
 				"NO_DATA_DESC": "카테고리 성과 지표를 보려면 항목 제출"
 			},
-
 			"APPROVAL_TREND": {
 				"TITLE": "승인률 추세",
 				"SUBTITLE": "월간 승인 성공률",
@@ -3131,7 +3159,6 @@
 				"NO_DATA": "승인 데이터 없음",
 				"NO_DATA_DESC": "승인률 추적을 위해 항목 제출"
 			},
-
 			"ENGAGEMENT_RATE": {
 				"TITLE": "참여율",
 				"SUBTITLE": "시간 경과에 따른 제출물당 참여",
@@ -3139,7 +3166,6 @@
 				"NO_DATA": "참여 데이터 없음",
 				"NO_DATA_DESC": "참여율 추세를 보려면 콘텐츠 생성"
 			},
-
 			"SUBMISSION_CALENDAR": {
 				"TITLE": "제출 활동",
 				"SUBTITLE": "지난 3개월 동안의 제출 일관성",
@@ -3164,12 +3190,10 @@
 				"NO_DATA": "참여 데이터 없음",
 				"NO_DATA_DESC": "참여 분포를 보려면 투표 및 댓글 받기"
 			},
-
 			"COMMON": {
 				"VS": "대",
 				"AVG": "평균"
 			},
-
 			"CHARTS": {
 				"LOADING": "차트 데이터 불러오는 중...",
 				"ERROR": "차트 불러오기 실패",
