@@ -45,14 +45,18 @@ export interface UpdateItemRequest extends Partial<CreateItemRequest> {
   deleted_at?: string; // For soft delete operations
 }
 
+// Sorting types for item lists
+export type SortField = 'name' | 'updated_at' | 'status' | 'submitted_at';
+export type SortOrder = 'asc' | 'desc';
+
 export interface ItemListOptions {
   status?: 'draft' | 'pending' | 'approved' | 'rejected';
   categories?: string[]; // Changed from single category to array for multi-category filtering
   tags?: string[]; // Changed from single tag to array for multi-tag filtering
   page?: number;
   limit?: number;
-  sortBy?: 'name' | 'updated_at' | 'status' | 'submitted_at';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: SortField;
+  sortOrder?: SortOrder;
   includeDeleted?: boolean; // Include soft-deleted items (default: false)
   submittedBy?: string; // Filter by user who submitted
   search?: string; // Search by name or description

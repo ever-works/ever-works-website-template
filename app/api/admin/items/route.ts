@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { ItemRepository } from '@/lib/repositories/item.repository';
-import { CreateItemRequest } from '@/lib/types/item';
+import { CreateItemRequest, SortField, SortOrder } from '@/lib/types/item';
 import { validatePaginationParams } from '@/lib/utils/pagination-validation';
 
 const itemRepository = new ItemRepository();
@@ -245,8 +245,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Validate sortBy parameter with type-safe guard
-    const validSortFields = ['name', 'updated_at', 'status', 'submitted_at'] as const;
-    type SortField = (typeof validSortFields)[number];
+    const validSortFields: readonly SortField[] = ['name', 'updated_at', 'status', 'submitted_at'];
     const isSortField = (s: string): s is SortField =>
       (validSortFields as readonly string[]).includes(s);
     let sortBy: SortField | undefined = undefined;
@@ -261,8 +260,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Validate sortOrder parameter with type-safe guard
-    const validSortOrders = ['asc', 'desc'] as const;
-    type SortOrder = (typeof validSortOrders)[number];
+    const validSortOrders: readonly SortOrder[] = ['asc', 'desc'];
     const isSortOrder = (s: string): s is SortOrder =>
       (validSortOrders as readonly string[]).includes(s);
     let sortOrder: SortOrder | undefined = undefined;
