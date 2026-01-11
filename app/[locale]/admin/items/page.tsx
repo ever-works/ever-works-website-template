@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,13 +27,14 @@ import { ItemSearch } from "./components/item-filters";
 export default function AdminItemsPage() {
   const t = useTranslations('admin.ADMIN_ITEMS_PAGE');
   const router = useRouter();
+  const params = useParams<{ locale: string }>();
   const PageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<SortField>("updated_at");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
-  const [searchTerm, setSearchTerm] = useState('');
-  const isInitialLoad = useRef(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const hasLoadedOnce = useRef(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   // Filter state
   const [statusFilter, setStatusFilter] = useState<string>('');
@@ -42,14 +43,13 @@ export default function AdminItemsPage() {
 
   // Debounced search (min 2 characters to trigger, 300ms delay)
   const { debouncedValue: debouncedSearchTerm, isSearching } = useDebounceSearch({
-    searchValue: searchTerm.length >= 2 ? searchTerm : '',
+    searchValue: searchTerm.length >= 2 ? searchTerm : "",
     delay: 300,
     onSearch: () => {
       // Reset to page 1 on new search
-      if (!isInitialLoad.current && currentPage !== 1) {
+      if (currentPage !== 1) {
         setCurrentPage(1);
       }
-      isInitialLoad.current = false;
     },
   });
 
@@ -90,16 +90,17 @@ export default function AdminItemsPage() {
     sortOrder,
   });
 
-  // Calculate active filter count (including search)
-  const activeFilterCount = (searchTerm ? 1 : 0) + (statusFilter ? 1 : 0) + categoriesFilter.length + tagsFilter.length;
+  // Calculate active filter count (only count search when >= 2 chars, matching query behavior)
+  const activeFilterCount = (searchTerm.length >= 2 ? 1 : 0) + (statusFilter ? 1 : 0) + categoriesFilter.length + tagsFilter.length;
   const hasActiveFilters = activeFilterCount > 0;
 
   // Clear all filters (including search)
   const handleClearAllFilters = () => {
-    setSearchTerm('');
-    setStatusFilter('');
+    setSearchTerm("");
+    setStatusFilter("");
     setCategoriesFilter([]);
     setTagsFilter([]);
+    setCurrentPage(1);
   };
 
   // Sort handlers
@@ -205,6 +206,57 @@ export default function AdminItemsPage() {
     setIsModalOpen(false);
     setSelectedItem(undefined);
   };
+
+  // Modal accessibility: Escape key handler and focus management (Feedback 4)
+  useEffect(() => {
+    if (!isModalOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    };
+
+    // Add escape key listener
+    document.addEventListener("keydown", handleKeyDown);
+
+    // Focus the modal when it opens
+    if (modalRef.current) {
+      modalRef.current.focus();
+    }
+
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [isModalOpen]);
+
+  // Format date with fallback for missing/invalid values (Feedback 2)
+  const formatDate = (dateValue: string | null | undefined): string => {
+    if (!dateValue) return "—";
+    try {
+      const date = new Date(dateValue);
+      if (isNaN(date.getTime())) return "—";
+      return date.toLocaleDateString();
+    } catch {
+      return "—";
+    }
+  };
+
+  // Secure external link handler (Feedback 3)
+  const handleOpenExternal = useCallback((rawUrl?: string) => {
+    if (!rawUrl) return;
+    try {
+      const url = new URL(rawUrl);
+      const w = window.open(url.toString(), "_blank", "noopener,noreferrer");
+      if (w) w.opener = null;
+    } catch {
+      // Invalid URL, silently ignore
+    }
+  }, []);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -485,7 +537,6 @@ export default function AdminItemsPage() {
                   onStatusChange={setStatusFilter}
                   onCategoriesChange={setCategoriesFilter}
                   onTagsChange={setTagsFilter}
-                  onClearAll={handleClearAllFilters}
                   categories={allCategories.map(c => ({ id: c.id, name: c.name }))}
                   tags={allTags.map(t => ({ id: t.id, name: t.name }))}
                   itemCounts={{
@@ -625,7 +676,7 @@ export default function AdminItemsPage() {
                               </span>
                               <span className="inline-flex items-center gap-1">
                                 <Calendar className="w-3 h-3" />
-                                {new Date(item.updated_at || Date.now()).toLocaleDateString()}
+                                {formatDate(item.updated_at)}
                               </span>
                             </div>
                           </div>
@@ -636,9 +687,9 @@ export default function AdminItemsPage() {
                       <div className="flex items-center ml-4">
                         <ItemActionsMenu
                           item={item}
-                          onViewSource={() => window.open(item.source_url || '#', '_blank')}
-                          onEdit={() => openEditModal(item as any)}
-                          onCreateSurvey={() => router.push(`/admin/surveys/create?itemId=${encodeURIComponent(item.id)}`)}
+                          onViewSource={() => handleOpenExternal(item.source_url)}
+                          onEdit={() => openEditModal(item)}
+                          onCreateSurvey={() => router.push(`/${params.locale}/admin/surveys/create?itemId=${encodeURIComponent(item.id)}`)}
                           onApprove={() => handleApproveItem(item.id)}
                           onReject={() => openRejectModal(item)}
                           onDelete={() => handleDeleteItem(item.id)}
@@ -710,9 +761,22 @@ export default function AdminItemsPage() {
 
       {/* Item Form Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+        <div
+          ref={modalRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="item-form-modal-title"
+          tabIndex={-1}
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto focus:outline-none"
+          onClick={(e) => {
+            // Close modal when clicking backdrop
+            if (e.target === e.currentTarget) {
+              closeModal();
+            }
+          }}
+        >
           <div className="flex min-h-full items-center justify-center p-4">
-            <div className="max-w-4xl w-full">
+            <div className="max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
               <MultiStepItemForm
                 item={selectedItem}
                 mode={formMode}
