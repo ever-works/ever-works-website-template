@@ -52,47 +52,47 @@ export function ItemListSorting({
     };
 
     return (
-        <div className="inline-flex items-center gap-1">
-            {/* Sort Order Toggle - Separate accessible button */}
-            <button
-                type="button"
-                onClick={toggleOrder}
-                disabled={disabled || isLoading}
-                aria-label={sortOrder === "asc" ? t("SORT_ASC") : t("SORT_DESC")}
-                className={cn(
-                    "inline-flex items-center justify-center",
-                    "w-7 h-7 rounded-md",
-                    "border border-gray-200 dark:border-gray-700",
-                    "text-gray-600 dark:text-gray-300",
-                    "hover:bg-gray-50 dark:hover:bg-gray-800",
-                    "hover:text-theme-primary dark:hover:text-theme-primary",
-                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary/50",
-                    "transition-colors",
-                    "disabled:opacity-50 disabled:cursor-not-allowed"
-                )}
-            >
-                {isLoading ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                ) : sortOrder === "asc" ? (
-                    <ArrowUp className="w-3.5 h-3.5" />
-                ) : (
-                    <ArrowDown className="w-3.5 h-3.5" />
-                )}
-            </button>
+        <DropdownMenu.Root>
+            <div className="inline-flex items-center">
+                {/* Sort Order Toggle */}
+                <button
+                    type="button"
+                    onClick={toggleOrder}
+                    disabled={disabled || isLoading}
+                    aria-label={sortOrder === "asc" ? t("SORT_ASC") : t("SORT_DESC")}
+                    className={cn(
+                        "inline-flex items-center justify-center",
+                        "w-8 h-8 rounded-l-md",
+                        "border border-r-0 border-gray-200 dark:border-gray-700",
+                        "bg-gray-50 dark:bg-gray-800",
+                        "text-gray-600 dark:text-gray-300",
+                        "hover:bg-gray-100 dark:hover:bg-gray-700",
+                        "hover:text-theme-primary dark:hover:text-theme-primary",
+                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary/50 focus-visible:z-10",
+                        "transition-colors",
+                        "disabled:opacity-50 disabled:cursor-not-allowed"
+                    )}
+                >
+                    {isLoading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : sortOrder === "asc" ? (
+                        <ArrowUp className="w-4 h-4" />
+                    ) : (
+                        <ArrowDown className="w-4 h-4" />
+                    )}
+                </button>
 
-            {/* Sort Field Dropdown */}
-            <DropdownMenu.Root>
+                {/* Sort Field Dropdown Trigger */}
                 <DropdownMenu.Trigger asChild>
                     <button
                         type="button"
                         disabled={disabled || isLoading}
                         className={cn(
-                            "inline-flex items-center justify-between gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md",
-                            "min-w-[100px]",
+                            "inline-flex items-center gap-2 px-3 h-8 text-xs font-medium rounded-r-md",
                             "border border-gray-200 dark:border-gray-700",
-                            "text-gray-600 dark:text-gray-300",
-                            "hover:bg-gray-50 dark:hover:bg-gray-800",
-                            "hover:text-gray-900 dark:hover:text-white",
+                            "bg-white dark:bg-gray-800",
+                            "text-gray-700 dark:text-gray-200",
+                            "hover:bg-gray-50 dark:hover:bg-gray-700",
                             "focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary/50",
                             "transition-colors",
                             "disabled:opacity-50 disabled:cursor-not-allowed"
@@ -102,41 +102,41 @@ export function ItemListSorting({
                         <ChevronDown className="w-3.5 h-3.5 opacity-50" />
                     </button>
                 </DropdownMenu.Trigger>
+            </div>
 
-                <DropdownMenu.Portal>
-                    <DropdownMenu.Content
-                        className={cn(
-                            "min-w-[160px] bg-white dark:bg-gray-800 rounded-lg shadow-lg",
-                            "border border-gray-200 dark:border-gray-700",
-                            "py-1 z-50",
-                            "animate-in fade-in-0 zoom-in-95 duration-200"
-                        )}
-                        sideOffset={5}
-                        align="end"
-                    >
-                        {SORT_FIELDS.map((field) => (
-                            <DropdownMenu.Item
-                                key={field.value}
-                                onSelect={() => handleFieldSelect(field.value)}
-                                className={cn(
-                                    "flex items-center justify-between px-3 py-2 text-sm cursor-pointer outline-none",
-                                    "hover:bg-gray-100 dark:hover:bg-gray-700",
-                                    "focus:bg-gray-100 dark:focus:bg-gray-700",
-                                    "transition-colors",
-                                    sortBy === field.value
-                                        ? "text-theme-primary"
-                                        : "text-gray-700 dark:text-gray-300"
-                                )}
-                            >
-                                <span>{t(field.labelKey)}</span>
-                                {sortBy === field.value && (
-                                    <Check className="w-3.5 h-3.5 text-theme-primary" />
-                                )}
-                            </DropdownMenu.Item>
-                        ))}
-                    </DropdownMenu.Content>
-                </DropdownMenu.Portal>
-            </DropdownMenu.Root>
-        </div>
+            <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                    className={cn(
+                        "min-w-[160px] bg-white dark:bg-gray-800 rounded-lg shadow-lg",
+                        "border border-gray-200 dark:border-gray-700",
+                        "py-1 z-50",
+                        "animate-in fade-in-0 zoom-in-95 duration-200"
+                    )}
+                    sideOffset={5}
+                    align="end"
+                >
+                    {SORT_FIELDS.map((field) => (
+                        <DropdownMenu.Item
+                            key={field.value}
+                            onSelect={() => handleFieldSelect(field.value)}
+                            className={cn(
+                                "flex items-center justify-between px-3 py-2 text-sm cursor-pointer outline-none",
+                                "hover:bg-gray-100 dark:hover:bg-gray-700",
+                                "focus:bg-gray-100 dark:focus:bg-gray-700",
+                                "transition-colors",
+                                sortBy === field.value
+                                    ? "text-theme-primary"
+                                    : "text-gray-700 dark:text-gray-300"
+                            )}
+                        >
+                            <span>{t(field.labelKey)}</span>
+                            {sortBy === field.value && (
+                                <Check className="w-3.5 h-3.5 text-theme-primary" />
+                            )}
+                        </DropdownMenu.Item>
+                    ))}
+                </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+        </DropdownMenu.Root>
     );
 }
