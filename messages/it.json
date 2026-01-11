@@ -2075,7 +2075,25 @@
 			"SEARCH_PLACEHOLDER": "Cerca elementi...",
 			"NO_ITEMS_FOUND_SEARCH": "Nessun elemento trovato",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Nessun elemento corrisponde a \"{term}\". Prova una ricerca diversa.",
-			"CLEAR_SEARCH": "Cancella ricerca"
+			"CLEAR_SEARCH": "Cancella ricerca",
+			"VIEW_HISTORY": "Visualizza cronologia"
+		},
+		"ITEM_HISTORY": {
+			"TITLE": "Cronologia elemento",
+			"NO_HISTORY": "Nessuna cronologia disponibile",
+			"ERROR_LOADING": "Errore nel caricamento della cronologia",
+			"ACTION_CREATED": "Creato",
+			"ACTION_UPDATED": "Aggiornato",
+			"ACTION_STATUS_CHANGED": "Stato modificato",
+			"ACTION_REVIEWED": "Esaminato",
+			"ACTION_DELETED": "Eliminato",
+			"ACTION_RESTORED": "Ripristinato",
+			"SYSTEM": "Sistema",
+			"JUST_NOW": "Adesso",
+			"MINUTES_AGO": "{count} min fa",
+			"HOURS_AGO": "{count}h fa",
+			"DAYS_AGO": "{count}g fa",
+			"VIEW_CHANGES": "Visualizza {count} modifiche"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

@@ -2075,7 +2075,25 @@
 			"SEARCH_PLACEHOLDER": "Search items...",
 			"NO_ITEMS_FOUND_SEARCH": "No items found",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
-			"CLEAR_SEARCH": "Clear Search"
+			"CLEAR_SEARCH": "Clear Search",
+			"VIEW_HISTORY": "Geçmişi Görüntüle"
+		},
+		"ITEM_HISTORY": {
+			"TITLE": "Öğe Geçmişi",
+			"NO_HISTORY": "Geçmiş yok",
+			"ERROR_LOADING": "Geçmiş yüklenemedi",
+			"ACTION_CREATED": "Oluşturuldu",
+			"ACTION_UPDATED": "Güncellendi",
+			"ACTION_STATUS_CHANGED": "Durum değişti",
+			"ACTION_REVIEWED": "İncelendi",
+			"ACTION_DELETED": "Silindi",
+			"ACTION_RESTORED": "Geri yüklendi",
+			"SYSTEM": "Sistem",
+			"JUST_NOW": "Az önce",
+			"MINUTES_AGO": "{count} dk önce",
+			"HOURS_AGO": "{count}s önce",
+			"DAYS_AGO": "{count}g önce",
+			"VIEW_CHANGES": "{count} değişikliği görüntüle"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

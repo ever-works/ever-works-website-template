@@ -2064,7 +2064,25 @@
 			"SEARCH_PLACEHOLDER": "Search items...",
 			"NO_ITEMS_FOUND_SEARCH": "No items found",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
-			"CLEAR_SEARCH": "Clear Search"
+			"CLEAR_SEARCH": "Clear Search",
+			"VIEW_HISTORY": "Xem lịch sử"
+		},
+		"ITEM_HISTORY": {
+			"TITLE": "Lịch sử mục",
+			"NO_HISTORY": "Không có lịch sử",
+			"ERROR_LOADING": "Không thể tải lịch sử",
+			"ACTION_CREATED": "Đã tạo",
+			"ACTION_UPDATED": "Đã cập nhật",
+			"ACTION_STATUS_CHANGED": "Đã thay đổi trạng thái",
+			"ACTION_REVIEWED": "Đã xem xét",
+			"ACTION_DELETED": "Đã xóa",
+			"ACTION_RESTORED": "Đã khôi phục",
+			"SYSTEM": "Hệ thống",
+			"JUST_NOW": "Vừa xong",
+			"MINUTES_AGO": "{count} phút trước",
+			"HOURS_AGO": "{count}h trước",
+			"DAYS_AGO": "{count}d trước",
+			"VIEW_CHANGES": "Xem {count} thay đổi"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

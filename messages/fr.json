@@ -2166,7 +2166,25 @@
 			"SEARCH_PLACEHOLDER": "Rechercher des éléments...",
 			"NO_ITEMS_FOUND_SEARCH": "Aucun élément trouvé",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Aucun élément ne correspond à \"{term}\". Essayez une autre recherche.",
-			"CLEAR_SEARCH": "Effacer la recherche"
+			"CLEAR_SEARCH": "Effacer la recherche",
+			"VIEW_HISTORY": "Voir l'historique"
+		},
+		"ITEM_HISTORY": {
+			"TITLE": "Historique de l'élément",
+			"NO_HISTORY": "Aucun historique disponible",
+			"ERROR_LOADING": "Échec du chargement de l'historique",
+			"ACTION_CREATED": "Créé",
+			"ACTION_UPDATED": "Mis à jour",
+			"ACTION_STATUS_CHANGED": "Statut modifié",
+			"ACTION_REVIEWED": "Examiné",
+			"ACTION_DELETED": "Supprimé",
+			"ACTION_RESTORED": "Restauré",
+			"SYSTEM": "Système",
+			"JUST_NOW": "À l'instant",
+			"MINUTES_AGO": "il y a {count} min",
+			"HOURS_AGO": "il y a {count}h",
+			"DAYS_AGO": "il y a {count}j",
+			"VIEW_CHANGES": "Voir {count} modifications"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Gestion des Utilisateurs",

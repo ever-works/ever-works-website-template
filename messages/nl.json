@@ -2075,7 +2075,25 @@
 			"SEARCH_PLACEHOLDER": "Search items...",
 			"NO_ITEMS_FOUND_SEARCH": "No items found",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
-			"CLEAR_SEARCH": "Clear Search"
+			"CLEAR_SEARCH": "Clear Search",
+			"VIEW_HISTORY": "Geschiedenis bekijken"
+		},
+		"ITEM_HISTORY": {
+			"TITLE": "Item Geschiedenis",
+			"NO_HISTORY": "Geen geschiedenis beschikbaar",
+			"ERROR_LOADING": "Kon geschiedenis niet laden",
+			"ACTION_CREATED": "Aangemaakt",
+			"ACTION_UPDATED": "Bijgewerkt",
+			"ACTION_STATUS_CHANGED": "Status gewijzigd",
+			"ACTION_REVIEWED": "Beoordeeld",
+			"ACTION_DELETED": "Verwijderd",
+			"ACTION_RESTORED": "Hersteld",
+			"SYSTEM": "Systeem",
+			"JUST_NOW": "Zojuist",
+			"MINUTES_AGO": "{count} min geleden",
+			"HOURS_AGO": "{count}u geleden",
+			"DAYS_AGO": "{count}d geleden",
+			"VIEW_CHANGES": "{count} wijzigingen bekijken"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

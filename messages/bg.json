@@ -2064,7 +2064,25 @@
 			"SEARCH_PLACEHOLDER": "Търсене на елементи...",
 			"NO_ITEMS_FOUND_SEARCH": "Няма намерени елементи",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Няма елементи, съответстващи на \"{term}\". Опитайте друго търсене.",
-			"CLEAR_SEARCH": "Изчисти търсенето"
+			"CLEAR_SEARCH": "Изчисти търсенето",
+			"VIEW_HISTORY": "View History"
+		},
+		"ITEM_HISTORY": {
+			"TITLE": "Item History",
+			"NO_HISTORY": "No history available",
+			"ERROR_LOADING": "Failed to load history",
+			"ACTION_CREATED": "Created",
+			"ACTION_UPDATED": "Updated",
+			"ACTION_STATUS_CHANGED": "Status Changed",
+			"ACTION_REVIEWED": "Reviewed",
+			"ACTION_DELETED": "Deleted",
+			"ACTION_RESTORED": "Restored",
+			"SYSTEM": "System",
+			"JUST_NOW": "Just now",
+			"MINUTES_AGO": "{count} min ago",
+			"HOURS_AGO": "{count}h ago",
+			"DAYS_AGO": "{count}d ago",
+			"VIEW_CHANGES": "View {count} changes"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

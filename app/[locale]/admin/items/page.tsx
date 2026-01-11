@@ -10,6 +10,7 @@ import { MultiStepItemForm } from "@/components/admin/items/multi-step-item-form
 import { ItemFilters } from "@/components/admin/items/item-filters";
 import { ActiveItemFilters } from "@/components/admin/items/active-item-filters";
 import { ItemRejectModal } from "@/components/admin/items/item-reject-modal";
+import { ItemHistoryModal } from "@/components/admin/items/item-history-modal";
 import { ItemListSorting, SortField, SortOrder } from "@/components/admin/items/item-list-sorting";
 import { ItemActionsMenu } from "@/components/admin/items/item-actions-menu";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
@@ -131,6 +132,10 @@ export default function AdminItemsPage() {
   const [selectedItemForReject, setSelectedItemForReject] = useState<ItemData | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
 
+  // History modal state
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const [selectedItemForHistory, setSelectedItemForHistory] = useState<ItemData | null>(null);
+
 
   const handleCreateItem = async (data: CreateItemRequest) => {
     const success = await createItem(data as any);
@@ -176,6 +181,16 @@ export default function AdminItemsPage() {
     setRejectModalOpen(false);
     setSelectedItemForReject(null);
     setRejectionReason('');
+  };
+
+  const openHistoryModal = (item: ItemData) => {
+    setSelectedItemForHistory(item);
+    setHistoryModalOpen(true);
+  };
+
+  const closeHistoryModal = () => {
+    setHistoryModalOpen(false);
+    setSelectedItemForHistory(null);
   };
 
   const handleRejectConfirm = async () => {
@@ -638,6 +653,7 @@ export default function AdminItemsPage() {
                           item={item}
                           onViewSource={() => window.open(item.source_url || '#', '_blank')}
                           onEdit={() => openEditModal(item as any)}
+                          onViewHistory={() => openHistoryModal(item)}
                           onCreateSurvey={() => router.push(`/admin/surveys/create?itemId=${encodeURIComponent(item.id)}`)}
                           onApprove={() => handleApproveItem(item.id)}
                           onReject={() => openRejectModal(item)}
@@ -735,6 +751,16 @@ export default function AdminItemsPage() {
         onConfirm={handleRejectConfirm}
         onClose={closeRejectModal}
       />
+
+      {/* Item History Modal */}
+      {selectedItemForHistory && (
+        <ItemHistoryModal
+          isOpen={historyModalOpen}
+          itemId={selectedItemForHistory.id}
+          itemName={selectedItemForHistory.name}
+          onClose={closeHistoryModal}
+        />
+      )}
     </div>
   );
 } 

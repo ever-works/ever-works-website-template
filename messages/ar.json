@@ -2095,7 +2095,25 @@
 			"SEARCH_PLACEHOLDER": "البحث في العناصر...",
 			"NO_ITEMS_FOUND_SEARCH": "لم يتم العثور على عناصر",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "لا توجد عناصر تطابق \"{term}\". جرب بحثًا مختلفًا.",
-			"CLEAR_SEARCH": "مسح البحث"
+			"CLEAR_SEARCH": "مسح البحث",
+			"VIEW_HISTORY": "عرض السجل"
+		},
+		"ITEM_HISTORY": {
+			"TITLE": "سجل العنصر",
+			"NO_HISTORY": "لا يوجد سجل متاح",
+			"ERROR_LOADING": "فشل في تحميل السجل",
+			"ACTION_CREATED": "تم الإنشاء",
+			"ACTION_UPDATED": "تم التحديث",
+			"ACTION_STATUS_CHANGED": "تم تغيير الحالة",
+			"ACTION_REVIEWED": "تمت المراجعة",
+			"ACTION_DELETED": "تم الحذف",
+			"ACTION_RESTORED": "تمت الاستعادة",
+			"SYSTEM": "النظام",
+			"JUST_NOW": "الآن",
+			"MINUTES_AGO": "منذ {count} دقيقة",
+			"HOURS_AGO": "منذ {count} ساعة",
+			"DAYS_AGO": "منذ {count} يوم",
+			"VIEW_CHANGES": "عرض {count} تغييرات"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "إدارة المستخدمين",

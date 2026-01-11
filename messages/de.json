@@ -2108,7 +2108,25 @@
 			"SEARCH_PLACEHOLDER": "Elemente suchen...",
 			"NO_ITEMS_FOUND_SEARCH": "Keine Elemente gefunden",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "Keine Elemente entsprechen \"{term}\". Versuchen Sie eine andere Suche.",
-			"CLEAR_SEARCH": "Suche löschen"
+			"CLEAR_SEARCH": "Suche löschen",
+			"VIEW_HISTORY": "Verlauf anzeigen"
+		},
+		"ITEM_HISTORY": {
+			"TITLE": "Element-Verlauf",
+			"NO_HISTORY": "Kein Verlauf verfügbar",
+			"ERROR_LOADING": "Fehler beim Laden des Verlaufs",
+			"ACTION_CREATED": "Erstellt",
+			"ACTION_UPDATED": "Aktualisiert",
+			"ACTION_STATUS_CHANGED": "Status geändert",
+			"ACTION_REVIEWED": "Überprüft",
+			"ACTION_DELETED": "Gelöscht",
+			"ACTION_RESTORED": "Wiederhergestellt",
+			"SYSTEM": "System",
+			"JUST_NOW": "Gerade eben",
+			"MINUTES_AGO": "vor {count} Min.",
+			"HOURS_AGO": "vor {count} Std.",
+			"DAYS_AGO": "vor {count} Tagen",
+			"VIEW_CHANGES": "{count} Änderungen anzeigen"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "Benutzerverwaltung",

@@ -2075,7 +2075,25 @@
 			"SEARCH_PLACEHOLDER": "Search items...",
 			"NO_ITEMS_FOUND_SEARCH": "No items found",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
-			"CLEAR_SEARCH": "Clear Search"
+			"CLEAR_SEARCH": "Clear Search",
+			"VIEW_HISTORY": "Zobacz historię"
+		},
+		"ITEM_HISTORY": {
+			"TITLE": "Historia elementu",
+			"NO_HISTORY": "Brak dostępnej historii",
+			"ERROR_LOADING": "Nie udało się załadować historii",
+			"ACTION_CREATED": "Utworzono",
+			"ACTION_UPDATED": "Zaktualizowano",
+			"ACTION_STATUS_CHANGED": "Zmieniono status",
+			"ACTION_REVIEWED": "Sprawdzono",
+			"ACTION_DELETED": "Usunięto",
+			"ACTION_RESTORED": "Przywrócono",
+			"SYSTEM": "System",
+			"JUST_NOW": "Przed chwilą",
+			"MINUTES_AGO": "{count} min temu",
+			"HOURS_AGO": "{count} godz. temu",
+			"DAYS_AGO": "{count} dni temu",
+			"VIEW_CHANGES": "Zobacz {count} zmian"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

@@ -2075,7 +2075,25 @@
 			"SEARCH_PLACEHOLDER": "Search items...",
 			"NO_ITEMS_FOUND_SEARCH": "No items found",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
-			"CLEAR_SEARCH": "Clear Search"
+			"CLEAR_SEARCH": "Clear Search",
+			"VIEW_HISTORY": "履歴を表示"
+		},
+		"ITEM_HISTORY": {
+			"TITLE": "アイテム履歴",
+			"NO_HISTORY": "履歴がありません",
+			"ERROR_LOADING": "履歴の読み込みに失敗しました",
+			"ACTION_CREATED": "作成",
+			"ACTION_UPDATED": "更新",
+			"ACTION_STATUS_CHANGED": "ステータス変更",
+			"ACTION_REVIEWED": "レビュー済み",
+			"ACTION_DELETED": "削除",
+			"ACTION_RESTORED": "復元",
+			"SYSTEM": "システム",
+			"JUST_NOW": "たった今",
+			"MINUTES_AGO": "{count}分前",
+			"HOURS_AGO": "{count}時間前",
+			"DAYS_AGO": "{count}日前",
+			"VIEW_CHANGES": "{count}件の変更を表示"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",

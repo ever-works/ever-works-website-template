@@ -2075,7 +2075,25 @@
 			"SEARCH_PLACEHOLDER": "Search items...",
 			"NO_ITEMS_FOUND_SEARCH": "No items found",
 			"NO_ITEMS_FOUND_SEARCH_DESC": "No items match \"{term}\". Try a different search.",
-			"CLEAR_SEARCH": "Clear Search"
+			"CLEAR_SEARCH": "Clear Search",
+			"VIEW_HISTORY": "Переглянути історію"
+		},
+		"ITEM_HISTORY": {
+			"TITLE": "Історія елемента",
+			"NO_HISTORY": "Історія недоступна",
+			"ERROR_LOADING": "Не вдалося завантажити історію",
+			"ACTION_CREATED": "Створено",
+			"ACTION_UPDATED": "Оновлено",
+			"ACTION_STATUS_CHANGED": "Статус змінено",
+			"ACTION_REVIEWED": "Перевірено",
+			"ACTION_DELETED": "Видалено",
+			"ACTION_RESTORED": "Відновлено",
+			"SYSTEM": "Система",
+			"JUST_NOW": "Щойно",
+			"MINUTES_AGO": "{count} хв тому",
+			"HOURS_AGO": "{count}год тому",
+			"DAYS_AGO": "{count}д тому",
+			"VIEW_CHANGES": "Переглянути {count} змін"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",
