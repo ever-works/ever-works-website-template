@@ -233,7 +233,16 @@ export async function GET(request: NextRequest) {
     type ItemStatus = (typeof validStatuses)[number];
     const isItemStatus = (s: string): s is ItemStatus =>
       (validStatuses as readonly string[]).includes(s);
-    const status = statusParam && isItemStatus(statusParam) ? statusParam : undefined;
+    let status: ItemStatus | undefined = undefined;
+    if (statusParam) {
+      if (!isItemStatus(statusParam)) {
+        return NextResponse.json(
+          { success: false, error: `Invalid status parameter. Must be one of: ${validStatuses.join(', ')}` },
+          { status: 400 }
+        );
+      }
+      status = statusParam;
+    }
 
     // Validate sortBy parameter with type-safe guard
     const validSortFields = ['name', 'updated_at', 'status', 'submitted_at'] as const;
