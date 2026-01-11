@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { ArrowUp, ArrowDown, Check, Loader2 } from "lucide-react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { ArrowUp, ArrowDown, Check, Loader2, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
@@ -33,30 +33,8 @@ export function ItemListSorting({
     isLoading = false,
 }: ItemListSortingProps) {
     const t = useTranslations("admin.ADMIN_ITEMS_PAGE");
-    const [isOpen, setIsOpen] = useState(false);
-    const menuRef = useRef<HTMLDivElement>(null);
-    const buttonRef = useRef<HTMLButtonElement>(null);
 
     const currentFieldLabel = SORT_FIELDS.find((f) => f.value === sortBy)?.labelKey || "SORT_UPDATED";
-
-    // Close menu on outside click
-    useEffect(() => {
-        if (!isOpen) return;
-
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                menuRef.current &&
-                !menuRef.current.contains(event.target as Node) &&
-                buttonRef.current &&
-                !buttonRef.current.contains(event.target as Node)
-            ) {
-                setIsOpen(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [isOpen]);
 
     const handleFieldSelect = (field: SortField) => {
         if (field === sortBy) {
@@ -65,79 +43,100 @@ export function ItemListSorting({
         } else {
             onSortByChange(field);
         }
-        setIsOpen(false);
     };
 
-    const toggleOrder = (e: React.MouseEvent) => {
-        e.stopPropagation();
+    const toggleOrder = () => {
         if (!isLoading && !disabled) {
             onSortOrderChange(sortOrder === "asc" ? "desc" : "asc");
         }
     };
 
     return (
-        <div className="relative">
+        <div className="inline-flex items-center gap-1">
+            {/* Sort Order Toggle - Separate accessible button */}
             <button
-                ref={buttonRef}
-                onClick={() => !disabled && !isLoading && setIsOpen(!isOpen)}
+                type="button"
+                onClick={toggleOrder}
                 disabled={disabled || isLoading}
+                aria-label={sortOrder === "asc" ? t("SORT_ASC") : t("SORT_DESC")}
                 className={cn(
-                    "inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md",
-                    "w-[130px]",
+                    "inline-flex items-center justify-center",
+                    "w-7 h-7 rounded-md",
                     "border border-gray-200 dark:border-gray-700",
-                    "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white",
-                    "hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors",
+                    "text-gray-600 dark:text-gray-300",
+                    "hover:bg-gray-50 dark:hover:bg-gray-800",
+                    "hover:text-theme-primary dark:hover:text-theme-primary",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary/50",
+                    "transition-colors",
                     "disabled:opacity-50 disabled:cursor-not-allowed"
                 )}
             >
-                <span
-                    onClick={toggleOrder}
-                    className={cn(
-                        "transition-colors cursor-pointer",
-                        !isLoading && "hover:text-theme-primary"
-                    )}
-                    title={sortOrder === "asc" ? t("SORT_ASC") : t("SORT_DESC")}
-                >
-                    {isLoading ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    ) : sortOrder === "asc" ? (
-                        <ArrowUp className="w-3.5 h-3.5" />
-                    ) : (
-                        <ArrowDown className="w-3.5 h-3.5" />
-                    )}
-                </span>
-                <span>{t(currentFieldLabel)}</span>
+                {isLoading ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : sortOrder === "asc" ? (
+                    <ArrowUp className="w-3.5 h-3.5" />
+                ) : (
+                    <ArrowDown className="w-3.5 h-3.5" />
+                )}
             </button>
 
-            {isOpen && (
-                <div
-                    ref={menuRef}
-                    className={cn(
-                        "absolute right-0 top-full mt-1 z-50",
-                        "min-w-[160px] py-1 rounded-lg shadow-lg",
-                        "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
-                    )}
-                >
-                    {SORT_FIELDS.map((field) => (
-                        <button
-                            key={field.value}
-                            onClick={() => handleFieldSelect(field.value)}
-                            className={cn(
-                                "w-full flex items-center justify-between px-3 py-2 text-sm text-left",
-                                "hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors",
-                                sortBy === field.value
-                                    ? "text-theme-primary"
-                                    : "text-gray-700 dark:text-gray-300"
-                            )}
-                        >
-                            <span>{t(field.labelKey)}</span>
-                            {sortBy === field.value && (
-                                <Check className="w-3.5 h-3.5 text-theme-primary" />
-                            )}
-                        </button>
-                    ))}
-                </div>
-            )}
+            {/* Sort Field Dropdown */}
+            <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                    <button
+                        type="button"
+                        disabled={disabled || isLoading}
+                        className={cn(
+                            "inline-flex items-center justify-between gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md",
+                            "min-w-[100px]",
+                            "border border-gray-200 dark:border-gray-700",
+                            "text-gray-600 dark:text-gray-300",
+                            "hover:bg-gray-50 dark:hover:bg-gray-800",
+                            "hover:text-gray-900 dark:hover:text-white",
+                            "focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary/50",
+                            "transition-colors",
+                            "disabled:opacity-50 disabled:cursor-not-allowed"
+                        )}
+                    >
+                        <span>{t(currentFieldLabel)}</span>
+                        <ChevronDown className="w-3.5 h-3.5 opacity-50" />
+                    </button>
+                </DropdownMenu.Trigger>
+
+                <DropdownMenu.Portal>
+                    <DropdownMenu.Content
+                        className={cn(
+                            "min-w-[160px] bg-white dark:bg-gray-800 rounded-lg shadow-lg",
+                            "border border-gray-200 dark:border-gray-700",
+                            "py-1 z-50",
+                            "animate-in fade-in-0 zoom-in-95 duration-200"
+                        )}
+                        sideOffset={5}
+                        align="end"
+                    >
+                        {SORT_FIELDS.map((field) => (
+                            <DropdownMenu.Item
+                                key={field.value}
+                                onSelect={() => handleFieldSelect(field.value)}
+                                className={cn(
+                                    "flex items-center justify-between px-3 py-2 text-sm cursor-pointer outline-none",
+                                    "hover:bg-gray-100 dark:hover:bg-gray-700",
+                                    "focus:bg-gray-100 dark:focus:bg-gray-700",
+                                    "transition-colors",
+                                    sortBy === field.value
+                                        ? "text-theme-primary"
+                                        : "text-gray-700 dark:text-gray-300"
+                                )}
+                            >
+                                <span>{t(field.labelKey)}</span>
+                                {sortBy === field.value && (
+                                    <Check className="w-3.5 h-3.5 text-theme-primary" />
+                                )}
+                            </DropdownMenu.Item>
+                        ))}
+                    </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+            </DropdownMenu.Root>
         </div>
     );
 }
