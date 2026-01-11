@@ -61,8 +61,8 @@ export function ItemListSorting({
                     disabled={disabled || isLoading}
                     aria-label={sortOrder === "asc" ? t("SORT_ASC") : t("SORT_DESC")}
                     className={cn(
-                        "inline-flex items-center justify-center",
-                        "px-2 py-1 rounded-l-md",
+                        "inline-flex items-center justify-center h-[28px]",
+                        "px-2 rounded-l-md",
                         "border border-r-0 border-gray-200 dark:border-gray-700",
                         "bg-gray-50 dark:bg-gray-800",
                         "text-gray-600 dark:text-gray-300",
@@ -88,8 +88,8 @@ export function ItemListSorting({
                         type="button"
                         disabled={disabled || isLoading}
                         className={cn(
-                            "inline-flex items-center justify-between gap-1.5 px-2.5 py-1 text-xs font-medium rounded-r-md",
-                            "min-w-[100px]",
+                            "inline-flex items-center justify-between gap-1.5 h-[28px] px-2.5 text-xs font-medium rounded-r-md",
+                            "w-[140px]",
                             "border border-gray-200 dark:border-gray-700",
                             "text-gray-600 dark:text-gray-300",
                             "hover:bg-gray-50 dark:hover:bg-gray-800",
