@@ -41,9 +41,9 @@ export default function AdminItemsPage() {
   const [categoriesFilter, setCategoriesFilter] = useState<string[]>([]);
   const [tagsFilter, setTagsFilter] = useState<string[]>([]);
 
-  // Debounced search (min 2 characters to trigger, 300ms delay)
+  // Debounced search (min 2 trimmed characters to trigger, 300ms delay)
   const { debouncedValue: debouncedSearchTerm, isSearching } = useDebounceSearch({
-    searchValue: searchTerm.length >= 2 ? searchTerm : "",
+    searchValue: searchTerm.trim().length >= 2 ? searchTerm.trim() : "",
     delay: 300,
     onSearch: () => {
       // Reset to page 1 on new search
@@ -136,7 +136,7 @@ export default function AdminItemsPage() {
 
 
   const handleCreateItem = async (data: CreateItemRequest) => {
-    const success = await createItem(data as any);
+    const success = await createItem(data);
     if (success) {
       setIsModalOpen(false);
     }
@@ -144,8 +144,8 @@ export default function AdminItemsPage() {
 
   const handleUpdateItem = async (data: UpdateItemRequest) => {
     if (!selectedItem) return;
-    
-    const success = await updateItem(selectedItem.id, data as any);
+
+    const success = await updateItem(selectedItem.id, data);
     if (success) {
       setIsModalOpen(false);
     }

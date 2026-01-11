@@ -96,6 +96,9 @@ export const ITEM_STATUSES = {
   REJECTED: 'rejected',
 } as const;
 
+// Type alias for item status literals
+export type ItemStatus = (typeof ITEM_STATUSES)[keyof typeof ITEM_STATUSES];
+
 export const ITEM_STATUS_LABELS = {
   draft: 'Draft',
   pending: 'Pending Review',
