@@ -22,7 +22,7 @@ const CHIP = cn(
 
 const CHIP_REMOVE = cn(
 	'p-0.5 rounded-full hover:bg-theme-primary/20 dark:hover:bg-theme-primary/30',
-	'transition-colors focus:outline-none'
+	'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary/50'
 );
 
 /**
@@ -95,7 +95,7 @@ export function ActiveItemFilters({
 				<button
 					type="button"
 					onClick={onClearAll}
-					className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 ml-1"
+					className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 ml-1 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary/50"
 				>
 					{t('CLEAR_ALL_FILTERS')}
 				</button>
