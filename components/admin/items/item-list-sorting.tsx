@@ -88,7 +88,8 @@ export function ItemListSorting({
                         type="button"
                         disabled={disabled || isLoading}
                         className={cn(
-                            "inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-r-md",
+                            "inline-flex items-center justify-between gap-1.5 px-2.5 py-1 text-xs font-medium rounded-r-md",
+                            "min-w-[100px]",
                             "border border-gray-200 dark:border-gray-700",
                             "text-gray-600 dark:text-gray-300",
                             "hover:bg-gray-50 dark:hover:bg-gray-800",
