@@ -22,10 +22,6 @@ export const InfiniteScrollSentinel = forwardRef<HTMLDivElement, InfiniteScrollS
 			);
 		}
 
-		if (!hasMore) {
-			return null;
-		}
-
 		return (
 			<div ref={ref} className="w-full flex items-center justify-center py-8 min-h-[100px]">
 				{error ? (

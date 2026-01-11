@@ -13,7 +13,7 @@ export function CollectionsPagination({ page, totalPages, onPageChange }: Collec
 	}
 
 	return (
-		<footer className="flex items-center justify-center py-6 bottom-0 bg-linear-to-t">
+		<footer className="flex items-center justify-center py-6 bg-linear-to-t from-white dark:from-gray-900 to-transparent">
 			<UniversalPagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
 		</footer>
 	);

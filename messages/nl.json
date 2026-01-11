@@ -2049,6 +2049,21 @@
 			"NO_ITEMS_DESCRIPTION": "Maak je eerste item aan om je collectie op te bouwen.",
 			"CREATE_ITEM": "Item aanmaken",
 			"CONFIRM_DELETE_ITEM": "Weet je zeker dat je dit item wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+			"FILTERS": "Filters",
+			"FILTER_BY_STATUS": "Filteren op status",
+			"FILTER_BY_CATEGORY": "Filteren op categorie",
+			"FILTER_BY_TAGS": "Filteren op tags",
+			"ALL_STATUSES": "Alle statussen",
+			"ALL_CATEGORIES": "Alle categorieën",
+			"ALL_TAGS": "Alle tags",
+			"CLEAR_ALL": "Alles wissen",
+			"NO_FILTER_RESULTS": "Geen items komen overeen met de geselecteerde filters",
+			"NO_FILTER_RESULTS_DESCRIPTION": "Probeer je filters aan te passen om te vinden wat je zoekt.",
+			"ACTIVE_FILTERS": "Actieve filters",
+			"STATUS_LABEL": "Status",
+			"CATEGORY_LABEL": "Categorie",
+			"TAGS_LABEL": "Tags",
+			"SELECT_TAGS": "Selecteer tags...",
 			"CANCEL": "Annuleren",
 			"REJECT_MODAL_TITLE": "Item afwijzen",
 			"REJECT_MODAL_DESCRIPTION": "Geef een reden op voor het afwijzen van dit item. Dit wordt naar de indiener gestuurd.",
@@ -2056,7 +2071,24 @@
 			"REJECTION_REASON_LABEL": "Reden voor afwijzing",
 			"REJECTION_REASON_PLACEHOLDER": "Leg uit waarom dit item wordt afgewezen...",
 			"REJECTION_REASON_MIN_LENGTH": "De reden voor afwijzing moet minimaal 10 tekens bevatten",
-			"CONFIRM_REJECT": "Item afwijzen"
+			"CONFIRM_REJECT": "Item afwijzen",
+			"STATUS_DRAFT": "Concept",
+			"STATUS_PENDING": "In behandeling",
+			"STATUS_APPROVED": "Goedgekeurd",
+			"STATUS_REJECTED": "Afgewezen",
+			"ACTIONS": "Acties",
+			"SEARCH_PLACEHOLDER": "Zoek items...",
+			"NO_ITEMS_FOUND_SEARCH": "Geen items gevonden",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "Geen items komen overeen met \"{term}\". Probeer een andere zoekopdracht.",
+			"CLEAR_SEARCH": "Zoekopdracht wissen",
+			"FILTER_SEARCH_PLACEHOLDER": "Zoeken...",
+			"LOADING": "Laden...",
+			"STATUS_ALL": "Alle",
+			"NO_RESULTS": "Geen resultaten",
+			"NO_CATEGORIES_AVAILABLE": "Geen categorieën beschikbaar",
+			"NO_TAGS_AVAILABLE": "Geen tags beschikbaar",
+			"REMOVE_FILTER": "Filter {name} verwijderen",
+			"CLEAR_ALL_FILTERS": "Alles wissen"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",
@@ -2862,7 +2894,6 @@
 			"WELCOME_BACK": "Welkom terug, {name}! Hier is uw activiteitenoverzicht.",
 			"REFRESH": "Vernieuwen",
 			"FAILED_TO_LOAD": "Kan dashboardstatistieken niet laden",
-
 			"STATS": {
 				"TOTAL_SUBMISSIONS": "Totaal Inzendingen",
 				"CONTENT_CREATED": "Door u gemaakte inhoud",
@@ -2873,7 +2904,6 @@
 				"COMMENTS_RECEIVED": "Ontvangen Reacties",
 				"COMMENTS_ON_CONTENT": "Reacties op uw inhoud"
 			},
-
 			"PERIOD_COMPARISON": {
 				"TITLE": "Wekelijkse Prestaties",
 				"THIS_WEEK": "Deze Week",
@@ -2886,7 +2916,6 @@
 				"NO_DATA": "Geen gegevens beschikbaar",
 				"NO_DATA_DESC": "Begin met het maken van inhoud om uw wekelijkse prestatievergelijking te zien."
 			},
-
 			"CATEGORY_PERFORMANCE": {
 				"TITLE": "Categorieprestaties",
 				"SUBTITLE": "Topcategorieën op gemiddelde betrokkenheid",
@@ -2897,7 +2926,6 @@
 				"NO_DATA": "Geen categoriegegevens",
 				"NO_DATA_DESC": "Dien items in om categorieprestatiemetrieken te zien."
 			},
-
 			"APPROVAL_TREND": {
 				"TITLE": "Goedkeuringstrend",
 				"SUBTITLE": "Maandelijks goedkeuringspercentage",
@@ -2907,7 +2935,6 @@
 				"NO_DATA": "Geen goedkeuringsgegevens",
 				"NO_DATA_DESC": "Dien items in om uw goedkeuringspercentage te volgen."
 			},
-
 			"ENGAGEMENT_RATE": {
 				"TITLE": "Betrokkenheidspercentage",
 				"SUBTITLE": "Betrokkenheid per inzending over tijd",
@@ -2915,7 +2942,6 @@
 				"NO_DATA": "Geen betrokkenheidsgegevens",
 				"NO_DATA_DESC": "Maak inhoud om uw betrokkenheidstrends te zien."
 			},
-
 			"SUBMISSION_CALENDAR": {
 				"TITLE": "Inzendingsactiviteit",
 				"SUBTITLE": "Uw inzendingsconsistentie over de afgelopen 3 maanden",
@@ -2927,7 +2953,6 @@
 				"LESS": "Minder",
 				"MORE": "Meer"
 			},
-
 			"ENGAGEMENT_DISTRIBUTION": {
 				"TITLE": "Betrokkenheidsverdeling",
 				"SUBTITLE": "Hoe betrokkenheid is verdeeld over uw topitems",
@@ -2936,12 +2961,10 @@
 				"NO_DATA": "Geen betrokkenheidsgegevens",
 				"NO_DATA_DESC": "Ontvang stemmen en reacties om de betrokkenheidsverdeling te zien."
 			},
-
 			"COMMON": {
 				"VS": "vs",
 				"AVG": "Gem."
 			},
-
 			"CHARTS": {
 				"LOADING": "Grafiekgegevens laden...",
 				"ERROR": "Kan grafiek niet laden",

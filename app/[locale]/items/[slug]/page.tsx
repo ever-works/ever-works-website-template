@@ -10,8 +10,10 @@ import { Metadata } from 'next';
 import { siteConfig } from '@/lib/config';
 import { cleanUrl } from '@/lib/utils/url-cleaner';
 
-// Disable static generation to prevent MDX compilation errors during build
-export const dynamic = 'force-dynamic';
+// Enable ISR with 10 minutes revalidation
+// Using dynamicParams allows on-demand generation without build-time MDX errors
+export const revalidate = 600;
+export const dynamicParams = true;
 
 /**
  * Normalize and validate the base URL from environment variables
