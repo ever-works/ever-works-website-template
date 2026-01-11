@@ -2049,6 +2049,21 @@
 			"NO_ITEMS_DESCRIPTION": "Utwórz pierwszy element, aby rozpocząć budowanie kolekcji.",
 			"CREATE_ITEM": "Utwórz element",
 			"CONFIRM_DELETE_ITEM": "Czy na pewno chcesz usunąć ten element? Tej akcji nie można cofnąć.",
+			"FILTERS": "Filtry",
+			"FILTER_BY_STATUS": "Filtruj według statusu",
+			"FILTER_BY_CATEGORY": "Filtruj według kategorii",
+			"FILTER_BY_TAGS": "Filtruj według tagów",
+			"ALL_STATUSES": "Wszystkie statusy",
+			"ALL_CATEGORIES": "Wszystkie kategorie",
+			"ALL_TAGS": "Wszystkie tagi",
+			"CLEAR_ALL": "Wyczyść wszystko",
+			"NO_FILTER_RESULTS": "Brak elementów pasujących do wybranych filtrów",
+			"NO_FILTER_RESULTS_DESCRIPTION": "Spróbuj dostosować filtry, aby znaleźć to, czego szukasz.",
+			"ACTIVE_FILTERS": "Aktywne filtry",
+			"STATUS_LABEL": "Status",
+			"CATEGORY_LABEL": "Kategoria",
+			"TAGS_LABEL": "Tagi",
+			"SELECT_TAGS": "Wybierz tagi...",
 			"CANCEL": "Anuluj",
 			"REJECT_MODAL_TITLE": "Odrzuć element",
 			"REJECT_MODAL_DESCRIPTION": "Podaj powód odrzucenia tego elementu. Zostanie on wysłany do osoby zgłaszającej.",
@@ -2056,7 +2071,24 @@
 			"REJECTION_REASON_LABEL": "Powód odrzucenia",
 			"REJECTION_REASON_PLACEHOLDER": "Wyjaśnij, dlaczego ten element jest odrzucany...",
 			"REJECTION_REASON_MIN_LENGTH": "Powód odrzucenia musi mieć co najmniej 10 znaków",
-			"CONFIRM_REJECT": "Odrzuć element"
+			"CONFIRM_REJECT": "Odrzuć element",
+			"STATUS_DRAFT": "Szkic",
+			"STATUS_PENDING": "Oczekujący",
+			"STATUS_APPROVED": "Zatwierdzony",
+			"STATUS_REJECTED": "Odrzucony",
+			"ACTIONS": "Akcje",
+			"SEARCH_PLACEHOLDER": "Szukaj elementów...",
+			"NO_ITEMS_FOUND_SEARCH": "Nie znaleziono elementów",
+			"NO_ITEMS_FOUND_SEARCH_DESC": "Brak elementów pasujących do \"{term}\". Spróbuj innego wyszukiwania.",
+			"CLEAR_SEARCH": "Wyczyść wyszukiwanie",
+			"FILTER_SEARCH_PLACEHOLDER": "Szukaj...",
+			"LOADING": "Ładowanie...",
+			"STATUS_ALL": "Wszystkie",
+			"NO_RESULTS": "Brak wyników",
+			"NO_CATEGORIES_AVAILABLE": "Brak dostępnych kategorii",
+			"NO_TAGS_AVAILABLE": "Brak dostępnych tagów",
+			"REMOVE_FILTER": "Usuń filtr {name}",
+			"CLEAR_ALL_FILTERS": "Wyczyść wszystko"
 		},
 		"ADMIN_USERS_PAGE": {
 			"TITLE": "User Management",
@@ -2862,7 +2894,6 @@
 			"WELCOME_BACK": "Witaj ponownie, {name}! Oto przegląd Twojej aktywności.",
 			"REFRESH": "Odśwież",
 			"FAILED_TO_LOAD": "Nie udało się załadować statystyk panelu",
-
 			"STATS": {
 				"TOTAL_SUBMISSIONS": "Łączna Liczba Zgłoszeń",
 				"CONTENT_CREATED": "Utworzona przez Ciebie treść",
@@ -2873,7 +2904,6 @@
 				"COMMENTS_RECEIVED": "Otrzymane Komentarze",
 				"COMMENTS_ON_CONTENT": "Komentarze do Twoich treści"
 			},
-
 			"PERIOD_COMPARISON": {
 				"TITLE": "Wydajność Tygodniowa",
 				"THIS_WEEK": "Ten Tydzień",
@@ -2886,7 +2916,6 @@
 				"NO_DATA": "Brak dostępnych danych",
 				"NO_DATA_DESC": "Zacznij tworzyć treści, aby zobaczyć porównanie wydajności tygodniowej."
 			},
-
 			"CATEGORY_PERFORMANCE": {
 				"TITLE": "Wydajność Kategorii",
 				"SUBTITLE": "Najlepsze kategorie według średniego zaangażowania",
@@ -2897,7 +2926,6 @@
 				"NO_DATA": "Brak danych kategorii",
 				"NO_DATA_DESC": "Prześlij elementy, aby zobaczyć metryki wydajności kategorii."
 			},
-
 			"APPROVAL_TREND": {
 				"TITLE": "Trend Zatwierdzania",
 				"SUBTITLE": "Miesięczny wskaźnik sukcesu zatwierdzania",
@@ -2907,7 +2935,6 @@
 				"NO_DATA": "Brak danych zatwierdzania",
 				"NO_DATA_DESC": "Prześlij elementy, aby śledzić swój wskaźnik zatwierdzania."
 			},
-
 			"ENGAGEMENT_RATE": {
 				"TITLE": "Wskaźnik Zaangażowania",
 				"SUBTITLE": "Zaangażowanie na zgłoszenie w czasie",
@@ -2915,7 +2942,6 @@
 				"NO_DATA": "Brak danych zaangażowania",
 				"NO_DATA_DESC": "Twórz treści, aby zobaczyć trendy zaangażowania."
 			},
-
 			"SUBMISSION_CALENDAR": {
 				"TITLE": "Aktywność Zgłoszeń",
 				"SUBTITLE": "Twoja regularność zgłoszeń w ciągu ostatnich 3 miesięcy",
@@ -2927,7 +2953,6 @@
 				"LESS": "Mniej",
 				"MORE": "Więcej"
 			},
-
 			"ENGAGEMENT_DISTRIBUTION": {
 				"TITLE": "Rozkład Zaangażowania",
 				"SUBTITLE": "Jak zaangażowanie jest rozłożone wśród Twoich najlepszych elementów",
@@ -2936,12 +2961,10 @@
 				"NO_DATA": "Brak danych zaangażowania",
 				"NO_DATA_DESC": "Otrzymuj głosy i komentarze, aby zobaczyć rozkład zaangażowania."
 			},
-
 			"COMMON": {
 				"VS": "vs",
 				"AVG": "Śr."
 			},
-
 			"CHARTS": {
 				"LOADING": "Ładowanie danych wykresu...",
 				"ERROR": "Nie udało się załadować wykresu",
