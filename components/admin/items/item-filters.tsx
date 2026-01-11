@@ -5,7 +5,6 @@ import * as Popover from '@radix-ui/react-popover';
 import { Filter, X, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
-import { ITEM_STATUS_LABELS } from '@/lib/types/item';
 
 interface ItemFiltersProps {
 	statusFilter: string;
@@ -107,28 +106,28 @@ export function ItemFilters({
 					onClick={() => onStatusChange('approved')}
 					className={statusFilter === 'approved' ? STATUS_TAB_ACTIVE : STATUS_TAB}
 				>
-					{ITEM_STATUS_LABELS.approved}
+					{t('STATUS_APPROVED')}
 					<span className="ml-1.5 text-xs text-gray-400">{itemCounts.approved}</span>
 				</button>
 				<button
 					onClick={() => onStatusChange('pending')}
 					className={statusFilter === 'pending' ? STATUS_TAB_ACTIVE : STATUS_TAB}
 				>
-					{ITEM_STATUS_LABELS.pending}
+					{t('STATUS_PENDING')}
 					<span className="ml-1.5 text-xs text-gray-400">{itemCounts.pending}</span>
 				</button>
 				<button
 					onClick={() => onStatusChange('draft')}
 					className={statusFilter === 'draft' ? STATUS_TAB_ACTIVE : STATUS_TAB}
 				>
-					{ITEM_STATUS_LABELS.draft}
+					{t('STATUS_DRAFT')}
 					<span className="ml-1.5 text-xs text-gray-400">{itemCounts.draft}</span>
 				</button>
 				<button
 					onClick={() => onStatusChange('rejected')}
 					className={statusFilter === 'rejected' ? STATUS_TAB_ACTIVE : STATUS_TAB}
 				>
-					{ITEM_STATUS_LABELS.rejected}
+					{t('STATUS_REJECTED')}
 					<span className="ml-1.5 text-xs text-gray-400">{itemCounts.rejected}</span>
 				</button>
 			</div>
