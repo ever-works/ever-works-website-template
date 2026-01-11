@@ -235,17 +235,37 @@ export async function GET(request: NextRequest) {
       (validStatuses as readonly string[]).includes(s);
     const status = statusParam && isItemStatus(statusParam) ? statusParam : undefined;
 
-    // Validate sortBy parameter
+    // Validate sortBy parameter with type-safe guard
     const validSortFields = ['name', 'updated_at', 'status', 'submitted_at'] as const;
-    const sortBy = sortByParam && validSortFields.includes(sortByParam as any)
-      ? (sortByParam as 'name' | 'updated_at' | 'status' | 'submitted_at')
-      : undefined;
+    type SortField = (typeof validSortFields)[number];
+    const isSortField = (s: string): s is SortField =>
+      (validSortFields as readonly string[]).includes(s);
+    let sortBy: SortField | undefined = undefined;
+    if (sortByParam) {
+      if (!isSortField(sortByParam)) {
+        return NextResponse.json(
+          { success: false, error: `Invalid sortBy parameter. Must be one of: ${validSortFields.join(', ')}` },
+          { status: 400 }
+        );
+      }
+      sortBy = sortByParam;
+    }
 
-    // Validate sortOrder parameter
+    // Validate sortOrder parameter with type-safe guard
     const validSortOrders = ['asc', 'desc'] as const;
-    const sortOrder = sortOrderParam && validSortOrders.includes(sortOrderParam as any)
-      ? (sortOrderParam as 'asc' | 'desc')
-      : undefined;
+    type SortOrder = (typeof validSortOrders)[number];
+    const isSortOrder = (s: string): s is SortOrder =>
+      (validSortOrders as readonly string[]).includes(s);
+    let sortOrder: SortOrder | undefined = undefined;
+    if (sortOrderParam) {
+      if (!isSortOrder(sortOrderParam)) {
+        return NextResponse.json(
+          { success: false, error: `Invalid sortOrder parameter. Must be one of: ${validSortOrders.join(', ')}` },
+          { status: 400 }
+        );
+      }
+      sortOrder = sortOrderParam;
+    }
 
     // Get paginated items
     const result = await itemRepository.findAllPaginated(page, limit, {
